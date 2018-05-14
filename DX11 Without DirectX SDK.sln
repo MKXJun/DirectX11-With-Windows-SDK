@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube", "03 Rendering a Cube\03 Rendering a Cube.vcxproj", "{10FD2630-1709-4D22-853C-2EFE3A7EFD67}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard", "05 Mouse and Keyboard\05 Mouse and Keyboard.vcxproj", "{27BB9181-5063-485E-8A9F-3A56A82CE09E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{10FD2630-1709-4D22-853C-2EFE3A7EFD67}.Release|x64.Build.0 = Release|x64
 		{10FD2630-1709-4D22-853C-2EFE3A7EFD67}.Release|x86.ActiveCfg = Release|Win32
 		{10FD2630-1709-4D22-853C-2EFE3A7EFD67}.Release|x86.Build.0 = Release|Win32
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Debug|x64.ActiveCfg = Debug|x64
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Debug|x64.Build.0 = Debug|x64
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Debug|x86.ActiveCfg = Debug|Win32
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Debug|x86.Build.0 = Debug|Win32
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Release|x64.ActiveCfg = Release|x64
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Release|x64.Build.0 = Release|x64
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Release|x86.ActiveCfg = Release|Win32
+		{27BB9181-5063-485E-8A9F-3A56A82CE09E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

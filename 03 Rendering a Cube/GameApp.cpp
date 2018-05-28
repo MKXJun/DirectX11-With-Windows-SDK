@@ -39,7 +39,7 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-	// 更新固定缓冲区，让立方体转起来
+	// 更新常量缓冲区，让立方体转起来
 	static float phi = 0.0f, theta = 0.0f;
 	phi += 0.00003f, theta += 0.00005f;
 	mCBuffer.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
@@ -55,7 +55,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&blue));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// 将更新好的固定缓冲区绑定到顶点着色器
+	// 将更新好的常量缓冲区绑定到顶点着色器
 	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
 
 	// 绘制立方体
@@ -222,17 +222,17 @@ bool GameApp::InitResource()
 
 
 	// ******************
-	// 设置固定缓冲区描述
+	// 设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DEFAULT;
 	cbd.ByteWidth = sizeof(ConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.CPUAccessFlags = 0;
-	// 新建固定缓冲区，不使用初始数据
+	// 新建常量缓冲区，不使用初始数据
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffer.GetAddressOf()));
 
-	// 初始化固定缓冲区的值
+	// 初始化常量缓冲区的值
 	mCBuffer.world = XMMatrixIdentity();
 	mCBuffer.view = XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),

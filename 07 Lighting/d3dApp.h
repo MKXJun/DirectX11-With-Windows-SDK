@@ -90,7 +90,6 @@ protected:
 	DirectX::Mouse::ButtonStateTracker mMouseTracker;					// 鼠标状态追踪器
 	std::unique_ptr<DirectX::Keyboard> mKeyboard;						// 键盘
 	DirectX::Keyboard::KeyboardStateTracker mKeyboardTracker;			// 键盘状态追踪器
-
 	// 派生类应该在构造函数设置好这些自定义的初始参数
 	std::wstring mMainWndCaption;                                       // 主窗口标题
 	int mClientWidth;                                                   // 视口宽度

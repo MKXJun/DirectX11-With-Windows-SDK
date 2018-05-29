@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard", "05
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting", "07 Lighting\07 Lighting.vcxproj", "{FC9AD1DA-C424-4567-A49C-DADCF83E7557}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability.vcxproj", "{7DCC8C3F-6626-4F9A-B132-6F0A30246026}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{FC9AD1DA-C424-4567-A49C-DADCF83E7557}.Release|x64.Build.0 = Release|x64
 		{FC9AD1DA-C424-4567-A49C-DADCF83E7557}.Release|x86.ActiveCfg = Release|Win32
 		{FC9AD1DA-C424-4567-A49C-DADCF83E7557}.Release|x86.Build.0 = Release|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x64.ActiveCfg = Debug|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x64.Build.0 = Debug|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x86.ActiveCfg = Debug|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x86.Build.0 = Debug|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x64.ActiveCfg = Release|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x64.Build.0 = Release|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x86.ActiveCfg = Release|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

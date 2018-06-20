@@ -49,14 +49,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Triangle.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="Triangle_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="Triangle_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Triangle.fx">
+      <Filter>着色器</Filter>
+    </None>
   </ItemGroup>
 </Project>

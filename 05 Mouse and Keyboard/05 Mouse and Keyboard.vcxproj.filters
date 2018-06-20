@@ -21,9 +21,6 @@
     <FxCompile Include="Cube_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Cube.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="Cube_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -58,5 +55,10 @@
     <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Cube.fx">
+      <Filter>着色器</Filter>
+    </None>
   </ItemGroup>
 </Project>

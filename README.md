@@ -6,3 +6,4 @@
 
 [https://blog.csdn.net/x_jun96/article/details/80293670](https://blog.csdn.net/x_jun96/article/details/80293670)（待考试后会重新整理）
 
+项目如果有编译不通过的问题的话可以提出来。

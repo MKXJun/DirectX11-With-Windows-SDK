@@ -64,13 +64,11 @@
     <FxCompile Include="Light_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LightHelper.hlsli">
+    <FxCompile Include="Light.fx">
       <Filter>着色器</Filter>
-    </None>
-    <None Include="Light.fx">
+    </FxCompile>
+    <FxCompile Include="LightHelper.hlsli">
       <Filter>着色器</Filter>
-    </None>
+    </FxCompile>
   </ItemGroup>
 </Project>

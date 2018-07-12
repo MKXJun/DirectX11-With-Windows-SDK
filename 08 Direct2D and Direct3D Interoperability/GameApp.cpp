@@ -2,7 +2,6 @@
 #include <filesystem>
 using namespace DirectX;
 using namespace std::experimental;
-using namespace Microsoft::WRL;
 
 const D3D11_INPUT_ELEMENT_DESC GameApp::VertexPosNormalColor::inputLayout[3] = {
 	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -240,7 +239,7 @@ bool GameApp::InitResource()
 	cbd.ByteWidth = sizeof(VSConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.CPUAccessFlags = 0;
-	// 新建用于VS常量缓冲区，不使用初始数据
+	// 新建用于VS和PS的常量缓冲区
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
 	cbd.ByteWidth = sizeof(PSConstantBuffer);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));

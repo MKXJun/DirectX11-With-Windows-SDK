@@ -2,8 +2,6 @@
 #include <WindowsX.h>
 #include <sstream>
 
-using Microsoft::WRL::ComPtr;
-
 namespace
 {
 	// This is just used to forward Windows messages from a global window

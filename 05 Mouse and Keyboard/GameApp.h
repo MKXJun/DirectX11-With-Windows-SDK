@@ -40,12 +40,13 @@ private:
 
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantBuffer;		// 常量缓冲区
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器
+	ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
+	ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
+	ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
+	ComPtr<ID3D11Buffer> mConstantBuffer;		// 常量缓冲区
+	
+	ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
+	ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器
 	ConstantBuffer mCBuffer;	// 用于修改GPU常量缓冲区的变量
 };
 

@@ -60,18 +60,21 @@ private:
 
 
 private:
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mVertexBuffer;		// 顶点缓冲区
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
-	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantBuffers[2];	// 常量缓冲区
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader;	// 像素着色器
+	ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
+	ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
+	ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
+	ComPtr<ID3D11Buffer> mConstantBuffers[2];	// 常量缓冲区
+	int mIndexCount;							// 绘制物体的索引数组大小
+
+	ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
+	ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器
 	VSConstantBuffer mVSConstantBuffer;			// 用于修改用于VS的GPU常量缓冲区的变量
 	PSConstantBuffer mPSConstantBuffer;			// 用于修改用于PS的GPU常量缓冲区的变量
+
 	DirectionalLight mDirLight;					// 默认环境光
 	PointLight mPointLight;						// 默认点光
 	SpotLight mSpotLight;						// 默认汇聚光
-	int mIndexCount;							// 绘制物体的索引数组大小
+	
 };
 
 

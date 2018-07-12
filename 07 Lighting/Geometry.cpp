@@ -26,7 +26,7 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 			XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
 			meshData.posVec.push_back(pos);
 			XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
-			meshData.normalVec.push_back(pos);
+			meshData.normalVec.push_back(normal);
 
 		}
 	}

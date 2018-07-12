@@ -70,24 +70,27 @@ protected:
 
 	GameTimer mTimer;           // 计时器
 
+	// 使用模板别名(C++11)简化类型名
+	template <class T>
+	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// DX11
-	Microsoft::WRL::ComPtr<ID3D11Device> md3dDevice;                    // D3D11设备
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> md3dImmediateContext;   // D3D11设备上下文
-	Microsoft::WRL::ComPtr<IDXGISwapChain> mSwapChain;                  // D3D11交换链
+	ComPtr<ID3D11Device> md3dDevice;                    // D3D11设备
+	ComPtr<ID3D11DeviceContext> md3dImmediateContext;   // D3D11设备上下文
+	ComPtr<IDXGISwapChain> mSwapChain;                  // D3D11交换链
 	// DX11.1
-	Microsoft::WRL::ComPtr<ID3D11Device1> md3dDevice1;                  // D3D11.1设备
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext1> md3dImmediateContext1; // D3D11.1设备上下文
-	Microsoft::WRL::ComPtr<IDXGISwapChain1> mSwapChain1;                // D3D11.1交换链
+	ComPtr<ID3D11Device1> md3dDevice1;                  // D3D11.1设备
+	ComPtr<ID3D11DeviceContext1> md3dImmediateContext1; // D3D11.1设备上下文
+	ComPtr<IDXGISwapChain1> mSwapChain1;                // D3D11.1交换链
 	// 常用资源
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> mDepthStencilBuffer;        // 深度模板缓冲区
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> mRenderTargetView;   // 渲染目标视图
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> mDepthStencilView;   // 深度模板视图
-	D3D11_VIEWPORT mScreenViewport;                                     // 视口
+	ComPtr<ID3D11Texture2D> mDepthStencilBuffer;        // 深度模板缓冲区
+	ComPtr<ID3D11RenderTargetView> mRenderTargetView;   // 渲染目标视图
+	ComPtr<ID3D11DepthStencilView> mDepthStencilView;   // 深度模板视图
+	D3D11_VIEWPORT mScreenViewport;                     // 视口
 
 	// 派生类应该在构造函数设置好这些自定义的初始参数
-	std::wstring mMainWndCaption;                                       // 主窗口标题
-	int mClientWidth;                                                   // 视口宽度
-	int mClientHeight;                                                  // 视口高度
+	std::wstring mMainWndCaption;                       // 主窗口标题
+	int mClientWidth;                                   // 视口宽度
+	int mClientHeight;                                  // 视口高度
 };
 
 #endif // D3DAPP_H

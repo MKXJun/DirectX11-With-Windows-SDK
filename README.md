@@ -4,6 +4,6 @@
 
 [https://www.cnblogs.com/X-Jun/p/9028764.html](https://www.cnblogs.com/X-Jun/p/9028764.html)（当前最新）
 
-[https://blog.csdn.net/x_jun96/article/details/80293670](https://blog.csdn.net/x_jun96/article/details/80293670)（待考试后会重新整理）
+[https://blog.csdn.net/x_jun96/article/details/80293670](https://blog.csdn.net/x_jun96/article/details/80293670)
 
 项目如果有编译不通过的问题的话可以提出来。

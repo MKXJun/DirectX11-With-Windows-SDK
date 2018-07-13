@@ -135,7 +135,7 @@ void GameApp::DrawScene()
 	md2dRenderTarget->BeginDraw();
 	static const WCHAR* textStr = L"切换灯光类型: 1-平行光 2-点光 3-聚光灯\n"
 		 "切换模型: Q-立方体 W-球体 E-圆柱体";
-	md2dRenderTarget->DrawTextW(textStr, wcslen(textStr), mTextFormat.Get(),
+	md2dRenderTarget->DrawTextW(textStr, (UINT)wcslen(textStr), mTextFormat.Get(),
 		D2D1_RECT_F{ 0.0f, 0.0f, 400.0f, 40.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
@@ -296,9 +296,9 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	int vertexSize = meshData.posVec.size();
+	size_t vertexSize = meshData.posVec.size();
 	std::vector<VertexPosNormalColor> vertices(vertexSize);
-	for (int i = 0; i < vertexSize; ++i)
+	for (size_t i = 0; i < vertexSize; ++i)
 	{
 		vertices[i].pos = meshData.posVec[i];
 		vertices[i].normal = meshData.normalVec[i];
@@ -309,7 +309,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.ByteWidth = vertices.size() * sizeof(VertexPosNormalColor);
+	vbd.ByteWidth = (UINT)vertices.size() * sizeof(VertexPosNormalColor);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -327,7 +327,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 
 
 	// 设置索引缓冲区描述
-	mIndexCount = meshData.indexVec.size();
+	mIndexCount = (int)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_DEFAULT;

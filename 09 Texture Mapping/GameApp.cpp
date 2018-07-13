@@ -148,7 +148,7 @@ void GameApp::DrawScene()
 	// »æÖÆDirect2D²¿·Ö
 	md2dRenderTarget->BeginDraw();
 	static const WCHAR* textStr = L"ÇÐ»»ÏÔÊ¾: 1-Ä¾Ïä(3D) 2-»ðÑæ(2D)\n";
-	md2dRenderTarget->DrawTextW(textStr, wcslen(textStr), mTextFormat.Get(),
+	md2dRenderTarget->DrawTextW(textStr, (UINT)wcslen(textStr), mTextFormat.Get(),
 		D2D1_RECT_F{ 0.0f, 0.0f, 400.0f, 20.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
@@ -370,9 +370,9 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	int vertexSize = meshData.posVec.size();
+	size_t vertexSize = meshData.posVec.size();
 	std::vector<VertexPosNormalTex> vertices(vertexSize);
-	for (int i = 0; i < vertexSize; ++i)
+	for (size_t i = 0; i < vertexSize; ++i)
 	{
 		vertices[i].pos = meshData.posVec[i];
 		vertices[i].normal = meshData.normalVec[i];
@@ -383,7 +383,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.ByteWidth = vertices.size() * sizeof(VertexPosNormalTex);
+	vbd.ByteWidth = (UINT)vertices.size() * sizeof(VertexPosNormalTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// ÐÂ½¨¶¥µã»º³åÇø
@@ -401,7 +401,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 
 
 	// ÉèÖÃË÷Òý»º³åÇøÃèÊö
-	mIndexCount = meshData.indexVec.size();
+	mIndexCount = (int)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_DEFAULT;

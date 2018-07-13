@@ -264,9 +264,9 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	int vertexSize = meshData.posVec.size();
+	size_t vertexSize = meshData.posVec.size();
 	std::vector<VertexPosNormalColor> vertices(vertexSize);
-	for (int i = 0; i < vertexSize; ++i)
+	for (size_t i = 0; i < vertexSize; ++i)
 	{
 		vertices[i].pos = meshData.posVec[i];
 		vertices[i].normal = meshData.normalVec[i];
@@ -277,7 +277,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.ByteWidth = vertices.size() * sizeof(VertexPosNormalColor);
+	vbd.ByteWidth = (UINT)vertices.size() * sizeof(VertexPosNormalColor);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -295,7 +295,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 
 
 	// 设置索引缓冲区描述
-	mIndexCount = meshData.indexVec.size();
+	mIndexCount = (int)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_DEFAULT;

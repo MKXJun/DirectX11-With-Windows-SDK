@@ -99,7 +99,7 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 已经编译好的着色器文件名
-	filesystem::path psoPath = "Cube_PS.cso", vsoPath = "Cube_VS.cso";
+	filesystem::path psoPath = "HLSL\\Cube_PS.cso", vsoPath = "HLSL\\Cube_VS.cso";
 	std::wstring wstr;
 	// 寻找是否有已经编译好的顶点着色器，否则在运行期编译
 	if (filesystem::exists(vsoPath))
@@ -109,7 +109,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Cube.fx", "VS", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Cube.fx", "VS", "vs_4_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));
@@ -129,7 +129,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Cube.fx", "PS", "ps_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Cube.fx", "PS", "ps_4_0", blob.GetAddressOf()));
 	}
 	// 创建像素着色器
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader.GetAddressOf()));

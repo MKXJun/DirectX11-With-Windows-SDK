@@ -10,7 +10,8 @@
 
 # 更新记录
 2018/7/13</br>
--HLSL和纹理分别使用单独的文件夹
+-HLSL和纹理分别使用单独的文件夹</br>
+-消除x64平台下的一些警告
 
 2018/7/12</br>
 -原DX11 Without DirectX SDK 现在更名为 DirectX11 With Windows SDK</br>

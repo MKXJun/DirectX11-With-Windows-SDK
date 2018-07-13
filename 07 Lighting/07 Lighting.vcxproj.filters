@@ -58,17 +58,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Light_PS.hlsl">
+    <FxCompile Include="HLSL\Light.fx">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Light_VS.hlsl">
+    <FxCompile Include="HLSL\Light_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="LightHelper.hlsli">
+    <FxCompile Include="HLSL\Light_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Light.fx">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\LightHelper.hlsli">
       <Filter>着色器</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>

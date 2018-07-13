@@ -147,7 +147,7 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 已经编译好的着色器文件名
-	filesystem::path psoPath = "Light_PS.cso", vsoPath = "Light_VS.cso";
+	filesystem::path psoPath = "HLSL\\Light_PS.cso", vsoPath = "HLSL\\Light_VS.cso";
 	filesystem::file_status fs;
 	std::wstring wstr;
 	// 寻找是否有已经编译好的顶点着色器，否则在运行期编译
@@ -158,7 +158,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Light.fx", "VS", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "VS", "vs_4_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));
@@ -178,7 +178,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Light.fx", "PS", "ps_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "PS", "ps_4_0", blob.GetAddressOf()));
 	}
 	// 创建像素着色器
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader.GetAddressOf()));

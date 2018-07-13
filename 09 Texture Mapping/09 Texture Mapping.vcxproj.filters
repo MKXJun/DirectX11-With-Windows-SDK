@@ -58,24 +58,24 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Basic_PS_2D.hlsl">
+    <FxCompile Include="HLSL\Basic.fx">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Basic_VS_2D.hlsl">
+    <FxCompile Include="HLSL\Basic_PS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Basic_PS_3D.hlsl">
+    <FxCompile Include="HLSL\Basic_PS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Basic_VS_3D.hlsl">
+    <FxCompile Include="HLSL\Basic_VS_2D.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic_VS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="LightHelper.hlsli">
-      <Filter>着色器</Filter>
-    </None>
-    <None Include="Basic.fx">
+    <None Include="HLSL\LightHelper.hlsli">
       <Filter>着色器</Filter>
     </None>
   </ItemGroup>

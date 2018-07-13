@@ -49,13 +49,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Triangle_PS.hlsl">
+    <FxCompile Include="HLSL\Triangle.fx">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Triangle_VS.hlsl">
+    <FxCompile Include="HLSL\Triangle_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="Triangle.fx">
+    <FxCompile Include="HLSL\Triangle_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

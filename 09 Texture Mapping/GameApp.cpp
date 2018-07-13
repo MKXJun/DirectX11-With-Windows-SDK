@@ -192,8 +192,8 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 已经编译好的着色器文件名
-	std::wstring pso2DPath = L"Basic_PS_2D.cso", vso2DPath = L"Basic_VS_2D.cso";
-	std::wstring pso3DPath = L"Basic_PS_3D.cso", vso3DPath = L"Basic_VS_3D.cso";
+	std::wstring pso2DPath = L"HLSL\\Basic_PS_2D.cso", vso2DPath = L"HLSL\\Basic_VS_2D.cso";
+	std::wstring pso3DPath = L"HLSL\\Basic_PS_3D.cso", vso3DPath = L"HLSL\\Basic_VS_3D.cso";
 	// ******************************************************
 	// 寻找是否有已经编译好的顶点着色器(2D)，否则在运行期编译
 	if (filesystem::exists(vso2DPath))
@@ -202,7 +202,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Basic.fx", "VS_2D", "vs_4_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_2D", "vs_4_0", blob.GetAddressOf()))
 	}
 	// 创建顶点着色器(2D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
@@ -220,7 +220,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Basic.fx", "VS_3D", "vs_4_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_3D", "vs_4_0", blob.GetAddressOf()))
 	}
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader3D.GetAddressOf()));
@@ -237,7 +237,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Basic.fx", "PS_2D", "ps_4_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_4_0", blob.GetAddressOf()))
 	}
 	// 创建顶点着色器(2D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader2D.GetAddressOf()));
@@ -251,7 +251,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"Basic.fx", "PS_3D", "ps_4_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_4_0", blob.GetAddressOf()))
 	}
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));
@@ -289,13 +289,13 @@ bool GameApp::InitResource()
 	// 初始化纹理和采样器状态
 	
 	// 初始化木箱纹理
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"WoodCrate.dds", nullptr, mWoodCrate.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, mWoodCrate.GetAddressOf()));
 	// 初始化火焰纹理
-	WCHAR strFile[30];
+	WCHAR strFile[40];
 	mFireAnim.resize(120);
 	for (int i = 1; i <= 120; ++i)
 	{
-		wsprintf(strFile, L"FireAnim\\Fire%03d.bmp", i);
+		wsprintf(strFile, L"Texture\\FireAnim\\Fire%03d.bmp", i);
 		HR(CreateWICTextureFromFile(md3dDevice.Get(), strFile, nullptr, mFireAnim[i - 1].GetAddressOf()));
 	}
 		

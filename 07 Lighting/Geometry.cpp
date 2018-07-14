@@ -193,7 +193,7 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	{
 		theta = i * per_theta;
 		meshData.posVec.push_back(XMFLOAT3(cosf(theta), -h2, sinf(theta)));
-		meshData.normalVec.push_back(XMFLOAT3(cosf(theta), 0.0f, sinf(theta)));
+		meshData.normalVec.push_back(XMFLOAT3(0.0f, -1.0f, 0.0f));
 	}
 	// ·ÅÈëµ×¶ËÔ²ÐÄ
 	meshData.posVec.push_back(XMFLOAT3(0.0f, -h2, 0.0f));

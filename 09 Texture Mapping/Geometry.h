@@ -2,18 +2,15 @@
 #define GEOMETRY_H_
 
 #include <Windows.h>
-#include <DirectXMath.h>
 #include <vector>
-
+#include "Vertex.h"
 
 class Geometry
 {
 public:
 	struct MeshData
 	{
-		std::vector<DirectX::XMFLOAT3> posVec;		// 位置数组
-		std::vector<DirectX::XMFLOAT3> normalVec;	// 法向量数组
-		std::vector<DirectX::XMFLOAT2> texVec;		// 纹理坐标数组
+		std::vector<VertexPosNormalTex> vertexVec;	// 顶点数组
 		std::vector<WORD> indexVec;					// 索引数组
 	};
 

@@ -4,11 +4,7 @@
 using namespace DirectX;
 using namespace std::experimental;
 
-const D3D11_INPUT_ELEMENT_DESC GameApp::VertexPosNormalTex::inputLayout[3] = {
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
-};
+
 
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance)
@@ -65,7 +61,6 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// 键盘切换灯光类型
 	Keyboard::State state = mKeyboard->GetState();
 	mKeyboardTracker.Update(state);	
 
@@ -268,9 +263,7 @@ bool GameApp::InitEffect()
 
 bool GameApp::InitResource()
 {
-	// 初始化网格模型
-	Geometry::MeshData meshData = Geometry::CreateBox();
-	ResetMesh(meshData);
+
 
 	// ******************
 	// 设置常量缓冲区描述
@@ -343,14 +336,11 @@ bool GameApp::InitResource()
 
 	// ******************************
 	// 设置好渲染管线各阶段所需资源
-
-	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
+	// 初始化网格模型并设置到输入装配阶段
+	Geometry::MeshData meshData = Geometry::CreateBox();
+	ResetMesh(meshData);
 	// 输入装配阶段设置图元类型
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
-	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
-
-	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	// 像素着色阶段设置好采样器
 	md3dImmediateContext->PSSetSamplers(0, 1, mSamplerState.GetAddressOf());
 	// 像素着色阶段默认设置木箱纹理
@@ -370,26 +360,19 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	size_t vertexSize = meshData.posVec.size();
-	std::vector<VertexPosNormalTex> vertices(vertexSize);
-	for (size_t i = 0; i < vertexSize; ++i)
-	{
-		vertices[i].pos = meshData.posVec[i];
-		vertices[i].normal = meshData.normalVec[i];
-		vertices[i].tex = meshData.texVec[i];
-	}
+
 
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.ByteWidth = (UINT)vertices.size() * sizeof(VertexPosNormalTex);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices.data();
+	InitData.pSysMem = meshData.vertexVec.data();
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf()));
 
 	// 输入装配阶段的顶点缓冲区设置

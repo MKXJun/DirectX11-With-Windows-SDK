@@ -222,7 +222,7 @@ bool GameApp::InitResource()
 	mPointLight.Position = XMFLOAT3(0.0f, 0.0f, -10.0f);
 	mPointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mPointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mPointLight.Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	mPointLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
 	mPointLight.Range = 25.0f;
 	// 聚光灯
@@ -247,9 +247,12 @@ bool GameApp::InitResource()
 	// 初始化用于PS的常量缓冲区的值
 	mPSConstantBuffer.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPSConstantBuffer.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mPSConstantBuffer.material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 50.0f);
+	mPSConstantBuffer.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	// 使用默认平行光
 	mPSConstantBuffer.dirLight = mDirLight;
+	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
+	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
+
 	// 更新PS常量缓冲区资源
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
 	// 设置图元类型

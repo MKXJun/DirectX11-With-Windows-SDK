@@ -1,6 +1,5 @@
 #include "GameApp.h"
 #include <filesystem>
-#include <D3D11_4.H>
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -234,7 +233,7 @@ bool GameApp::InitEffect()
 	{
 		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_4_0", blob.GetAddressOf()))
 	}
-	// 创建顶点着色器(2D)
+	// 创建像素着色器(2D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader2D.GetAddressOf()));
 	blob.Reset();
 
@@ -248,7 +247,7 @@ bool GameApp::InitEffect()
 	{
 		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_4_0", blob.GetAddressOf()))
 	}
-	// 创建顶点着色器(3D)
+	// 创建像素着色器(3D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));
 	blob.Reset();
 
@@ -263,7 +262,9 @@ bool GameApp::InitEffect()
 
 bool GameApp::InitResource()
 {
-
+	// 初始化网格模型并设置到输入装配阶段
+	Geometry::MeshData meshData = Geometry::CreateBox();
+	ResetMesh(meshData);
 
 	// ******************
 	// 设置常量缓冲区描述
@@ -323,22 +324,22 @@ bool GameApp::InitResource()
 	mPSConstantBuffer.pointLight[0].Position = XMFLOAT3(0.0f, 0.0f, -10.0f);
 	mPSConstantBuffer.pointLight[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mPSConstantBuffer.pointLight[0].Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mPSConstantBuffer.pointLight[0].Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	mPSConstantBuffer.pointLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPSConstantBuffer.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
 	mPSConstantBuffer.pointLight[0].Range = 25.0f;
 	mPSConstantBuffer.numDirLight = 0;
 	mPSConstantBuffer.numPointLight = 1;
 	mPSConstantBuffer.numSpotLight = 0;
+	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);	// 这里容易遗漏，已补上
 	// 初始化材质
 	mPSConstantBuffer.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPSConstantBuffer.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mPSConstantBuffer.material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 50.0f);
+	mPSConstantBuffer.material.Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 5.0f);
+	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
+	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
 	// ******************************
 	// 设置好渲染管线各阶段所需资源
-	// 初始化网格模型并设置到输入装配阶段
-	Geometry::MeshData meshData = Geometry::CreateBox();
-	ResetMesh(meshData);
 	// 输入装配阶段设置图元类型
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// 像素着色阶段设置好采样器

@@ -318,6 +318,7 @@ bool GameApp::InitResource()
 	);
 	mVSConstantBuffer.proj = XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f);
 	mVSConstantBuffer.worldInvTranspose = XMMatrixIdentity();
+	mVSConstantBuffer.texTransform = XMMatrixIdentity();
 	
 	// 初始化用于PS的常量缓冲区的值
 	// 这里只使用一盏点光来演示

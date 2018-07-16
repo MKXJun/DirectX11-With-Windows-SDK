@@ -4,26 +4,35 @@ Texture2D tex : register(t0);
 SamplerState samLinear : register(s0);
 
 
-cbuffer VSConstantBuffer : register(b0)
+cbuffer CBChangesEveryDrawing : register(b0)
 {
-    row_major matrix gWorld; 
-    row_major matrix gView;  
-    row_major matrix gProj;  
-    row_major matrix gWorldInvTranspose;
+	row_major matrix gWorld;
+	row_major matrix gWorldInvTranspose;
 	row_major matrix gTexTransform;
 }
 
-cbuffer PSConstantBuffer : register(b1)
+cbuffer CBChangesEveryFrame : register(b1)
 {
-    DirectionalLight gDirLight[10];
-    PointLight gPointLight[10];
-    SpotLight gSpotLight[10];
-    Material gMaterial;
+	row_major matrix gView;
+	float3 gEyePosW;
+}
+
+cbuffer CBChangesOnResize : register(b2)
+{
+	row_major matrix gProj;
+}
+
+cbuffer CBNeverChange : register(b3)
+{
+	DirectionalLight gDirLight[10];
+	PointLight gPointLight[10];
+	SpotLight gSpotLight[10];
+	Material gMaterial;
 	int gNumDirLight;
 	int gNumPointLight;
 	int gNumSpotLight;
-    float3 gEyePosW;
 }
+
 
 
 struct VertexIn
@@ -52,7 +61,7 @@ VertexOut VS_3D(VertexIn pIn)
     pOut.PosH = mul(float4(pIn.Pos, 1.0f), worldViewProj);     
     pOut.PosW = mul(float4(pIn.Pos, 1.0f), gWorld).xyz;
     pOut.NormalW = mul(pIn.Normal, (float3x3)gWorldInvTranspose);
-	pOut.Tex = mul(float4(pIn.Tex, 0.0f, 1.0f), gTexTransform).xy;	                   
+	pOut.Tex = mul(float4(pIn.Tex, 0.0f, 1.0f), gTexTransform).xy;
     return pOut;
 }
 

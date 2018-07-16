@@ -114,16 +114,17 @@ void GameApp::UpdateScene(float dt)
 			cam1st->Strafe(dt * 3.0f);
 
 		// 将位置限制在[-8.9f, 8.9f]的区域内
+		// 不允许穿地
 		XMFLOAT3 adjustedPos;
-		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorReplicate(-8.9f), XMVectorReplicate(8.9f)));
+		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorSet(-8.9f, 0.0f, -8.9f, 0.0f), XMVectorReplicate(8.9f)));
 		cam1st->SetPosition(adjustedPos);
 
 		// 仅在第一人称模式移动箱子
 		if (mCameraMode == CameraMode::FirstPerson)
 			mWoodCrate.SetWorldMatrix(XMMatrixTranslation(adjustedPos.x, adjustedPos.y, adjustedPos.z));
 		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(dy * 0.01f);
-		cam1st->RotateY(dx * 0.01f);	
+		cam1st->Pitch(dy * dt * 1.25f);
+		cam1st->RotateY(dx * dt * 1.25f);
 	}
 	else if (mCameraMode == CameraMode::ThirdPerson)
 	{
@@ -132,8 +133,8 @@ void GameApp::UpdateScene(float dt)
 		cam3rd->SetTarget(mWoodCrate.GetPosition());
 
 		// 绕物体旋转
-		cam3rd->RotateX(dy * 0.01f);
-		cam3rd->RotateY(dx * 0.01f);
+		cam3rd->RotateX(dy * dt * 1.25f);
+		cam3rd->RotateY(dx * dt * 1.25f);
 		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 	}
 
@@ -228,7 +229,7 @@ void GameApp::DrawScene()
 		text += L"第三人称";
 	else
 		text += L"自由视角";
-	md2dRenderTarget->DrawTextW(text.c_str(), text.length(), mTextFormat.Get(),
+	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
 		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 

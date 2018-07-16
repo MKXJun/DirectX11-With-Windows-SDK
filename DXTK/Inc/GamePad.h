@@ -129,10 +129,10 @@ namespace DirectX
             bool __cdecl IsStartPressed() const { return buttons.start; }
             bool __cdecl IsMenuPressed() const { return buttons.menu; }
 
-            bool __cdecl IsDPadDownPressed() const { return dpad.down; };
-            bool __cdecl IsDPadUpPressed() const { return dpad.up; };
-            bool __cdecl IsDPadLeftPressed() const { return dpad.left; };
-            bool __cdecl IsDPadRightPressed() const { return dpad.right; };
+            bool __cdecl IsDPadDownPressed() const { return dpad.down; }
+            bool __cdecl IsDPadUpPressed() const { return dpad.up; }
+            bool __cdecl IsDPadLeftPressed() const { return dpad.left; }
+            bool __cdecl IsDPadRightPressed() const { return dpad.right; }
 
             bool __cdecl IsLeftThumbStickUp() const { return (thumbSticks.leftY > 0.5f) != 0; }
             bool __cdecl IsLeftThumbStickDown() const { return (thumbSticks.leftY < -0.5f) != 0; }
@@ -169,6 +169,8 @@ namespace DirectX
             Type            gamepadType;
         #if (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/)
             std::wstring    id;
+
+            Capabilities() noexcept : connected(false), gamepadType(UNKNOWN) {}
         #else
             uint64_t        id;
         #endif
@@ -228,6 +230,7 @@ namespace DirectX
             ButtonState leftTrigger;
             ButtonState rightTrigger;
 
+            #pragma prefast(suppress: 26495, "Reset() performs the initialization")
             ButtonStateTracker() noexcept { Reset(); }
 
             void __cdecl Update(const State& state);

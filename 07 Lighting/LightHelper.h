@@ -60,7 +60,7 @@ struct SpotLight
 // 物体表面材质
 struct Material
 {
-	Material() { memset(this, 0, sizeof(SpotLight)); }
+	Material() { memset(this, 0, sizeof(Material)); }
 
 	DirectX::XMFLOAT4 Ambient;
 	DirectX::XMFLOAT4 Diffuse;

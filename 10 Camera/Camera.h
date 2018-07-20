@@ -79,9 +79,9 @@ public:
 	// 前进(朝前向移动)
 	void MoveForward(float d);
 	// 上下观察
-	void Pitch(float radius);
+	void Pitch(float rad);
 	// 左右观察
-	void RotateY(float radius);
+	void RotateY(float rad);
 
 
 	// 更新观察矩阵
@@ -103,9 +103,9 @@ public:
 	// 获取绕Y轴的旋转方向
 	float GetRotationY() const;
 	// 绕物体垂直旋转
-	void RotateX(float radius);
+	void RotateX(float rad);
 	// 绕物体水平旋转
-	void RotateY(float radius);
+	void RotateY(float rad);
 	// 拉近物体
 	void Approach(float dist);
 	// 设置并绑定待跟踪物体的位置

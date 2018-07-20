@@ -178,9 +178,9 @@ void FirstPersonCamera::MoveForward(float d)
 	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(Dist, Look, Pos));
 }
 
-void FirstPersonCamera::Pitch(float radius)
+void FirstPersonCamera::Pitch(float rad)
 {
-	XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&mRight), radius);
+	XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&mRight), rad);
 	XMVECTOR Up = XMVector3TransformNormal(XMLoadFloat3(&mUp), R);
 	XMVECTOR Look = XMVector3TransformNormal(XMLoadFloat3(&mLook), R);
 	float cosPhi = XMVectorGetY(Look);
@@ -193,9 +193,9 @@ void FirstPersonCamera::Pitch(float radius)
 	XMStoreFloat3(&mLook, Look);
 }
 
-void FirstPersonCamera::RotateY(float radius)
+void FirstPersonCamera::RotateY(float rad)
 {
-	XMMATRIX R = XMMatrixRotationY(radius);
+	XMMATRIX R = XMMatrixRotationY(rad);
 
 	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
 	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
@@ -262,9 +262,9 @@ float ThirdPersonCamera::GetRotationY() const
 	return mTheta;
 }
 
-void ThirdPersonCamera::RotateX(float radius)
+void ThirdPersonCamera::RotateX(float rad)
 {
-	mPhi -= radius;
+	mPhi -= rad;
 	// 将上下视野角度Phi限制在[pi/6, pi/2]，
 	// 即余弦值[0, cos(pi/6)]之间
 	if (mPhi < XM_PI / 6)
@@ -273,9 +273,9 @@ void ThirdPersonCamera::RotateX(float radius)
 		mPhi = XM_PIDIV2;
 }
 
-void ThirdPersonCamera::RotateY(float radius)
+void ThirdPersonCamera::RotateY(float rad)
 {
-	mTheta = fmod(mTheta - radius, XM_2PI);
+	mTheta = fmod(mTheta - rad, XM_2PI);
 
 }
 

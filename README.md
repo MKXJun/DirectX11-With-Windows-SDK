@@ -9,42 +9,47 @@
 项目如果有编译不通过的问题的话可以提出来。
 
 # 更新记录
-2018/7/16</br>
+
+2018/7/20 v7.1</br>
+-修改了Material结构体构造函数的问题</br>
+-每个解决方案将管理10章内容的项目，减小单个解决方案编译的项目数
+
+2018/7/16 v7.0</br>
 -添加项目 Camera</br>
 -添加DirectXTK源码，删去旧有库，用户需要自己编译
 
-2018/7/14</br>
+2018/7/14 v6.2</br>
 -修改了光照高亮(镜面反射)部分显示问题
 
-2018/7/13</br>
+2018/7/13 v6.1</br>
 -HLSL和纹理分别使用单独的文件夹</br>
 -消除x64平台下的一些警告
 
-2018/7/12</br>
+2018/7/12 v6.0</br>
 -原DX11 Without DirectX SDK 现在更名为 DirectX11 With Windows SDK</br>
 -添加项目 Texture Mapping
 
-2018/6/21</br>
+2018/6/21 v5.1</br>
 -调整项目配置
 
-2018/5/29</br>
+2018/5/29 v5.0</br>
 -添加项目 Direct2D and Direct3D Interoperability
 
-2018/5/28</br>
+2018/5/28 v4.0</br>
 -添加项目 Lighting
 
-2018/5/21</br>
+2018/5/21 v3.1</br>
 -小幅度问题修改
 
-2018/5/14</br>
--添加项目 Mouse and Keyboard
+2018/5/14 v3.0</br>
+-添加项目 Mouse and Keyboard</br>
 -小幅度问题修改
 
-2018/5/13</br>
--添加项目 Rendering a Cube
+2018/5/13 v2.0</br>
+-添加项目 Rendering a Cube</br>
 -添加项目 Rendering a Triangle
 
-2018/5/12</br>
+2018/5/12 v1.0</br>
 -添加项目 DirectX11 Initialization
 
 

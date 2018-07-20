@@ -1,5 +1,7 @@
 # DirectX11 With Windows SDK
 
+该项目需要使用Visual Studio 2017来打开
+
 目前对应的博客更新：
 
 [https://www.cnblogs.com/X-Jun/p/9028764.html](https://www.cnblogs.com/X-Jun/p/9028764.html)（当前最新）

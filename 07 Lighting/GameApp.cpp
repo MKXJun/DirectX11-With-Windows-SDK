@@ -158,7 +158,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "VS", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "VS", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));
@@ -178,7 +178,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "PS", "ps_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Light.fx", "PS", "ps_5_0", blob.GetAddressOf()));
 	}
 	// 创建像素着色器
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader.GetAddressOf()));

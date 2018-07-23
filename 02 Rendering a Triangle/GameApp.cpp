@@ -102,7 +102,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Triangle.fx", "VS", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Triangle.fx", "VS", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));

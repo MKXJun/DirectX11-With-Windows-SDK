@@ -162,8 +162,8 @@ void D3DApp::OnResize()
 	depthStencilDesc.MiscFlags = 0;
 
 	// 创建深度缓冲区以及深度模板视图
-	HR(md3dDevice->CreateTexture2D(&depthStencilDesc, 0, mDepthStencilBuffer.GetAddressOf()));
-	HR(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), 0, mDepthStencilView.GetAddressOf()));
+	HR(md3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, mDepthStencilBuffer.GetAddressOf()));
+	HR(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, mDepthStencilView.GetAddressOf()));
 
 
 	// 将渲染目标视图和深度/模板缓冲区结合到管线

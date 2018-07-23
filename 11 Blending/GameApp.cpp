@@ -197,7 +197,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_2D", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_2D", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(2D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
@@ -215,7 +215,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_3D", "vs_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_3D", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader3D.GetAddressOf()));
@@ -232,7 +232,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(2D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader2D.GetAddressOf()));
@@ -246,7 +246,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_4_0", blob.GetAddressOf()));
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));

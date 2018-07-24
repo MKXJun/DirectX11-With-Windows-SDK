@@ -2,3 +2,6 @@ Debug/
 x64/
 DXTK/Bin
 DXTK/Lib
+.git/
+.vs/
+*.cso

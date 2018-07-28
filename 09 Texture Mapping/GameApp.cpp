@@ -139,7 +139,9 @@ void GameApp::DrawScene()
 	// 绘制几何模型
 	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
 
+	//
 	// 绘制Direct2D部分
+	//
 	md2dRenderTarget->BeginDraw();
 	static const WCHAR* textStr = L"切换显示: 1-木箱(3D) 2-火焰(2D)\n";
 	md2dRenderTarget->DrawTextW(textStr, (UINT32)wcslen(textStr), mTextFormat.Get(),
@@ -196,7 +198,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_2D", "vs_5_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_2D", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(2D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
@@ -214,7 +216,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_3D", "vs_5_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "VS_3D", "vs_5_0", blob.GetAddressOf()));
 	}
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader3D.GetAddressOf()));
@@ -231,7 +233,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_5_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_2D", "ps_5_0", blob.GetAddressOf()));
 	}
 	// 创建像素着色器(2D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader2D.GetAddressOf()));
@@ -245,7 +247,7 @@ bool GameApp::InitEffect()
 	}
 	else
 	{
-		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_5_0", blob.GetAddressOf()))
+		HR(CompileShaderFromFile(L"HLSL\\Basic.fx", "PS_3D", "ps_5_0", blob.GetAddressOf()));
 	}
 	// 创建像素着色器(3D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));

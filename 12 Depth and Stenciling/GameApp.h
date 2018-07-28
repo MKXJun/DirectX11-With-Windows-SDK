@@ -29,6 +29,7 @@ public:
 	{
 		DirectX::XMMATRIX view;
 		DirectX::XMFLOAT4 eyePos;
+
 	};
 
 	struct CBChangesOnResize
@@ -36,15 +37,17 @@ public:
 		DirectX::XMMATRIX proj;
 	};
 
+
 	struct CBNeverChange
 	{
+		DirectX::XMMATRIX reflection;
 		DirectionalLight dirLight[10];
 		PointLight pointLight[10];
 		SpotLight spotLight[10];
 		int numDirLight;
 		int numPointLight;
 		int numSpotLight;
-		int pad;
+		float pad;		// 打包保证16字节对齐
 	};
 
 	// 一个尽可能小的游戏对象类
@@ -53,6 +56,7 @@ public:
 	public:
 		// 获取位置
 		DirectX::XMFLOAT3 GetPosition() const;
+
 		// 设置缓冲区
 		void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
 		// 设置纹理
@@ -109,6 +113,7 @@ private:
 	GameObject mFloor;										// 地板
 	std::vector<GameObject> mWalls;							// 墙壁
 	GameObject mWater;										// 水
+	GameObject mMirror;										// 镜面
 
 	ComPtr<ID3D11VertexShader> mVertexShader3D;				// 用于3D的顶点着色器
 	ComPtr<ID3D11PixelShader> mPixelShader3D;				// 用于3D的像素着色器

@@ -12,26 +12,34 @@ cbuffer CBChangesEveryDrawing : register(b0)
 	Material gMaterial;
 }
 
-cbuffer CBChangesEveryFrame : register(b1)
+cbuffer CBDrawingState : register(b1)
+{
+    int gIsReflection;
+}
+
+cbuffer CBChangesEveryFrame : register(b2)
 {
 	row_major matrix gView;
 	float3 gEyePosW;
 }
 
-cbuffer CBChangesOnResize : register(b2)
+cbuffer CBChangesOnResize : register(b3)
 {
 	row_major matrix gProj;
 }
 
-cbuffer CBNeverChange : register(b3)
+cbuffer CBNeverChange : register(b4)
 {
+    row_major matrix gReflection;
 	DirectionalLight gDirLight[10];
 	PointLight gPointLight[10];
 	SpotLight gSpotLight[10];
 	int gNumDirLight;
 	int gNumPointLight;
 	int gNumSpotLight;
+	float gPad;
 }
+
 
 
 struct VertexIn
@@ -56,8 +64,15 @@ struct VertexOut
 VertexOut VS_3D(VertexIn pIn)
 {
 	VertexOut pOut;
-    row_major matrix worldViewProj = mul(mul(gWorld, gView), gProj);
-    pOut.PosH = mul(float4(pIn.Pos, 1.0f), worldViewProj);     
+    
+    float4 posH = mul(float4(pIn.Pos, 1.0f), gWorld);
+    // 若当前在绘制反射物体，先进行反射操作
+    [flatten]
+    if (gIsReflection)
+    {
+        posH = mul(posH, gReflection);
+    }
+    pOut.PosH = mul(mul(posH, gView), gProj);
     pOut.PosW = mul(float4(pIn.Pos, 1.0f), gWorld).xyz;
     pOut.NormalW = mul(pIn.Normal, (float3x3)gWorldInvTranspose);
 	pOut.Tex = mul(float4(pIn.Tex, 0.0f, 1.0f), gTexTransform).xy;
@@ -87,7 +102,6 @@ float4 PS_3D(VertexOut pIn) : SV_Target
 	float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	int i;
 
-	
 
 	// 强制展开循环以减少指令数
 	[unroll]
@@ -102,7 +116,15 @@ float4 PS_3D(VertexOut pIn) : SV_Target
 	[unroll]
 	for (i = 0; i < gNumPointLight; ++i)
 	{
-		ComputePointLight(gMaterial, gPointLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        PointLight pointLight = gPointLight[i];
+        // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+        [flatten]
+        if (gIsReflection)
+        {
+            pointLight.Position = (float3) mul(float4(pointLight.Position, 1.0f), gReflection);
+        }
+
+        ComputePointLight(gMaterial, pointLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
 		ambient += A;
 		diffuse += D;
 		spec += S;
@@ -111,7 +133,15 @@ float4 PS_3D(VertexOut pIn) : SV_Target
 	[unroll]
 	for (i = 0; i < gNumSpotLight; ++i)
 	{
-		ComputeSpotLight(gMaterial, gSpotLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        SpotLight spotLight = gSpotLight[i];
+        // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+        [flatten]
+        if (gIsReflection)
+        {
+            spotLight.Position = (float3) mul(float4(spotLight.Position, 1.0f), gReflection);
+        }
+
+        ComputeSpotLight(gMaterial, spotLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
 		ambient += A;
 		diffuse += D;
 		spec += S;

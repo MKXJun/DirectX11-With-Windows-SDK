@@ -6,6 +6,7 @@ struct DirectionalLight
     float4 Diffuse;
     float4 Specular;
     float3 Direction;
+    float Pad;
 };
 
 // 点光
@@ -19,6 +20,7 @@ struct PointLight
     float Range;
 
     float3 Att;
+    float Pad;
 };
 
 // 聚光灯
@@ -35,6 +37,7 @@ struct SpotLight
     float Spot;
 
     float3 Att;
+    float Pad;
 };
 
 // 物体表面材质

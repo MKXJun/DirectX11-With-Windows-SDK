@@ -131,7 +131,9 @@ void GameApp::DrawScene()
 	// 绘制几何模型
 	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
 
+	//
 	// 绘制Direct2D部分
+	//
 	md2dRenderTarget->BeginDraw();
 	static const WCHAR* textStr = L"切换灯光类型: 1-平行光 2-点光 3-聚光灯\n"
 		 "切换模型: Q-立方体 W-球体 E-圆柱体";

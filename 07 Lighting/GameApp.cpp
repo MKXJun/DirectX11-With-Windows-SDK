@@ -105,7 +105,7 @@ void GameApp::DrawScene()
 	
 	
 	// 绘制几何模型
-	 md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
+	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
 
 	HR(mSwapChain->Present(0, 0));
 }

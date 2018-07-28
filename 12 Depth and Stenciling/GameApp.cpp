@@ -1,5 +1,7 @@
 #include "GameApp.h"
 #include <filesystem>
+#include <algorithm>
+
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -62,12 +64,12 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mConstantBuffers[2] != nullptr)
+	if (mConstantBuffers[3] != nullptr)
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
 		mCBOnReSize.proj = mCamera->GetProj();
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
-		md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
+		md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
+		md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
 	}
 }
 
@@ -87,30 +89,107 @@ void GameApp::UpdateScene(float dt)
 	SetCursorPos(center.x, center.y);
 	// 获取子类
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
-
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
 	
-	// 第三人称摄像机的操作
-	// 绕原点旋转
-	cam3rd->SetTarget(XMFLOAT3());
-	cam3rd->RotateX(dy * dt * 1.25f);
-	cam3rd->RotateY(dx * dt * 1.25f);
-	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	if (mCameraMode == CameraMode::FirstPerson || mCameraMode == CameraMode::Free)
+	{
+		// 第一人称/自由摄像机的操作
 
-	// 更新观察矩阵，并更新每帧缓冲区
+		// 方向移动
+		if (keyState.IsKeyDown(Keyboard::W))
+		{
+			if (mCameraMode == CameraMode::FirstPerson)
+				cam1st->Walk(dt * 3.0f);
+			else
+				cam1st->MoveForward(dt * 3.0f);
+		}
+		if (keyState.IsKeyDown(Keyboard::S))
+		{
+			if (mCameraMode == CameraMode::FirstPerson)
+				cam1st->Walk(dt * -3.0f);
+			else
+				cam1st->MoveForward(dt * -3.0f);
+		}
+		if (keyState.IsKeyDown(Keyboard::A))
+			cam1st->Strafe(dt * -3.0f);
+		if (keyState.IsKeyDown(Keyboard::D))
+			cam1st->Strafe(dt * 3.0f);
+
+		// 将位置限制在[-8.9f, 8.9f]的区域内
+		// 不允许穿地
+		XMFLOAT3 adjustedPos;
+		XMStoreFloat3(&adjustedPos, cam1st->GetPositionXM());
+		cam1st->SetPosition(adjustedPos);
+
+		// 仅在第一人称模式移动箱子
+		if (mCameraMode == CameraMode::FirstPerson)
+			mWireFence.SetWorldMatrix(XMMatrixTranslation(adjustedPos.x, adjustedPos.y, adjustedPos.z));
+		// 视野旋转，防止开始的差值过大导致的突然旋转
+		cam1st->Pitch(dy * dt * 1.25f);
+		cam1st->RotateY(dx * dt * 1.25f);
+	}
+	else if (mCameraMode == CameraMode::ThirdPerson)
+	{
+		// 第三人称摄像机的操作
+
+		cam3rd->SetTarget(mWireFence.GetPosition());
+
+		// 绕物体旋转
+		cam3rd->RotateX(dy * dt * 1.25f);
+		cam3rd->RotateY(dx * dt * 1.25f);
+		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	}
+
+	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 	mCBFrame.view = mCamera->GetView();
-	
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
+
+	// 摄像机模式切换
 	
+	if (keyState.IsKeyDown(Keyboard::D1) && mCameraMode != CameraMode::ThirdPerson)
+	{
+		if (!cam3rd)
+		{
+			cam3rd.reset(new ThirdPersonCamera);
+			cam3rd->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+			mCamera = cam3rd;
+		}
+		XMFLOAT3 target = mWireFence.GetPosition();
+		cam3rd->SetTarget(target);
+		cam3rd->SetDistance(8.0f);
+		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
+		// 初始化时朝物体后方看
+		// cam3rd->RotateY(-XM_PIDIV2);
+
+		mCameraMode = CameraMode::ThirdPerson;
+	}
+	else if (keyState.IsKeyDown(Keyboard::D2) && mCameraMode != CameraMode::Free)
+	{
+		if (!cam1st)
+		{
+			cam1st.reset(new FirstPersonCamera);
+			cam1st->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+			mCamera = cam1st;
+		}
+		// 从箱子上方开始
+		XMFLOAT3 pos = mWireFence.GetPosition();
+		XMFLOAT3 look{ 0.0f, 0.0f, 1.0f };
+		XMFLOAT3 up{ 0.0f, 1.0f, 0.0f };
+		pos.y += 3;
+		cam1st->LookTo(pos, look, up);
+
+		mCameraMode = CameraMode::Free;
+	}
 	
 	// 退出程序，这里应向窗口发送销毁信息
 	if (keyState.IsKeyDown(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mCBFrame, 0, 0);
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBFrame, 0, 0);
 }
 
 void GameApp::DrawScene()
@@ -121,38 +200,98 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// ************************
-	// 1. 绘制不透明对象
-	//
+	
+	
+	// *********************
+	// 1. 绘制镜面反射的模型
+	// 
+
+	// 裁剪掉背面三角形
+	// 标记镜面区域的模板值为1
+	// 不写入像素颜色
 	md3dImmediateContext->RSSetState(nullptr);
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSMarkMirror.Get(), 1);
+	md3dImmediateContext->OMSetBlendState(RenderStates::BSNoColorWrite.Get(), nullptr, 0xFFFFFFFF);
+
+
+	mMirror.Draw(md3dImmediateContext);
+
+	// ***********************
+	// 2. 绘制不透明的反射物体
+	//
+
+	// 开启反射绘制
+	XMINT4 reflectionState = { 1, 0, 0, 0 };
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &reflectionState, 0, 0);
+	
+	// 绘制不透明物体，需要顺时针裁剪
+	// 仅对模板值为1的镜面区域绘制
+	md3dImmediateContext->RSSetState(RenderStates::RSCullClockWise.Get());
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawReflection.Get(), 1);
+	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+	
+	mWalls[2].Draw(md3dImmediateContext);
+	mWalls[3].Draw(md3dImmediateContext);
+	mWalls[4].Draw(md3dImmediateContext);
+	mFloor.Draw(md3dImmediateContext);
+
+	// ***********************
+	// 3. 绘制透明的反射物体
+	//
+
+	// 关闭顺逆时针裁剪
+	// 仅对模板值为1的镜面区域绘制
+	// 透明混合
+	md3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawReflection.Get(), 1);
+	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
+
+	mWireFence.Draw(md3dImmediateContext);
+	mWater.Draw(md3dImmediateContext);
+	mMirror.Draw(md3dImmediateContext);
+	
+	// 关闭反射绘制
+	reflectionState.x = 0;
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &reflectionState, 0, 0);
+	
+
+	// ************************
+	// 4. 绘制不透明的正常物体
+	//
+
+	md3dImmediateContext->RSSetState(nullptr);
+	md3dImmediateContext->OMSetDepthStencilState(nullptr, 0);
 	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 
 	for (auto& wall : mWalls)
 		wall.Draw(md3dImmediateContext);
 	mFloor.Draw(md3dImmediateContext);
 
-	// ************************
-	// 2. 绘制透明对象
+	// ***********************
+	// 5. 绘制透明的正常物体
 	//
+
+	// 关闭顺逆时针裁剪
+	// 透明混合
 	md3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
+	md3dImmediateContext->OMSetDepthStencilState(nullptr, 0);
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 
-	// 篱笆盒稍微抬起一点高度
-	mWireFence.SetWorldMatrix(XMMatrixTranslation(2.0f, 0.01f, 0.0f));
 	mWireFence.Draw(md3dImmediateContext);
-	mWireFence.SetWorldMatrix(XMMatrixTranslation(-2.0f, 0.01f, 0.0f));
-	mWireFence.Draw(md3dImmediateContext);
-	// 绘制了篱笆盒后再绘制水面
 	mWater.Draw(md3dImmediateContext);
-	
-
 
 	//
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
-	std::wstring text = L"当前摄像机模式：第三人称视角  Esc退出\n"
-		"鼠标移动控制视野 滚轮控制第三人称观察距离";
+	std::wstring text = L"切换摄像机模式: 1-第三人称 2-自由视角\n"
+		"W/S/A/D 前进/后退/左平移/右平移 (第三人称无效)  Esc退出\n"
+		"鼠标移动控制视野 滚轮控制第三人称观察距离\n"
+		"当前模式: ";
+	if (mCameraMode == CameraMode::ThirdPerson)
+		text += L"第三人称";
+	else
+		text += L"自由视角";
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
 		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
@@ -284,12 +423,14 @@ bool GameApp::InitResource()
 	// 新建用于VS和PS的常量缓冲区
 	cbd.ByteWidth = sizeof(CBChangesEveryDrawing);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
-	cbd.ByteWidth = sizeof(CBChangesEveryFrame);
+	cbd.ByteWidth = 16;
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
-	cbd.ByteWidth = sizeof(CBChangesOnResize);
+	cbd.ByteWidth = sizeof(CBChangesEveryFrame);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
-	cbd.ByteWidth = sizeof(CBNeverChange);
+	cbd.ByteWidth = sizeof(CBChangesOnResize);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[3].GetAddressOf()));
+	cbd.ByteWidth = sizeof(CBNeverChange);
+	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[4].GetAddressOf()));
 	// ******************
 	// 初始化游戏对象
 	ComPtr<ID3D11ShaderResourceView> texture;
@@ -300,10 +441,14 @@ bool GameApp::InitResource()
 	// 初始化篱笆盒
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WireFence.dds", nullptr, texture.GetAddressOf()));
 	mWireFence.SetBuffer(md3dDevice, Geometry::CreateBox());
+	// 抬起高度避免深度缓冲区资源争夺
+	mWireFence.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 7.5f));
 	mWireFence.SetTexTransformMatrix(XMMatrixIdentity());
 	mWireFence.SetTexture(texture);
 	mWireFence.SetMaterial(material);
 	
+	
+
 	// 初始化地板
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	mFloor.SetBuffer(md3dDevice, 
@@ -314,20 +459,34 @@ bool GameApp::InitResource()
 	mFloor.SetMaterial(material);
 
 	// 初始化墙体
-	mWalls.resize(4);
+	mWalls.resize(5);
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\brick.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	// 这里控制墙体四个面的生成
-	for (int i = 0; i < 4; ++i)
+	// 这里控制墙体五个面的生成，0和1的中间位置用于放置镜面
+	//     ____     ____
+	//    /| 0 |   | 1 |\
+	//   /4|___|___|___|2\
+	//  /_/_ _ _ _ _ _ _\_\
+	// | /       3       \ |
+	// |/_________________\|
+	//
+	for (int i = 0; i < 5; ++i)
 	{
-		mWalls[i].SetBuffer(md3dDevice,
-			Geometry::CreatePlane(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
-		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
-			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		mWalls[i].SetMaterial(material);
-		mWalls[i].SetWorldMatrix(world);
 		mWalls[i].SetTexTransformMatrix(XMMatrixIdentity());
 		mWalls[i].SetTexture(texture);
 	}
+	mWalls[0].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
+	mWalls[1].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
+	mWalls[2].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	mWalls[3].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	mWalls[4].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	
+	mWalls[0].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(-7.0f, 3.0f, 10.0f));
+	mWalls[1].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(7.0f, 3.0f, 10.0f));
+	mWalls[2].SetWorldMatrix(XMMatrixRotationY(-XM_PIDIV2) * XMMatrixRotationZ(XM_PIDIV2) * XMMatrixTranslation(10.0f, 3.0f, 0.0f));
+	mWalls[3].SetWorldMatrix(XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, -10.0f));
+	mWalls[4].SetWorldMatrix(XMMatrixRotationY(XM_PIDIV2) * XMMatrixRotationZ(-XM_PIDIV2) * XMMatrixTranslation(-10.0f, 3.0f, 0.0f));
+	
 		
 	// 初始化水
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -340,6 +499,18 @@ bool GameApp::InitResource()
 	mWater.SetTexTransformMatrix(XMMatrixIdentity());
 	mWater.SetTexture(texture);
 	mWater.SetMaterial(material);
+
+	// 初始化镜面
+	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
+	material.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
+	mMirror.SetBuffer(md3dDevice,
+		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
+	mMirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
+	mMirror.SetTexTransformMatrix(XMMatrixIdentity());
+	mMirror.SetTexture(texture);
+	mMirror.SetMaterial(material);
 
 	// 初始化采样器状态
 	D3D11_SAMPLER_DESC sampDesc;
@@ -372,6 +543,7 @@ bool GameApp::InitResource()
 	mCBOnReSize.proj = mCamera->GetProj();
 
 	// 初始化不会变化的值
+	mCBNeverChange.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
 	// 环境光
 	mCBNeverChange.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mCBNeverChange.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -387,11 +559,12 @@ bool GameApp::InitResource()
 	mCBNeverChange.numDirLight = 1;
 	mCBNeverChange.numPointLight = 1;
 	mCBNeverChange.numSpotLight = 0;
+	
 
 
 	// 更新不容易被修改的常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBNeverChange, 0, 0);
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[4].Get(), 0, nullptr, &mCBNeverChange, 0, 0);
 
 	// 初始化所有渲染状态
 	RenderStates::InitAll(md3dDevice);
@@ -408,17 +581,15 @@ bool GameApp::InitResource()
 	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
 	md3dImmediateContext->VSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
 	md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
+	md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
+	md3dImmediateContext->VSSetConstantBuffers(4, 1, mConstantBuffers[4].GetAddressOf());
 
-	md3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
 
 	md3dImmediateContext->PSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
-	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
-	md3dImmediateContext->PSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
+	md3dImmediateContext->PSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
+	md3dImmediateContext->PSSetConstantBuffers(4, 1, mConstantBuffers[4].GetAddressOf());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	md3dImmediateContext->PSSetSamplers(0, 1, mSamplerState.GetAddressOf());
-
-	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
-
 	return true;
 }
 
@@ -428,6 +599,7 @@ DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
 {
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
+
 
 void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData)
 {

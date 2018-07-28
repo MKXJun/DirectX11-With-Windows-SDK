@@ -210,14 +210,17 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	
+	//
 	// 绘制几何模型
+	//
 	mWoodCrate.Draw(md3dImmediateContext);
 	mFloor.Draw(md3dImmediateContext);
 	for (auto& wall : mWalls)
 		wall.Draw(md3dImmediateContext);
 
+	//
 	// 绘制Direct2D部分
+	//
 	md2dRenderTarget->BeginDraw();
 	std::wstring text = L"切换摄像机模式: 1-第一人称 2-第三人称 3-自由视角\n"
 		"W/S/A/D 前进/后退/左平移/右平移 (第三人称无效)  Esc退出\n"

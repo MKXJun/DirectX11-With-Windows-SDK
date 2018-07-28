@@ -2,6 +2,7 @@ Debug/
 x64/
 DXTK/Bin
 DXTK/Lib
+DXTK/Src/Shaders/Compiled
 .git/
 .vs/
 *.cso

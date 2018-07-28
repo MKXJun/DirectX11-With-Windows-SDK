@@ -25,6 +25,10 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+	// 初始化鼠标，键盘不需要
+	mMouse->SetWindow(mhMainWnd);
+	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+
 	return true;
 }
 

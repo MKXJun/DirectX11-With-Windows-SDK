@@ -11,7 +11,6 @@
 #include "Geometry.h"
 #include "Camera.h"
 #include "RenderStates.h"
-#include <VertexTypes.h>
 
 class GameApp : public D3DApp
 {

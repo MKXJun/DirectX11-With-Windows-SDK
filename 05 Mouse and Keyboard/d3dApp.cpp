@@ -289,7 +289,10 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
-	// 监测这些鼠标事件
+
+		// 监测这些键盘/鼠标事件
+	case WM_INPUT:
+
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
@@ -305,11 +308,16 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		mMouse->ProcessMessage(msg, wParam, lParam);
 		return 0;
-	// 监测这些键盘事件
+
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
+		mKeyboard->ProcessMessage(msg, wParam, lParam);
+		return 0;
+
+	case WM_ACTIVATEAPP:
+		mMouse->ProcessMessage(msg, wParam, lParam);
 		mKeyboard->ProcessMessage(msg, wParam, lParam);
 		return 0;
 	}
@@ -354,10 +362,6 @@ bool D3DApp::InitMainWindow()
 
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
-
-	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 	
 	return true;
 }

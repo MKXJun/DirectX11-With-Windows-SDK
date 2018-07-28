@@ -23,14 +23,10 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+	// 初始化鼠标，键盘不需要
+	mMouse->SetWindow(mhMainWnd);
+	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
-	// 设置鼠标不可见，并将鼠标位置居中
-	mMouse->SetVisible(false);
-	POINT center = { mClientWidth / 2, mClientHeight / 2 };
-	ClientToScreen(MainWnd(), &center);
-	SetCursorPos(center.x, center.y);
-	// 初始化鼠标状态
-	mMouseTracker.Update(mMouse->GetState());
 	return true;
 }
 
@@ -77,14 +73,11 @@ void GameApp::UpdateScene(float dt)
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = mMouse->GetState();
 	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	POINT center = { mClientWidth / 2, mClientHeight / 2 };
-	int dx = mouseState.x - center.x, dy = mouseState.y - center.y;
 	mMouseTracker.Update(mouseState);
+
 	Keyboard::State keyState = mKeyboard->GetState();
 	mKeyboardTracker.Update(keyState);
-	// 固定鼠标位置到窗口中间
-	ClientToScreen(MainWnd(), &center);
-	SetCursorPos(center.x, center.y);
+
 	// 获取子类
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
 
@@ -92,8 +85,8 @@ void GameApp::UpdateScene(float dt)
 	// 第三人称摄像机的操作
 	// 绕原点旋转
 	cam3rd->SetTarget(XMFLOAT3());
-	cam3rd->RotateX(dy * dt * 1.25f);
-	cam3rd->RotateY(dx * dt * 1.25f);
+	cam3rd->RotateX(mouseState.y * dt * 1.25f);
+	cam3rd->RotateY(mouseState.x * dt * 1.25f);
 	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 
 	// 更新观察矩阵，并更新每帧缓冲区

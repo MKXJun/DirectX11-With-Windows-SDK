@@ -13,7 +13,7 @@
 // 由于常量缓冲区的创建需要是16字节的倍数，该函数可以返回合适的字节大小
 inline UINT Align16Bytes(UINT size)
 {
-	return (size + 15) & (-16);
+	return (size + 15) & (UINT)(-16);
 }
 
 struct CBChangesEveryDrawing

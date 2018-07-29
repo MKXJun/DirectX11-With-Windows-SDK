@@ -13,8 +13,8 @@ ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage		= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSNoColorWrite			= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSTransparent			= nullptr;
 
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSMarkMirror		= nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSDrawReflection = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil	= nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSDrawWithStencil= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDoubleBlend	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite	= nullptr;
@@ -114,7 +114,7 @@ void RenderStates::InitAll(const ComPtr<ID3D11Device>& device)
 	// ***********初始化深度/模板状态***********
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
 
-	// 镜面标记深度/模板状态
+	// 写入模板值的深度/模板状态
 	// 这里不写入深度信息
 	// 无论是正面还是背面，原来指定的区域的模板值都会被写入StencilRef
 	dsDesc.DepthEnable = true;
@@ -135,11 +135,10 @@ void RenderStates::InitAll(const ComPtr<ID3D11Device>& device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSMarkMirror.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSWriteStencil.ReleaseAndGetAddressOf()));
 
-	// 反射绘制深度/模板状态
-	// 由于要绘制反射镜面，需要更新深度
-	// 仅当镜面标记模板值和当前设置模板值相等时才会进行绘制
+	// 对指定模板值进行绘制的深度/模板状态
+	// 对满足模板值条件的区域才进行绘制，并更新深度
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -158,7 +157,7 @@ void RenderStates::InitAll(const ComPtr<ID3D11Device>& device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawReflection.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawWithStencil.ReleaseAndGetAddressOf()));
 
 	// 无二次混合深度/模板状态
 	// 允许默认深度测试

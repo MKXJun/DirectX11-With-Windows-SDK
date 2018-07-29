@@ -46,8 +46,8 @@ public:
 	static ComPtr<ID3D11BlendState> BSTransparent;		// 混合状态：透明混合
 	static ComPtr<ID3D11BlendState> BSAlphaToCoverage;	// 混合状态：Alpha-To-Coverage
 
-	static ComPtr<ID3D11DepthStencilState> DSSMarkMirror;		// 深度/模板状态：标记镜面区域
-	static ComPtr<ID3D11DepthStencilState> DSSDrawReflection;	// 深度/模板状态：绘制反射区域
+	static ComPtr<ID3D11DepthStencilState> DSSWriteStencil;		// 深度/模板状态：写入模板值
+	static ComPtr<ID3D11DepthStencilState> DSSDrawWithStencil;	// 深度/模板状态：对指定模板值的区域进行绘制
 	static ComPtr<ID3D11DepthStencilState> DSSNoDoubleBlend;	// 深度/模板状态：无二次混合区域
 	static ComPtr<ID3D11DepthStencilState> DSSNoDepthTest;		// 深度/模板状态：关闭深度测试
 	static ComPtr<ID3D11DepthStencilState> DSSNoDepthWrite;		// 深度/模板状态：仅深度测试，不写入深度值

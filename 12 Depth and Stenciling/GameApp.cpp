@@ -196,7 +196,7 @@ void GameApp::DrawScene()
 	
 	
 	// *********************
-	// 1. 绘制镜面反射的模型
+	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
 	// 裁剪掉背面三角形
@@ -393,12 +393,6 @@ bool GameApp::InitEffect()
 	// 创建顶点着色器(3D)
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));
 	blob.Reset();
-
-	// 默认将3D着色器绑定到渲染管线
-	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
-	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
-	// 默认将顶点输入布局3D绑定到渲染管线
-	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 
 	return true;
 }

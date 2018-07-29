@@ -255,12 +255,6 @@ bool GameApp::InitEffect()
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));
 	blob.Reset();
 
-	// 默认将3D着色器绑定到渲染管线
-	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
-	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
-	// 默认将顶点输入布局3D绑定到渲染管线
-	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
-
 	return true;
 }
 

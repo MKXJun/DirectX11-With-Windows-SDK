@@ -173,7 +173,7 @@ void BasicManager::SetRenderDefaultWithStencil(UINT stencilRef)
 	md3dImmediateContext->RSSetState(RenderStates::RSCullClockWise.Get());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	md3dImmediateContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
-	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), stencilRef);
 	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
@@ -184,7 +184,7 @@ void BasicManager::SetRenderAlphaBlendWithStencil(UINT stencilRef)
 	md3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	md3dImmediateContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
-	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
+	md3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), stencilRef);
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 

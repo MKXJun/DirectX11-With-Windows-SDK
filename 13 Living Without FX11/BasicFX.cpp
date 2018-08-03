@@ -1,11 +1,11 @@
-#include "BasicManager.h"
+#include "BasicFX.h"
 #include <filesystem>
 
 using namespace DirectX;
 using namespace std::experimental;
 
 
-bool BasicManager::InitAll(ComPtr<ID3D11Device> device)
+bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
 {
 	if (!device)
 		return false;
@@ -117,12 +117,12 @@ bool BasicManager::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-bool BasicManager::IsInit() const
+bool BasicFX::IsInit() const
 {
 	return md3dImmediateContext != nullptr;
 }
 
-void BasicManager::SetRenderDefault()
+void BasicFX::SetRenderDefault()
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -133,7 +133,7 @@ void BasicManager::SetRenderDefault()
 	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::SetRenderAlphaBlend()
+void BasicFX::SetRenderAlphaBlend()
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -144,7 +144,7 @@ void BasicManager::SetRenderAlphaBlend()
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::SetRenderNoDoubleBlend(UINT stencilRef)
+void BasicFX::SetRenderNoDoubleBlend(UINT stencilRef)
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -155,7 +155,7 @@ void BasicManager::SetRenderNoDoubleBlend(UINT stencilRef)
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::SetWriteStencilOnly(UINT stencilRef)
+void BasicFX::SetWriteStencilOnly(UINT stencilRef)
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -166,7 +166,7 @@ void BasicManager::SetWriteStencilOnly(UINT stencilRef)
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSNoColorWrite.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::SetRenderDefaultWithStencil(UINT stencilRef)
+void BasicFX::SetRenderDefaultWithStencil(UINT stencilRef)
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -177,7 +177,7 @@ void BasicManager::SetRenderDefaultWithStencil(UINT stencilRef)
 	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::SetRenderAlphaBlendWithStencil(UINT stencilRef)
+void BasicFX::SetRenderAlphaBlendWithStencil(UINT stencilRef)
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
@@ -188,7 +188,7 @@ void BasicManager::SetRenderAlphaBlendWithStencil(UINT stencilRef)
 	md3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::Set2DRenderDefault()
+void BasicFX::Set2DRenderDefault()
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout2D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader2D.Get(), nullptr, 0);
@@ -199,7 +199,7 @@ void BasicManager::Set2DRenderDefault()
 	md3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicManager::Set2DRenderAlphaBlend()
+void BasicFX::Set2DRenderAlphaBlend()
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout2D.Get());
 	md3dImmediateContext->VSSetShader(mVertexShader2D.Get(), nullptr, 0);
@@ -213,7 +213,7 @@ void BasicManager::Set2DRenderAlphaBlend()
 
 
 
-HRESULT BasicManager::CompileShaderFromFile(const WCHAR * szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob ** ppBlobOut)
+HRESULT BasicFX::CompileShaderFromFile(const WCHAR * szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 
@@ -244,36 +244,36 @@ HRESULT BasicManager::CompileShaderFromFile(const WCHAR * szFileName, LPCSTR szE
 }
 
 template<class T>
-void BasicManager::UpdateConstantBuffer(const T& cbuffer)
+void BasicFX::UpdateConstantBuffer(const T& cbuffer)
 {
 }
 
 template<>
-void BasicManager::UpdateConstantBuffer<CBChangesEveryDrawing>(const CBChangesEveryDrawing& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesEveryDrawing>(const CBChangesEveryDrawing& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicManager::UpdateConstantBuffer<CBDrawingState>(const CBDrawingState& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBDrawingState>(const CBDrawingState& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicManager::UpdateConstantBuffer<CBChangesEveryFrame>(const CBChangesEveryFrame& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesEveryFrame>(const CBChangesEveryFrame& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicManager::UpdateConstantBuffer<CBChangesOnResize>(const CBChangesOnResize& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesOnResize>(const CBChangesOnResize& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicManager::UpdateConstantBuffer<CBNeverChange>(const CBNeverChange& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBNeverChange>(const CBNeverChange& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[4].Get(), 0, nullptr, &cbuffer, 0, 0);
 }

@@ -1,5 +1,5 @@
-#ifndef BASICMANAGER_H
-#define BASICMANAGER_H
+#ifndef BASICFX_H
+#define BASICFX_H
 
 #include <wrl/client.h>
 #include <d3d11_1.h>
@@ -58,7 +58,7 @@ struct CBNeverChange
 	float pad;		// 打包保证16字节对齐
 };
 
-class BasicManager
+class BasicFX
 {
 public:
 	// 使用模板别名(C++11)简化类型名

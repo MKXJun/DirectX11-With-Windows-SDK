@@ -119,7 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BasicManager.cpp" />
+    <ClCompile Include="BasicFX.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="dxerr.cpp" />
@@ -132,7 +132,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicManager.h" />
+    <ClInclude Include="BasicFX.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="dxerr.h" />

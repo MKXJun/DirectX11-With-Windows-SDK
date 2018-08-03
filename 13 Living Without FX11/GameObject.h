@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "BasicManager.h"
+#include "BasicFX.h"
 #include "Geometry.h"
 
 // 一个尽可能小的游戏对象类

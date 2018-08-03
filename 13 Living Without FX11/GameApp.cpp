@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicManager.InitAll(md3dDevice))
+	if (!mBasicFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -60,11 +60,11 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mBasicManager.IsInit())
+	if (mBasicFX.IsInit())
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
 		mCBOnReSize.proj = mCamera->GetProj();
-		mBasicManager.UpdateConstantBuffer(mCBOnReSize);
+		mBasicFX.UpdateConstantBuffer(mCBOnReSize);
 	}
 }
 
@@ -194,7 +194,7 @@ void GameApp::UpdateScene(float dt)
 	if (keyState.IsKeyDown(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
-	mBasicManager.UpdateConstantBuffer(mCBFrame);
+	mBasicFX.UpdateConstantBuffer(mCBFrame);
 }
 
 void GameApp::DrawScene()
@@ -211,7 +211,7 @@ void GameApp::DrawScene()
 	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
-	mBasicManager.SetWriteStencilOnly(1);
+	mBasicFX.SetWriteStencilOnly(1);
 	mMirror.Draw(md3dImmediateContext);
 
 	// ***********************
@@ -220,8 +220,8 @@ void GameApp::DrawScene()
 
 	// 开启反射绘制
 	mDrawingState.isReflection = 1;		// 反射开启
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
-	mBasicManager.SetRenderDefaultWithStencil(1);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.SetRenderDefaultWithStencil(1);
 
 	mWalls[2].Draw(md3dImmediateContext);
 	mWalls[3].Draw(md3dImmediateContext);
@@ -232,14 +232,14 @@ void GameApp::DrawScene()
 	// 绘制阴影
 	mWoodCrate.SetMaterial(mShadowMat);
 	mDrawingState.isShadow = 1;			// 反射开启，阴影开启
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
-	mBasicManager.SetRenderNoDoubleBlend(1);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.SetRenderNoDoubleBlend(1);
 
 	mWoodCrate.Draw(md3dImmediateContext);
 
 	// 恢复到原来的状态
 	mDrawingState.isShadow = 0;
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 	
 
@@ -247,19 +247,19 @@ void GameApp::DrawScene()
 	// 3. 绘制透明镜面
 	//
 
-	mBasicManager.SetRenderAlphaBlendWithStencil(1);
+	mBasicFX.SetRenderAlphaBlendWithStencil(1);
 
 	mMirror.Draw(md3dImmediateContext);
 	
 	// 关闭反射绘制
 	mDrawingState.isReflection = 0;
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
 	
 
 	// ************************
 	// 4. 绘制不透明的正常物体
 	//
-	mBasicManager.SetRenderDefault();
+	mBasicFX.SetRenderDefault();
 
 	for (auto& wall : mWalls)
 		wall.Draw(md3dImmediateContext);
@@ -269,13 +269,13 @@ void GameApp::DrawScene()
 	// 绘制阴影
 	mWoodCrate.SetMaterial(mShadowMat);
 	mDrawingState.isShadow = 1;			// 反射关闭，阴影开启
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
-	mBasicManager.SetRenderNoDoubleBlend(0);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.SetRenderNoDoubleBlend(0);
 
 	mWoodCrate.Draw(md3dImmediateContext);
 
 	mDrawingState.isShadow = 0;			// 反射关闭
-	mBasicManager.UpdateConstantBuffer(mDrawingState);
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 
 
@@ -420,8 +420,8 @@ bool GameApp::InitResource()
 
 
 	// 更新不容易被修改的常量缓冲区资源
-	mBasicManager.UpdateConstantBuffer(mCBOnReSize);
-	mBasicManager.UpdateConstantBuffer(mCBNeverChange);
+	mBasicFX.UpdateConstantBuffer(mCBOnReSize);
+	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
 
 
 	return true;

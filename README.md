@@ -1,10 +1,12 @@
 # DirectX11 With Windows SDK
 
 里面的解决方案/项目需要使用Visual Studio 2017来打开，并且需要使用最新的Windows SDK版本(10.0.17134.0)。若要指定哪个项目，需要对项目右键-设为启动项。
-![](https://images2018.cnblogs.com/blog/1172605/201808/1172605-20180805190353942-413421942.png)
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.jpg)
 
 然后对项目右键-选择生成，或者对整个解决方案进行生成都可以。
-![](https://images2018.cnblogs.com/blog/1172605/201808/1172605-20180805190611687-1924240554.png)
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.jpg)
 
 目前对应的博客更新：
 

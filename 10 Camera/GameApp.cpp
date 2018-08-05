@@ -268,8 +268,8 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 已经编译好的着色器文件名
-	std::wstring pso2DPath = L"HLSL\\Basic_PS_2D.cso", vso2DPath = L"HLSL\\Basic_VS_2D.cso";
-	std::wstring pso3DPath = L"HLSL\\Basic_PS_3D.cso", vso3DPath = L"HLSL\\Basic_VS_3D.cso";
+	std::wstring pso2DPath = L"HLSL\\Basic_PS_2D.pso", vso2DPath = L"HLSL\\Basic_VS_2D.vso";
+	std::wstring pso3DPath = L"HLSL\\Basic_PS_3D.pso", vso3DPath = L"HLSL\\Basic_VS_3D.vso";
 	// ******************************************************
 	// 寻找是否有已经编译好的顶点着色器(2D)，否则在运行期编译
 	if (filesystem::exists(vso2DPath))

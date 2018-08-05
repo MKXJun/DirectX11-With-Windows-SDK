@@ -23,6 +23,9 @@ public:
 	// 创建圆柱体模型数据，slices越大，精度越高。
 	static MeshData CreateCylinder(float radius = 1.0f, float height = 2.0f, int slices = 20);
 
+	// 创建圆柱体只有侧面的模型数据，slices越大，精度越高
+	static MeshData CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, int slices = 20);
+
 	// 创建一个覆盖NDC屏幕的面
 	static MeshData Create2DShow(float centerX = 0.0f, float centerY = 0.0f, float scaleX = 1.0f, float scaleY = 1.0f);
 };

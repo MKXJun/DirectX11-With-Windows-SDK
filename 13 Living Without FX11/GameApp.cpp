@@ -274,7 +274,7 @@ void GameApp::DrawScene()
 
 	mWoodCrate.Draw(md3dImmediateContext);
 
-	mDrawingState.isShadow = 0;			// 反射关闭
+	mDrawingState.isShadow = 0;			// 阴影关闭
 	mBasicFX.UpdateConstantBuffer(mDrawingState);
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 

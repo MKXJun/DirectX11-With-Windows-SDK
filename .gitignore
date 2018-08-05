@@ -5,4 +5,10 @@ DXTK/Lib
 .git/
 .vs/
 *.cso
+*.vso
+*.pso
+*.dso
+*.gso
+*.hso
+
 

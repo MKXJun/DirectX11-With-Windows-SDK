@@ -12,7 +12,7 @@ ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage	= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSNoColorWrite		= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSTransparent		= nullptr;
 
-void RenderStates::InitAll(const ComPtr<ID3D11Device>& device)
+void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 {
 	// ***********初始化光栅化器状态***********
 	D3D11_RASTERIZER_DESC rasterizerDesc;

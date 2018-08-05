@@ -151,7 +151,7 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 已经编译好的着色器文件名
-	filesystem::path psoPath = "HLSL\\Light_PS.cso", vsoPath = "HLSL\\Light_VS.cso";
+	filesystem::path psoPath = "HLSL\\Light_PS.pso", vsoPath = "HLSL\\Light_VS.vso";
 	filesystem::file_status fs;
 	std::wstring wstr;
 	// 寻找是否有已经编译好的顶点着色器，否则在运行期编译

@@ -24,6 +24,10 @@ public:
 
 	// 创建圆柱体模型数据，slices越大，精度越高。
 	static MeshData CreateCylinder(float radius = 1.0f, float height = 2.0f, int slices = 20);
+
+	// 创建圆柱体只有侧面的模型数据，slices越大，精度越高
+	static MeshData CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, int slices = 20);
+
 };
 
 

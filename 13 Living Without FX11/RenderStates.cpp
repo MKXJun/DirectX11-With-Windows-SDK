@@ -19,7 +19,7 @@ ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDoubleBlend	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite	= nullptr;
 
-void RenderStates::InitAll(const ComPtr<ID3D11Device>& device)
+void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 {
 	// ***********初始化光栅化器状态***********
 	D3D11_RASTERIZER_DESC rasterizerDesc;

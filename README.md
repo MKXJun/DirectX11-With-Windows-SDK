@@ -11,6 +11,13 @@
 项目如果有编译不通过的问题的话可以提出来。
 
 # 更新记录
+2018/8/5 v11.0</br>
+-添加项目 Depth Test</br>
+-编译二进制着色器文件的后缀名变成*.vso, *.pso, *.hso, *.gso, *.hso, *.cso</br>
+-修正了Geometry类中椭圆体的模型问题，并添加了只包含圆柱侧面的方法</br>
+-BasicManager类更名为BasicFX类
+-一些小修改
+
 2018/7/29 v10.0</br>
 -添加项目 Living Without FX11
 

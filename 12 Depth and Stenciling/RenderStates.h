@@ -31,7 +31,7 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	static void InitAll(const ComPtr<ID3D11Device>& device);
+	static void InitAll(ComPtr<ID3D11Device> device);
 	// 使用ComPtr无需手工释放
 
 public:

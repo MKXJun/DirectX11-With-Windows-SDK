@@ -234,6 +234,9 @@ void GameApp::DrawScene()
 	mBasicFX.SetDrawBoltAnimNoDepthWriteWithStencil(1);
 	mBoltAnim.Draw(md3dImmediateContext);
 
+	mDrawingState.isReflection = 0;		// 反射关闭
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
+
 	mBasicFX.SetRenderAlphaBlendWithStencil(1);
 	mMirror.Draw(md3dImmediateContext);
 	
@@ -243,8 +246,6 @@ void GameApp::DrawScene()
 	// 5. 绘制不透明的正常物体
 	//
 	mBasicFX.SetRenderDefault();
-	mDrawingState.isReflection = 0;		// 反射关闭
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
 	
 	for (auto& wall : mWalls)
 		wall.Draw(md3dImmediateContext);

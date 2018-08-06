@@ -229,7 +229,10 @@ void GameApp::DrawScene()
 	mFloor.Draw(md3dImmediateContext);
 	mWoodCrate.Draw(md3dImmediateContext);
 
-	// 绘制阴影
+	// ***********************
+	// 3. 绘制不透明反射物体的阴影
+	//
+
 	mWoodCrate.SetMaterial(mShadowMat);
 	mDrawingState.isShadow = 1;			// 反射开启，阴影开启
 	mBasicFX.UpdateConstantBuffer(mDrawingState);
@@ -244,20 +247,19 @@ void GameApp::DrawScene()
 	
 
 	// ***********************
-	// 3. 绘制透明镜面
+	// 4. 绘制透明镜面
 	//
+
+	// 关闭反射绘制
+	mDrawingState.isReflection = 0;
+	mBasicFX.UpdateConstantBuffer(mDrawingState);
 
 	mBasicFX.SetRenderAlphaBlendWithStencil(1);
 
 	mMirror.Draw(md3dImmediateContext);
-	
-	// 关闭反射绘制
-	mDrawingState.isReflection = 0;
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
-	
 
 	// ************************
-	// 4. 绘制不透明的正常物体
+	// 5. 绘制不透明的正常物体
 	//
 	mBasicFX.SetRenderDefault();
 
@@ -266,7 +268,9 @@ void GameApp::DrawScene()
 	mFloor.Draw(md3dImmediateContext);
 	mWoodCrate.Draw(md3dImmediateContext);
 
-	// 绘制阴影
+	// ************************
+	// 6. 绘制不透明正常物体的阴影
+	//
 	mWoodCrate.SetMaterial(mShadowMat);
 	mDrawingState.isShadow = 1;			// 反射关闭，阴影开启
 	mBasicFX.UpdateConstantBuffer(mDrawingState);

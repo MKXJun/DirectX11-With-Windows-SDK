@@ -141,7 +141,7 @@ void GameApp::UpdateScene(float dt)
 	mMouse->ResetScrollWheelValue();
 
 	// 摄像机模式切换
-	if (keyState.IsKeyDown(Keyboard::D1) && mCameraMode != CameraMode::FirstPerson)
+	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1) && mCameraMode != CameraMode::FirstPerson)
 	{
 		if (!cam1st)
 		{
@@ -155,7 +155,7 @@ void GameApp::UpdateScene(float dt)
 
 		mCameraMode = CameraMode::FirstPerson;
 	}
-	else if (keyState.IsKeyDown(Keyboard::D2) && mCameraMode != CameraMode::ThirdPerson)
+	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D2) && mCameraMode != CameraMode::ThirdPerson)
 	{
 		if (!cam3rd)
 		{
@@ -172,7 +172,7 @@ void GameApp::UpdateScene(float dt)
 
 		mCameraMode = CameraMode::ThirdPerson;
 	}
-	else if (keyState.IsKeyDown(Keyboard::D3) && mCameraMode != CameraMode::Free)
+	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3) && mCameraMode != CameraMode::Free)
 	{
 		if (!cam1st)
 		{
@@ -191,7 +191,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	
 	// 退出程序，这里应向窗口发送销毁信息
-	if (keyState.IsKeyDown(Keyboard::Escape))
+	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
 	mBasicFX.UpdateConstantBuffer(mCBFrame);

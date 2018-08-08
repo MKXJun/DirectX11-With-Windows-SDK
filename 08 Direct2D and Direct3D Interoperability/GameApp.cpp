@@ -124,13 +124,6 @@ void GameApp::DrawScene()
 
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	// VS常量缓冲区对应HLSL寄存于b0的常量缓冲区
-	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
-	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
-	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
-	
-	
 	
 	// 绘制几何模型
 	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
@@ -285,9 +278,13 @@ bool GameApp::InitResource()
 	md3dImmediateContext->IASetInputLayout(mVertexLayout.Get());
 	// 将着色器绑定到渲染管线
 	md3dImmediateContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+	// VS常量缓冲区对应HLSL寄存于b0的常量缓冲区
+	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
+	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
+	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
 	md3dImmediateContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
-		return true;
+	return true;
 }
 
 bool GameApp::ResetMesh(const Geometry::MeshData & meshData)

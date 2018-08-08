@@ -21,8 +21,8 @@ cbuffer PSConstantBuffer : register(b1)
 
 struct VertexIn
 {
-    float3 Pos : POSITION;
-    float3 Normal : NORMAL;
+    float3 PosL : POSITION;
+    float3 NormalL : NORMAL;
     float4 Color : COLOR;
 };
 

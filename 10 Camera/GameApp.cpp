@@ -139,7 +139,7 @@ void GameApp::UpdateScene(float dt)
 	mMouse->ResetScrollWheelValue();
 	
 	// 摄像机模式切换
-	if (keyState.IsKeyDown(Keyboard::D1) && mCameraMode != CameraMode::FirstPerson)
+	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1) && mCameraMode != CameraMode::FirstPerson)
 	{
 		if (!cam1st)
 		{
@@ -153,7 +153,7 @@ void GameApp::UpdateScene(float dt)
 		
 		mCameraMode = CameraMode::FirstPerson;
 	}
-	else if (keyState.IsKeyDown(Keyboard::D2) && mCameraMode != CameraMode::ThirdPerson)
+	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D2) && mCameraMode != CameraMode::ThirdPerson)
 	{
 		if (!cam3rd)
 		{
@@ -170,7 +170,7 @@ void GameApp::UpdateScene(float dt)
 		
 		mCameraMode = CameraMode::ThirdPerson;
 	}
-	else if (keyState.IsKeyDown(Keyboard::D3) && mCameraMode != CameraMode::Free)
+	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3) && mCameraMode != CameraMode::Free)
 	{
 		if (!cam1st)
 		{
@@ -414,7 +414,7 @@ bool GameApp::InitResource()
 	// 设置图元类型，设定输入布局
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
-	
+	// 默认绑定3D着色器
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
 	// 预先绑定各自所需的缓冲区，其中每帧更新的缓冲区需要绑定到两个缓冲区上
 	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());

@@ -54,9 +54,6 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// 将更新好的常量缓冲区绑定到顶点着色器
-	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
-
 	// 绘制立方体
 	md3dImmediateContext->DrawIndexed(36, 0, 0);
 	HR(mSwapChain->Present(0, 0));
@@ -230,6 +227,9 @@ bool GameApp::InitResource()
 	md3dImmediateContext->IASetInputLayout(mVertexLayout.Get());
 	// 将着色器绑定到渲染管线
 	md3dImmediateContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+	// 将更新好的常量缓冲区绑定到顶点着色器
+	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffer.GetAddressOf());
+
 	md3dImmediateContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 
 	return true;

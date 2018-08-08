@@ -22,6 +22,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13 Living Without FX11", "1
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14 Depth Test", "14 Depth Test\14 Depth Test.vcxproj", "{6DAC099E-BAB8-4082-9789-B8FB3B24E20C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginning", "15 Geometry Shader Beginning\15 Geometry Shader Beginning.vcxproj", "{FE018766-060B-4E29-8405-CD05BDC9C0B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -92,6 +94,18 @@ Global
 		{6DAC099E-BAB8-4082-9789-B8FB3B24E20C}.Release|x64.Build.0 = Release|x64
 		{6DAC099E-BAB8-4082-9789-B8FB3B24E20C}.Release|x86.ActiveCfg = Release|Win32
 		{6DAC099E-BAB8-4082-9789-B8FB3B24E20C}.Release|x86.Build.0 = Release|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Debug|x64.ActiveCfg = Debug|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Debug|x64.Build.0 = Debug|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Debug|x86.ActiveCfg = Debug|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Debug|x86.Build.0 = Debug|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Profile|x64.ActiveCfg = Release|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Profile|x64.Build.0 = Release|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Profile|x86.ActiveCfg = Release|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Profile|x86.Build.0 = Release|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Release|x64.ActiveCfg = Release|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Release|x64.Build.0 = Release|x64
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Release|x86.ActiveCfg = Release|Win32
+		{FE018766-060B-4E29-8405-CD05BDC9C0B7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

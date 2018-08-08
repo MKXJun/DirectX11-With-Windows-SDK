@@ -134,11 +134,6 @@ void GameApp::DrawScene()
 
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	// VS常量缓冲区对应HLSL寄存于b0的常量缓冲区
-	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
-	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
-	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
 	
 	// 绘制几何模型
 	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
@@ -306,6 +301,9 @@ bool GameApp::InitResource()
 	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
 	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
+	// 更新PS常量缓冲区资源
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
+
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
 	// 设置图元类型，设定输入布局
@@ -313,13 +311,16 @@ bool GameApp::InitResource()
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 	// 默认绑定3D着色器
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
+	// VS常量缓冲区对应HLSL寄存于b0的常量缓冲区
+	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
+	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
+	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
 	// 像素着色阶段设置好采样器
 	md3dImmediateContext->PSSetSamplers(0, 1, mSamplerState.GetAddressOf());
 	md3dImmediateContext->PSSetShaderResources(0, 1, mWoodCrate.GetAddressOf());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	
-	// 更新PS常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
+	
 	// 像素着色阶段默认设置木箱纹理
 	mCurrMode = ShowMode::WoodCrate;
 

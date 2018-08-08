@@ -100,7 +100,7 @@ void GameApp::UpdateScene(float dt)
 	
 	
 	// 退出程序，这里应向窗口发送销毁信息
-	if (keyState.IsKeyDown(Keyboard::Escape))
+	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mCBFrame, 0, 0);

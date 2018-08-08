@@ -65,7 +65,7 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	// 初始化Basix.fx所需资源并初始化光栅化状态
+	// 初始化Basix.fx所需资源并初始化渲染状态
 	bool InitAll(ComPtr<ID3D11Device> device);
 	// 是否已经初始化
 	bool IsInit() const;

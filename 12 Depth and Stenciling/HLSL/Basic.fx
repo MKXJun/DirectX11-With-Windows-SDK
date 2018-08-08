@@ -44,8 +44,8 @@ cbuffer CBNeverChange : register(b4)
 
 struct VertexIn
 {
-	float3 Pos : POSITION;
-    float3 Normal : NORMAL;
+	float3 PosL : POSITION;
+    float3 NormalL : NORMAL;
 	float2 Tex : TEXCOORD;
 };
 

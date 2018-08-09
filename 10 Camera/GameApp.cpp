@@ -489,7 +489,7 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameApp::GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
 {
-	mWorldMatrix = mTexTransform;
+	mTexTransform = texTransform;
 }
 
 void GameApp::GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)

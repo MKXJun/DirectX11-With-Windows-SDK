@@ -67,7 +67,7 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
 {
-	mWorldMatrix = mTexTransform;
+	mTexTransform = texTransform;
 }
 
 void GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)

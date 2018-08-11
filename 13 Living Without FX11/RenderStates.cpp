@@ -27,7 +27,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	// Ïß¿òÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSWireframe.ReleaseAndGetAddressOf()));

@@ -87,7 +87,7 @@ void GameApp::UpdateScene(float dt)
 	else
 	{
 		static float phi = 0.0f, theta = 0.0f;
-		phi += 0.0001f, theta += 0.00015f;
+		phi += 0.2f * dt, theta += 0.3f * dt;
 		mCBChangeEveryFrame.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 		mCBChangeEveryFrame.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mCBChangeEveryFrame.world));
 	}

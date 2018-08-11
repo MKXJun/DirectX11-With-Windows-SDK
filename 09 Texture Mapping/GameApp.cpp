@@ -75,12 +75,6 @@ void GameApp::UpdateScene(float dt)
 		md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 		Geometry::MeshData meshData = Geometry::CreateBox();
 		ResetMesh(meshData);
-		// 输入装配阶段的顶点缓冲区设置
-		UINT stride = sizeof(VertexPosNormalTex);	// 跨越字节数
-		UINT offset = 0;							// 起始偏移量
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		// 输入装配阶段的索引缓冲区设置
-		md3dImmediateContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 		md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShaderResources(0, 1, mWoodCrate.GetAddressOf());
@@ -92,12 +86,6 @@ void GameApp::UpdateScene(float dt)
 		md3dImmediateContext->IASetInputLayout(mVertexLayout2D.Get());
 		Geometry::MeshData meshData = Geometry::Create2DShow();
 		ResetMesh(meshData);
-		// 输入装配阶段的顶点缓冲区设置
-		UINT stride = sizeof(VertexPosNormalTex);	// 跨越字节数
-		UINT offset = 0;							// 起始偏移量
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		// 输入装配阶段的索引缓冲区设置
-		md3dImmediateContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 		md3dImmediateContext->VSSetShader(mVertexShader2D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShader(mPixelShader2D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShaderResources(0, 1, mFireAnim[0].GetAddressOf());

@@ -17,11 +17,14 @@
 项目如果有编译不通过的问题的话可以提出来。
 
 # 更新记录
+2018/8/11 v13.0</br>
+-添加项目 Stream Output
+
 2018/8/9 v12.1</br>
 -修正GameObject类的小错误
 
 2018/8/8 v12.0</br>
--添加项目Geometry Shader Beginning</br>
+-添加项目 Geometry Shader Beginning</br>
 -小幅度修改键盘输入和着色器变量名标识问题
 
 2018/8/8 v11.3</br>

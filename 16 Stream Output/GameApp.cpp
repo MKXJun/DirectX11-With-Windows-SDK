@@ -57,14 +57,14 @@ void GameApp::OnResize()
 	HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 		mTextFormat.GetAddressOf()));
-	
+
 	// 只有常量缓冲区被初始化后才执行更新操作
 	if (mBasicFX.IsInit())
 	{
 		mCBOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mBasicFX.UpdateConstantBuffer(mCBOnReSize);
 	}
-	
+
 }
 
 void GameApp::UpdateScene(float dt)
@@ -88,7 +88,7 @@ void GameApp::UpdateScene(float dt)
 	UINT stride = (mShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
 	UINT offset = 0;
 
-	
+
 
 	// 切换分形
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
@@ -123,7 +123,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// 切换阶数
-	for (int i = 0; i < ARRAYSIZE(mVertexBuffers); ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		if (mKeyboardTracker.IsKeyPressed((Keyboard::Keys)((int)Keyboard::D1 + i)))
 		{
@@ -176,7 +176,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	
+
 	// 根据当前绘制模式设置需要用于渲染的各项资源
 	if (mShowMode == Mode::SplitedTriangle)
 	{
@@ -226,7 +226,7 @@ void GameApp::DrawScene()
 		text += L"雪花";
 	else
 		text += L"球";
-	
+
 	if (mIsWireFrame)
 		text += L"(线框)";
 	else
@@ -239,7 +239,7 @@ void GameApp::DrawScene()
 		else
 			text += L"(N-开启法向量)";
 	}
-	
+
 
 
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
@@ -282,8 +282,8 @@ bool GameApp::InitResource()
 	mCBChangeEveryFrame.world = XMMatrixIdentity();
 	mCBChangeEveryFrame.worldInvTranspose = XMMatrixIdentity();
 	mCBNeverChange.view = XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f), 
-		XMVectorZero(), 
+		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
+		XMVectorZero(),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	mCBNeverChange.sphereCenter = XMFLOAT3();
 	mCBNeverChange.sphereRadius = 2.0f;
@@ -293,7 +293,7 @@ bool GameApp::InitResource()
 	// 更新常量缓冲区资源
 	mBasicFX.UpdateConstantBuffer(mCBOnReSize);
 	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
-	
+
 	return true;
 }
 
@@ -306,8 +306,8 @@ void GameApp::ResetSplitedTriangle()
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(-1.0f * 3, -0.866f * 3, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(0.0f * 3, 0.866f * 3, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
-		{ XMFLOAT3(1.0f * 3, -0.866f * 3, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
+	{ XMFLOAT3(0.0f * 3, 0.866f * 3, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
+	{ XMFLOAT3(1.0f * 3, -0.866f * 3, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
 	};
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
@@ -322,11 +322,11 @@ void GameApp::ResetSplitedTriangle()
 	InitData.pSysMem = vertices;
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-	
+
 	// 三角形顶点数
 	mVertexCounts[0] = 3;
 	// 初始化所有顶点缓冲区
-	for (int i = 1; i < ARRAYSIZE(mVertexBuffers); ++i)
+	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 3;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 3;
@@ -345,17 +345,17 @@ void GameApp::ResetSplitedSnow()
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+	{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
 	};
 	// 将三角形宽度和高度都放大3倍
-	for (int i = 0; i < ARRAYSIZE(vertices); ++i)
+	for (VertexPosColor& v : vertices)
 	{
-		vertices[i].pos.x *= 3;
-		vertices[i].pos.y *= 3;
+		v.pos.x *= 3;
+		v.pos.y *= 3;
 	}
 
 	// 设置顶点缓冲区描述
@@ -374,7 +374,7 @@ void GameApp::ResetSplitedSnow()
 	// 顶点数
 	mVertexCounts[0] = 6;
 	// 初始化所有顶点缓冲区
-	for (int i = 1; i < ARRAYSIZE(mVertexBuffers); ++i)
+	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 4;
@@ -388,13 +388,13 @@ void GameApp::ResetSplitedSphere()
 {
 	VertexPosNormalColor basePoint[] = {
 		{ XMFLOAT3(0.0f, 2.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(2.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.0f, 0.0f, 2.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(-2.0f, 0.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-		{ XMFLOAT3(0.0f, -2.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(2.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(0.0f, 0.0f, 2.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(-2.0f, 0.0f, 0.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(0.0f, 0.0f, -2.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+	{ XMFLOAT3(0.0f, -2.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 	};
-	int indices[] = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4, 1, 2, 5, 2, 3, 5, 3, 4, 5, 4, 1, 5};
+	int indices[] = { 0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4, 1, 2, 5, 2, 3, 5, 3, 4, 5, 4, 1, 5 };
 
 	std::vector<VertexPosNormalColor> vertices;
 	for (int pos : indices)
@@ -407,7 +407,7 @@ void GameApp::ResetSplitedSphere()
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DEFAULT;
-	vbd.ByteWidth = vertices.size() * sizeof(VertexPosNormalColor);
+	vbd.ByteWidth = (UINT)(vertices.size() * sizeof(VertexPosNormalColor));
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -417,9 +417,9 @@ void GameApp::ResetSplitedSphere()
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffers[0].ReleaseAndGetAddressOf()));
 
 	// 顶点数
-	mVertexCounts[0] = ARRAYSIZE(indices);
+	mVertexCounts[0] = 24;
 	// 初始化所有顶点缓冲区
-	for (int i = 1; i < ARRAYSIZE(mVertexBuffers); ++i)
+	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 4;

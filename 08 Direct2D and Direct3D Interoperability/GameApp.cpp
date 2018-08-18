@@ -135,7 +135,7 @@ void GameApp::DrawScene()
 	static const WCHAR* textStr = L"切换灯光类型: 1-平行光 2-点光 3-聚光灯\n"
 		 "切换模型: Q-立方体 W-球体 E-圆柱体";
 	md2dRenderTarget->DrawTextW(textStr, (UINT32)wcslen(textStr), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 400.0f, 40.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));

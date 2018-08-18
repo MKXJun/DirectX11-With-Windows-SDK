@@ -225,7 +225,7 @@ void GameApp::DrawScene()
 	else
 		text += L"втсийс╫г";
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));

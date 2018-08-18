@@ -28,6 +28,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mMinimized(false),
 	mMaximized(false),
 	mResizing(false),
+	mEnable4xMsaa(false),
 	m4xMsaaQuality(0),
 
 	mMouse(std::make_unique<DirectX::Mouse>()),
@@ -134,11 +135,9 @@ void D3DApp::OnResize()
 
 	// 重设交换链并且重新创建渲染目标视图
 	ComPtr<ID3D11Texture2D> backBuffer;
-	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_B8G8R8A8_UNORM, 0));	// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
 	HR(md3dDevice->CreateRenderTargetView(backBuffer.Get(), 0, mRenderTargetView.GetAddressOf()));
-	
-	
 	backBuffer.Reset();
 
 
@@ -151,9 +150,16 @@ void D3DApp::OnResize()
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 要使用 4X MSAA? --需要给交换链设置MASS参数
-
-	depthStencilDesc.SampleDesc.Count = 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
+	if (mEnable4xMsaa)
+	{
+		depthStencilDesc.SampleDesc.Count = 4;
+		depthStencilDesc.SampleDesc.Quality = m4xMsaaQuality - 1;
+	}
+	else
+	{
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+	}
 
 
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -289,6 +295,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
+
 		// 监测这些键盘/鼠标事件
 	case WM_INPUT:
 
@@ -362,10 +369,6 @@ bool D3DApp::InitMainWindow()
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
 
-	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-	
 	return true;
 }
 
@@ -374,7 +377,7 @@ bool D3DApp::InitDirect3D()
 	HRESULT hr = S_OK;
 
 	// 创建D3D设备 和 D3D设备上下文
-	UINT createDeviceFlags = 0;
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;	// Direct2D需要支持BGRA格式
 #if defined(DEBUG) || defined(_DEBUG)  
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -402,7 +405,7 @@ bool D3DApp::InitDirect3D()
 		d3dDriverType = driverTypes[driverTypeIndex];
 		hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
 			D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
-		
+
 		if (hr == E_INVALIDARG)
 		{
 			// DirectX 11.0 平台不承认D3D_FEATURE_LEVEL_11_1所以我们需要尝试特性等级11.0
@@ -429,11 +432,11 @@ bool D3DApp::InitDirect3D()
 
 	// 检测 MSAA支持的质量等级
 	md3dDevice->CheckMultisampleQualityLevels(
-		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m4xMsaaQuality);
+		DXGI_FORMAT_B8G8R8A8_UNORM, 4, &m4xMsaaQuality);	// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
 	assert(m4xMsaaQuality > 0);
 
-	
-	
+
+
 
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
 	ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
@@ -442,14 +445,14 @@ bool D3DApp::InitDirect3D()
 	ComPtr<IDXGIDevice1> dxgiDevice1 = nullptr;
 	ComPtr<IDXGIAdapter1> dxgiAdapter1 = nullptr;
 	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;
-	
+
 	// 为了正确创建 DXGI交换链，首先我们需要获取创建 D3D设备 的 DXGI工厂，否则会引发报错：
 	// "IDXGIFactory::CreateSwapChain: This function is being called with a device from a different IDXGIFactory."
 	// 从属关系为 DXGI工厂-> DXGI适配器 -> DXGI设备 {D3D11设备}
 	HR(md3dDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(dxgiDevice.GetAddressOf())));
 	HR(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
 	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(dxgiFactory1.GetAddressOf())));
-	
+
 	// 查看该对象是否包含IDXGIFactory2接口
 	hr = dxgiFactory1->QueryInterface(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(dxgiFactory2.GetAddressOf()));
 	// 如果包含，则说明支持DX11.1
@@ -462,9 +465,18 @@ bool D3DApp::InitDirect3D()
 		ZeroMemory(&sd, sizeof(sd));
 		sd.Width = mClientWidth;
 		sd.Height = mClientHeight;
-		sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
+		sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;		// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
+		// 是否开启4倍多重采样？
+		if (mEnable4xMsaa)
+		{
+			sd.SampleDesc.Count = 4;
+			sd.SampleDesc.Quality = m4xMsaaQuality - 1;
+		}
+		else
+		{
+			sd.SampleDesc.Count = 1;
+			sd.SampleDesc.Quality = 0;
+		}
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = 1;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -489,11 +501,20 @@ bool D3DApp::InitDirect3D()
 		sd.BufferDesc.Height = mClientHeight;
 		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
 		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
+		// 是否开启4倍多重采样？
+		if (mEnable4xMsaa)
+		{
+			sd.SampleDesc.Count = 4;
+			sd.SampleDesc.Quality = m4xMsaaQuality - 1;
+		}
+		else
+		{
+			sd.SampleDesc.Count = 1;
+			sd.SampleDesc.Quality = 0;
+		}
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = 1;
 		sd.OutputWindow = mhMainWnd;
@@ -502,8 +523,8 @@ bool D3DApp::InitDirect3D()
 		sd.Flags = 0;
 		HR(dxgiFactory1->CreateSwapChain(md3dDevice.Get(), &sd, mSwapChain.GetAddressOf()));
 	}
-	
-	
+
+
 
 	// 可以禁止alt+enter全屏
 	dxgiFactory1->MakeWindowAssociation(mhMainWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
@@ -515,6 +536,9 @@ bool D3DApp::InitDirect3D()
 
 	return true;
 }
+
+
+
 
 void D3DApp::CalculateFrameStats()
 {

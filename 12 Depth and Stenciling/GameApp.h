@@ -123,7 +123,7 @@ private:
 	ComPtr<ID3D11PixelShader> mPixelShader2D;				// 用于2D的像素着色器
 
 	CBChangesEveryFrame mCBFrame;							// 该缓冲区存放仅在每一帧进行更新的变量
-	CBChangesOnResize mCBOnReSize;							// 该缓冲区存放仅在窗口大小变化时更新的变量
+	CBChangesOnResize mCBChangesOnReSize;					// 该缓冲区存放仅在窗口大小变化时更新的变量
 	CBNeverChange mCBNeverChange;							// 该缓冲区存放不会再进行修改的变量
 
 	ComPtr<ID3D11SamplerState> mSamplerState;				// 采样器状态

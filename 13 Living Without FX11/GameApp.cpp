@@ -63,8 +63,8 @@ void GameApp::OnResize()
 	if (mBasicFX.IsInit())
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBOnReSize.proj = mCamera->GetProj();
-		mBasicFX.UpdateConstantBuffer(mCBOnReSize);
+		mCBChangesOnReSize.proj = mCamera->GetProj();
+		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	}
 }
 
@@ -298,7 +298,7 @@ void GameApp::DrawScene()
 	else
 		text += L"自由视角";
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));
@@ -398,7 +398,7 @@ bool GameApp::InitResource()
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBOnReSize.proj = mCamera->GetProj();
+	mCBChangesOnReSize.proj = mCamera->GetProj();
 
 	// 初始化不会变化的值
 	mCBNeverChange.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
@@ -424,7 +424,7 @@ bool GameApp::InitResource()
 
 
 	// 更新不容易被修改的常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBOnReSize);
+	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
 
 

@@ -62,8 +62,8 @@ void GameApp::OnResize()
 	// 只有常量缓冲区被初始化后才执行更新操作
 	if (mBasicFX.IsInit())
 	{
-		mCBOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-		mBasicFX.UpdateConstantBuffer(mCBOnReSize);
+		mCBChangesOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
+		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	}
 	
 }
@@ -82,16 +82,16 @@ void GameApp::UpdateScene(float dt)
 	// 更新每帧变化的值
 	if (mShowMode == Mode::SplitedTriangle)
 	{
-		mCBChangeEveryFrame.worldInvTranspose = mCBChangeEveryFrame.world = XMMatrixIdentity();
+		mCBChangesEveryFrame.worldInvTranspose = mCBChangesEveryFrame.world = XMMatrixIdentity();
 	}
 	else
 	{
 		static float phi = 0.0f, theta = 0.0f;
 		phi += 0.2f * dt, theta += 0.3f * dt;
-		mCBChangeEveryFrame.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
-		mCBChangeEveryFrame.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mCBChangeEveryFrame.world));
+		mCBChangesEveryFrame.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
+		mCBChangesEveryFrame.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mCBChangesEveryFrame.world));
 	}
-	mBasicFX.UpdateConstantBuffer(mCBChangeEveryFrame);
+	mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
 
 
 	// 切换显示模式
@@ -158,7 +158,7 @@ void GameApp::DrawScene()
 	else
 		text += L"圆线构造柱面(Q-隐藏圆线的法向量)";
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));
@@ -187,17 +187,17 @@ bool GameApp::InitResource()
 	// 摄像机位置
 	mCBNeverChange.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
 	// 矩阵
-	mCBChangeEveryFrame.world = XMMatrixIdentity();
-	mCBChangeEveryFrame.worldInvTranspose = XMMatrixIdentity();
+	mCBChangesEveryFrame.world = XMMatrixIdentity();
+	mCBChangesEveryFrame.worldInvTranspose = XMMatrixIdentity();
 	mCBNeverChange.view = XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f), 
 		XMVectorZero(), 
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	mCBNeverChange.cylinderHeight = 2.0f;
-	mCBOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+	mCBChangesOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
 	// 更新常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBOnReSize);
+	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
 
 	// ******************

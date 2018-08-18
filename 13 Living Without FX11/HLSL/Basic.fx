@@ -12,7 +12,7 @@ cbuffer CBChangesEveryDrawing : register(b0)
 	Material gMaterial;
 }
 
-cbuffer CBDrawingState : register(b1)
+cbuffer CBDrawingStates : register(b1)
 {
     int gIsReflection;
     int gIsShadow;

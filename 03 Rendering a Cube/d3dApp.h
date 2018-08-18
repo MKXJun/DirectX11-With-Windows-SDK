@@ -43,7 +43,7 @@ public:
 	HWND      MainWnd()const;       // 获取主窗口句柄
 	float     AspectRatio()const;   // 获取屏幕宽高比
 
-	int Run();                      // 运行程序，执行消息事件的循环
+	int Run();                      // 运行程序，进行游戏主循环
 
 	// 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
 	virtual bool Init();            // 该父类方法需要初始化窗口和Direct3D部分
@@ -66,10 +66,11 @@ protected:
 	bool      mMinimized;       // 应用是否最小化
 	bool      mMaximized;       // 应用是否最大化
 	bool      mResizing;        // 窗口大小是否变化
+	bool	  mEnable4xMsaa;	// 是否开启4倍多重采样
 	UINT      m4xMsaaQuality;   // MSAA支持的质量等级
 
-	GameTimer mTimer;           // 计时器
 
+	GameTimer mTimer;           // 计时器
 
 	// 使用模板别名(C++11)简化类型名
 	template <class T>

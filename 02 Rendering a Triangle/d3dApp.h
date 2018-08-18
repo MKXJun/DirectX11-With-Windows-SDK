@@ -66,10 +66,11 @@ protected:
 	bool      mMinimized;       // 应用是否最小化
 	bool      mMaximized;       // 应用是否最大化
 	bool      mResizing;        // 窗口大小是否变化
+	bool	  mEnable4xMsaa;	// 是否开启4倍多重采样
 	UINT      m4xMsaaQuality;   // MSAA支持的质量等级
 
-	GameTimer mTimer;           // 计时器
 
+	GameTimer mTimer;           // 计时器
 
 	// 使用模板别名(C++11)简化类型名
 	template <class T>

@@ -50,7 +50,7 @@ bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
 
 	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesEveryDrawing));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
-	cbd.ByteWidth = Align16Bytes(sizeof(CBDrawingState));
+	cbd.ByteWidth = Align16Bytes(sizeof(CBDrawingStates));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
 	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesEveryFrame));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
@@ -268,7 +268,7 @@ void BasicFX::UpdateConstantBuffer<CBChangesEveryDrawing>(const CBChangesEveryDr
 }
 
 template<>
-void BasicFX::UpdateConstantBuffer<CBDrawingState>(const CBDrawingState& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBDrawingStates>(const CBDrawingStates& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &cbuffer, 0, 0);
 }

@@ -35,6 +35,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16 Stream Output", "16 Stre
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17 Tree Billboard", "17 Tree Billboard\17 Tree Billboard.vcxproj", "{8EDDEF58-4251-4857-BAF2-BD78F62BC267}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -129,6 +134,18 @@ Global
 		{2D3D5288-6CA3-43CF-B9CA-45FC6F8DFD43}.Release|x64.Build.0 = Release|x64
 		{2D3D5288-6CA3-43CF-B9CA-45FC6F8DFD43}.Release|x86.ActiveCfg = Release|Win32
 		{2D3D5288-6CA3-43CF-B9CA-45FC6F8DFD43}.Release|x86.Build.0 = Release|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Debug|x64.ActiveCfg = Debug|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Debug|x64.Build.0 = Debug|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Debug|x86.ActiveCfg = Debug|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Debug|x86.Build.0 = Debug|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Profile|x64.ActiveCfg = Release|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Profile|x64.Build.0 = Release|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Profile|x86.ActiveCfg = Release|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Profile|x86.Build.0 = Release|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Release|x64.ActiveCfg = Release|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Release|x64.Build.0 = Release|x64
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Release|x86.ActiveCfg = Release|Win32
+		{8EDDEF58-4251-4857-BAF2-BD78F62BC267}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

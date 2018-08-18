@@ -28,6 +28,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mMinimized(false),
 	mMaximized(false),
 	mResizing(false),
+	mEnable4xMsaa(false),
 	m4xMsaaQuality(0),
 
 	mMouse(std::make_unique<DirectX::Mouse>()),
@@ -137,7 +138,7 @@ void D3DApp::OnResize()
 
 	// 重设交换链并且重新创建渲染目标视图
 	ComPtr<ID3D11Texture2D> backBuffer;
-	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_B8G8R8A8_UNORM, 0));	// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
 	HR(md3dDevice->CreateRenderTargetView(backBuffer.Get(), 0, mRenderTargetView.GetAddressOf()));
 	backBuffer.Reset();
@@ -152,9 +153,16 @@ void D3DApp::OnResize()
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// 要使用 4X MSAA? --需要给交换链设置MASS参数
-
-	depthStencilDesc.SampleDesc.Count = 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
+	if (mEnable4xMsaa)
+	{
+		depthStencilDesc.SampleDesc.Count = 4;
+		depthStencilDesc.SampleDesc.Quality = m4xMsaaQuality - 1;
+	}
+	else
+	{
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+	}
 
 
 	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -290,6 +298,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
+	
 		// 监测这些键盘/鼠标事件
 	case WM_INPUT:
 
@@ -365,7 +374,7 @@ bool D3DApp::InitMainWindow()
 
 	ShowWindow(mhMainWnd, SW_SHOW);
 	UpdateWindow(mhMainWnd);
-
+	
 	return true;
 }
 
@@ -472,8 +481,17 @@ bool D3DApp::InitDirect3D()
 		sd.Width = mClientWidth;
 		sd.Height = mClientHeight;
 		sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;		// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
+		// 是否开启4倍多重采样？
+		if (mEnable4xMsaa)
+		{
+			sd.SampleDesc.Count = 4;
+			sd.SampleDesc.Quality = m4xMsaaQuality - 1;
+		}
+		else
+		{
+			sd.SampleDesc.Count = 1;
+			sd.SampleDesc.Quality = 0;
+		}
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = 1;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -501,8 +519,17 @@ bool D3DApp::InitDirect3D()
 		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// 注意此处DXGI_FORMAT_B8G8R8A8_UNORM
 		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
+		// 是否开启4倍多重采样？
+		if (mEnable4xMsaa)
+		{
+			sd.SampleDesc.Count = 4;
+			sd.SampleDesc.Quality = m4xMsaaQuality - 1;
+		}
+		else
+		{
+			sd.SampleDesc.Count = 1;
+			sd.SampleDesc.Quality = 0;
+		}
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = 1;
 		sd.OutputWindow = mhMainWnd;

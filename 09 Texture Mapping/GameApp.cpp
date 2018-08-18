@@ -132,7 +132,7 @@ void GameApp::DrawScene()
 	md2dRenderTarget->BeginDraw();
 	static const WCHAR* textStr = L"ÇĞ»»ÏÔÊ¾: 1-Ä¾Ïä(3D) 2-»ğÑæ(2D)\n";
 	md2dRenderTarget->DrawTextW(textStr, (UINT32)wcslen(textStr), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 400.0f, 20.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));

@@ -61,8 +61,8 @@ void GameApp::OnResize()
 	if (mConstantBuffers[2] != nullptr)
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBOnReSize.proj = mCamera->GetProj();
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
+		mCBChangesOnReSize.proj = mCamera->GetProj();
+		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
 	}
 }
@@ -147,7 +147,7 @@ void GameApp::DrawScene()
 	std::wstring text = L"当前摄像机模式：第三人称视角  Esc退出\n"
 		"鼠标移动控制视野 滚轮控制第三人称观察距离";
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 500.0f, 60.0f }, mColorBrush.Get());
+		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));
@@ -324,7 +324,7 @@ bool GameApp::InitResource()
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBOnReSize.proj = mCamera->GetProj();
+	mCBChangesOnReSize.proj = mCamera->GetProj();
 
 	// 初始化不会变化的值
 	// 环境光
@@ -345,7 +345,7 @@ bool GameApp::InitResource()
 
 
 	// 更新不容易被修改的常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBNeverChange, 0, 0);
 
 	// 初始化所有渲染状态

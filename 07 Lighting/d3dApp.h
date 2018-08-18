@@ -47,8 +47,8 @@ public:
 
 	int Run();                      // 运行程序，执行消息事件的循环
 
-	// 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
-	virtual bool Init();            // 该父类方法需要初始化窗口和Direct3D部分
+									// 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
+	virtual bool Init();            // 该父类方法需要初始化窗口、Direct2D和Direct3D部分
 	virtual void OnResize();        // 该父类方法需要在窗口大小变动的时候调用
 	virtual void UpdateScene(float dt) = 0;   // 子类需要实现该方法，完成每一帧的更新
 	virtual void DrawScene() = 0;             // 子类需要实现该方法，完成每一帧的绘制
@@ -57,6 +57,7 @@ public:
 protected:
 	bool InitMainWindow();      // 窗口初始化
 	bool InitDirect3D();        // Direct3D初始化
+
 
 	void CalculateFrameStats(); // 计算每秒帧数并在窗口显示
 
@@ -68,6 +69,7 @@ protected:
 	bool      mMinimized;       // 应用是否最小化
 	bool      mMaximized;       // 应用是否最大化
 	bool      mResizing;        // 窗口大小是否变化
+	bool	  mEnable4xMsaa;	// 是否开启4倍多重采样
 	UINT      m4xMsaaQuality;   // MSAA支持的质量等级
 
 	GameTimer mTimer;           // 计时器
@@ -76,11 +78,11 @@ protected:
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DX11
+	// Direct3D 11
 	ComPtr<ID3D11Device> md3dDevice;							// D3D11设备
 	ComPtr<ID3D11DeviceContext> md3dImmediateContext;			// D3D11设备上下文
 	ComPtr<IDXGISwapChain> mSwapChain;							// D3D11交换链
-	// DX11.1
+	// Direct3D 11.1
 	ComPtr<ID3D11Device1> md3dDevice1;							// D3D11.1设备
 	ComPtr<ID3D11DeviceContext1> md3dImmediateContext1;			// D3D11.1设备上下文
 	ComPtr<IDXGISwapChain1> mSwapChain1;						// D3D11.1交换链

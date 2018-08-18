@@ -31,7 +31,7 @@ struct CBChangesEveryFrame
 
 };
 
-struct CBDrawingState
+struct CBDrawingStates
 {
 	int isReflection;
 	int isShadow;

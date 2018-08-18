@@ -212,7 +212,7 @@ void GameApp::DrawScene()
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
-	std::wstring text = L"1-雾效开关 2-白天/黑夜雾效切换 3-AlphaToCoverage开关\n"
+	std::wstring text = L"1-雾效开关 2-白天/黑夜雾效切换 3-AlphaToCoverage开关 Esc-退出\n"
 		"滚轮-调整雾效范围\n"
 		"仅支持自由视角摄像机\n";
 	text += std::wstring(L"AlphaToCoverage状态: ") + (mEnableAlphaToCoverage ? L"开启\n" : L"关闭\n");

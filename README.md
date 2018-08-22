@@ -14,12 +14,12 @@
 
 [https://blog.csdn.net/x_jun96/article/details/80293670](https://blog.csdn.net/x_jun96/article/details/80293670)
 
-项目如果有编译不通过的问题的话可以提出来。
+项目如果有编译不通过的问题的话可以提出来。如果是DirectXTK的问题，请到下面链接寻找合适的解决方案尝试编译，若能够通过则替换掉现有的DirectXTK_Desktop_2017_Win10项目，按照博客第4章教程进行配置即可。
 
 # 更新记录
 2018/8/19 v14.0</br>
--补回4倍多重采样的支持设置
--调整代码细节
+-补回4倍多重采样的支持设置</br>
+-调整代码细节</br>
 -添加项目 Tree Billboard
 
 2018/8/12 v13.1</br>

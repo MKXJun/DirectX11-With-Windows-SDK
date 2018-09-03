@@ -8,6 +8,19 @@
 
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.jpg)
 
+**紧急事项(2018/9/3):如果现在DirectXTK无法通过编译，出现了下面的错误：**
+
+**C7510 "Callback": 模板 从属名称的使用必须以"模板"为前缀 event.h**
+
+**在**[**StackOverflow**](https://stackoverflow.com/questions/51864528/update-visual-studio-2017-now-getting-compile-error-c7510-callback-use-of-d)**找到了问题所在**
+
+**双击该错误，首先定位到316行，把:** `return DelegateHelper::Traits::Callback(Details::Forward(callback));` 修改为 `return DelegateHelper::Traits::template Callback(Details::Forward(callback));`
+
+**然后定位到324行，把:** `DelegateHelper::Traits::Callback(` **修改为** `DelegateHelper::Traits::template Callback(`
+
+
+
+
 目前对应的博客更新：
 
 [https://www.cnblogs.com/X-Jun/p/9028764.html](https://www.cnblogs.com/X-Jun/p/9028764.html)（当前最新）

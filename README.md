@@ -8,15 +8,15 @@
 
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.jpg)
 
-**紧急事项(2018/9/3):如果现在DirectXTK无法通过编译，出现了下面的错误：**
+<font color="#ff0000">**紧急事项(2018/9/3):如果现在DirectXTK无法通过编译，出现了下面的错误：**</font>
 
-**C7510 "Callback": 模板 从属名称的使用必须以"模板"为前缀 event.h**
+<font color="#ff0000">**C7510 "Callback": 模板 从属名称的使用必须以"模板"为前缀 event.h**</font>
 
-**在**[**StackOverflow**](https://stackoverflow.com/questions/51864528/update-visual-studio-2017-now-getting-compile-error-c7510-callback-use-of-d)**找到了问题所在**
+<font color="#ff0000">**在**[**StackOverflow**](https://stackoverflow.com/questions/51864528/update-visual-studio-2017-now-getting-compile-error-c7510-callback-use-of-d)**找到了问题所在**</font>
 
-**双击该错误，首先定位到316行，把:** `return DelegateHelper::Traits::Callback(Details::Forward(callback));` 修改为 `return DelegateHelper::Traits::template Callback(Details::Forward(callback));`
+<font color="#ff0000">**双击该错误，首先定位到316行，把:** `return DelegateHelper::Traits::Callback(Details::Forward(callback));` 修改为 `return DelegateHelper::Traits::template Callback(Details::Forward(callback));`</font>
 
-**然后定位到324行，把:** `DelegateHelper::Traits::Callback(` **修改为** `DelegateHelper::Traits::template Callback(`
+<font color="#ff0000">**然后定位到324行，把:** `DelegateHelper::Traits::Callback(` **修改为** `DelegateHelper::Traits::template Callback(`</font>
 
 
 

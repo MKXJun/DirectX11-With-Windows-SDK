@@ -319,7 +319,7 @@ bool ObjReader::WriteMbo(const wchar_t * mboFileName)
 			fout.write(reinterpret_cast<const char*>(&indexCount), sizeof(UINT));
 			// [顶点]32*顶点数 字节
 			fout.write(reinterpret_cast<const char*>(objParts[i].vertices.data()), vertexCount * sizeof(VertexPosNormalTex));
-			// [索引]2(或4)*索引数 字节，取决于顶点数是否不超过65535
+			// [索引]4*索引数 字节
 			fout.write(reinterpret_cast<const char*>(objParts[i].indices32.data()), indexCount * sizeof(DWORD));
 		}
 		else
@@ -329,7 +329,7 @@ bool ObjReader::WriteMbo(const wchar_t * mboFileName)
 			fout.write(reinterpret_cast<const char*>(&indexCount), sizeof(UINT));
 			// [顶点]32*顶点数 字节
 			fout.write(reinterpret_cast<const char*>(objParts[i].vertices.data()), vertexCount * sizeof(VertexPosNormalTex));
-			//   [索引]2(或4)*索引数 字节，取决于顶点数是否不超过65535
+			// [索引]2*索引数 字节
 			fout.write(reinterpret_cast<const char*>(objParts[i].indices16.data()), indexCount * sizeof(WORD));
 		}
 	}

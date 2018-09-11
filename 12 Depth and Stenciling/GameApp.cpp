@@ -631,12 +631,12 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
-	CBChangesEveryDrawing mCBDrawing;
-	mCBDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
-	mCBDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mCBDrawing.world));
-	mCBDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
-	mCBDrawing.material = mMaterial;
-	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &mCBDrawing, 0, 0);
+	CBChangesEveryDrawing cbDrawing;
+	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
+	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
+	cbDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
+	cbDrawing.material = mMaterial;
+	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, mTexture.GetAddressOf());
 	// 可以开始绘制

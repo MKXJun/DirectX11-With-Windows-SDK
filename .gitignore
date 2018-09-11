@@ -11,5 +11,6 @@ DXTK/Lib
 *.dso
 *.gso
 *.hso
+*.mbo
 
 

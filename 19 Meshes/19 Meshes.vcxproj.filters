@@ -9,16 +9,16 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="着色器">
-      <UniqueIdentifier>{dfcc46e8-bfbb-4ea7-8497-ab4983d3dc47}</UniqueIdentifier>
-    </Filter>
     <Filter Include="资源文件">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{d42004ca-8fb4-4c5f-afd7-54efbbe867ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicFX.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="d3dApp.cpp">
@@ -30,7 +30,13 @@
     <ClCompile Include="GameApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
@@ -42,9 +48,15 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ObjReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicFX.h">
+    <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="d3dApp.h">
@@ -56,7 +68,16 @@
     <ClInclude Include="GameApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="GameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RenderStates.h">
@@ -65,39 +86,21 @@
     <ClInclude Include="Vertex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="LightHelper.h">
+    <ClInclude Include="ObjReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObjectFX.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
+    <FxCompile Include="HLSL\BasicObject.fx">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Triangle_PS.hlsl">
+    <FxCompile Include="HLSL\BasicObject_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Triangle_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Triangle_GS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Normal_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Normal_GS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Normal_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Cylinder_GS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Cylinder_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Cylinder_VS.hlsl">
+    <FxCompile Include="HLSL\BasicObject_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

@@ -68,8 +68,12 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			//
 			// 顶点位置
 			//
+
+			// 注意obj使用的是右手坐标系，而不是左手坐标系
+			// 需要将z值反转
 			XMFLOAT3 pos;
 			wfin >> pos.x >> pos.y >> pos.z;
+			pos.z = -pos.z;
 			positions.push_back(pos);
 			XMVECTOR vecPos = XMLoadFloat3(&pos);
 			vecMax = XMVectorMax(vecMax, vecPos);
@@ -92,8 +96,12 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			//
 			// 顶点法向量
 			//
+
+			// 注意obj使用的是右手坐标系，而不是左手坐标系
+			// 需要将z值反转
 			float x, y, z;
 			wfin >> x >> y >> z;
+			z = -z;
 			normals.emplace_back(XMFLOAT3(x, y, z));
 		}
 		else if (wstr == L"mtllib")
@@ -151,28 +159,25 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			// 几何面
 			//
 			VertexPosNormalTex vertex;
-			DWORD vpi, vni, vti;
+			DWORD vpi[3], vni[3], vti[3];
 			wchar_t ignore;
 
-			// 确定
 			// 顶点位置索引/纹理坐标索引/法向量索引
-			wfin >> vpi >> ignore >> vti >> ignore >> vni;
-			vertex.pos = positions[vpi - 1];
-			vertex.normal = normals[vni - 1];
-			vertex.tex = texCoords[vti - 1];
-			AddVertex(vertex, vpi, vti, vni);
+			// 原来右手坐标系下顶点顺序是逆时针排布
+			// 现在需要转变为左手坐标系就需要将三角形顶点反过来输入
+			for (int i = 2; i >= 0; --i)
+			{
+				wfin >> vpi[i] >> ignore >> vti[i] >> ignore >> vni[i];
+			}
 
-			wfin >> vpi >> ignore >> vti >> ignore >> vni;
-			vertex.pos = positions[vpi - 1];
-			vertex.normal = normals[vni - 1];
-			vertex.tex = texCoords[vti - 1];
-			AddVertex(vertex, vpi, vti, vni);
-
-			wfin >> vpi >> ignore >> vti >> ignore >> vni;
-			vertex.pos = positions[vpi - 1];
-			vertex.normal = normals[vni - 1];
-			vertex.tex = texCoords[vti - 1];
-			AddVertex(vertex, vpi, vti, vni);
+			for (int i = 0; i < 3; ++i)
+			{
+				vertex.pos = positions[vpi[i] - 1];
+				vertex.normal = normals[vni[i] - 1];
+				vertex.tex = texCoords[vti[i] - 1];
+				AddVertex(vertex, vpi[i], vti[i], vni[i]);
+			}
+			
 
 			while (iswblank(wfin.peek()))
 				wfin.get();

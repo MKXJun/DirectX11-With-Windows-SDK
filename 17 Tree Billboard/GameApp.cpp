@@ -367,7 +367,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 	//
 	// 1. 读取所有纹理
 	//
-	size_t size = filenames.size();
+	UINT size = (UINT)filenames.size();
 	std::vector<ComPtr<ID3D11Texture2D>> srcTex(size);
 	UINT mipLevel = maxMipMapSize;
 	UINT width, height;
@@ -432,7 +432,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 	//
 
 	// 每个纹理元素
-	for (size_t i = 0; i < size; ++i)
+	for (UINT i = 0; i < size; ++i)
 	{
 		// 纹理中的每个mipmap等级
 		for (UINT j = 0; j < mipLevel; ++j)

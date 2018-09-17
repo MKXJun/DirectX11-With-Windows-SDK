@@ -357,7 +357,7 @@ void ObjReader::AddVertex(const VertexPosNormalTex& vertex, DWORD vpi, DWORD vti
 	else
 	{
 		objParts.back().vertices.push_back(vertex);
-		DWORD pos = objParts.back().vertices.size() - 1;
+		DWORD pos = (DWORD)objParts.back().vertices.size() - 1;
 		vertexCache[idxStr] = pos;
 		objParts.back().indices32.push_back(pos);
 	}

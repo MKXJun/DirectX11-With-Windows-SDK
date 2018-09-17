@@ -28,9 +28,9 @@ public:
 	float GetFarWindowHeight() const;
 
 	// 获取矩阵
-	DirectX::XMMATRIX GetView() const;
-	DirectX::XMMATRIX GetProj() const;
-	DirectX::XMMATRIX GetViewProj() const;
+	DirectX::XMMATRIX GetViewXM() const;
+	DirectX::XMMATRIX GetProjXM() const;
+	DirectX::XMMATRIX GetViewProjXM() const;
 
 	// 设置视锥体
 	void SetFrustum(float fovY, float aspect, float nearZ, float farZ);

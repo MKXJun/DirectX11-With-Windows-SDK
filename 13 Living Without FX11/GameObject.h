@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "BasicFX.h"
+#include "Effects.h"
 #include "Geometry.h"
 
 // 一个尽可能小的游戏对象类
@@ -11,6 +11,8 @@ public:
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
+
+	GameObject();
 
 	// 获取位置
 	DirectX::XMFLOAT3 GetPosition() const;
@@ -27,7 +29,7 @@ public:
 	void SetTexTransformMatrix(const DirectX::XMFLOAT4X4& texTransform);
 	void SetTexTransformMatrix(DirectX::FXMMATRIX texTransform);
 	// 绘制
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect);
 private:
 	DirectX::XMFLOAT4X4 mWorldMatrix;				// 世界矩阵
 	DirectX::XMFLOAT4X4 mTexTransform;				// 纹理变换矩阵

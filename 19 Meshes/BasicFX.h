@@ -4,7 +4,6 @@
 #include <wrl/client.h>
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
-#include <directxmath.h>
 #include <vector>
 #include "LightHelper.h"
 #include "RenderStates.h"
@@ -31,31 +30,16 @@ struct CBChangesEveryFrame
 
 };
 
-struct CBDrawingStates
-{
-	int isReflection;
-	int isShadow;
-	DirectX::XMINT2 pad;
-};
-
 struct CBChangesOnResize
 {
 	DirectX::XMMATRIX proj;
 };
 
 
-struct CBNeverChange
+struct CBChangesRarely
 {
-	DirectX::XMMATRIX reflection;
-	DirectX::XMMATRIX shadow;
-	DirectX::XMMATRIX refShadow;
-	DirectionalLight dirLight[10];
-	PointLight pointLight[10];
-	SpotLight spotLight[10];
-	int numDirLight;
-	int numPointLight;
-	int numSpotLight;
-	float pad;		// 打包保证16字节对齐
+	DirectionalLight dirLight;
+	PointLight pointLight;
 };
 
 class BasicFX
@@ -65,6 +49,10 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	// 获取单例，需要用户预先定义一个实例
+	static BasicFX& Get();
+
+
 	// 初始化Basix.fx所需资源并初始化渲染状态
 	bool InitAll(ComPtr<ID3D11Device> device);
 	// 是否已经初始化
@@ -73,23 +61,11 @@ public:
 	template <class T>
 	void UpdateConstantBuffer(const T& cbuffer);
 
-	// 默认状态来绘制
-	void SetRenderDefault();
-	// Alpha混合绘制
-	void SetRenderAlphaBlend();		
-	// 无二次混合
-	void SetRenderNoDoubleBlend(UINT stencilRef);
-	// 仅写入模板值
-	void SetWriteStencilOnly(UINT stencilRef);		
-	// 对指定模板值的区域进行绘制，采用默认状态
-	void SetRenderDefaultWithStencil(UINT stencilRef);		
-	// 对指定模板值的区域进行绘制，采用Alpha混合
-	void SetRenderAlphaBlendWithStencil(UINT stencilRef);		
-	// 2D默认状态绘制
-	void Set2DRenderDefault();
-	// 2D混合绘制
-	void Set2DRenderAlphaBlend();
+	// 默认状态来绘制对象
+	void SetRenderObjectDefault();
 
+
+	BasicFX();
 
 private:
 	// objFileNameInOut为编译好的着色器二进制文件(.*so)，若有指定则优先寻找该文件并读取
@@ -99,13 +75,11 @@ private:
 	HRESULT CreateShaderFromFile(const WCHAR* objFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
 
 private:
-	ComPtr<ID3D11VertexShader> mVertexShader3D;				// 用于3D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader3D;				// 用于3D的像素着色器
-	ComPtr<ID3D11VertexShader> mVertexShader2D;				// 用于2D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader2D;				// 用于2D的像素着色器
 
-	ComPtr<ID3D11InputLayout> mVertexLayout2D;				// 用于2D的顶点输入布局
-	ComPtr<ID3D11InputLayout> mVertexLayout3D;				// 用于3D的顶点输入布局
+	ComPtr<ID3D11VertexShader> mBasicObjectVS;				// 用于3D对象的顶点着色器
+	ComPtr<ID3D11PixelShader> mBasicObjectPS;				// 用于3D对象的像素着色器
+
+	ComPtr<ID3D11InputLayout> mVertexLayout;				// 顶点输入布局
 
 	ComPtr<ID3D11DeviceContext> md3dImmediateContext;		// 设备上下文
 

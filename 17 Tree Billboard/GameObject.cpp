@@ -3,6 +3,20 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+GameObject::GameObject()
+	: mWorldMatrix(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f),
+	mTexTransform(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f)
+{
+}
+
 DirectX::XMFLOAT3 GameObject::GetPosition() const
 {
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));

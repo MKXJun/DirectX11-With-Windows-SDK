@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicObjectFX.InitAll(md3dDevice))
+	if (!mBasicFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -60,11 +60,11 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mBasicObjectFX.IsInit())
+	if (mBasicFX.IsInit())
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetProj();
-		mBasicObjectFX.UpdateConstantBuffer(mCBChangesOnReSize);
+		mCBChangesOnReSize.proj = mCamera->GetProjXM();
+		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	}
 }
 
@@ -92,7 +92,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -102,7 +102,7 @@ void GameApp::UpdateScene(float dt)
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
 	// 更新每帧变化的值
-	mBasicObjectFX.UpdateConstantBuffer(mCBFrame);
+	mBasicFX.UpdateConstantBuffer(mCBFrame);
 }
 
 void GameApp::DrawScene()
@@ -113,7 +113,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	mBasicObjectFX.SetRenderDefault();
+	mBasicFX.SetRenderObjectDefault();
 	
 	mGround.Draw(md3dImmediateContext);
 	mHouse.Draw(md3dImmediateContext);
@@ -164,30 +164,30 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(10.0f);
 	camera->SetDistanceMinMax(6.0f, 100.0f);
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = mCamera->GetProj();
+	mCBChangesOnReSize.proj = mCamera->GetProjXM();
 
 	// 初始化不会变化的值
 	// 环境光
-	mCBNeverChange.dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBNeverChange.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	mCBRarely.dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mCBRarely.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	// 灯光
-	mCBNeverChange.pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
-	mCBNeverChange.pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mCBNeverChange.pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mCBNeverChange.pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBNeverChange.pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mCBNeverChange.pointLight.Range = 30.0f;	
+	mCBRarely.pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
+	mCBRarely.pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	mCBRarely.pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	mCBRarely.pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mCBRarely.pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	mCBRarely.pointLight.Range = 30.0f;	
 
 	// 更新不容易被修改的常量缓冲区资源
-	mBasicObjectFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicObjectFX.UpdateConstantBuffer(mCBNeverChange);
+	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
+	mBasicFX.UpdateConstantBuffer(mCBRarely);
 
 	return true;
 }

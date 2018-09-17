@@ -37,7 +37,7 @@ public:
 	};
 
 
-	struct CBNeverChange
+	struct CBChangesRarely
 	{
 		DirectX::XMMATRIX reflection;
 		DirectionalLight dirLight[10];
@@ -53,6 +53,8 @@ public:
 	class GameObject
 	{
 	public:
+		GameObject();
+
 		// 获取位置
 		DirectX::XMFLOAT3 GetPosition() const;
 
@@ -124,7 +126,7 @@ private:
 
 	CBChangesEveryFrame mCBFrame;							// 该缓冲区存放仅在每一帧进行更新的变量
 	CBChangesOnResize mCBChangesOnReSize;					// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBNeverChange mCBNeverChange;							// 该缓冲区存放不会再进行修改的变量
+	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
 
 	ComPtr<ID3D11SamplerState> mSamplerState;				// 采样器状态
 

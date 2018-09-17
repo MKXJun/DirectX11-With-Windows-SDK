@@ -25,9 +25,14 @@ DirectX::XMFLOAT3 GameObject::GetPosition() const
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
 
-const GameObject::GameObjectPart & GameObject::GetPart(size_t pos) const
+const ModelPart & GameObject::GetModelPart(size_t pos) const
 {
 	return mParts[pos];
+}
+
+size_t GameObject::GetModelPartSize() const
+{
+	return mParts.size();
 }
 
 void GameObject::GetBoundingBox(BoundingBox & box) const

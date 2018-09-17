@@ -12,6 +12,8 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	GameObject();
+
 	// 获取位置
 	DirectX::XMFLOAT3 GetPosition() const;
 
@@ -35,7 +37,6 @@ private:
 	ComPtr<ID3D11ShaderResourceView> mTexture;		// 纹理
 	ComPtr<ID3D11Buffer> mVertexBuffer;				// 顶点缓冲区
 	ComPtr<ID3D11Buffer> mIndexBuffer;				// 索引缓冲区
-	int mVertexCount;								// 顶点数目
 	int mIndexCount;								// 索引数目	
 };
 

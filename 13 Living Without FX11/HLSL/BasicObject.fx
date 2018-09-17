@@ -29,18 +29,14 @@ cbuffer CBChangesOnResize : register(b3)
 	row_major matrix gProj;
 }
 
-cbuffer CBNeverChange : register(b4)
+cbuffer CBChangesRarely : register(b4)
 {
     row_major matrix gReflection;
     row_major matrix gShadow;
     row_major matrix gRefShadow;
-	DirectionalLight gDirLight[10];
-	PointLight gPointLight[10];
-	SpotLight gSpotLight[10];
-	int gNumDirLight;
-	int gNumPointLight;
-	int gNumSpotLight;
-	float gPad;
+	DirectionalLight gDirLight[5];
+	PointLight gPointLight[5];
+	SpotLight gSpotLight[5];
 }
 
 

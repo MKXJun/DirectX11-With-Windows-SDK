@@ -16,6 +16,9 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{260bbf5f-b770-40fa-95a5-859e5b3f7cd9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{19bf8dfb-0d2e-4ac3-b9e9-d658121f3684}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -48,8 +51,8 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,24 +86,27 @@
     <ClInclude Include="Vertex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BasicFX.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
+    <FxCompile Include="HLSL\BasicObject_PS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic_PS_2D.hlsl">
+    <FxCompile Include="HLSL\BasicObject_PS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic_PS_3D.hlsl">
+    <FxCompile Include="HLSL\BasicObject.fx">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic_VS_2D.hlsl">
+    <FxCompile Include="HLSL\BasicObject_VS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic_VS_3D.hlsl">
+    <FxCompile Include="HLSL\BasicObject_VS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

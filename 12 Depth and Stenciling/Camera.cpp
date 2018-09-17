@@ -71,17 +71,17 @@ float Camera::GetFarWindowHeight() const
 	return mFarWindowHeight;
 }
 
-DirectX::XMMATRIX Camera::GetView() const
+DirectX::XMMATRIX Camera::GetViewXM() const
 {
 	return XMLoadFloat4x4(&mView);
 }
 
-DirectX::XMMATRIX Camera::GetProj() const
+DirectX::XMMATRIX Camera::GetProjXM() const
 {
 	return XMLoadFloat4x4(&mProj);
 }
 
-DirectX::XMMATRIX Camera::GetViewProj() const
+DirectX::XMMATRIX Camera::GetViewProjXM() const
 {
 	return XMLoadFloat4x4(&mView) * XMLoadFloat4x4(&mProj);
 }

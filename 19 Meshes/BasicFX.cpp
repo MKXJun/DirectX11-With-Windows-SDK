@@ -1,4 +1,4 @@
-#include "BasicObjectFX.h"
+#include "BasicFX.h"
 #include <filesystem>
 
 using namespace DirectX;
@@ -6,25 +6,25 @@ using namespace std::experimental;
 
 namespace
 {
-	BasicObjectFX * pInstance = nullptr;
+	BasicFX * pInstance = nullptr;
 }
 
 
-BasicObjectFX::BasicObjectFX()
+BasicFX::BasicFX()
 {
 	if (pInstance)
-		throw std::exception("BasicObjectFX is a singleton!");
+		throw std::exception("BasicFX is a singleton!");
 	pInstance = this;
 }
 
-BasicObjectFX & BasicObjectFX::Get()
+BasicFX & BasicFX::Get()
 {
 	if (!pInstance)
-		throw std::exception("BasicObjectFX needs an instance!");
+		throw std::exception("BasicFX needs an instance!");
 	return *pInstance;
 }
 
-bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
+bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
 {
 	if (!device)
 		return false;
@@ -60,7 +60,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
 	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesOnResize));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
-	cbd.ByteWidth = Align16Bytes(sizeof(CBNeverChange));
+	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesRarely));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[3].GetAddressOf()));
 
 	// 预先绑定各自所需的缓冲区，其中每帧更新的缓冲区需要绑定到两个缓冲区上
@@ -77,12 +77,12 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-bool BasicObjectFX::IsInit() const
+bool BasicFX::IsInit() const
 {
 	return md3dImmediateContext != nullptr;
 }
 
-void BasicObjectFX::SetRenderDefault()
+void BasicFX::SetRenderObjectDefault()
 {
 	md3dImmediateContext->IASetInputLayout(mVertexLayout.Get());
 	md3dImmediateContext->VSSetShader(mBasicObjectVS.Get(), nullptr, 0);
@@ -95,7 +95,7 @@ void BasicObjectFX::SetRenderDefault()
 
 
 
-HRESULT BasicObjectFX::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
+HRESULT BasicFX::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 
@@ -138,30 +138,30 @@ HRESULT BasicObjectFX::CreateShaderFromFile(const WCHAR * objFileNameInOut, cons
 }
 
 template<class T>
-void BasicObjectFX::UpdateConstantBuffer(const T& cbuffer)
+void BasicFX::UpdateConstantBuffer(const T& cbuffer)
 {
 }
 
 template<>
-void BasicObjectFX::UpdateConstantBuffer<CBChangesEveryDrawing>(const CBChangesEveryDrawing& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesEveryDrawing>(const CBChangesEveryDrawing& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicObjectFX::UpdateConstantBuffer<CBChangesEveryFrame>(const CBChangesEveryFrame& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesEveryFrame>(const CBChangesEveryFrame& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicObjectFX::UpdateConstantBuffer<CBChangesOnResize>(const CBChangesOnResize& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesOnResize>(const CBChangesOnResize& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &cbuffer, 0, 0);
 }
 
 template<>
-void BasicObjectFX::UpdateConstantBuffer<CBNeverChange>(const CBNeverChange& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesRarely>(const CBChangesRarely& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &cbuffer, 0, 0);
 }

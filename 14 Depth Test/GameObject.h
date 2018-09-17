@@ -12,6 +12,8 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	GameObject();
+
 	// ªÒ»°Œª÷√
 	DirectX::XMFLOAT3 GetPosition() const;
 

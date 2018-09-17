@@ -23,7 +23,7 @@ cbuffer CBChangesOnResize : register(b2)
 	row_major matrix gProj;
 }
 
-cbuffer CBNeverChange : register(b3)
+cbuffer CBChangesRarely : register(b3)
 {
 	DirectionalLight gDirLight[10];
 	PointLight gPointLight[10];

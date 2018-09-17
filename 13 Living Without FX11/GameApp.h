@@ -39,12 +39,7 @@ private:
 	Material mShadowMat;									// 阴影材质
 	Material mWoodCrateMat;									// 木盒材质
 
-	BasicFX mBasicFX;										// Basic特效管理类
-
-	CBChangesEveryFrame mCBFrame;							// 该缓冲区存放仅在每一帧进行更新的变量
-	CBDrawingStates mDrawingState;							// 该缓冲区存放绘制状态
-	CBChangesOnResize mCBChangesOnReSize;							// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBNeverChange mCBNeverChange;							// 该缓冲区存放不会再进行修改的变量
+	BasicObjectFX mBasicObjectFX;								// Basic特效管理类
 
 	std::shared_ptr<Camera> mCamera;						// 摄像机
 	CameraMode mCameraMode;									// 摄像机模式

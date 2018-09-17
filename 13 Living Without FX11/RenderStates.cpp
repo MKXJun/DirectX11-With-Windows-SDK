@@ -19,8 +19,17 @@ ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDoubleBlend	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite	= nullptr;
 
+bool RenderStates::IsInit()
+{
+	// 一般来说初始化操作会把所有的状态都创建出来
+	return RSWireframe != nullptr;
+}
+
 void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 {
+	// 先前初始化过的话就没必要重来了
+	if (IsInit())
+		return;
 	// ***********初始化光栅化器状态***********
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
@@ -30,21 +39,21 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
-	HR(device->CreateRasterizerState(&rasterizerDesc, RSWireframe.ReleaseAndGetAddressOf()));
+	HR(device->CreateRasterizerState(&rasterizerDesc, RSWireframe.GetAddressOf()));
 
 	// 无背面剔除模式
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
-	HR(device->CreateRasterizerState(&rasterizerDesc, RSNoCull.ReleaseAndGetAddressOf()));
+	HR(device->CreateRasterizerState(&rasterizerDesc, RSNoCull.GetAddressOf()));
 
 	// 顺时针剔除模式
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.FrontCounterClockwise = true;
 	rasterizerDesc.DepthClipEnable = true;
-	HR(device->CreateRasterizerState(&rasterizerDesc, RSCullClockWise.ReleaseAndGetAddressOf()));
+	HR(device->CreateRasterizerState(&rasterizerDesc, RSCullClockWise.GetAddressOf()));
 
 	
 	// ***********初始化采样器状态***********
@@ -59,7 +68,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.ReleaseAndGetAddressOf()));
+	HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.GetAddressOf()));
 
 	// 各向异性过滤模式
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
@@ -70,7 +79,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	sampDesc.MaxAnisotropy = 4;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.ReleaseAndGetAddressOf()));
+	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
 	
 	// ***********初始化混合状态***********
 	D3D11_BLEND_DESC blendDesc;
@@ -81,7 +90,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	blendDesc.IndependentBlendEnable = false;
 	rtDesc.BlendEnable = false;
 	rtDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	HR(device->CreateBlendState(&blendDesc, BSAlphaToCoverage.ReleaseAndGetAddressOf()));
+	HR(device->CreateBlendState(&blendDesc, BSAlphaToCoverage.GetAddressOf()));
 
 	// 透明混合模式
 	// Color = SrcAlpha * SrcColor + (1 - SrcAlpha) * DestColor 
@@ -96,7 +105,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	rtDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
 	rtDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 
-	HR(device->CreateBlendState(&blendDesc, BSTransparent.ReleaseAndGetAddressOf()));
+	HR(device->CreateBlendState(&blendDesc, BSTransparent.GetAddressOf()));
 	
 	// 无颜色写入混合模式
 	// Color = DestColor
@@ -109,7 +118,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	rtDesc.DestBlendAlpha = D3D11_BLEND_ONE;
 	rtDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	rtDesc.RenderTargetWriteMask = 0;
-	HR(device->CreateBlendState(&blendDesc, BSNoColorWrite.ReleaseAndGetAddressOf()));
+	HR(device->CreateBlendState(&blendDesc, BSNoColorWrite.GetAddressOf()));
 	
 	// ***********初始化深度/模板状态***********
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
@@ -135,7 +144,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSWriteStencil.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSWriteStencil.GetAddressOf()));
 
 	// 对指定模板值进行绘制的深度/模板状态
 	// 对满足模板值条件的区域才进行绘制，并更新深度
@@ -157,7 +166,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawWithStencil.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawWithStencil.GetAddressOf()));
 
 	// 无二次混合深度/模板状态
 	// 允许默认深度测试
@@ -180,7 +189,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDoubleBlend.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDoubleBlend.GetAddressOf()));
 
 	// 关闭深度测试的深度/模板状态
 	// 若绘制非透明物体，务必严格按照绘制顺序
@@ -189,7 +198,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.DepthEnable = false;
 	dsDesc.StencilEnable = false;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthTest.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthTest.GetAddressOf()));
 
 
 	// 进行深度测试，但不写入深度值的状态
@@ -201,6 +210,6 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	dsDesc.StencilEnable = false;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.ReleaseAndGetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.GetAddressOf()));
 
 }

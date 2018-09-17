@@ -63,7 +63,7 @@ void GameApp::OnResize()
 	if (mBasicFX.IsInit())
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetProj();
+		mCBChangesOnReSize.proj = mCamera->GetProjXM();
 		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	}
 }
@@ -120,7 +120,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -320,7 +320,6 @@ bool GameApp::InitResource()
 	mBoltAnim.SetBuffer(md3dDevice, Geometry::CreateCylinderNoCap(4.0f, 4.0f));
 	// 抬起高度避免深度缓冲区资源争夺
 	mBoltAnim.SetWorldMatrix(XMMatrixTranslation(0.0f, 2.01f, 0.0f));
-	mBoltAnim.SetTexTransformMatrix(XMMatrixIdentity());
 	mBoltAnim.SetMaterial(material);
 	
 	// 初始化木盒
@@ -328,7 +327,6 @@ bool GameApp::InitResource()
 	mWoodCrate.SetBuffer(md3dDevice, Geometry::CreateBox());
 	// 抬起高度避免深度缓冲区资源争夺
 	mWoodCrate.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 0.0f));
-	mWoodCrate.SetTexTransformMatrix(XMMatrixIdentity());
 	mWoodCrate.SetTexture(texture);
 	mWoodCrate.SetMaterial(material);
 	
@@ -337,8 +335,6 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	mFloor.SetBuffer(md3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
-	mFloor.SetWorldMatrix(XMMatrixIdentity());
-	mFloor.SetTexTransformMatrix(XMMatrixIdentity());
 	mFloor.SetTexture(texture);
 	mFloor.SetMaterial(material);
 
@@ -356,7 +352,6 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 5; ++i)
 	{
 		mWalls[i].SetMaterial(material);
-		mWalls[i].SetTexTransformMatrix(XMMatrixIdentity());
 		mWalls[i].SetTexture(texture);
 	}
 	mWalls[0].SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
@@ -379,7 +374,6 @@ bool GameApp::InitResource()
 	mMirror.SetBuffer(md3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
 	mMirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
-	mMirror.SetTexTransformMatrix(XMMatrixIdentity());
 	mMirror.SetTexture(texture);
 	mMirror.SetMaterial(material);
 
@@ -393,39 +387,39 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = mCamera->GetProj();
+	mCBChangesOnReSize.proj = mCamera->GetProjXM();
 
 	// 初始化不会变化的值
-	mCBNeverChange.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
+	mCBRarely.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
 	// 稍微高一点位置以显示阴影
-	mCBNeverChange.shadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f));
-	mCBNeverChange.refShadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f));
+	mCBRarely.shadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f));
+	mCBRarely.refShadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f));
 	// 环境光
-	mCBNeverChange.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBNeverChange.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mCBRarely.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	// 灯光
-	mCBNeverChange.pointLight[0].Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
-	mCBNeverChange.pointLight[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mCBNeverChange.pointLight[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	mCBNeverChange.pointLight[0].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBNeverChange.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mCBNeverChange.pointLight[0].Range = 25.0f;
-	mCBNeverChange.numDirLight = 1;
-	mCBNeverChange.numPointLight = 1;
-	mCBNeverChange.numSpotLight = 0;
+	mCBRarely.pointLight[0].Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
+	mCBRarely.pointLight[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	mCBRarely.pointLight[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	mCBRarely.pointLight[0].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mCBRarely.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	mCBRarely.pointLight[0].Range = 25.0f;
+	mCBRarely.numDirLight = 1;
+	mCBRarely.numPointLight = 1;
+	mCBRarely.numSpotLight = 0;
 	
 
 
 	// 更新不容易被修改的常量缓冲区资源
 	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
+	mBasicFX.UpdateConstantBuffer(mCBRarely);
 
 
 	return true;

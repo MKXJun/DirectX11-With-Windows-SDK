@@ -51,7 +51,7 @@
     <ClCompile Include="ObjReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicObjectFX.cpp">
+    <ClCompile Include="BasicFX.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,7 +89,7 @@
     <ClInclude Include="ObjReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BasicObjectFX.h">
+    <ClInclude Include="BasicFX.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

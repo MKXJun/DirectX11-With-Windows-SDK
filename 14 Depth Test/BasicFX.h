@@ -44,7 +44,7 @@ struct CBChangesOnResize
 };
 
 
-struct CBNeverChange
+struct CBChangesRarely
 {
 	DirectX::XMMATRIX reflection;
 	DirectX::XMMATRIX shadow;

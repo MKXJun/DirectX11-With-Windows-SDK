@@ -65,7 +65,7 @@ void GameApp::OnResize()
 	if (mBasicFX.IsInit())
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetView();
+		mCBChangesOnReSize.proj = mCamera->GetViewXM();
 		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	}
 
@@ -118,7 +118,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBChangesEveryFrame.eyePos, mCamera->GetPositionXM());
-	mCBChangesEveryFrame.view = mCamera->GetView();
+	mCBChangesEveryFrame.view = mCamera->GetViewXM();
 
 	bool isDrawingStateChanged = false;
 	// 开关雾效
@@ -271,8 +271,6 @@ bool GameApp::InitResource()
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	mGround.SetMaterial(material);
-	mGround.SetWorldMatrix(XMMatrixIdentity());
-	mGround.SetTexTransformMatrix(XMMatrixIdentity());
 
 	// ******************
 	// 初始化常量缓冲区的值
@@ -283,16 +281,16 @@ bool GameApp::InitResource()
 
 
 	// 方向光
-	mCBNeverChange.dirLight[0].Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	mCBNeverChange.dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
-	mCBNeverChange.dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	mCBNeverChange.dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
-	mCBNeverChange.dirLight[1] = mCBNeverChange.dirLight[0];
-	mCBNeverChange.dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
-	mCBNeverChange.dirLight[2] = mCBNeverChange.dirLight[0];
-	mCBNeverChange.dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
-	mCBNeverChange.dirLight[3] = mCBNeverChange.dirLight[0];
-	mCBNeverChange.dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	mCBRarely.dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	mCBRarely.dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	mCBRarely.dirLight[1] = mCBRarely.dirLight[0];
+	mCBRarely.dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	mCBRarely.dirLight[2] = mCBRarely.dirLight[0];
+	mCBRarely.dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	mCBRarely.dirLight[3] = mCBRarely.dirLight[0];
+	mCBRarely.dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 
 	// 摄像机相关
 	mCameraMode = CameraMode::Free;
@@ -307,10 +305,10 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 
 
-	mCBChangesEveryFrame.view = camera->GetView();
+	mCBChangesEveryFrame.view = camera->GetViewXM();
 	XMStoreFloat4(&mCBChangesEveryFrame.eyePos, camera->GetPositionXM());
 
-	mCBChangesOnReSize.proj = camera->GetProj();
+	mCBChangesOnReSize.proj = camera->GetProjXM();
 	
 	// 雾状态默认开启
 	mCBDrawingStates.fogEnabled = 1;
@@ -322,7 +320,7 @@ bool GameApp::InitResource()
 	mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
 	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
 	mBasicFX.UpdateConstantBuffer(mCBDrawingStates);
-	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
+	mBasicFX.UpdateConstantBuffer(mCBRarely);
 
 	// 直接绑定树的纹理
 	md3dImmediateContext->PSSetShaderResources(1, 1, mTreeTexArray.GetAddressOf());

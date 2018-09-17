@@ -176,29 +176,29 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化常量缓冲区的值
 	// 方向光
-	mCBNeverChange.dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBNeverChange.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBNeverChange.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	mCBRarely.dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	mCBRarely.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mCBRarely.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	// 材质
-	mCBNeverChange.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mCBNeverChange.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
+	mCBRarely.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	mCBRarely.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	// 摄像机位置
-	mCBNeverChange.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	mCBRarely.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
 	// 矩阵
 	mCBChangesEveryFrame.world = XMMatrixIdentity();
 	mCBChangesEveryFrame.worldInvTranspose = XMMatrixIdentity();
-	mCBNeverChange.view = XMMatrixLookAtLH(
+	mCBRarely.view = XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f), 
 		XMVectorZero(), 
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	mCBNeverChange.cylinderHeight = 2.0f;
+	mCBRarely.cylinderHeight = 2.0f;
 	mCBChangesOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
 	// 更新常量缓冲区资源
 	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBNeverChange);
+	mBasicFX.UpdateConstantBuffer(mCBRarely);
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源

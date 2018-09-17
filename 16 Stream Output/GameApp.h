@@ -44,7 +44,7 @@ private:
 
 	CBChangesEveryFrame mCBChangesEveryFrame;				// 该缓冲区存放每帧更新的变量
 	CBChangesOnResize mCBChangesOnReSize;							// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBNeverChange mCBNeverChange;							// 该缓冲区存放不会再进行修改的变量
+	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
 };
 
 

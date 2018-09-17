@@ -27,7 +27,7 @@ struct CBChangesOnResize
 	DirectX::XMMATRIX proj;
 };
 
-struct CBNeverChange
+struct CBChangesRarely
 {
 	DirectionalLight dirLight;
 	Material material;

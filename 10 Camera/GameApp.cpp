@@ -58,10 +58,10 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mConstantBuffers[2] != nullptr)
+	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBOnReSize.proj = mCamera->GetProj();
+		mCBOnReSize.proj = mCamera->GetProjXM();
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
 	}
@@ -133,7 +133,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -320,7 +320,7 @@ bool GameApp::InitResource()
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
 	cbd.ByteWidth = sizeof(CBChangesOnResize);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
-	cbd.ByteWidth = sizeof(CBNeverChange);
+	cbd.ByteWidth = sizeof(CBChangesRarely);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[3].GetAddressOf()));
 	// ******************
 	// 初始化游戏对象
@@ -328,16 +328,12 @@ bool GameApp::InitResource()
 	// 初始化木箱
 	CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf());
 	mWoodCrate.SetBuffer(md3dDevice, Geometry::CreateBox());
-	mWoodCrate.SetWorldMatrix(XMMatrixIdentity());
-	mWoodCrate.SetTexTransformMatrix(XMMatrixIdentity());
 	mWoodCrate.SetTexture(texture);
 	
 	// 初始化地板
 	CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf());
 	mFloor.SetBuffer(md3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
-	mFloor.SetWorldMatrix(XMMatrixIdentity());
-	mFloor.SetTexTransformMatrix(XMMatrixIdentity());
 	mFloor.SetTexture(texture);
 
 	// 初始化墙体
@@ -351,7 +347,6 @@ bool GameApp::InitResource()
 		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
 			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		mWalls[i].SetWorldMatrix(world);
-		mWalls[i].SetTexTransformMatrix(XMMatrixIdentity());
 		mWalls[i].SetTexture(texture);
 	}
 		
@@ -376,38 +371,38 @@ bool GameApp::InitResource()
 	mCamera = camera;
 	
 	camera->LookAt(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
-	mCBFrame.view = mCamera->GetView();
+	mCBFrame.view = mCamera->GetViewXM();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBOnReSize.proj = mCamera->GetProj();
+	mCBOnReSize.proj = mCamera->GetProjXM();
 
 	// 初始化不会变化的值
 	// 环境光
-	mCBNeverChange.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBNeverChange.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mCBRarely.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	// 灯光
-	mCBNeverChange.pointLight[0].Position = XMFLOAT3(0.0f, 10.0f, 0.0f);
-	mCBNeverChange.pointLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.pointLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBNeverChange.pointLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mCBNeverChange.pointLight[0].Range = 25.0f;
-	mCBNeverChange.numDirLight = 1;
-	mCBNeverChange.numPointLight = 1;
-	mCBNeverChange.numSpotLight = 0;
+	mCBRarely.pointLight[0].Position = XMFLOAT3(0.0f, 10.0f, 0.0f);
+	mCBRarely.pointLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.pointLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	mCBRarely.pointLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	mCBRarely.pointLight[0].Range = 25.0f;
+	mCBRarely.numDirLight = 1;
+	mCBRarely.numPointLight = 1;
+	mCBRarely.numSpotLight = 0;
 	// 初始化材质
-	mCBNeverChange.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBNeverChange.material.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	mCBNeverChange.material.Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 50.0f);
+	mCBRarely.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mCBRarely.material.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	mCBRarely.material.Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 50.0f);
 
 
 	// 更新不容易被修改的常量缓冲区资源
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBNeverChange, 0, 0);
+	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBRarely, 0, 0);
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
@@ -429,7 +424,19 @@ bool GameApp::InitResource()
 	return true;
 }
 
-
+GameApp::GameObject::GameObject()
+	: mWorldMatrix(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f),
+	mTexTransform(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f)
+{
+}
 
 DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
 {

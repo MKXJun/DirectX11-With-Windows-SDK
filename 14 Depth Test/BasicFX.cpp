@@ -56,7 +56,7 @@ bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
 	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesOnResize));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[3].GetAddressOf()));
-	cbd.ByteWidth = Align16Bytes(sizeof(CBNeverChange));
+	cbd.ByteWidth = Align16Bytes(sizeof(CBChangesRarely));
 	HR(device->CreateBuffer(&cbd, nullptr, mConstantBuffers[4].GetAddressOf()));
 
 	// 预先绑定各自所需的缓冲区，其中每帧更新的缓冲区需要绑定到两个缓冲区上
@@ -286,7 +286,7 @@ void BasicFX::UpdateConstantBuffer<CBChangesOnResize>(const CBChangesOnResize& c
 }
 
 template<>
-void BasicFX::UpdateConstantBuffer<CBNeverChange>(const CBNeverChange& cbuffer)
+void BasicFX::UpdateConstantBuffer<CBChangesRarely>(const CBChangesRarely& cbuffer)
 {
 	md3dImmediateContext->UpdateSubresource(mConstantBuffers[4].Get(), 0, nullptr, &cbuffer, 0, 0);
 }

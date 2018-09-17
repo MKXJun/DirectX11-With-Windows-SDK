@@ -44,7 +44,7 @@ struct CBChangesOnResize
 	DirectX::XMMATRIX proj;
 };
 
-struct CBNeverChange
+struct CBChangesRarely
 {
 	DirectionalLight dirLight[4];
 };

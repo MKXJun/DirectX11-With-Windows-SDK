@@ -34,11 +34,11 @@ private:
 	GameObject mHouse;										// 房屋
 	GameObject mGround;										// 地面
 
-	BasicObjectFX mBasicObjectFX;							// BasicObject特效管理类
+	BasicFX mBasicFX;							// BasicObject特效管理类
 
 	CBChangesEveryFrame mCBFrame;							// 该缓冲区存放仅在每一帧进行更新的变量
 	CBChangesOnResize mCBChangesOnReSize;					// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBNeverChange mCBNeverChange;							// 该缓冲区存放不会再进行修改的变量
+	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
 
 	std::shared_ptr<Camera> mCamera;						// 摄像机
 	CameraMode mCameraMode;									// 摄像机模式

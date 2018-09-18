@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 VertexPosHColor VS(VertexPosColor pIn)
 {

@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicObjectFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -60,11 +60,10 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mBasicFX.IsInit())
+	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetProjXM();
-		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
+		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -119,8 +118,7 @@ void GameApp::UpdateScene(float dt)
 
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetViewXM();
+	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -175,7 +173,6 @@ void GameApp::UpdateScene(float dt)
 		frameTime -= 1.0f / 60;
 	}
 	frameTime += dt;
-	mBasicFX.UpdateConstantBuffer(mCBFrame);
 }
 
 void GameApp::DrawScene()
@@ -192,84 +189,76 @@ void GameApp::DrawScene()
 	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
-	mBasicFX.SetWriteStencilOnly(1);
-	mMirror.Draw(md3dImmediateContext);
+	mBasicObjectFX.SetWriteStencilOnly(md3dImmediateContext, 1);
+	mMirror.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	// ***********************
 	// 2. 绘制不透明的反射物体
 	//
 
 	// 开启反射绘制
-	mDrawingState.isReflection = 1;		// 反射开启
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
-	mBasicFX.SetRenderDefaultWithStencil(1);
+	mBasicObjectFX.SetReflectionState(true);	// 反射开启
+	mBasicObjectFX.SetRenderDefaultWithStencil(md3dImmediateContext, 1);
 
-	mWalls[2].Draw(md3dImmediateContext);
-	mWalls[3].Draw(md3dImmediateContext);
-	mWalls[4].Draw(md3dImmediateContext);
-	mFloor.Draw(md3dImmediateContext);
+	mWalls[2].Draw(md3dImmediateContext, mBasicObjectFX);
+	mWalls[3].Draw(md3dImmediateContext, mBasicObjectFX);
+	mWalls[4].Draw(md3dImmediateContext, mBasicObjectFX);
+	mFloor.Draw(md3dImmediateContext, mBasicObjectFX);
 	
-	mWoodCrate.Draw(md3dImmediateContext);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	// ***********************
 	// 3. 绘制不透明反射物体的阴影
 	//
 
 	mWoodCrate.SetMaterial(mShadowMat);
-	mDrawingState.isShadow = 1;			// 反射开启，阴影开启
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
-	mBasicFX.SetRenderNoDoubleBlend(1);
+	mBasicObjectFX.SetShadowState(true);			// 反射开启，阴影开启
+	mBasicObjectFX.SetRenderNoDoubleBlend(md3dImmediateContext, 1);
 
-	mWoodCrate.Draw(md3dImmediateContext);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	// 恢复到原来的状态
-	mDrawingState.isShadow = 0;
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicObjectFX.SetShadowState(false);
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 
 	// ***********************
 	// 4. 绘制需要混合的反射闪电动画和透明物体
 	//
 
-	mBasicFX.SetDrawBoltAnimNoDepthWriteWithStencil(1);
-	mBoltAnim.Draw(md3dImmediateContext);
+	mBasicObjectFX.SetDrawBoltAnimNoDepthWriteWithStencil(md3dImmediateContext, 1);
+	mBoltAnim.Draw(md3dImmediateContext, mBasicObjectFX);
 
-	mDrawingState.isReflection = 0;		// 反射关闭
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicObjectFX.SetReflectionState(false);		// 反射关闭
 
-	mBasicFX.SetRenderAlphaBlendWithStencil(1);
-	mMirror.Draw(md3dImmediateContext);
+	mBasicObjectFX.SetRenderAlphaBlendWithStencil(md3dImmediateContext, 1);
+	mMirror.Draw(md3dImmediateContext, mBasicObjectFX);
 	
-	
-
 	// ************************
 	// 5. 绘制不透明的正常物体
 	//
-	mBasicFX.SetRenderDefault();
+	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
 	
 	for (auto& wall : mWalls)
-		wall.Draw(md3dImmediateContext);
-	mFloor.Draw(md3dImmediateContext);
-	mWoodCrate.Draw(md3dImmediateContext);
+		wall.Draw(md3dImmediateContext, mBasicObjectFX);
+	mFloor.Draw(md3dImmediateContext, mBasicObjectFX);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	// ************************
 	// 6. 绘制不透明正常物体的阴影
 	//
 	mWoodCrate.SetMaterial(mShadowMat);
-	mDrawingState.isShadow = 1;			// 反射关闭，阴影开启
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
-	mBasicFX.SetRenderNoDoubleBlend(0);
+	mBasicObjectFX.SetShadowState(true);			// 反射关闭，阴影开启
+	mBasicObjectFX.SetRenderNoDoubleBlend(md3dImmediateContext, 0);
 
-	mWoodCrate.Draw(md3dImmediateContext);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
 
-	mDrawingState.isShadow = 0;			// 阴影关闭
-	mBasicFX.UpdateConstantBuffer(mDrawingState);
+	mBasicObjectFX.SetShadowState(false);			// 阴影关闭
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 
 	// ************************
 	// 7. 绘制需要混合的闪电动画
-	mBasicFX.SetDrawBoltAnimNoDepthWrite();
-	mBoltAnim.Draw(md3dImmediateContext);
+	mBasicObjectFX.SetDrawBoltAnimNoDepthWrite(md3dImmediateContext);
+	mBoltAnim.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	//
 	// 绘制Direct2D部分
@@ -387,40 +376,35 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
-	mCBFrame.view = mCamera->GetViewXM();
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
+	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
+	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = mCamera->GetProjXM();
+	mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 
 	// 初始化不会变化的值
-	mCBRarely.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
+	mBasicObjectFX.SetReflectionMatrix(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
 	// 稍微高一点位置以显示阴影
-	mCBRarely.shadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f));
-	mCBRarely.refShadow = XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f));
+	mBasicObjectFX.SetShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f)));
+	mBasicObjectFX.SetRefShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f)));
 	// 环境光
-	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBRarely.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	DirectionalLight dirLight;
+	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	mBasicObjectFX.SetDirLight(0, dirLight);
 	// 灯光
-	mCBRarely.pointLight[0].Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
-	mCBRarely.pointLight[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mCBRarely.pointLight[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	mCBRarely.pointLight[0].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBRarely.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mCBRarely.pointLight[0].Range = 25.0f;
-	mCBRarely.numDirLight = 1;
-	mCBRarely.numPointLight = 1;
-	mCBRarely.numSpotLight = 0;
+	PointLight pointLight;
+	pointLight.Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
+	pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	pointLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	pointLight.Range = 25.0f;
+	mBasicObjectFX.SetPointLight(0, pointLight);
 	
-
-
-	// 更新不容易被修改的常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBRarely);
-
 
 	return true;
 }

@@ -5,7 +5,8 @@
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include "d3dApp.h"
-#include "BasicFX.h"
+#include "Effects.h"
+#include "Vertex.h"
 class GameApp : public D3DApp
 {
 public:
@@ -38,11 +39,8 @@ private:
 	int mVertexCount;										// 顶点数目
 	Mode mShowMode;											// 当前显示模式
 
-	BasicFX mBasicFX;										// Basic特效管理类
+	BasicObjectFX mBasicObjectFX;							// 对象渲染特效管理
 
-	CBChangesEveryFrame mCBChangesEveryFrame;				// 该缓冲区存放每帧更新的变量
-	CBChangesOnResize mCBChangesOnReSize;					// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
 };
 
 

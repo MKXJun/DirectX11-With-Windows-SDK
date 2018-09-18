@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 // 一个v0v1线段输出6个三角形顶点
 [maxvertexcount(6)]

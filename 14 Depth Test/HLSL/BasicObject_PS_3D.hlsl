@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 // 像素着色器(3D)
 float4 PS_3D(Vertex3DOut pIn) : SV_Target
@@ -23,49 +23,54 @@ float4 PS_3D(Vertex3DOut pIn) : SV_Target
     int i;
 
 
-	// 强制展开循环以减少指令数
-	[unroll]
-    for (i = 0; i < gNumDirLight; ++i)
+    [unroll]
+    for (i = 0; i < 5; ++i)
     {
         ComputeDirectionalLight(gMaterial, gDirLight[i], pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
     }
+        
     
-	[unroll]
-    for (i = 0; i < gNumPointLight; ++i)
+
+    
+    // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+    PointLight pointLight;
+    [unroll]
+    for (i = 0; i < 5; ++i)
     {
-        PointLight pointLight = gPointLight[i];
-        // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+        pointLight = gPointLight[i];
         [flatten]
         if (gIsReflection)
         {
             pointLight.Position = (float3) mul(float4(pointLight.Position, 1.0f), gReflection);
         }
-
         ComputePointLight(gMaterial, pointLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
     }
+        
     
-	[unroll]
-    for (i = 0; i < gNumSpotLight; ++i)
+	
+    SpotLight spotLight;
+    // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+    [unroll]
+    for (i = 0; i < 5; ++i)
     {
-        SpotLight spotLight = gSpotLight[i];
-        // 若当前在绘制反射物体，需要对光照进行反射矩阵变换
+        spotLight = gSpotLight[i];
         [flatten]
         if (gIsReflection)
         {
             spotLight.Position = (float3) mul(float4(spotLight.Position, 1.0f), gReflection);
         }
-
         ComputeSpotLight(gMaterial, spotLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
     }
+        
     
 
 	

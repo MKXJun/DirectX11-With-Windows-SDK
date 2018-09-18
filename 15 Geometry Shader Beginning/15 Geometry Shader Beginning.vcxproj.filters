@@ -16,11 +16,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{9d4c5487-aaf7-4f95-906f-56e210ce1eb9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="d3dApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -42,11 +42,11 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicFX.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="d3dApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -68,11 +68,14 @@
     <ClInclude Include="LightHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Triangle_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -98,6 +101,9 @@
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Cylinder_VS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicObject.fx">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

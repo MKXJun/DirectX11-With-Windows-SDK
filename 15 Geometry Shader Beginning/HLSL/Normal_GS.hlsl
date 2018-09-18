@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 [maxvertexcount(2)]
 void GS(point VertexPosHWNormalColor input[1], inout LineStream<VertexPosHWNormalColor> output)

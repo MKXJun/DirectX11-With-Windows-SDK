@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 float4 PS(VertexPosHWNormalColor pIn) : SV_TARGET
 {

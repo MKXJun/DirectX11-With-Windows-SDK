@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 // ¶¥µã×ÅÉ«Æ÷(2D)
 Vertex2DOut VS_2D(Vertex2DIn pIn)

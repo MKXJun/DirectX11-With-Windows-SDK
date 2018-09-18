@@ -21,12 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic_PS_3D.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Basic_VS_3D.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Billboard_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -37,6 +31,12 @@
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\BasicObject.fx">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicObject_PS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicObject_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

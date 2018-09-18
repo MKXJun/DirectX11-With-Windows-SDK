@@ -2,7 +2,9 @@
 
 ## 基本配置
 IDE：Visual Studio 2017 Community
+
 语言：C++/HLSL
+
 Windows SDK版本：10.0.17134.0(最新版本)
 
 项目如果有编译不通过的问题的话可以提Issue。如果是DirectXTK的问题，请到下面链接寻找合适的解决方案尝试编译，若能够通过则替换掉现有的DirectXTK_Desktop_2017_Win10项目，按照博客第4章教程进行配置即可。

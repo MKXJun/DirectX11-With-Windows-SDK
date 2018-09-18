@@ -4,7 +4,7 @@
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include <DirectXCollision.h>
-#include "BasicFX.h"
+#include "Effects.h"
 #include "ObjReader.h"
 #include "Geometry.h"
 
@@ -85,7 +85,7 @@ public:
 
 
 	// ªÊ÷∆∂‘œÛ
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect);
 
 private:
 	void SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex* vertices, UINT vertexCount,

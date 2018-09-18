@@ -18,7 +18,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicObjectFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -58,12 +58,8 @@ void GameApp::OnResize()
 		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 		mTextFormat.GetAddressOf()));
 
-	// 只有常量缓冲区被初始化后才执行更新操作
-	if (mBasicFX.IsInit())
-	{
-		mCBChangesOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	}
+	// 更新投影矩阵
+	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f));
 
 }
 
@@ -79,12 +75,6 @@ void GameApp::UpdateScene(float dt)
 	mKeyboardTracker.Update(keyState);
 
 	// 更新每帧变化的值
-
-	mCBChangesEveryFrame.worldInvTranspose = mCBChangesEveryFrame.world = XMMatrixIdentity();
-
-	mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
-
-
 	UINT stride = (mShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
 	UINT offset = 0;
 
@@ -155,14 +145,11 @@ void GameApp::UpdateScene(float dt)
 	{
 		static float theta = 0.0f;
 		theta += 0.3f * dt;
-		mCBChangesEveryFrame.world = XMMatrixRotationY(theta);
-		mCBChangesEveryFrame.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mCBChangesEveryFrame.world));
-		mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
+		mBasicObjectFX.SetWorldMatrix(XMMatrixRotationY(theta));
 	}
 	else
 	{
-		mCBChangesEveryFrame.world = XMMatrixIdentity();
-		mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
+		mBasicObjectFX.SetWorldMatrix(XMMatrixIdentity());
 	}
 
 }
@@ -180,15 +167,15 @@ void GameApp::DrawScene()
 	// 根据当前绘制模式设置需要用于渲染的各项资源
 	if (mShowMode == Mode::SplitedTriangle)
 	{
-		mBasicFX.SetRenderSplitedTriangle();
+		mBasicObjectFX.SetRenderSplitedTriangle(md3dImmediateContext);
 	}
 	else if (mShowMode == Mode::SplitedSnow)
 	{
-		mBasicFX.SetRenderSplitedSnow();
+		mBasicObjectFX.SetRenderSplitedSnow(md3dImmediateContext);
 	}
 	else if (mShowMode == Mode::SplitedSphere)
 	{
-		mBasicFX.SetRenderSplitedSphere();
+		mBasicObjectFX.SetRenderSplitedSphere(md3dImmediateContext);
 	}
 
 	// 设置线框/面模式
@@ -201,12 +188,14 @@ void GameApp::DrawScene()
 		md3dImmediateContext->RSSetState(nullptr);
 	}
 
-	// 进行绘制
+	// 进行绘制，记得应用常量缓冲区的变更
+	mBasicObjectFX.Apply(md3dImmediateContext);
 	md3dImmediateContext->Draw(mVertexCounts[mCurrIndex], 0);
 	// 绘制法向量
 	if (mShowNormal)
 	{
-		mBasicFX.SetRenderNormal();
+		mBasicObjectFX.SetRenderNormal(md3dImmediateContext);
+		mBasicObjectFX.Apply(md3dImmediateContext);
 		md3dImmediateContext->Draw(mVertexCounts[mCurrIndex], 0);
 	}
 
@@ -268,31 +257,31 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化常量缓冲区的值
 	// 方向光
-	mCBRarely.dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBRarely.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBRarely.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	DirectionalLight dirLight;
+	dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	mBasicObjectFX.SetDirLight(0, dirLight);
 	// 材质
-	mCBRarely.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mCBRarely.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
+	Material material;
+	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
+	mBasicObjectFX.SetMaterial(material);
 	// 摄像机位置
-	mCBRarely.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	mBasicObjectFX.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
 	// 矩阵
-	mCBChangesEveryFrame.world = XMMatrixIdentity();
-	mCBChangesEveryFrame.worldInvTranspose = XMMatrixIdentity();
-	mCBRarely.view = XMMatrixLookAtLH(
-		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
-		XMVectorZero(),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	mCBRarely.sphereCenter = XMFLOAT3();
-	mCBRarely.sphereRadius = 2.0f;
-	mCBRarely.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
-	mCBChangesOnReSize.proj = XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+	mBasicObjectFX.SetWorldViewProjMatrix(
+		XMMatrixIdentity(),
+		XMMatrixLookAtLH(
+			XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
+			XMVectorZero(),
+			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
+		XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
-	// 更新常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBRarely);
+	mBasicObjectFX.SetSphereCenter(XMFLOAT3());
+	mBasicObjectFX.SetSphereRadius(2.0f);
 
 	return true;
 }
@@ -331,7 +320,7 @@ void GameApp::ResetSplitedTriangle()
 		vbd.ByteWidth *= 3;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 3;
 		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicFX.SetStreamOutputSplitedTriangle(mVertexBuffers[i - 1], mVertexBuffers[i]);
+		mBasicObjectFX.SetStreamOutputSplitedTriangle(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
 		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
 	}
 }
@@ -379,7 +368,7 @@ void GameApp::ResetSplitedSnow()
 		vbd.ByteWidth *= 4;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 4;
 		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicFX.SetStreamOutputSplitedSnow(mVertexBuffers[i - 1], mVertexBuffers[i]);
+		mBasicObjectFX.SetStreamOutputSplitedSnow(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
 		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
 	}
 }
@@ -424,7 +413,7 @@ void GameApp::ResetSplitedSphere()
 		vbd.ByteWidth *= 4;
 		mVertexCounts[i] = mVertexCounts[i - 1] * 4;
 		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicFX.SetStreamOutputSplitedSphere(mVertexBuffers[i - 1], mVertexBuffers[i]);
+		mBasicObjectFX.SetStreamOutputSplitedSphere(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
 		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
 	}
 }

@@ -16,11 +16,11 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{5024b468-ca21-4b0a-aed8-630d38a96c51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{f4cfdda8-913a-4e38-acfd-6ca562fb5cdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Basic_PS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -36,6 +36,9 @@
     <FxCompile Include="HLSL\Billboard_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\BasicObject.fx">
+      <Filter>着色器</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\LightHelper.hlsli">
@@ -43,9 +46,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="d3dApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -76,11 +76,11 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicFX.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="d3dApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -110,6 +110,12 @@
     </ClInclude>
     <ClInclude Include="Geometry.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

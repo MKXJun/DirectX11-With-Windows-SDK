@@ -119,7 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
+    <FxCompile Include="HLSL\BasicObject.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -405,7 +405,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicFX.cpp" />
+    <ClCompile Include="BasicObjectFX.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -415,9 +415,10 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicFX.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="dxerr.h" />
+    <ClInclude Include="EffectHelper.h" />
+    <ClInclude Include="Effects.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="LightHelper.h" />

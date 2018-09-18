@@ -10,10 +10,27 @@ using namespace std::experimental;
 // 这些结构体对应HLSL的结构体，仅供该文件使用。需要按16字节对齐
 //
 
-struct CBChangesEveryFrame
+struct CBChangesEveryDrawing
 {
 	DirectX::XMMATRIX world;
 	DirectX::XMMATRIX worldInvTranspose;
+	DirectX::XMMATRIX texTransform;
+	Material material;
+};
+
+struct CBChangesEveryFrame
+{
+	DirectX::XMMATRIX view;
+	DirectX::XMVECTOR eyePos;
+};
+
+struct CBDrawingStates
+{
+	DirectX::XMVECTOR fogColor;
+	int fogEnabled;
+	float fogStart;
+	float fogRange;
+	float pad;
 };
 
 struct CBChangesOnResize
@@ -27,10 +44,6 @@ struct CBChangesRarely
 	DirectionalLight dirLight[BasicObjectFX::maxLights];
 	PointLight pointLight[BasicObjectFX::maxLights];
 	SpotLight spotLight[BasicObjectFX::maxLights];
-	Material material;
-	DirectX::XMMATRIX view;
-	DirectX::XMFLOAT3 eyePos;
-	float cylinderHeight;
 };
 
 
@@ -53,30 +66,28 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
-	CBufferObject<0, CBChangesEveryFrame>   cbFrame;		// 每次对象绘制的常量缓冲区
-	CBufferObject<1, CBChangesOnResize>     cbOnResize;		// 每次窗口大小变更的常量缓冲区
-	CBufferObject<2, CBChangesRarely>		cbRarely;		// 几乎不会变更的常量缓冲区
+	CBufferObject<0, CBChangesEveryDrawing> cbDrawing;		// 每次对象绘制的常量缓冲区
+	CBufferObject<1, CBChangesEveryFrame>   cbFrame;		// 每帧绘制的常量缓冲区
+	CBufferObject<2, CBDrawingStates>       cbStates;		// 每次绘制状态变更的常量缓冲区
+	CBufferObject<3, CBChangesOnResize>     cbOnResize;		// 每次窗口大小变更的常量缓冲区
+	CBufferObject<4, CBChangesRarely>		cbRarely;		// 几乎不会变更的常量缓冲区
 	BOOL isDirty;											// 是否有值变更
 	std::vector<CBufferBase*> cBufferPtrs;					// 统一管理上面所有的常量缓冲区
 
 
-	ComPtr<ID3D11VertexShader> triangleVS;
-	ComPtr<ID3D11PixelShader> trianglePS;
-	ComPtr<ID3D11GeometryShader> triangleGS;
+	ComPtr<ID3D11VertexShader> basicObjectVS;
+	ComPtr<ID3D11PixelShader> basicObjectPS;
 
-	ComPtr<ID3D11VertexShader> cylinderVS;
-	ComPtr<ID3D11PixelShader> cylinderPS;
-	ComPtr<ID3D11GeometryShader> cylinderGS;
+	ComPtr<ID3D11VertexShader> billboardVS;
+	ComPtr<ID3D11GeometryShader> billboardGS;
+	ComPtr<ID3D11PixelShader> billboardPS;
 
-	ComPtr<ID3D11VertexShader> normalVS;
-	ComPtr<ID3D11PixelShader> normalPS;
-	ComPtr<ID3D11GeometryShader> normalGS;
 
-	ComPtr<ID3D11InputLayout> vertexPosColorLayout;		// VertexPosColor输入布局
-	ComPtr<ID3D11InputLayout> vertexPosNormalColorLayout;	// VertexPosNormalColor输入布局
+	ComPtr<ID3D11InputLayout> vertexPosSizeLayout;			// 点精灵输入布局
+	ComPtr<ID3D11InputLayout> vertexPosNormalTexLayout;		// 3D顶点输入布局
 
 	ComPtr<ID3D11ShaderResourceView> texture;				// 用于绘制的纹理
-
+	ComPtr<ID3D11ShaderResourceView> textures;				// 用于绘制的纹理数组
 };
 
 //
@@ -131,46 +142,39 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 
 	ComPtr<ID3DBlob> blob;
 
-	// 创建顶点着色器和顶点布局
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_VS.vso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.GetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleVS.GetAddressOf()));
-	HR(device->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosColorLayout.GetAddressOf()));
+	//
+	// 常规3D绘制
+	//
+	HR(pImpl->CreateShaderFromFile(L"HLSL\\Basic_VS_3D.vso", L"HLSL\\Basic_VS_3D.hlsl", "VS_3D", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicObjectVS.GetAddressOf()));
+	// 创建顶点输入布局
+	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout), blob->GetBufferPointer(),
+		blob->GetBufferSize(), pImpl->vertexPosNormalTexLayout.GetAddressOf()));
+	HR(pImpl->CreateShaderFromFile(L"HLSL\\Basic_PS_3D.pso", L"HLSL\\Basic_PS_3D.hlsl", "PS_3D", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicObjectPS.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_VS.vso", L"HLSL\\Cylinder_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderVS.GetAddressOf()));
-	HR(device->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosNormalColorLayout.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_VS.vso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalVS.GetAddressOf()));
-
-	// 创建像素着色器
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_PS.pso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->trianglePS.GetAddressOf()));
-
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_PS.pso", L"HLSL\\Cylinder_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderPS.GetAddressOf()));
-
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_PS.pso", L"HLSL\\Normal_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalPS.GetAddressOf()));
-
-	// 创建几何着色器
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_GS.gso", L"HLSL\\Triangle_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleGS.GetAddressOf()));
-
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_GS.gso", L"HLSL\\Cylinder_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderGS.GetAddressOf()));
-
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_GS.gso", L"HLSL\\Normal_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalGS.GetAddressOf()));
+	//
+	// 绘制公告板
+	//
+	HR(pImpl->CreateShaderFromFile(L"HLSL\\Billboard_VS.vso", L"HLSL\\Billboard_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->billboardVS.GetAddressOf()));
+	// 创建顶点输入布局
+	HR(device->CreateInputLayout(VertexPosSize::inputLayout, ARRAYSIZE(VertexPosSize::inputLayout), blob->GetBufferPointer(),
+		blob->GetBufferSize(), pImpl->vertexPosSizeLayout.GetAddressOf()));
+	HR(pImpl->CreateShaderFromFile(L"HLSL\\Billboard_GS.gso", L"HLSL\\Billboard_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->billboardGS.GetAddressOf()));
+	HR(pImpl->CreateShaderFromFile(L"HLSL\\Billboard_PS.pso", L"HLSL\\Billboard_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->billboardPS.GetAddressOf()));
 
 
 	// 初始化
 	RenderStates::InitAll(device);
 
 	pImpl->cBufferPtrs.assign({
+		&pImpl->cbDrawing, 
 		&pImpl->cbFrame, 
+		&pImpl->cbStates, 
 		&pImpl->cbOnResize, 
 		&pImpl->cbRarely});
 
@@ -183,44 +187,38 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicObjectFX::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicObjectFX::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->triangleVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->triangleGS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->vertexPosNormalTexLayout.Get());
+	deviceContext->VSSetShader(pImpl->basicObjectVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->trianglePS.Get(), nullptr, 0);
-
+	deviceContext->PSSetShader(pImpl->basicObjectPS.Get(), nullptr, 0);
+	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
+	deviceContext->OMSetDepthStencilState(nullptr, 0);
+	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicObjectFX::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceContext)
-{
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->cylinderVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->cylinderGS.Get(), nullptr, 0);
-	deviceContext->RSSetState(RenderStates::RSNoCull.Get());
-	deviceContext->PSSetShader(pImpl->cylinderPS.Get(), nullptr, 0);
-
-}
-
-void BasicObjectFX::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicObjectFX::SetRenderBillboard(ComPtr<ID3D11DeviceContext> deviceContext, bool enableAlphaToCoverage)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->normalVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->normalGS.Get(), nullptr, 0);
-	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->normalPS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->vertexPosSizeLayout.Get());
+	deviceContext->VSSetShader(pImpl->billboardVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(pImpl->billboardGS.Get(), nullptr, 0);
+	deviceContext->RSSetState(RenderStates::RSNoCull.Get());
+	deviceContext->PSSetShader(pImpl->billboardPS.Get(), nullptr, 0);
+	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
+	deviceContext->OMSetDepthStencilState(nullptr, 0);
+	deviceContext->OMSetBlendState(
+		(enableAlphaToCoverage ? RenderStates::BSAlphaToCoverage.Get() : nullptr),
+		nullptr, 0xFFFFFFFF);
 
 }
-
-
 
 void XM_CALLCONV BasicObjectFX::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->cbDrawing;
 	cBuffer.data.world = W;
 	cBuffer.data.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
 	pImpl->isDirty = cBuffer.isDirty = true;
@@ -228,7 +226,7 @@ void XM_CALLCONV BasicObjectFX::SetWorldMatrix(DirectX::FXMMATRIX W)
 
 void XM_CALLCONV BasicObjectFX::SetViewMatrix(FXMMATRIX V)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->cbFrame;
 	cBuffer.data.view = V;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
@@ -242,14 +240,21 @@ void XM_CALLCONV BasicObjectFX::SetProjMatrix(FXMMATRIX P)
 
 void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
 {
-	pImpl->cbFrame.data.world = W;
-	pImpl->cbFrame.data.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
-	pImpl->cbRarely.data.view = V;
+	pImpl->cbDrawing.data.world = W;
+	pImpl->cbDrawing.data.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
+	pImpl->cbFrame.data.view = V;
 	pImpl->cbOnResize.data.proj = P;
 
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	pCBuffers[0]->isDirty = pCBuffers[1]->isDirty = pCBuffers[2]->isDirty = true;
+	pCBuffers[0]->isDirty = pCBuffers[1]->isDirty = pCBuffers[3]->isDirty = true;
 	pImpl->isDirty = true;
+}
+
+void XM_CALLCONV BasicObjectFX::SetTexTransformMatrix(FXMMATRIX W)
+{
+	auto& cBuffer = pImpl->cbDrawing;
+	cBuffer.data.texTransform = W;
+	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
 void BasicObjectFX::SetDirLight(size_t pos, const DirectionalLight & dirLight)
@@ -275,26 +280,57 @@ void BasicObjectFX::SetSpotLight(size_t pos, const SpotLight & spotLight)
 
 void BasicObjectFX::SetMaterial(const Material & material)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->cbDrawing;
 	cBuffer.data.material = material;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
+void BasicObjectFX::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+{
+	pImpl->texture = texture;
+}
+
+void BasicObjectFX::SetTextureArray(ComPtr<ID3D11ShaderResourceView> textures)
+{
+	pImpl->textures = textures;
+}
+
 void XM_CALLCONV BasicObjectFX::SetEyePos(FXMVECTOR eyePos)
 {
-	auto& cBuffer = pImpl->cbRarely;
-	XMStoreFloat3(&cBuffer.data.eyePos, eyePos);
+	auto& cBuffer = pImpl->cbFrame;
+	cBuffer.data.eyePos = eyePos;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicObjectFX::SetCylinderHeight(float height)
+
+
+void BasicObjectFX::SetFogState(bool isOn)
 {
-	auto& cBuffer = pImpl->cbRarely;
-	cBuffer.data.cylinderHeight = height;
+	auto& cBuffer = pImpl->cbStates;
+	cBuffer.data.fogEnabled = isOn;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
+void BasicObjectFX::SetFogStart(float fogStart)
+{
+	auto& cBuffer = pImpl->cbStates;
+	cBuffer.data.fogStart = fogStart;
+	pImpl->isDirty = cBuffer.isDirty = true;
+}
 
+void BasicObjectFX::SetFogColor(DirectX::XMVECTOR fogColor)
+{
+	auto& cBuffer = pImpl->cbStates;
+	cBuffer.data.fogColor = fogColor;
+	pImpl->isDirty = cBuffer.isDirty = true;
+}
+
+void BasicObjectFX::SetFogRange(float fogRange)
+{
+	auto& cBuffer = pImpl->cbStates;
+	cBuffer.data.fogRange = fogRange;
+	pImpl->isDirty = cBuffer.isDirty = true;
+}
 
 void BasicObjectFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
@@ -302,16 +338,20 @@ void BasicObjectFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
-	pCBuffers[2]->BindVS(deviceContext);
+	pCBuffers[3]->BindVS(deviceContext);
 
 	pCBuffers[0]->BindGS(deviceContext);
 	pCBuffers[1]->BindGS(deviceContext);
-	pCBuffers[2]->BindGS(deviceContext);
-	
+	pCBuffers[3]->BindGS(deviceContext);
+
+	pCBuffers[0]->BindPS(deviceContext);
+	pCBuffers[1]->BindPS(deviceContext);
 	pCBuffers[2]->BindPS(deviceContext);
+	pCBuffers[4]->BindPS(deviceContext);
 
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
+	deviceContext->PSSetShaderResources(1, 1, pImpl->textures.GetAddressOf());
 
 	if (pImpl->isDirty)
 	{

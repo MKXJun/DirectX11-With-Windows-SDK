@@ -26,8 +26,9 @@ cbuffer CBChangesOnResize : register(b2)
 
 cbuffer CBChangesRarely : register(b3)
 {
-    DirectionalLight gDirLight;
-    PointLight gPointLight;
+    DirectionalLight gDirLight[5];
+    PointLight gPointLight[5];
+    SpotLight gSpotLight[5];
 }
 
 

@@ -17,6 +17,7 @@ cbuffer CBChangesEveryFrame : register(b1)
 {
     row_major matrix gView;
     float3 gEyePosW;
+    float gPad;
 }
 
 cbuffer CBDrawingStates : register(b2)
@@ -25,6 +26,7 @@ cbuffer CBDrawingStates : register(b2)
     int gFogEnabled;
     float gFogStart;
     float gFogRange;
+    float gPad2;
 }
 
 cbuffer CBChangesOnResize : register(b3)
@@ -34,7 +36,9 @@ cbuffer CBChangesOnResize : register(b3)
 
 cbuffer CBChangesRarely : register(b4)
 {
-    DirectionalLight gDirLight[4];
+    DirectionalLight gDirLight[5];
+    PointLight gPointLight[5];
+    SpotLight gSpotLight[5];
 }
 
 

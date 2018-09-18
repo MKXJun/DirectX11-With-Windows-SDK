@@ -49,19 +49,16 @@ private:
 
 	GameObject mGround;										// 地面
 	
-	BasicFX mBasicFX;										// Basic特效管理类
+	BasicObjectFX mBasicObjectFX;							// 对象渲染特效管理
 
 	CameraMode mCameraMode;									// 摄像机模式
 	std::shared_ptr<Camera> mCamera;						// 摄像机
 
+	bool mFogEnabled;										// 是否开启雾效
 	bool mIsNight;											// 是否黑夜
 	bool mEnableAlphaToCoverage;							// 是否开启Alpha-To-Coverage
 
-	CBChangesEveryDrawing mCBChangesEveryDrawing;			// 该缓冲区存放每次绘制更新的变量
-	CBChangesEveryFrame mCBChangesEveryFrame;				// 该缓冲区存放每帧更新的变量
-	CBDrawingStates mCBDrawingStates;						// 该缓冲区存放绘制状态
-	CBChangesOnResize mCBChangesOnReSize;					// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
+	float mFogRange;										// 雾效范围
 };
 
 

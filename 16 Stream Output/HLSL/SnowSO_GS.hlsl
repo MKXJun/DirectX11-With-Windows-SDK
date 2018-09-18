@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 [maxvertexcount(5)]
 void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)

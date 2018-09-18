@@ -21,7 +21,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicObjectFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -62,11 +62,10 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 
 	// 只有常量缓冲区被初始化后才执行更新操作
-	if (mBasicFX.IsInit())
+	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetViewXM();
-		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
+		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 
 }
@@ -117,15 +116,14 @@ void GameApp::UpdateScene(float dt)
 
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	XMStoreFloat4(&mCBChangesEveryFrame.eyePos, mCamera->GetPositionXM());
-	mCBChangesEveryFrame.view = mCamera->GetViewXM();
+	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
+	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
 
-	bool isDrawingStateChanged = false;
 	// 开关雾效
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
-		mCBDrawingStates.fogEnabled = !mCBDrawingStates.fogEnabled;
-		isDrawingStateChanged = true;
+		mFogEnabled = !mFogEnabled;
+		mBasicObjectFX.SetFogState(mFogEnabled);
 	}
 	// 白天/黑夜变换
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
@@ -134,16 +132,15 @@ void GameApp::UpdateScene(float dt)
 		if (mIsNight)
 		{
 			// 黑夜模式下变为逐渐黑暗
-			mCBDrawingStates.fogColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-			mCBDrawingStates.fogStart = 5.0f;
+			mBasicObjectFX.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+			mBasicObjectFX.SetFogStart(5.0f);
 		}
 		else
 		{
 			// 白天模式则对应雾效
-			mCBDrawingStates.fogColor = XMFLOAT4(0.75f, 0.75f, 0.75f, 1.0f);
-			mCBDrawingStates.fogStart = 15.0f;
+			mBasicObjectFX.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+			mBasicObjectFX.SetFogStart(15.0f);
 		}
-		isDrawingStateChanged = true;
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3))
 	{
@@ -153,12 +150,12 @@ void GameApp::UpdateScene(float dt)
 	if (mouseState.scrollWheelValue != 0)
 	{
 		// 一次滚轮滚动的最小单位为120
-		mCBDrawingStates.fogRange += mouseState.scrollWheelValue / 120;
-		if (mCBDrawingStates.fogRange < 15.0f)
-			mCBDrawingStates.fogRange = 15.0f;
-		else if (mCBDrawingStates.fogRange > 175.0f)
-			mCBDrawingStates.fogRange = 175.0f;
-		isDrawingStateChanged = true;
+		mFogRange += mouseState.scrollWheelValue / 120;
+		if (mFogRange < 15.0f)
+			mFogRange = 15.0f;
+		else if (mFogRange > 175.0f)
+			mFogRange = 175.0f;
+		mBasicObjectFX.SetFogRange(mFogRange);
 	}
 	
 
@@ -170,14 +167,6 @@ void GameApp::UpdateScene(float dt)
 	// 退出程序，这里应向窗口发送销毁信息
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
-
-	if (isDrawingStateChanged)
-	{
-		mBasicFX.UpdateConstantBuffer(mCBDrawingStates);
-	}
-	mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
-
-
 
 }
 
@@ -198,14 +187,16 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制地面
-	mBasicFX.SetRenderDefault();
-	mGround.Draw(md3dImmediateContext);
+	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
+	mGround.Draw(md3dImmediateContext, mBasicObjectFX);
 
 	// 绘制树
-	mBasicFX.SetRenderBillboard(mEnableAlphaToCoverage);
+	mBasicObjectFX.SetRenderBillboard(md3dImmediateContext, mEnableAlphaToCoverage);
+	mBasicObjectFX.SetMaterial(mTreeMat);
 	UINT stride = sizeof(VertexPosSize);
 	UINT offset = 0;
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mPointSpritesBuffer.GetAddressOf(), &stride, &offset);
+	mBasicObjectFX.Apply(md3dImmediateContext);
 	md3dImmediateContext->Draw(16, 0);
 
 	//
@@ -216,12 +207,12 @@ void GameApp::DrawScene()
 		"滚轮-调整雾效范围\n"
 		"仅支持自由视角摄像机\n";
 	text += std::wstring(L"AlphaToCoverage状态: ") + (mEnableAlphaToCoverage ? L"开启\n" : L"关闭\n");
-	text += std::wstring(L"雾效状态: ") + (mCBDrawingStates.fogEnabled ? L"开启\n" : L"关闭\n");
-	if (mCBDrawingStates.fogEnabled)
+	text += std::wstring(L"雾效状态: ") + (mFogEnabled ? L"开启\n" : L"关闭\n");
+	if (mFogEnabled)
 	{
 		text += std::wstring(L"天气情况: ") + (mIsNight ? L"黑夜\n" : L"白天\n");
 		text += L"雾效范围: " + std::to_wstring(mIsNight ? 5 : 15) + L"-" + 
-			std::to_wstring((mIsNight ? 5 : 15) + (int)mCBDrawingStates.fogRange);
+			std::to_wstring((mIsNight ? 5 : 15) + (int)mFogRange);
 	}
 
 
@@ -248,11 +239,12 @@ bool GameApp::InitResource()
 		md3dDevice,
 		md3dImmediateContext,
 		std::vector<std::wstring>{
-		L"Texture\\tree0.dds",
+			L"Texture\\tree0.dds",
 			L"Texture\\tree1.dds",
 			L"Texture\\tree2.dds",
 			L"Texture\\tree3.dds"});
-	
+	mBasicObjectFX.SetTextureArray(mTreeTexArray);
+
 	// 初始化点精灵缓冲区
 	InitPointSpritesBuffer();
 
@@ -275,22 +267,21 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化常量缓冲区的值
 
-	mCBChangesEveryDrawing.material = mTreeMat;
-	mCBChangesEveryDrawing.world = mCBChangesEveryDrawing.worldInvTranspose = XMMatrixIdentity();
-	mCBChangesEveryDrawing.texTransform = XMMatrixIdentity();
-
-
 	// 方向光
-	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
-	mCBRarely.dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	mCBRarely.dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
-	mCBRarely.dirLight[1] = mCBRarely.dirLight[0];
-	mCBRarely.dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
-	mCBRarely.dirLight[2] = mCBRarely.dirLight[0];
-	mCBRarely.dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
-	mCBRarely.dirLight[3] = mCBRarely.dirLight[0];
-	mCBRarely.dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	DirectionalLight dirLight[4];
+	dirLight[0].Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight[1] = dirLight[0];
+	dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	dirLight[2] = dirLight[0];
+	dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	dirLight[3] = dirLight[0];
+	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	for (int i = 0; i < 4; ++i)
+		mBasicObjectFX.SetDirLight(i, dirLight[i]);
+
 
 	// 摄像机相关
 	mCameraMode = CameraMode::Free;
@@ -304,26 +295,20 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
 
+	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicObjectFX.SetTexTransformMatrix(XMMatrixIdentity());
+	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
 
-	mCBChangesEveryFrame.view = camera->GetViewXM();
-	XMStoreFloat4(&mCBChangesEveryFrame.eyePos, camera->GetPositionXM());
-
-	mCBChangesOnReSize.proj = camera->GetProjXM();
-	
 	// 雾状态默认开启
-	mCBDrawingStates.fogEnabled = 1;
-	mCBDrawingStates.fogColor = XMFLOAT4(0.75f, 0.75f, 0.75f, 1.0f);	// 银色
-	mCBDrawingStates.fogRange = 75.0f;
-	mCBDrawingStates.fogStart = 15.0f;
-	// 更新常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBChangesEveryDrawing);
-	mBasicFX.UpdateConstantBuffer(mCBChangesEveryFrame);
-	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBDrawingStates);
-	mBasicFX.UpdateConstantBuffer(mCBRarely);
+	mFogEnabled = 1;
+	mFogRange = 75.0f;
 
-	// 直接绑定树的纹理
-	md3dImmediateContext->PSSetShaderResources(1, 1, mTreeTexArray.GetAddressOf());
+	mBasicObjectFX.SetFogState(mFogEnabled);
+	mBasicObjectFX.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+	mBasicObjectFX.SetFogStart(15.0f);
+	mBasicObjectFX.SetFogRange(75.0f);
+
+	
 	
 	return true;
 }

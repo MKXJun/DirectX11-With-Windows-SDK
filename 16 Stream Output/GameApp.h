@@ -5,7 +5,8 @@
 #include <DDSTextureLoader.h>
 #include <WICTextureLoader.h>
 #include "d3dApp.h"
-#include "BasicFX.h"
+#include "Effects.h"
+#include "Vertex.h"
 class GameApp : public D3DApp
 {
 public:
@@ -40,11 +41,9 @@ private:
 	Mode mShowMode;											// 当前显示模式
 	bool mIsWireFrame;										// 是否为线框模式
 	bool mShowNormal;										// 是否显示法向量
-	BasicFX mBasicFX;										// Basic特效管理类
 
-	CBChangesEveryFrame mCBChangesEveryFrame;				// 该缓冲区存放每帧更新的变量
-	CBChangesOnResize mCBChangesOnReSize;							// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBChangesRarely mCBRarely;							// 该缓冲区存放不会再进行修改的变量
+	BasicObjectFX mBasicObjectFX;							// Basic特效管理类
+
 };
 
 

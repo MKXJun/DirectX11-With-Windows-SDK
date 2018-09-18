@@ -16,15 +16,15 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{2f2ac151-d24e-4398-b323-f33271d0d5ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{d1e155eb-b61e-410e-a238-f46de630efd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Normal_GS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Normal_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Basic.fx">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\TriangleSO_GS.hlsl">
@@ -66,6 +66,9 @@
     <FxCompile Include="HLSL\Sphere_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\BasicObject.fx">
+      <Filter>着色器</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\LightHelper.hlsli">
@@ -73,9 +76,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="d3dApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -97,11 +97,11 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicFX.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="d3dApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -122,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

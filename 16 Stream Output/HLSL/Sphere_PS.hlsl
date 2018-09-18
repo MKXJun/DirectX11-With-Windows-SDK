@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 float4 PS(VertexPosHWNormalColor pIn) : SV_Target
 {
@@ -14,7 +14,7 @@ float4 PS(VertexPosHWNormalColor pIn) : SV_Target
     float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     // 只计算方向光
-    ComputeDirectionalLight(gMaterial, gDirLight, pIn.NormalW, toEyeW, ambient, diffuse, spec);
+    ComputeDirectionalLight(gMaterial, gDirLight[0], pIn.NormalW, toEyeW, ambient, diffuse, spec);
 
     return pIn.Color * (ambient + diffuse) + spec;
 }

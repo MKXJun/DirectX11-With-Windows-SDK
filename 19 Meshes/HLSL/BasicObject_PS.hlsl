@@ -22,19 +22,35 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     float4 A = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 D = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    int i;
 
-    ComputeDirectionalLight(gMaterial, gDirLight, pIn.NormalW, toEyeW, A, D, S);
-    ambient += A;
-    diffuse += D;
-    spec += S;
-    
+    [unroll]
+    for (i = 0; i < 5; ++i)
+    {
+        ComputeDirectionalLight(gMaterial, gDirLight[i], pIn.NormalW, toEyeW, A, D, S);
+        ambient += A;
+        diffuse += D;
+        spec += S;
+    }
+        
+    [unroll]
+    for (i = 0; i < 5; ++i)
+    {
+        ComputePointLight(gMaterial, gPointLight[i], gEyePosW, pIn.NormalW, toEyeW, A, D, S);
+        ambient += A;
+        diffuse += D;
+        spec += S;
+    }
 
-    ComputePointLight(gMaterial, gPointLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
-    ambient += A;
-    diffuse += D;
-    spec += S;
-
-    
+    [unroll]
+    for (i = 0; i < 5; ++i)
+    {
+        ComputeSpotLight(gMaterial, gSpotLight[i], gEyePosW, pIn.NormalW, toEyeW, A, D, S);
+        ambient += A;
+        diffuse += D;
+        spec += S;
+    }
+  
     
     float4 litColor = texColorA * ambient + texColorD * diffuse + spec;
     litColor.a = texColorD.a * gMaterial.Diffuse.a;

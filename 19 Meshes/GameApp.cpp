@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicObjectFX.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -60,11 +60,10 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 摄像机变更显示
-	if (mBasicFX.IsInit())
+	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
-		mCBChangesOnReSize.proj = mCamera->GetProjXM();
-		mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
+		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -91,8 +90,7 @@ void GameApp::UpdateScene(float dt)
 	
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetViewXM();
+	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -100,9 +98,6 @@ void GameApp::UpdateScene(float dt)
 	// 退出程序，这里应向窗口发送销毁信息
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
-	
-	// 更新每帧变化的值
-	mBasicFX.UpdateConstantBuffer(mCBFrame);
 }
 
 void GameApp::DrawScene()
@@ -113,10 +108,11 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	mBasicFX.SetRenderObjectDefault();
+	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
 	
-	mGround.Draw(md3dImmediateContext);
-	mHouse.Draw(md3dImmediateContext);
+	mBasicObjectFX.Apply(md3dImmediateContext);
+	mGround.Draw(md3dImmediateContext, mBasicObjectFX);
+	mHouse.Draw(md3dImmediateContext, mBasicObjectFX);
 	
 
 	//
@@ -156,7 +152,6 @@ bool GameApp::InitResource()
 		XMMatrixTranslation(0.0f, -(mHouseBox.Center.y - mHouseBox.Extents.y + 1.0f), 0.0f));
 	// ******************
 	// 初始化常量缓冲区的值
-	// 初始化每帧可能会变化的值
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	mCamera = camera;
@@ -164,30 +159,29 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(10.0f);
 	camera->SetDistanceMinMax(6.0f, 100.0f);
-	mCBFrame.view = mCamera->GetViewXM();
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
+	camera->UpdateViewMatrix();
+	camera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 
-	// 初始化仅在窗口大小变动时修改的值
-	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = mCamera->GetProjXM();
-
+	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
+	
 	// 初始化不会变化的值
 	// 环境光
-	mCBRarely.dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mCBRarely.dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mCBRarely.dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	DirectionalLight dirLight;
+	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	mBasicObjectFX.SetDirLight(0, dirLight);
 	// 灯光
-	mCBRarely.pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
-	mCBRarely.pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mCBRarely.pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	mCBRarely.pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mCBRarely.pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	mCBRarely.pointLight.Range = 30.0f;	
-
-	// 更新不容易被修改的常量缓冲区资源
-	mBasicFX.UpdateConstantBuffer(mCBChangesOnReSize);
-	mBasicFX.UpdateConstantBuffer(mCBRarely);
+	PointLight pointLight;
+	pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
+	pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	pointLight.Range = 30.0f;	
+	mBasicObjectFX.SetPointLight(0, pointLight);
 
 	return true;
 }

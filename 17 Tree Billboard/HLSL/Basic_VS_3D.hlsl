@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "BasicObject.fx"
 
 // ¶¥µã×ÅÉ«Æ÷(3D)
 Vertex3DOut VS_3D(Vertex3DIn pIn)

@@ -73,7 +73,7 @@ public:
 	CBufferObject<3, CBChangesOnResize>     cbOnResize;		// 每次窗口大小变更的常量缓冲区
 	CBufferObject<4, CBChangesRarely>		cbRarely;		// 几乎不会变更的常量缓冲区
 	BOOL isDirty;											// 是否有值变更
-	std::vector<CBufferBase*> cBufferPtrs;					// 统一管理下面所有的常量缓冲区
+	std::vector<CBufferBase*> cBufferPtrs;					// 统一管理上面所有的常量缓冲区
 
 
 	ComPtr<ID3D11VertexShader> vertexShader3D;				// 用于3D的顶点着色器

@@ -208,30 +208,26 @@ void GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)
 }
 
 
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
+void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect)
 {
-	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
-	ComPtr<ID3D11Buffer> cBuffer = nullptr;
-	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
 
 	UINT strides = sizeof(VertexPosNormalTex);
 	UINT offsets = 0;
-	CBChangesEveryDrawing cbDrawing;
 
 	for (auto& part : mParts)
 	{
-		cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
-		cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
-		cbDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
-		cbDrawing.material = part.material;
-		deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
-
+		// 设置顶点/索引缓冲区
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
-		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-		deviceContext->PSSetShaderResources(0, 1, part.texA.GetAddressOf());
-		deviceContext->PSSetShaderResources(1, 1, part.texD.GetAddressOf());
-
+		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
+		
+		// 更新数据并应用
+		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
+		effect.SetTexTransformMatrix(XMLoadFloat4x4(&mTexTransform));
+		effect.SetTextureAmbient(part.texA);
+		effect.SetTextureDiffuse(part.texD);
+		effect.SetMaterial(part.material);
+		effect.Apply(deviceContext);
+		
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);
 	}
 }

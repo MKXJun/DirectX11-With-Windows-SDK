@@ -16,6 +16,9 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{d42004ca-8fb4-4c5f-afd7-54efbbe867ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{70788076-fee5-4858-8ad5-5a2d4b5be776}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -51,8 +54,8 @@
     <ClCompile Include="ObjReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="BasicObjectFX.cpp">
+      <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,8 +92,11 @@
     <ClInclude Include="ObjReader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BasicFX.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

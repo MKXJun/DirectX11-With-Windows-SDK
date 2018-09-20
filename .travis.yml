@@ -1,7 +1,8 @@
 image: Visual Studio 2017
 language: cpp
+compiler: clang++
 matrix:
-  solution: DirectX11 With Windows SDK(1-10).sln
+  solution: "DirectX11 With Windows SDK(1-10).sln"
   environment:
     matrix:
       - platform : x86
@@ -12,7 +13,7 @@ matrix:
         configuration : Debug
       - platform : x64
         configuration : Release
-  solution: DirectX11 With Windows SDK(11-20).sln
+  solution: "DirectX11 With Windows SDK(11-20).sln"
   environment:
     matrix:
       - platform : x86

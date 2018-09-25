@@ -59,7 +59,7 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 
 	// 更新投影矩阵
-	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f));
+	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
 }
 
@@ -74,13 +74,13 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State keyState = mKeyboard->GetState();
 	mKeyboardTracker.Update(keyState);
 
-	// 更新每帧变化的值
 	UINT stride = (mShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
 	UINT offset = 0;
 
 
-
+	// ******************
 	// 切换分形
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
 	{
 		mShowMode = Mode::SplitedTriangle;
@@ -112,7 +112,9 @@ void GameApp::UpdateScene(float dt)
 		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
 
+	// ******************
 	// 切换阶数
+	//
 	for (int i = 0; i < 7; ++i)
 	{
 		if (mKeyboardTracker.IsKeyPressed((Keyboard::Keys)((int)Keyboard::D1 + i)))
@@ -122,7 +124,9 @@ void GameApp::UpdateScene(float dt)
 		}
 	}
 
+	// ******************
 	// 切换线框/面
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::M))
 	{
 		if (mShowMode != Mode::SplitedSnow)
@@ -131,7 +135,9 @@ void GameApp::UpdateScene(float dt)
 		}
 	}
 
+	// ******************
 	// 是否添加法向量
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::N))
 	{
 		if (mShowMode == Mode::SplitedSphere)
@@ -140,9 +146,12 @@ void GameApp::UpdateScene(float dt)
 		}
 	}
 
-	// 让球体转起来
+	// ******************
+	// 更新每帧变化的值
+	//
 	if (mShowMode == Mode::SplitedSphere)
 	{
+		// 让球体转起来
 		static float theta = 0.0f;
 		theta += 0.3f * dt;
 		mBasicObjectFX.SetWorldMatrix(XMMatrixRotationY(theta));
@@ -243,6 +252,10 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
+	// ******************
+	// 初始化对象
+	//
+
 	// 默认绘制三角形
 	mShowMode = Mode::SplitedTriangle;
 	mIsWireFrame = false;
@@ -253,9 +266,10 @@ bool GameApp::InitResource()
 	UINT offset = 0;
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
 
-
 	// ******************
-	// 初始化常量缓冲区的值
+	// 初始化不会变化的值
+	//
+
 	// 方向光
 	DirectionalLight dirLight;
 	dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -291,6 +305,8 @@ void GameApp::ResetSplitedTriangle()
 {
 	// ******************
 	// 初始化三角形
+	//
+
 	// 设置三角形顶点
 	VertexPosColor vertices[] =
 	{
@@ -329,6 +345,8 @@ void GameApp::ResetSplitedSnow()
 {
 	// ******************
 	// 雪花分形从初始化三角形开始，需要6个顶点
+	//
+
 	// 设置三角形顶点
 	float sqrt3 = sqrt(3.0f);
 	VertexPosColor vertices[] =
@@ -375,6 +393,10 @@ void GameApp::ResetSplitedSnow()
 
 void GameApp::ResetSplitedSphere()
 {
+	// ******************
+	// 分形球体
+	//
+
 	VertexPosNormalColor basePoint[] = {
 		{ XMFLOAT3(0.0f, 2.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 	{ XMFLOAT3(2.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },

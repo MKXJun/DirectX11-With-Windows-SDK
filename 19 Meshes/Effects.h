@@ -58,8 +58,6 @@ public:
 
 	// 默认状态来绘制
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
-	// 公告板绘制
-	void SetRenderBillboard(ComPtr<ID3D11DeviceContext> deviceContext, bool enableAlphaToCoverage);
 	
 
 	//
@@ -70,8 +68,6 @@ public:
 	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V);
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P);
-
-	void XM_CALLCONV SetTexTransformMatrix(DirectX::FXMMATRIX W);
 
 
 	//

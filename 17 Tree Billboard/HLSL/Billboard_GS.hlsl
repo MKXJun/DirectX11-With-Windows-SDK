@@ -9,7 +9,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     inout TriangleStream<BillboardVertex> output)
 {
     // 计算公告板所处的局部坐标系，其中公告板相当于
-    // 被投影在了局部坐标系的xy平面，z轴
+    // 被投影在了局部坐标系的xy平面，z=0
 
     float3 up = float3(0.0f, 1.0f, 0.0f);
     float3 look = gEyePosW - input[0].PosW;

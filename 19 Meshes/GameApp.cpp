@@ -62,7 +62,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (mCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
@@ -81,7 +81,9 @@ void GameApp::UpdateScene(float dt)
 	// 获取子类
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
 	
+	// ******************
 	// 第三人称摄像机的操作
+	//
 
 	// 绕物体旋转
 	cam3rd->RotateX(mouseState.y * dt * 1.25f);
@@ -91,7 +93,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
-
+	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
 
@@ -105,6 +107,9 @@ void GameApp::DrawScene()
 	assert(md3dImmediateContext);
 	assert(mSwapChain);
 
+	// ******************
+	// 绘制Direct3D部分
+	//
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -115,7 +120,7 @@ void GameApp::DrawScene()
 	mHouse.Draw(md3dImmediateContext, mBasicObjectFX);
 	
 
-	//
+	// ******************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
@@ -132,26 +137,28 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
-	
-
-
 	// ******************
 	// 初始化游戏对象
+	//
+
 	// 初始化地板
 	mObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
-	mGround.SetModel(md3dDevice, mObjReader);
+	mGround.SetModel(Model(md3dDevice, mObjReader));
 
 	// 初始化房屋模型
 	mObjReader.Read(L"Model\\house.mbo", L"Model\\house.obj");
-	mHouse.SetModel(md3dDevice, mObjReader);
-	BoundingBox mHouseBox;
+	mHouse.SetModel(Model(md3dDevice, mObjReader));
 	// 获取房屋包围盒
-	mHouse.GetBoundingBox(mHouseBox, XMMatrixScaling(0.015f, 0.015f, 0.015f));
+	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
+	BoundingBox houseBox = mHouse.GetLocalBoundingBox();
+	houseBox.Transform(houseBox, S);
 	// 让房屋底部紧贴地面
-	mHouse.SetWorldMatrix(XMMatrixScaling(0.015f, 0.015f, 0.015f) *
-		XMMatrixTranslation(0.0f, -(mHouseBox.Center.y - mHouseBox.Extents.y + 1.0f), 0.0f));
+	mHouse.SetWorldMatrix(S * XMMatrixTranslation(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 1.0f), 0.0f));
+	
 	// ******************
-	// 初始化常量缓冲区的值
+	// 初始化摄像机
+	//
+
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	mCamera = camera;
@@ -160,12 +167,15 @@ bool GameApp::InitResource()
 	camera->SetDistance(10.0f);
 	camera->SetDistanceMinMax(6.0f, 100.0f);
 	camera->UpdateViewMatrix();
-	camera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
+	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
 	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
 	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
 	
+	// ******************
 	// 初始化不会变化的值
+	//
+
 	// 环境光
 	DirectionalLight dirLight;
 	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);

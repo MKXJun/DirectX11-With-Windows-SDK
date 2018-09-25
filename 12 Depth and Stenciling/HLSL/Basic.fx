@@ -8,7 +8,6 @@ cbuffer CBChangesEveryDrawing : register(b0)
 {
 	row_major matrix gWorld;
 	row_major matrix gWorldInvTranspose;
-	row_major matrix gTexTransform;
 	Material gMaterial;
 }
 

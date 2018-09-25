@@ -10,7 +10,6 @@ cbuffer VSConstantBuffer : register(b0)
     row_major matrix gView;  
     row_major matrix gProj;  
     row_major matrix gWorldInvTranspose;
-	row_major matrix gTexTransform;
 }
 
 cbuffer PSConstantBuffer : register(b1)

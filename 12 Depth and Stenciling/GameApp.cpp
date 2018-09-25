@@ -62,7 +62,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (mConstantBuffers[3] != nullptr)
 	{
-		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mCBChangesOnReSize.proj = mCamera->GetProjXM();
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
@@ -86,7 +86,9 @@ void GameApp::UpdateScene(float dt)
 	
 	if (mCameraMode == CameraMode::FirstPerson || mCameraMode == CameraMode::Free)
 	{
+		// ********************
 		// 第一人称/自由摄像机的操作
+		//
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
@@ -123,7 +125,9 @@ void GameApp::UpdateScene(float dt)
 	}
 	else if (mCameraMode == CameraMode::ThirdPerson)
 	{
+		// ********************
 		// 第三人称摄像机的操作
+		//
 
 		cam3rd->SetTarget(mWireFence.GetPosition());
 
@@ -141,7 +145,9 @@ void GameApp::UpdateScene(float dt)
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
 
+	// ********************
 	// 摄像机模式切换
+	//
 	
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1) && mCameraMode != CameraMode::ThirdPerson)
 	{
@@ -273,7 +279,7 @@ void GameApp::DrawScene()
 	mWireFence.Draw(md3dImmediateContext);
 	mWater.Draw(md3dImmediateContext);
 
-	//
+	// ********************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
@@ -459,7 +465,9 @@ bool GameApp::InitResource()
 	mMirror.SetTexture(texture);
 	mMirror.SetMaterial(material);
 
+	// ********************
 	// 初始化采样器状态
+	//
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -474,6 +482,8 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 初始化常量缓冲区的值
+	//
+
 	// 初始化每帧可能会变化的值
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
@@ -519,6 +529,8 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
+	//
+
 	// 设置图元类型，设定输入布局
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
@@ -541,11 +553,6 @@ bool GameApp::InitResource()
 
 GameApp::GameObject::GameObject()
 	: mWorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f),
-	mTexTransform(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -615,16 +622,6 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
 
-void GameApp::GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
-{
-	mTexTransform = texTransform;
-}
-
-void GameApp::GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)
-{
-	XMStoreFloat4x4(&mTexTransform, texTransform);
-}
-
 void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 设置顶点/索引缓冲区
@@ -639,7 +636,6 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	CBChangesEveryDrawing cbDrawing;
 	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
 	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
-	cbDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
 	cbDrawing.material = mMaterial;
 	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理

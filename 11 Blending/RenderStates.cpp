@@ -23,7 +23,9 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	// 先前初始化过的话就没必要重来了
 	if (IsInit())
 		return;
-	// ***********初始化光栅化器状态***********
+	// ********************
+	// 初始化光栅化器状态
+	//
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
 
@@ -41,8 +43,9 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	rasterizerDesc.DepthClipEnable = true;
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSNoCull.GetAddressOf()));
 
-	
-	// ***********初始化采样器状态***********
+	// ********************
+	// 初始化采样器状态
+	//
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 
@@ -67,7 +70,9 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
 	
-	// ***********初始化混合状态***********
+	// ********************
+	// 初始化混合状态
+	//
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
 	auto& rtDesc = blendDesc.RenderTarget[0];

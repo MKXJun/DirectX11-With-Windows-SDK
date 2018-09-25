@@ -26,13 +26,10 @@ public:
 	// 设置矩阵
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 	void SetWorldMatrix(DirectX::FXMMATRIX world);
-	void SetTexTransformMatrix(const DirectX::XMFLOAT4X4& texTransform);
-	void SetTexTransformMatrix(DirectX::FXMMATRIX texTransform);
 	// 绘制
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect);
 private:
 	DirectX::XMFLOAT4X4 mWorldMatrix;				// 世界矩阵
-	DirectX::XMFLOAT4X4 mTexTransform;				// 纹理变换矩阵
 	Material mMaterial;								// 物体材质
 	ComPtr<ID3D11ShaderResourceView> mTexture;		// 纹理
 	ComPtr<ID3D11Buffer> mVertexBuffer;				// 顶点缓冲区

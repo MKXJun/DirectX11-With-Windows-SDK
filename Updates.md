@@ -1,5 +1,10 @@
 更新记录
 
+2018/9/25 v17.0</br>
+-添加项目 Instancing and Frustum Culling
+-删掉了到现在都没什么用的texTransform
+-调整注释
+
 2018/9/18 v16.1</br>
 -项目13, 14, 15, 16, 17, 19已更新为自己写的Effects框架
 

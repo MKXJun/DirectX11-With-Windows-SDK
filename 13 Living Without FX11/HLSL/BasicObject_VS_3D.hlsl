@@ -22,6 +22,6 @@ Vertex3DOut VS_3D(Vertex3DIn pIn)
     pOut.PosH = mul(mul(posW, gView), gProj);
     pOut.PosW = mul(float4(pIn.PosL, 1.0f), gWorld).xyz;
     pOut.NormalW = mul(pIn.NormalL, (float3x3) gWorldInvTranspose);
-    pOut.Tex = mul(float4(pIn.Tex, 0.0f, 1.0f), gTexTransform).xy;
+    pOut.Tex = pIn.Tex;
     return pOut;
 }

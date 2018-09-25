@@ -14,7 +14,6 @@ struct CBChangesEveryDrawing
 {
 	DirectX::XMMATRIX world;
 	DirectX::XMMATRIX worldInvTranspose;
-	DirectX::XMMATRIX texTransform;
 	Material material;
 };
 
@@ -310,13 +309,6 @@ void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V,
 	auto& pCBuffers = pImpl->cBufferPtrs;
 	pCBuffers[0]->isDirty = pCBuffers[1]->isDirty = pCBuffers[3]->isDirty = true;
 	pImpl->isDirty = true;
-}
-
-void XM_CALLCONV BasicObjectFX::SetTexTransformMatrix(FXMMATRIX W)
-{
-	auto& cBuffer = pImpl->cbDrawing;
-	cBuffer.data.texTransform = W;
-	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicObjectFX::SetReflectionMatrix(FXMMATRIX R)

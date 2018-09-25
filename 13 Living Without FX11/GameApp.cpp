@@ -62,7 +62,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (mCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
@@ -84,7 +84,9 @@ void GameApp::UpdateScene(float dt)
 	
 	if (mCameraMode == CameraMode::FirstPerson || mCameraMode == CameraMode::Free)
 	{
+		// ******************
 		// 第一人称/自由摄像机的操作
+		//
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
@@ -121,7 +123,9 @@ void GameApp::UpdateScene(float dt)
 	}
 	else if (mCameraMode == CameraMode::ThirdPerson)
 	{
+		// ******************
 		// 第三人称摄像机的操作
+		//
 
 		cam3rd->SetTarget(mWoodCrate.GetPosition());
 
@@ -139,7 +143,9 @@ void GameApp::UpdateScene(float dt)
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
 
+	// ******************
 	// 摄像机模式切换
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1) && mCameraMode != CameraMode::FirstPerson)
 	{
 		if (!cam1st)
@@ -366,8 +372,9 @@ bool GameApp::InitResource()
 	mMirror.SetMaterial(material);
 
 	// ******************
-	// 初始化常量缓冲区的值
-	// 初始化每帧可能会变化的值
+	// 初始化摄像机
+	//
+
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	mCamera = camera;
@@ -379,15 +386,18 @@ bool GameApp::InitResource()
 	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
 	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
 
-	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 	mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 
+	// ******************
 	// 初始化不会变化的值
+	//
+
 	mBasicObjectFX.SetReflectionMatrix(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
 	// 稍微高一点位置以显示阴影
 	mBasicObjectFX.SetShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f)));
 	mBasicObjectFX.SetRefShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f)));
+
 	// 环境光
 	DirectionalLight dirLight;
 	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);

@@ -36,7 +36,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
-        ComputePointLight(gMaterial, gPointLight[i], gEyePosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputePointLight(gMaterial, gPointLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -45,7 +45,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
-        ComputeSpotLight(gMaterial, gSpotLight[i], gEyePosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputeSpotLight(gMaterial, gSpotLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;

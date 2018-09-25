@@ -8,11 +8,6 @@ GameObject::GameObject()
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f),
-	mTexTransform(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f)
 {
 }
@@ -79,16 +74,6 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
 
-void GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
-{
-	mTexTransform = texTransform;
-}
-
-void GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)
-{
-	XMStoreFloat4x4(&mTexTransform, texTransform);
-}
-
 
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect)
@@ -101,7 +86,6 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& 
 
 	// 更新数据并应用
 	effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
-	effect.SetTexTransformMatrix(XMLoadFloat4x4(&mTexTransform));
 	effect.SetTexture(mTexture);
 	effect.SetMaterial(mMaterial);
 	effect.Apply(deviceContext);

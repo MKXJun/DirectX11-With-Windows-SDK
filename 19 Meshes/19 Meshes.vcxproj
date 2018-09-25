@@ -128,6 +128,7 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="ObjReader.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="Vertex.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="LightHelper.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="Vertex.h" />

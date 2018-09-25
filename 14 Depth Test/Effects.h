@@ -93,8 +93,6 @@ public:
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P);
 
-	void XM_CALLCONV SetTexTransformMatrix(DirectX::FXMMATRIX W);
-
 	void XM_CALLCONV SetReflectionMatrix(DirectX::FXMMATRIX R);
 	void XM_CALLCONV SetShadowMatrix(DirectX::FXMMATRIX S);
 	void XM_CALLCONV SetRefShadowMatrix(DirectX::FXMMATRIX RefS);

@@ -14,7 +14,6 @@ struct CBChangesEveryDrawing
 {
 	DirectX::XMMATRIX world;
 	DirectX::XMMATRIX worldInvTranspose;
-	DirectX::XMMATRIX texTransform;
 	Material material;
 };
 
@@ -205,12 +204,6 @@ void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V,
 	pImpl->isDirty = true;
 }
 
-void XM_CALLCONV BasicObjectFX::SetTexTransformMatrix(FXMMATRIX W)
-{
-	auto& cBuffer = pImpl->cbDrawing;
-	cBuffer.data.texTransform = W;
-	pImpl->isDirty = cBuffer.isDirty = true;
-}
 
 void BasicObjectFX::SetDirLight(size_t pos, const DirectionalLight & dirLight)
 {
@@ -264,7 +257,6 @@ void BasicObjectFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
 	pCBuffers[2]->BindVS(deviceContext);
-	pCBuffers[3]->BindVS(deviceContext);
 
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindPS(deviceContext);

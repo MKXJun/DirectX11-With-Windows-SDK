@@ -60,7 +60,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (mCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mCBChangesOnReSize.proj = mCamera->GetProjXM();
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
@@ -81,8 +81,10 @@ void GameApp::UpdateScene(float dt)
 	// 获取子类
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
 
-	
+	// ******************
 	// 第三人称摄像机的操作
+	//
+
 	// 绕原点旋转
 	cam3rd->SetTarget(XMFLOAT3());
 	cam3rd->RotateX(mouseState.y * dt * 1.25f);
@@ -114,7 +116,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// ************************
+	// ********************
 	// 1. 绘制不透明对象
 	//
 	md3dImmediateContext->RSSetState(nullptr);
@@ -124,7 +126,7 @@ void GameApp::DrawScene()
 		wall.Draw(md3dImmediateContext);
 	mFloor.Draw(md3dImmediateContext);
 
-	// ************************
+	// ********************
 	// 2. 绘制透明对象
 	//
 	md3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
@@ -140,7 +142,7 @@ void GameApp::DrawScene()
 	
 
 
-	//
+	// ********************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
@@ -231,6 +233,7 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 设置常量缓冲区描述
+	//
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DEFAULT;
@@ -247,6 +250,7 @@ bool GameApp::InitResource()
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[3].GetAddressOf()));
 	// ******************
 	// 初始化游戏对象
+	//
 	ComPtr<ID3D11ShaderResourceView> texture;
 	Material material;
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -305,6 +309,8 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 初始化常量缓冲区的值
+	//
+
 	// 初始化每帧可能会变化的值
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
@@ -320,7 +326,10 @@ bool GameApp::InitResource()
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 	mCBChangesOnReSize.proj = mCamera->GetProjXM();
 
+	// ********************
 	// 初始化不会变化的值
+	//
+
 	// 环境光
 	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -348,6 +357,7 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
+	//
 
 	// 设置图元类型，设定输入布局
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -374,11 +384,6 @@ bool GameApp::InitResource()
 
 GameApp::GameObject::GameObject()
 	: mWorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f),
-	mTexTransform(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -447,16 +452,6 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
 
-void GameApp::GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
-{
-	mTexTransform = texTransform;
-}
-
-void GameApp::GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)
-{
-	XMStoreFloat4x4(&mTexTransform, texTransform);
-}
-
 void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 设置顶点/索引缓冲区
@@ -471,7 +466,6 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	CBChangesEveryDrawing cbDrawing;
 	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
 	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
-	cbDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
 	cbDrawing.material = mMaterial;
 	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理

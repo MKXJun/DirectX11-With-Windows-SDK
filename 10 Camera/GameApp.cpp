@@ -429,11 +429,6 @@ GameApp::GameObject::GameObject()
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f),
-	mTexTransform(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f)
 {
 }
@@ -494,16 +489,6 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
 
-void GameApp::GameObject::SetTexTransformMatrix(const DirectX::XMFLOAT4X4 & texTransform)
-{
-	mTexTransform = texTransform;
-}
-
-void GameApp::GameObject::SetTexTransformMatrix(DirectX::FXMMATRIX texTransform)
-{
-	XMStoreFloat4x4(&mTexTransform, texTransform);
-}
-
 void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 设置顶点/索引缓冲区
@@ -518,7 +503,6 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	CBChangesEveryDrawing cbDrawing;
 	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
 	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
-	cbDrawing.texTransform = XMLoadFloat4x4(&mTexTransform);
 	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, mTexture.GetAddressOf());

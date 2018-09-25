@@ -61,10 +61,9 @@ void GameApp::OnResize()
 		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 		mTextFormat.GetAddressOf()));
 
-	// 只有常量缓冲区被初始化后才执行更新操作
 	if (mCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 
@@ -86,7 +85,9 @@ void GameApp::UpdateScene(float dt)
 
 	if (mCameraMode == CameraMode::Free)
 	{
+		// ******************
 		// 自由摄像机的操作
+		//
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
@@ -107,6 +108,10 @@ void GameApp::UpdateScene(float dt)
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 	}
 
+	// ******************
+	// 更新摄像机
+	//
+
 	// 将位置限制在[-49.9f, 49.9f]的区域内
 	// 不允许穿地
 	XMFLOAT3 adjustedPos;
@@ -119,13 +124,18 @@ void GameApp::UpdateScene(float dt)
 	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
 	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
 
+	// ******************
 	// 开关雾效
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
 		mFogEnabled = !mFogEnabled;
 		mBasicObjectFX.SetFogState(mFogEnabled);
 	}
+
+	// ******************
 	// 白天/黑夜变换
+	//
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
 		mIsNight = !mIsNight;
@@ -146,7 +156,10 @@ void GameApp::UpdateScene(float dt)
 	{
 		mEnableAlphaToCoverage = !mEnableAlphaToCoverage;
 	}
+
+	// ******************
 	// 调整雾的范围
+	//
 	if (mouseState.scrollWheelValue != 0)
 	{
 		// 一次滚轮滚动的最小单位为120
@@ -175,7 +188,11 @@ void GameApp::DrawScene()
 	assert(md3dImmediateContext);
 	assert(mSwapChain);
 
-	// 白天/黑夜设置
+	// ******************
+	// 绘制Direct3D部分
+	//
+	
+	// 设置背景色
 	if (mIsNight)
 	{
 		md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
@@ -199,7 +216,7 @@ void GameApp::DrawScene()
 	mBasicObjectFX.Apply(md3dImmediateContext);
 	md3dImmediateContext->Draw(16, 0);
 
-	//
+	// ******************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
@@ -228,11 +245,9 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
-	// 默认白天，开启AlphaToCoverage
-	mIsNight = false;
-	mEnableAlphaToCoverage = true;
 	// ******************
 	// 初始化各种物体
+	//
 
 	// 初始化树纹理资源
 	mTreeTexArray = CreateDDSTexture2DArrayShaderResourceView(
@@ -265,7 +280,8 @@ bool GameApp::InitResource()
 	mGround.SetMaterial(material);
 
 	// ******************
-	// 初始化常量缓冲区的值
+	// 初始化不会变化的值
+	//
 
 	// 方向光
 	DirectionalLight dirLight[4];
@@ -282,8 +298,9 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 4; ++i)
 		mBasicObjectFX.SetDirLight(i, dirLight[i]);
 
-
-	// 摄像机相关
+	// ******************
+	// 初始化摄像机
+	//
 	mCameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
@@ -296,8 +313,15 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 
 	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
-	mBasicObjectFX.SetTexTransformMatrix(XMMatrixIdentity());
 	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
+
+	// ******************
+	// 初始化雾效和天气等
+	//
+
+	// 默认白天，开启AlphaToCoverage
+	mIsNight = false;
+	mEnableAlphaToCoverage = true;
 
 	// 雾状态默认开启
 	mFogEnabled = 1;
@@ -349,7 +373,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 	const std::vector<std::wstring>& filenames,
 	int maxMipMapSize)
 {
-	//
+	// ******************
 	// 1. 读取所有纹理
 	//
 	UINT size = (UINT)filenames.size();
@@ -392,7 +416,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 		
 	}
 
-	//
+	// ******************
 	// 2.创建纹理数组
 	//
 	D3D11_TEXTURE2D_DESC texDesc, texArrayDesc;
@@ -412,7 +436,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 	ComPtr<ID3D11Texture2D> texArray;
 	HR(device->CreateTexture2D(&texArrayDesc, nullptr, texArray.GetAddressOf()));
 
-	//
+	// ******************
 	// 3.将所有的纹理子资源赋值到纹理数组中
 	//
 
@@ -438,7 +462,7 @@ ComPtr<ID3D11ShaderResourceView> GameApp::CreateDDSTexture2DArrayShaderResourceV
 		}
 	}
 
-	//
+	// ******************
 	// 4.创建纹理数组的SRV
 	//
 	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;

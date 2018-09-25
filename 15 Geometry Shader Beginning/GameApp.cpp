@@ -60,7 +60,7 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 更新投影矩阵
-	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f));
+	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	
 }
 
@@ -142,7 +142,7 @@ void GameApp::DrawScene()
 	}
 
 
-	//
+	// ******************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();
@@ -165,13 +165,18 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
-	
+	// ******************
+	// 初始化对象
+	//
+
 	// 默认绘制三角形
 	mShowMode = Mode::SplitedTriangle;
 	ResetTriangle();
 	
 	// ******************
-	// 初始化常量缓冲区的值
+	// 初始化不会变化的值
+	//
+
 	// 方向光
 	DirectionalLight dirLight;
 	dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -218,6 +223,8 @@ void GameApp::ResetTriangle()
 {
 	// ******************
 	// 初始化三角形
+	//
+
 	// 设置三角形顶点
 	VertexPosColor vertices[] =
 	{
@@ -243,7 +250,7 @@ void GameApp::ResetTriangle()
 
 void GameApp::ResetRoundWire()
 {
-	// ******************
+	// ****************** 
 	// 初始化圆线
 	// 设置圆边上各顶点
 	// 必须要按顺时针设置
@@ -252,6 +259,7 @@ void GameApp::ResetRoundWire()
 	// /      \
 	// \______/
 	//
+
 	VertexPosNormalColor vertices[41];
 	for (int i = 0; i < 40; ++i)
 	{

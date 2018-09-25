@@ -100,8 +100,9 @@ void Camera::SetFrustum(float fovY, float aspect, float nearZ, float farZ)
 }
 
 
-
-// ***************第一人称摄像机***************
+// ********************
+// 第一人称/自由视角摄像机
+//
 
 FirstPersonCamera::FirstPersonCamera()
 	: Camera()
@@ -232,6 +233,10 @@ void FirstPersonCamera::UpdateViewMatrix()
 		x, y, z, 1.0f
 	};
 }
+
+// ********************
+// 第三人称摄像机
+//
 
 ThirdPersonCamera::ThirdPersonCamera()
 	: Camera(), mTheta(), mPhi(), mDistance(), mTarget()

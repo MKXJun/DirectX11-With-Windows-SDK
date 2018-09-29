@@ -1,12 +1,10 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-#include <DirectXColors.h>
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
 #include "d3dApp.h"
 #include "Camera.h"
 #include "GameObject.h"
+
 class GameApp : public D3DApp
 {
 public:

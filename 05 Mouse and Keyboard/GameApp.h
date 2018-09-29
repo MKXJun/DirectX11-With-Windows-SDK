@@ -2,8 +2,8 @@
 #define GAMEAPP_H
 
 #include <d3dcompiler.h>
-#include <directxmath.h>
 #include "d3dApp.h"
+
 class GameApp : public D3DApp
 {
 public:

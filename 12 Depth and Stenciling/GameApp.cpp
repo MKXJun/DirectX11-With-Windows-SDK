@@ -63,6 +63,7 @@ void GameApp::OnResize()
 	if (mConstantBuffers[3] != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
+		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 		mCBChangesOnReSize.proj = mCamera->GetProjXM();
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());

@@ -74,6 +74,9 @@
     <ClInclude Include="d3dApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Basic.fx">

@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="d3dApp.h" />
+    <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="EffectHelper.h" />
     <ClInclude Include="Effects.h" />

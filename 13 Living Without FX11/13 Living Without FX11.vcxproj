@@ -132,6 +132,7 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="EffectHelper.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="Camera.h" />

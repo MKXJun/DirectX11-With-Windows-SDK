@@ -86,6 +86,11 @@ DirectX::XMMATRIX Camera::GetViewProjXM() const
 	return XMLoadFloat4x4(&mView) * XMLoadFloat4x4(&mProj);
 }
 
+D3D11_VIEWPORT Camera::GetViewPort() const
+{
+	return mViewPort;
+}
+
 void Camera::SetFrustum(float fovY, float aspect, float nearZ, float farZ)
 {
 	mFovY = fovY;
@@ -97,6 +102,21 @@ void Camera::SetFrustum(float fovY, float aspect, float nearZ, float farZ)
 	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f * mFovY);
 
 	XMStoreFloat4x4(&mProj, XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ));
+}
+
+void Camera::SetViewPort(const D3D11_VIEWPORT & viewPort)
+{
+	mViewPort = viewPort;
+}
+
+void Camera::SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
+{
+	mViewPort.TopLeftX = topLeftX;
+	mViewPort.TopLeftY = topLeftY;
+	mViewPort.Width = width;
+	mViewPort.Height = height;
+	mViewPort.MinDepth = minDepth;
+	mViewPort.MaxDepth = maxDepth;
 }
 
 

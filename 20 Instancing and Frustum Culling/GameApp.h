@@ -1,12 +1,12 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-#include <DirectXColors.h>
 #include "d3dApp.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "ObjReader.h"
 #include "Collision.h"
+
 class GameApp : public D3DApp
 {
 public:

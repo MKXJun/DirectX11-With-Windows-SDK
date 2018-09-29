@@ -2,10 +2,7 @@
 #define GAMEAPP_H
 
 #include <d3dcompiler.h>
-#include <directxmath.h>
-#include <DirectXColors.h>
 #include "d3dApp.h"
-#include "LightHelper.h"
 #include "Geometry.h"
 
 class GameApp : public D3DApp

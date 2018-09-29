@@ -1,34 +1,14 @@
 #ifndef D3DAPP_H
 #define D3DAPP_H
 
-#include <wrl/client.h>
-#include <assert.h>
-#include <d3d11_1.h>
-#include <string>
-#include <Mouse.h>
+#include "d3dUtil.h"
+#include <DDSTextureLoader.h>
+#include <WICTextureLoader.h>
+#include <Mouse.h>		// Mouse.h和Keyboard.h需要预先包含Windows.h
 #include <Keyboard.h>
 #include "GameTimer.h"
-#include "dxerr.h"
 
-// 移植过来的错误检查，该项目仅允许使用Unicode字符集
-#if defined(DEBUG) | defined(_DEBUG)
-#ifndef HR
-#define HR(x)                                              \
-{                                                          \
-	HRESULT hr = (x);                                      \
-	if(FAILED(hr))                                         \
-	{                                                      \
-		DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
-	}                                                      \
-}
-#endif
-
-#else
-#ifndef HR
-#define HR(x) (x)
-#endif
-#endif 
-
+// 添加所有要引用的库
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")

@@ -1,8 +1,14 @@
 更新记录
 
+2018/9/29 v17.1</br>
+-添加d3dUtil.h</br>
+-添加Camera关于ViewPort的方法</br>
+-精简头文件</br>
+-修改错误描述
+
 2018/9/25 v17.0</br>
--添加项目 Instancing and Frustum Culling
--删掉了到现在都没什么用的texTransform
+-添加项目 Instancing and Frustum Culling</br>
+-删掉了到现在都没什么用的texTransform</br>
 -调整注释
 
 2018/9/18 v16.1</br>

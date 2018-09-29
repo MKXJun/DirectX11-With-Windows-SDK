@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <DirectXMath.h>
+#include "d3dUtil.h"
 
 class Camera
 {
@@ -32,8 +32,16 @@ public:
 	DirectX::XMMATRIX GetProjXM() const;
 	DirectX::XMMATRIX GetViewProjXM() const;
 
+	// 获取视口
+	D3D11_VIEWPORT GetViewPort() const;
+
+
 	// 设置视锥体
 	void SetFrustum(float fovY, float aspect, float nearZ, float farZ);
+
+	// 设置视口
+	void SetViewPort(const D3D11_VIEWPORT& viewPort);
+	void SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f);
 
 	// 更新观察矩阵
 	virtual void UpdateViewMatrix() = 0;
@@ -55,6 +63,9 @@ protected:
 	// 观察矩阵和透视投影矩阵
 	DirectX::XMFLOAT4X4 mView;
 	DirectX::XMFLOAT4X4 mProj;
+
+	// 当前视口
+	D3D11_VIEWPORT mViewPort;
 
 };
 

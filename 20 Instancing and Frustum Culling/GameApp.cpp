@@ -63,6 +63,7 @@ void GameApp::OnResize()
 	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 		mBasicFX.SetProjMatrix(mCamera->GetProjXM());
 	}
 }

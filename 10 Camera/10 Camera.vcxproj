@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="d3dApp.h" />
+    <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameTimer.h" />

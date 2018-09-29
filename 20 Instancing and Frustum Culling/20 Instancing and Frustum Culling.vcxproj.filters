@@ -66,6 +66,9 @@
     <ClInclude Include="Collision.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">

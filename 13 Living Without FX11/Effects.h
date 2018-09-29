@@ -1,6 +1,6 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
-#include <vector>
+
 #include <memory>
 #include "LightHelper.h"
 #include "RenderStates.h"

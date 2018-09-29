@@ -1,8 +1,6 @@
 #ifndef GEOMETRY_H_
 #define GEOMETRY_H_
 
-#include <Windows.h>
-#include <vector>
 #include "Vertex.h"
 
 class Geometry

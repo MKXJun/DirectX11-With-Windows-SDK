@@ -114,5 +114,8 @@
     <ClInclude Include="Effects.h">
       <Filter>特效文件</Filter>
     </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

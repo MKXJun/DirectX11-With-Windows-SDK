@@ -2,12 +2,7 @@
 #define GAMEAPP_H
 
 #include <d3dcompiler.h>
-#include <directxmath.h>
-#include <DirectXColors.h>
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
 #include "d3dApp.h"
-#include "LightHelper.h"
 #include "Geometry.h"
 #include "Camera.h"
 #include "RenderStates.h"

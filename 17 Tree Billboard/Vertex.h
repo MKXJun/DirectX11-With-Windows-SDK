@@ -1,9 +1,8 @@
 #ifndef VERTEX_H
 #define VERTEX_H
 
-#include <d3d11_1.h>
-#include <DirectXMath.h>
-#include <wrl/client.h>
+#include "d3dUtil.h"
+
 struct VertexPosColor
 {
 	DirectX::XMFLOAT3 pos;
@@ -34,6 +33,5 @@ struct VertexPosSize
 	DirectX::XMFLOAT2 size;
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[2];
 };
-
 
 #endif

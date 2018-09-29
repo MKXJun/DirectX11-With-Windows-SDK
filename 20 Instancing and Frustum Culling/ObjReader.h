@@ -22,8 +22,6 @@
 #define OBJREADER_H
 
 #include <iostream>
-#include <vector>
-#include <string>
 #include <fstream>
 #include <unordered_map>
 #include <map>
@@ -53,7 +51,7 @@ public:
 	// 否则会读取.obj文件
 	// 若.obj文件被读取，且提供了.mbo文件的路径，则会根据已经读取的数据创建.mbo文件
 	bool Read(const wchar_t* mboFileName, const wchar_t* objFileName);
-	
+
 	bool ReadObj(const wchar_t* objFileName);
 	bool ReadMbo(const wchar_t* mboFileName);
 	bool WriteMbo(const wchar_t* mboFileName);

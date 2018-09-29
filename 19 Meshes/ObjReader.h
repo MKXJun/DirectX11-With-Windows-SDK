@@ -22,8 +22,6 @@
 #define OBJREADER_H
 
 #include <iostream>
-#include <vector>
-#include <string>
 #include <fstream>
 #include <unordered_map>
 #include <map>

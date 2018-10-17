@@ -36,5 +36,9 @@ Windows SDK版本：10.0.17134.0(最新版本)
 
 [CSDN](https://blog.csdn.net/x_jun96/article/details/80293670)
 
+## QQ群交流
+
+QQ群号：727623616
+
 
 

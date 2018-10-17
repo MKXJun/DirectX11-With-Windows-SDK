@@ -1,7 +1,8 @@
 更新记录
 
 2018/10/17 v18.0</br>
--添加项目Picking
+-添加项目Picking</br>
+-修正d3dUtil.h中HR宏的问题
 
 2018/9/29 v17.1</br>
 -添加d3dUtil.h</br>

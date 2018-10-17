@@ -157,7 +157,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 
 	ComPtr<ID3DBlob> blob;
 
-	//
+	// ******************
 	// 流输出分裂三角形
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\TriangleSO_VS.vso", L"HLSL\\TriangleSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -169,7 +169,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posColorLayout, ARRAYSIZE(posColorLayout),
 		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->triangleSOGS.GetAddressOf()));
 
-	//
+	// ******************
 	// 绘制分形三角形
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_VS.vso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -178,7 +178,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->trianglePS.GetAddressOf()));
 
 
-	//
+	// ******************
 	// 流输出分形球体
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\SphereSO_VS.vso", L"HLSL\\SphereSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -190,7 +190,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posNormalColorLayout, ARRAYSIZE(posNormalColorLayout),
 		&stridePosNormalColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->sphereSOGS.GetAddressOf()));
 
-	//
+	// ******************
 	// 绘制球体
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Sphere_VS.vso", L"HLSL\\Sphere_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -199,7 +199,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->spherePS.GetAddressOf()));
 
 
-	//
+	// ******************
 	// 流输出分形雪花
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\SnowSO_VS.vso", L"HLSL\\SnowSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -208,7 +208,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posColorLayout, ARRAYSIZE(posColorLayout),
 		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->snowSOGS.GetAddressOf()));
 
-	//
+	// ******************
 	// 绘制雪花
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Snow_VS.vso", L"HLSL\\Snow_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -217,7 +217,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowPS.GetAddressOf()));
 
 
-	//
+	// ******************
 	// 绘制法向量
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_VS.vso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));

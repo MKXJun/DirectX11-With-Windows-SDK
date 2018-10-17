@@ -141,7 +141,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 
 	ComPtr<ID3DBlob> blob;
 
-	//
+	// ******************
 	// 常规3D绘制
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\BasicObject_VS.vso", L"HLSL\\BasicObject_VS.hlsl", "VS_3D", "vs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -153,7 +153,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicObjectPS.GetAddressOf()));
 
 
-	//
+	// ******************
 	// 绘制公告板
 	//
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Billboard_VS.vso", L"HLSL\\Billboard_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));

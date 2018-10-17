@@ -43,8 +43,8 @@ struct Model
 	//
 
 	void SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
-	void SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD> indices);
-	void SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD> indices);
+	void SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices);
+	void SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices);
 	void SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex* vertices, UINT vertexCount,
 		const void * indices, UINT indexCount, DXGI_FORMAT indexFormat);
 

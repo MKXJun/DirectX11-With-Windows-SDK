@@ -5,6 +5,7 @@ DXTK/Bin
 DXTK/Lib
 .git/
 .vs/
+*.vcxproj.user
 *.cso
 *.vso
 *.pso

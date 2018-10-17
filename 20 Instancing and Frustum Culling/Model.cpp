@@ -100,13 +100,13 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData & mesh
 	SetMesh(device, meshData.vertexVec, meshData.indexVec);
 }
 
-void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD> indices)
+void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices)
 {
 	SetMesh(device, vertices.data(), (UINT)vertices.size(), indices.data(),
 		(UINT)indices.size(), DXGI_FORMAT_R16_UINT);
 }
 
-void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD> indices)
+void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices)
 {
 	SetMesh(device, vertices.data(), (UINT)vertices.size(), indices.data(),
 		(UINT)indices.size(), DXGI_FORMAT_R32_UINT);

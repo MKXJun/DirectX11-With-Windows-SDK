@@ -277,7 +277,7 @@ void GameApp::DrawScene()
 	mBasicObjectFX.SetShadowState(false);		// 阴影关闭
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 
-	//
+	// ******************
 	// 绘制Direct2D部分
 	//
 	md2dRenderTarget->BeginDraw();

@@ -209,7 +209,7 @@ void GameApp::DrawScene()
 	}
 
 
-	//
+	// ******************
 	// »æÖÆDirect2D²¿·Ö
 	//
 	md2dRenderTarget->BeginDraw();

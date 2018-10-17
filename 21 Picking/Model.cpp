@@ -1,4 +1,6 @@
 #include "Model.h"
+#include <DDSTextureLoader.h>
+#include <WICTextureLoader.h>
 
 using namespace DirectX;
 
@@ -9,6 +11,26 @@ Model::Model()
 Model::Model(ComPtr<ID3D11Device> device, const ObjReader & model)
 {
 	SetModel(device, model);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
+{
+	SetMesh(device, meshData);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices)
+{
+	SetMesh(device, vertices, indices);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices)
+{
+	SetMesh(device, vertices, indices);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vertices, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
+{
+	SetMesh(device, vertices, vertexCount, indices, indexCount, indexFormat);
 }
 
 void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
@@ -119,6 +141,10 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vert
 	modelParts[0].vertexCount = vertexCount;
 	modelParts[0].indexCount = indexCount;
 	modelParts[0].indexFormat = indexFormat;
+
+	modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	modelParts[0].material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// …Ë÷√∂•µ„ª∫≥Â«¯√Ë ˆ
 	D3D11_BUFFER_DESC vbd;

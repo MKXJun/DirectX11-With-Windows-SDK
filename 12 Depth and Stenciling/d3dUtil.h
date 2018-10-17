@@ -21,10 +21,10 @@
 		DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
 	}                                                      \
 }
+#endif
 #else
 #ifndef HR
 #define HR(x) (x)
-#endif
 #endif 
 #endif
 

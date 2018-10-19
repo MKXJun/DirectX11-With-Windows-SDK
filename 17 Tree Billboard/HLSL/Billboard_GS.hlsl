@@ -37,7 +37,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
 
     // 对顶点位置进行矩阵变换，并以TriangleStrip形式输出
     BillboardVertex gOut;
-    row_major matrix viewProj = mul(gView, gProj);
+    matrix viewProj = mul(gView, gProj);
     [unroll]
     for (int i = 0; i < 4; ++i)
     {

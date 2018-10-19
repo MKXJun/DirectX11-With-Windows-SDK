@@ -11,6 +11,26 @@ Model::Model(ComPtr<ID3D11Device> device, const ObjReader & model)
 	SetModel(device, model);
 }
 
+Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
+{
+	SetMesh(device, meshData);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices)
+{
+	SetMesh(device, vertices, indices);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices)
+{
+	SetMesh(device, vertices, indices);
+}
+
+Model::Model(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vertices, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
+{
+	SetMesh(device, vertices, vertexCount, indices, indexCount, indexFormat);
+}
+
 void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 {
 	modelParts.resize(model.objParts.size());

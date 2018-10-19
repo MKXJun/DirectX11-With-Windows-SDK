@@ -41,7 +41,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新常量缓冲区，让立方体转起来
 	static float phi = 0.0f, theta = 0.0f;
 	phi += 0.00003f, theta += 0.00005f;
-	mCBuffer.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
+	mCBuffer.world = XMMatrixTranspose(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
 	md3dImmediateContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &mCBuffer, 0, 0);
 }
 
@@ -205,13 +205,13 @@ bool GameApp::InitResource()
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffer.GetAddressOf()));
 
 	// 初始化常量缓冲区的值
-	mCBuffer.world = XMMatrixIdentity();
-	mCBuffer.view = XMMatrixLookAtLH(
+	mCBuffer.world = XMMatrixIdentity();	// 单位矩阵的转置是它本身
+	mCBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-	);
-	mCBuffer.proj = XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f);
+	));
+	mCBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 
 
 	// ******************

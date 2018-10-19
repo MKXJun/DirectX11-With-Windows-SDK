@@ -96,8 +96,9 @@ void GameApp::UpdateScene(float dt)
 		// 更新常量缓冲区，让立方体转起来
 		static float phi = 0.0f, theta = 0.0f;
 		phi += 0.00003f, theta += 0.00005f;
-		mVSConstantBuffer.world = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
-		mVSConstantBuffer.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, mVSConstantBuffer.world));
+		XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
+		mVSConstantBuffer.world = XMMatrixTranspose(W);
+		mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &mVSConstantBuffer, 0, 0);
 	}
 	else if (mCurrMode == ShowMode::FireAnim)
@@ -261,12 +262,12 @@ bool GameApp::InitResource()
 
 	// 初始化用于VS的常量缓冲区的值
 	mVSConstantBuffer.world = XMMatrixIdentity();			
-	mVSConstantBuffer.view = XMMatrixLookAtLH(
+	mVSConstantBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-	);
-	mVSConstantBuffer.proj = XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f);
+	));
+	mVSConstantBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 	mVSConstantBuffer.worldInvTranspose = XMMatrixIdentity();
 	
 	// 初始化用于PS的常量缓冲区的值

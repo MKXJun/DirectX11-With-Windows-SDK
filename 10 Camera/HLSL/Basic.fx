@@ -6,19 +6,19 @@ SamplerState samLinear : register(s0);
 
 cbuffer CBChangesEveryDrawing : register(b0)
 {
-	row_major matrix gWorld;
-	row_major matrix gWorldInvTranspose;
+	matrix gWorld;
+	matrix gWorldInvTranspose;
 }
 
 cbuffer CBChangesEveryFrame : register(b1)
 {
-	row_major matrix gView;
+	matrix gView;
 	float3 gEyePosW;
 }
 
 cbuffer CBChangesOnResize : register(b2)
 {
-	row_major matrix gProj;
+	matrix gProj;
 }
 
 cbuffer CBChangesRarely : register(b3)

@@ -6,10 +6,10 @@ SamplerState samLinear : register(s0);
 
 cbuffer VSConstantBuffer : register(b0)
 {
-    row_major matrix gWorld; 
-    row_major matrix gView;  
-    row_major matrix gProj;  
-    row_major matrix gWorldInvTranspose;
+    matrix gWorld; 
+    matrix gView;  
+    matrix gProj;  
+    matrix gWorldInvTranspose;
 }
 
 cbuffer PSConstantBuffer : register(b1)

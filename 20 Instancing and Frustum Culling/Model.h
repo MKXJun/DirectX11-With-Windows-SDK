@@ -28,10 +28,14 @@ struct Model
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
-	
+
 	Model();
 	Model(ComPtr<ID3D11Device> device, const ObjReader& model);
-
+	Model(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
+	Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices);
+	Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices);
+	Model(ComPtr<ID3D11Device> device, const VertexPosNormalTex* vertices, UINT vertexCount,
+		const void * indices, UINT indexCount, DXGI_FORMAT indexFormat);
 	//
 	// 设置模型
 	//

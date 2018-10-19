@@ -7,8 +7,8 @@ SamplerState sam : register(s0);
 
 cbuffer CBChangesEveryObjectDrawing : register(b0)
 {
-    row_major matrix gWorld;
-    row_major matrix gWorldInvTranspose;
+    matrix gWorld;
+    matrix gWorldInvTranspose;
 }
 
 cbuffer CBChangesEveryInstanceDrawing : register(b1)
@@ -24,14 +24,14 @@ cbuffer CBDrawingStates : register(b2)
 
 cbuffer CBChangesEveryFrame : register(b3)
 {
-    row_major matrix gView;
+    matrix gView;
     float3 gEyePosW;
     float gPad2;
 }
 
 cbuffer CBChangesOnResize : register(b4)
 {
-    row_major matrix gProj;
+    matrix gProj;
 }
 
 cbuffer CBChangesRarely : register(b5)
@@ -61,8 +61,8 @@ struct InstancePosNormalTex
     float3 PosL : POSITION;
     float3 NormalL : NORMAL;
     float2 Tex : TEXCOORD;
-    row_major matrix World : World;
-    row_major matrix WorldInvTranspose : WorldInvTranspose;
+    matrix World : World;
+    matrix WorldInvTranspose : WorldInvTranspose;
 };
 
 

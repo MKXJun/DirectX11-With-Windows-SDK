@@ -221,31 +221,31 @@ void BasicObjectFX::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
 void XM_CALLCONV BasicObjectFX::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->cbFrame;
-	cBuffer.data.world = W;
-	cBuffer.data.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
+	cBuffer.data.world = XMMatrixTranspose(W);
+	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicObjectFX::SetViewMatrix(FXMMATRIX V)
 {
 	auto& cBuffer = pImpl->cbRarely;
-	cBuffer.data.view = V;
+	cBuffer.data.view = XMMatrixTranspose(V);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicObjectFX::SetProjMatrix(FXMMATRIX P)
 {
 	auto& cBuffer = pImpl->cbOnResize;
-	cBuffer.data.proj = P;
+	cBuffer.data.proj = XMMatrixTranspose(P);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
 {
-	pImpl->cbFrame.data.world = W;
-	pImpl->cbFrame.data.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
-	pImpl->cbRarely.data.view = V;
-	pImpl->cbOnResize.data.proj = P;
+	pImpl->cbFrame.data.world = XMMatrixTranspose(W);
+	pImpl->cbFrame.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
+	pImpl->cbRarely.data.view = XMMatrixTranspose(V);
+	pImpl->cbOnResize.data.proj = XMMatrixTranspose(P);
 
 	auto& pCBuffers = pImpl->cBufferPtrs;
 	pCBuffers[0]->isDirty = pCBuffers[1]->isDirty = pCBuffers[2]->isDirty = true;

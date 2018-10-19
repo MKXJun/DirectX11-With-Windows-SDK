@@ -6,8 +6,8 @@ SamplerState samLinear : register(s0);
 
 cbuffer CBChangesEveryDrawing : register(b0)
 {
-	row_major matrix gWorld;
-	row_major matrix gWorldInvTranspose;
+	matrix gWorld;
+	matrix gWorldInvTranspose;
 	Material gMaterial;
 }
 
@@ -18,18 +18,18 @@ cbuffer CBDrawingStates : register(b1)
 
 cbuffer CBChangesEveryFrame : register(b2)
 {
-	row_major matrix gView;
+	matrix gView;
 	float3 gEyePosW;
 }
 
 cbuffer CBChangesOnResize : register(b3)
 {
-	row_major matrix gProj;
+	matrix gProj;
 }
 
 cbuffer CBChangesRarely : register(b4)
 {
-    row_major matrix gReflection;
+    matrix gReflection;
 	DirectionalLight gDirLight[10];
 	PointLight gPointLight[10];
 	SpotLight gSpotLight[10];

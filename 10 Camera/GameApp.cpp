@@ -62,7 +62,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mCBOnReSize.proj = mCamera->GetProjXM();
+		mCBOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
 	}
@@ -134,7 +134,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetViewXM();
+	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -372,12 +372,12 @@ bool GameApp::InitResource()
 	mCamera = camera;
 	
 	camera->LookAt(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
-	mCBFrame.view = mCamera->GetViewXM();
+	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBOnReSize.proj = mCamera->GetProjXM();
+	mCBOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
 
 	// 初始化不会变化的值
 	// 环境光
@@ -502,8 +502,11 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
 	CBChangesEveryDrawing cbDrawing;
-	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
-	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
+
+	// 内部进行转置，这样外部就不需要提前转置了
+	XMMATRIX W = XMLoadFloat4x4(&mWorldMatrix);
+	cbDrawing.world = XMMatrixTranspose(W);
+	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, mTexture.GetAddressOf());

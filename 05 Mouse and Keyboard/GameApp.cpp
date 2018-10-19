@@ -69,7 +69,7 @@ void GameApp::UpdateScene(float dt)
 		cubeTheta -= dt * 2;
 
 
-	mCBuffer.world = XMMatrixRotationY(cubeTheta) * XMMatrixRotationX(cubePhi);
+	mCBuffer.world = XMMatrixTranspose(XMMatrixRotationY(cubeTheta) * XMMatrixRotationX(cubePhi));
 	md3dImmediateContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &mCBuffer, 0, 0);
 }
 
@@ -234,12 +234,12 @@ bool GameApp::InitResource()
 
 	// 初始化常量缓冲区的值
 	mCBuffer.world = XMMatrixIdentity();
-	mCBuffer.view = XMMatrixLookAtLH(
+	mCBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
-	);
-	mCBuffer.proj = XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f);
+	));
+	mCBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源

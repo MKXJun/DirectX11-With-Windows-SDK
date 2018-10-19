@@ -2,13 +2,13 @@
 
 cbuffer CBChangesEveryFrame : register(b0)
 {
-    row_major matrix gWorld;
-    row_major matrix gWorldInvTranspose;
+    matrix gWorld;
+    matrix gWorldInvTranspose;
 }
 
 cbuffer CBChangesOnResize : register(b1)
 {
-    row_major matrix gProj;
+    matrix gProj;
 }
 
 cbuffer CBChangesRarely : register(b2)
@@ -17,7 +17,7 @@ cbuffer CBChangesRarely : register(b2)
     PointLight gPointLight[5];
     SpotLight gSpotLight[5];
     Material gMaterial;
-    row_major matrix gView;
+    matrix gView;
     float3 gEyePosW;
     float gCylinderHeight;
 }

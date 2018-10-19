@@ -64,7 +64,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mCBChangesOnReSize.proj = mCamera->GetProjXM();
+		mCBChangesOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
 		md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
 	}
@@ -141,7 +141,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
-	mCBFrame.view = mCamera->GetViewXM();
+	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -493,15 +493,15 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
-	mCBFrame.view = mCamera->GetViewXM();
+	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
 	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = mCamera->GetProjXM();
+	mCBChangesOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
 
 	// 初始化不会变化的值
-	mCBRarely.reflection = XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f));
+	mCBRarely.reflection = XMMatrixTranspose(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
 	// 环境光
 	mCBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mCBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -634,9 +634,10 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
+	XMMATRIX W = XMLoadFloat4x4(&mWorldMatrix);
 	CBChangesEveryDrawing cbDrawing;
-	cbDrawing.world = XMLoadFloat4x4(&mWorldMatrix);
-	cbDrawing.worldInvTranspose = XMMatrixTranspose(XMMatrixInverse(nullptr, cbDrawing.world));
+	cbDrawing.world = XMMatrixTranspose(W);
+	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);
 	cbDrawing.material = mMaterial;
 	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
 	// 设置纹理

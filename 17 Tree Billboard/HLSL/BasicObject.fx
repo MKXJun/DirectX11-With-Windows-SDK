@@ -7,14 +7,14 @@ SamplerState sam : register(s0);
 
 cbuffer CBChangesEveryDrawing : register(b0)
 {
-    row_major matrix gWorld;
-    row_major matrix gWorldInvTranspose;
+    matrix gWorld;
+    matrix gWorldInvTranspose;
     Material gMaterial;
 }
 
 cbuffer CBChangesEveryFrame : register(b1)
 {
-    row_major matrix gView;
+    matrix gView;
     float3 gEyePosW;
     float gPad;
 }
@@ -30,7 +30,7 @@ cbuffer CBDrawingStates : register(b2)
 
 cbuffer CBChangesOnResize : register(b3)
 {
-    row_major matrix gProj;
+    matrix gProj;
 }
 
 cbuffer CBChangesRarely : register(b4)
@@ -42,14 +42,14 @@ cbuffer CBChangesRarely : register(b4)
 
 
 
-struct Vertex3DIn
+struct VertexPosNormalTex
 {
     float3 PosL : POSITION;
     float3 NormalL : NORMAL;
     float2 Tex : TEXCOORD;
 };
 
-struct Vertex3DOut
+struct VertexPosHWNormalTex
 {
     float4 PosH : SV_POSITION;
     float3 PosW : POSITION; // 在世界中的位置

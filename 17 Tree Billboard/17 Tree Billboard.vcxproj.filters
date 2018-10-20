@@ -30,13 +30,13 @@
     <FxCompile Include="HLSL\Billboard_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject.fx">
+    <FxCompile Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject_PS.hlsl">
+    <FxCompile Include="HLSL\Basic_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject_VS.hlsl">
+    <FxCompile Include="HLSL\Basic_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>
@@ -76,7 +76,7 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicObjectFX.cpp">
+    <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>

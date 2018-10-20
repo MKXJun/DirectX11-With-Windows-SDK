@@ -1,4 +1,7 @@
 更新记录
+2018/10/20 v18.2</br>
+-将BasicFX和BasicObjectFX都更名为BasicEffect
+-将文件的.fx后缀改为.hlsli
 
 2018/10/19 v18.1</br>
 -优化着色器(减少汇编指令)

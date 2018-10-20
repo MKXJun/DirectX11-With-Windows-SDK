@@ -29,7 +29,7 @@ public:
 };
 
 
-class BasicFX : public IEffect
+class BasicEffect : public IEffect
 {
 public:
 	// 使用模板别名(C++11)简化类型名
@@ -38,18 +38,18 @@ public:
 
 	enum RenderType { RenderObject, RenderInstance };
 
-	BasicFX();
-	virtual ~BasicFX() override;
+	BasicEffect();
+	virtual ~BasicEffect() override;
 
-	BasicFX(BasicFX&& moveFrom);
-	BasicFX& operator=(BasicFX&& moveFrom);
+	BasicEffect(BasicEffect&& moveFrom);
+	BasicEffect& operator=(BasicEffect&& moveFrom);
 
 	// 获取单例
-	static BasicFX& Get();
+	static BasicEffect& Get();
 
 	
 
-	// 初始化Basix.fx所需资源并初始化渲染状态
+	// 初始化Basic.hlsli所需资源并初始化渲染状态
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 

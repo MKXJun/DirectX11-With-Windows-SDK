@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicObjectFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -64,7 +64,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
+		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -93,8 +93,8 @@ void GameApp::UpdateScene(float dt)
 	
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
-	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
+	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
+	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
 
@@ -114,11 +114,11 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
+	mBasicEffect.SetRenderDefault(md3dImmediateContext);
 	
-	mBasicObjectFX.Apply(md3dImmediateContext);
-	mGround.Draw(md3dImmediateContext, mBasicObjectFX);
-	mHouse.Draw(md3dImmediateContext, mBasicObjectFX);
+	mBasicEffect.Apply(md3dImmediateContext);
+	mGround.Draw(md3dImmediateContext, mBasicEffect);
+	mHouse.Draw(md3dImmediateContext, mBasicEffect);
 	
 
 	// ******************
@@ -170,8 +170,8 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
-	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
-	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
+	mBasicEffect.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicEffect.SetEyePos(camera->GetPositionXM());
 	
 	// ******************
 	// 初始化不会变化的值
@@ -183,7 +183,7 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	mBasicObjectFX.SetDirLight(0, dirLight);
+	mBasicEffect.SetDirLight(0, dirLight);
 	// 灯光
 	PointLight pointLight;
 	pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
@@ -192,7 +192,7 @@ bool GameApp::InitResource()
 	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
 	pointLight.Range = 30.0f;	
-	mBasicObjectFX.SetPointLight(0, pointLight);
+	mBasicEffect.SetPointLight(0, pointLight);
 
 	return true;
 }

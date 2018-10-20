@@ -1,4 +1,4 @@
-#include "Cube.fx"
+#include "Cube.hlsli"
 
 VertexOut VS(VertexIn pIn)
 {

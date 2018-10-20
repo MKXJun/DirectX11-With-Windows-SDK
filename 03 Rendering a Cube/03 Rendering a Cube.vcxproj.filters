@@ -52,13 +52,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Cube.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Cube_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Cube_VS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Cube.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

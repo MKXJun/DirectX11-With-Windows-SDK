@@ -40,17 +40,17 @@ struct CBChangesOnResize
 
 struct CBChangesRarely
 {
-	DirectionalLight dirLight[BasicFX::maxLights];
-	PointLight pointLight[BasicFX::maxLights];
-	SpotLight spotLight[BasicFX::maxLights];
+	DirectionalLight dirLight[BasicEffect::maxLights];
+	PointLight pointLight[BasicEffect::maxLights];
+	SpotLight spotLight[BasicEffect::maxLights];
 };
 
 
 //
-// BasicFX::Impl 需要先于BasicFX的定义
+// BasicEffect::Impl 需要先于BasicEffect的定义
 //
 
-class BasicFX::Impl : public AlignedType<BasicFX::Impl>
+class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 {
 public:
 	// 必须显式指定
@@ -90,47 +90,47 @@ public:
 };
 
 //
-// BasicFX
+// BasicEffect
 //
 
 namespace
 {
-	// BasicFX单例
-	static BasicFX * pInstance = nullptr;
+	// BasicEffect单例
+	static BasicEffect * pInstance = nullptr;
 }
 
-BasicFX::BasicFX()
+BasicEffect::BasicEffect()
 {
 	if (pInstance)
-		throw std::exception("BasicFX is a singleton!");
+		throw std::exception("BasicEffect is a singleton!");
 	pInstance = this;
-	pImpl = std::make_unique<BasicFX::Impl>();
+	pImpl = std::make_unique<BasicEffect::Impl>();
 }
 
-BasicFX::~BasicFX()
+BasicEffect::~BasicEffect()
 {
 }
 
-BasicFX::BasicFX(BasicFX && moveFrom)
+BasicEffect::BasicEffect(BasicEffect && moveFrom)
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-BasicFX & BasicFX::operator=(BasicFX && moveFrom)
+BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom)
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;
 }
 
-BasicFX & BasicFX::Get()
+BasicEffect & BasicEffect::Get()
 {
 	if (!pInstance)
-		throw std::exception("BasicFX needs an instance!");
+		throw std::exception("BasicEffect needs an instance!");
 	return *pInstance;
 }
 
 
-bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 {
 	if (!device)
 		return false;
@@ -200,7 +200,7 @@ bool BasicFX::InitAll(ComPtr<ID3D11Device> device)
 }
 
 
-void BasicFX::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type)
+void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type)
 {
 	if (type == RenderInstance)
 	{
@@ -225,7 +225,7 @@ void BasicFX::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, Render
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void XM_CALLCONV BasicFX::SetWorldMatrix(DirectX::FXMMATRIX W)
+void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->cbObjDrawing;
 	cBuffer.data.world = XMMatrixTranspose(W);
@@ -233,21 +233,21 @@ void XM_CALLCONV BasicFX::SetWorldMatrix(DirectX::FXMMATRIX W)
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicFX::SetViewMatrix(FXMMATRIX V)
+void XM_CALLCONV BasicEffect::SetViewMatrix(FXMMATRIX V)
 {
 	auto& cBuffer = pImpl->cbFrame;
 	cBuffer.data.view = XMMatrixTranspose(V);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicFX::SetProjMatrix(FXMMATRIX P)
+void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 {
 	auto& cBuffer = pImpl->cbOnResize;
 	cBuffer.data.proj = XMMatrixTranspose(P);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
+void XM_CALLCONV BasicEffect::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
 {
 	pImpl->cbObjDrawing.data.world = XMMatrixTranspose(W);
 	pImpl->cbObjDrawing.data.worldInvTranspose = XMMatrixInverse(nullptr, W);
@@ -259,59 +259,59 @@ void XM_CALLCONV BasicFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMA
 	pImpl->isDirty = true;
 }
 
-void BasicFX::SetDirLight(size_t pos, const DirectionalLight & dirLight)
+void BasicEffect::SetDirLight(size_t pos, const DirectionalLight & dirLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.dirLight[pos] = dirLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::SetPointLight(size_t pos, const PointLight & pointLight)
+void BasicEffect::SetPointLight(size_t pos, const PointLight & pointLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.pointLight[pos] = pointLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::SetSpotLight(size_t pos, const SpotLight & spotLight)
+void BasicEffect::SetSpotLight(size_t pos, const SpotLight & spotLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.spotLight[pos] = spotLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::SetMaterial(const Material & material)
+void BasicEffect::SetMaterial(const Material & material)
 {
 	auto& cBuffer = pImpl->cbInstDrawing;
 	cBuffer.data.material = material;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::SetTextureUsed(bool isUsed)
+void BasicEffect::SetTextureUsed(bool isUsed)
 {
 	auto& cBuffer = pImpl->cbStates;
 	cBuffer.data.textureUsed = isUsed;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture)
+void BasicEffect::SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture)
 {
 	pImpl->textureA = texture;
 }
 
-void BasicFX::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture)
+void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture)
 {
 	pImpl->textureD = texture;
 }
 
-void XM_CALLCONV BasicFX::SetEyePos(FXMVECTOR eyePos)
+void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
 {
 	auto& cBuffer = pImpl->cbFrame;
 	cBuffer.data.eyePos = eyePos;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
 	// 将缓冲区绑定到渲染管线上
@@ -343,11 +343,11 @@ void BasicFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 }
 
 //
-// BasicFX::Impl实现部分
+// BasicEffect::Impl实现部分
 //
 
 
-HRESULT BasicFX::Impl::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
+HRESULT BasicEffect::Impl::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 

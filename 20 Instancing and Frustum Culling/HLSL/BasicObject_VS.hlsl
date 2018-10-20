@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "Basic.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷
 VertexPosHWNormalTex VS(VertexPosNormalTex pIn)

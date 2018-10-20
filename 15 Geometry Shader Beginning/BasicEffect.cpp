@@ -24,9 +24,9 @@ struct CBChangesOnResize
 
 struct CBChangesRarely
 {
-	DirectionalLight dirLight[BasicObjectFX::maxLights];
-	PointLight pointLight[BasicObjectFX::maxLights];
-	SpotLight spotLight[BasicObjectFX::maxLights];
+	DirectionalLight dirLight[BasicEffect::maxLights];
+	PointLight pointLight[BasicEffect::maxLights];
+	SpotLight spotLight[BasicEffect::maxLights];
 	Material material;
 	DirectX::XMMATRIX view;
 	DirectX::XMFLOAT3 eyePos;
@@ -35,10 +35,10 @@ struct CBChangesRarely
 
 
 //
-// BasicObjectFX::Impl 需要先于BasicObjectFX的定义
+// BasicEffect::Impl 需要先于BasicEffect的定义
 //
 
-class BasicObjectFX::Impl : public AlignedType<BasicObjectFX::Impl>
+class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 {
 public:
 	// 必须显式指定
@@ -80,47 +80,47 @@ public:
 };
 
 //
-// BasicObjectFX
+// BasicEffect
 //
 
 namespace
 {
-	// BasicObjectFX单例
-	static BasicObjectFX * pInstance = nullptr;
+	// BasicEffect单例
+	static BasicEffect * pInstance = nullptr;
 }
 
-BasicObjectFX::BasicObjectFX()
+BasicEffect::BasicEffect()
 {
 	if (pInstance)
-		throw std::exception("BasicObjectFX is a singleton!");
+		throw std::exception("BasicEffect is a singleton!");
 	pInstance = this;
-	pImpl = std::make_unique<BasicObjectFX::Impl>();
+	pImpl = std::make_unique<BasicEffect::Impl>();
 }
 
-BasicObjectFX::~BasicObjectFX()
+BasicEffect::~BasicEffect()
 {
 }
 
-BasicObjectFX::BasicObjectFX(BasicObjectFX && moveFrom)
+BasicEffect::BasicEffect(BasicEffect && moveFrom)
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-BasicObjectFX & BasicObjectFX::operator=(BasicObjectFX && moveFrom)
+BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom)
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;
 }
 
-BasicObjectFX & BasicObjectFX::Get()
+BasicEffect & BasicEffect::Get()
 {
 	if (!pInstance)
-		throw std::exception("BasicObjectFX needs an instance!");
+		throw std::exception("BasicEffect needs an instance!");
 	return *pInstance;
 }
 
 
-bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 {
 	if (!device)
 		return false;
@@ -183,7 +183,7 @@ bool BasicObjectFX::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicObjectFX::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
@@ -194,7 +194,7 @@ void BasicObjectFX::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceC
 
 }
 
-void BasicObjectFX::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
@@ -205,7 +205,7 @@ void BasicObjectFX::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceCon
 
 }
 
-void BasicObjectFX::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
@@ -218,7 +218,7 @@ void BasicObjectFX::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
 
 
 
-void XM_CALLCONV BasicObjectFX::SetWorldMatrix(DirectX::FXMMATRIX W)
+void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->cbFrame;
 	cBuffer.data.world = XMMatrixTranspose(W);
@@ -226,21 +226,21 @@ void XM_CALLCONV BasicObjectFX::SetWorldMatrix(DirectX::FXMMATRIX W)
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicObjectFX::SetViewMatrix(FXMMATRIX V)
+void XM_CALLCONV BasicEffect::SetViewMatrix(FXMMATRIX V)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.view = XMMatrixTranspose(V);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicObjectFX::SetProjMatrix(FXMMATRIX P)
+void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 {
 	auto& cBuffer = pImpl->cbOnResize;
 	cBuffer.data.proj = XMMatrixTranspose(P);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
+void XM_CALLCONV BasicEffect::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
 {
 	pImpl->cbFrame.data.world = XMMatrixTranspose(W);
 	pImpl->cbFrame.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
@@ -252,42 +252,42 @@ void XM_CALLCONV BasicObjectFX::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V,
 	pImpl->isDirty = true;
 }
 
-void BasicObjectFX::SetDirLight(size_t pos, const DirectionalLight & dirLight)
+void BasicEffect::SetDirLight(size_t pos, const DirectionalLight & dirLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.dirLight[pos] = dirLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicObjectFX::SetPointLight(size_t pos, const PointLight & pointLight)
+void BasicEffect::SetPointLight(size_t pos, const PointLight & pointLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.pointLight[pos] = pointLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicObjectFX::SetSpotLight(size_t pos, const SpotLight & spotLight)
+void BasicEffect::SetSpotLight(size_t pos, const SpotLight & spotLight)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.spotLight[pos] = spotLight;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicObjectFX::SetMaterial(const Material & material)
+void BasicEffect::SetMaterial(const Material & material)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.material = material;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicObjectFX::SetEyePos(FXMVECTOR eyePos)
+void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	XMStoreFloat3(&cBuffer.data.eyePos, eyePos);
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicObjectFX::SetCylinderHeight(float height)
+void BasicEffect::SetCylinderHeight(float height)
 {
 	auto& cBuffer = pImpl->cbRarely;
 	cBuffer.data.cylinderHeight = height;
@@ -296,7 +296,7 @@ void BasicObjectFX::SetCylinderHeight(float height)
 
 
 
-void BasicObjectFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
 	// 将缓冲区绑定到渲染管线上
@@ -324,11 +324,11 @@ void BasicObjectFX::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 }
 
 //
-// BasicObjectFX::Impl实现部分
+// BasicEffect::Impl实现部分
 //
 
 
-HRESULT BasicObjectFX::Impl::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
+HRESULT BasicEffect::Impl::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 

@@ -21,7 +21,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicObjectFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -65,7 +65,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
+		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	}
 
 }
@@ -122,8 +122,8 @@ void GameApp::UpdateScene(float dt)
 
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
-	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
+	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
+	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
 
 	// ******************
 	// 开关雾效
@@ -131,7 +131,7 @@ void GameApp::UpdateScene(float dt)
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
 		mFogEnabled = !mFogEnabled;
-		mBasicObjectFX.SetFogState(mFogEnabled);
+		mBasicEffect.SetFogState(mFogEnabled);
 	}
 
 	// ******************
@@ -143,14 +143,14 @@ void GameApp::UpdateScene(float dt)
 		if (mIsNight)
 		{
 			// 黑夜模式下变为逐渐黑暗
-			mBasicObjectFX.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
-			mBasicObjectFX.SetFogStart(5.0f);
+			mBasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+			mBasicEffect.SetFogStart(5.0f);
 		}
 		else
 		{
 			// 白天模式则对应雾效
-			mBasicObjectFX.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
-			mBasicObjectFX.SetFogStart(15.0f);
+			mBasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+			mBasicEffect.SetFogStart(15.0f);
 		}
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3))
@@ -169,7 +169,7 @@ void GameApp::UpdateScene(float dt)
 			mFogRange = 15.0f;
 		else if (mFogRange > 175.0f)
 			mFogRange = 175.0f;
-		mBasicObjectFX.SetFogRange(mFogRange);
+		mBasicEffect.SetFogRange(mFogRange);
 	}
 	
 
@@ -205,16 +205,16 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制地面
-	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
-	mGround.Draw(md3dImmediateContext, mBasicObjectFX);
+	mBasicEffect.SetRenderDefault(md3dImmediateContext);
+	mGround.Draw(md3dImmediateContext, mBasicEffect);
 
 	// 绘制树
-	mBasicObjectFX.SetRenderBillboard(md3dImmediateContext, mEnableAlphaToCoverage);
-	mBasicObjectFX.SetMaterial(mTreeMat);
+	mBasicEffect.SetRenderBillboard(md3dImmediateContext, mEnableAlphaToCoverage);
+	mBasicEffect.SetMaterial(mTreeMat);
 	UINT stride = sizeof(VertexPosSize);
 	UINT offset = 0;
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mPointSpritesBuffer.GetAddressOf(), &stride, &offset);
-	mBasicObjectFX.Apply(md3dImmediateContext);
+	mBasicEffect.Apply(md3dImmediateContext);
 	md3dImmediateContext->Draw(16, 0);
 
 	// ******************
@@ -259,7 +259,7 @@ bool GameApp::InitResource()
 			L"Texture\\tree1.dds",
 			L"Texture\\tree2.dds",
 			L"Texture\\tree3.dds"});
-	mBasicObjectFX.SetTextureArray(mTreeTexArray);
+	mBasicEffect.SetTextureArray(mTreeTexArray);
 
 	// 初始化点精灵缓冲区
 	InitPointSpritesBuffer();
@@ -297,7 +297,7 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicObjectFX.SetDirLight(i, dirLight[i]);
+		mBasicEffect.SetDirLight(i, dirLight[i]);
 
 	// ******************
 	// 初始化摄像机
@@ -313,8 +313,8 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
 
-	mBasicObjectFX.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
-	mBasicObjectFX.SetEyePos(camera->GetPositionXM());
+	mBasicEffect.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicEffect.SetEyePos(camera->GetPositionXM());
 
 	// ******************
 	// 初始化雾效和天气等
@@ -328,10 +328,10 @@ bool GameApp::InitResource()
 	mFogEnabled = 1;
 	mFogRange = 75.0f;
 
-	mBasicObjectFX.SetFogState(mFogEnabled);
-	mBasicObjectFX.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
-	mBasicObjectFX.SetFogStart(15.0f);
-	mBasicObjectFX.SetFogRange(75.0f);
+	mBasicEffect.SetFogState(mFogEnabled);
+	mBasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+	mBasicEffect.SetFogStart(15.0f);
+	mBasicEffect.SetFogRange(75.0f);
 
 	
 	

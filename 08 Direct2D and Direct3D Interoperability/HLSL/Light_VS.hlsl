@@ -1,4 +1,4 @@
-#include "Light.fx"
+#include "Light.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷
 VertexOut VS(VertexIn pIn)

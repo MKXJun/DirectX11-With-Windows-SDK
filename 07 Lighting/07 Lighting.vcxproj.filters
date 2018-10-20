@@ -61,13 +61,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Light.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Light_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Light_VS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Light.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

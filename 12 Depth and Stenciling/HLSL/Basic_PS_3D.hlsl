@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "Basic.hlsli"
 
 // ÏñËØ×ÅÉ«Æ÷(3D)
 float4 PS_3D(VertexOut pIn) : SV_Target

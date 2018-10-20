@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicObjectFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -64,7 +64,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
+		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -138,8 +138,8 @@ void GameApp::UpdateScene(float dt)
 
 	// 更新观察矩阵
 	mCamera->UpdateViewMatrix();
-	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
-	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
+	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
+	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 
 	// 重置滚轮值
 	mMouse->ResetScrollWheelValue();
@@ -214,35 +214,35 @@ void GameApp::DrawScene()
 	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
-	mBasicObjectFX.SetWriteStencilOnly(md3dImmediateContext, 1);
-	mMirror.Draw(md3dImmediateContext, mBasicObjectFX);
+	mBasicEffect.SetWriteStencilOnly(md3dImmediateContext, 1);
+	mMirror.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ***********************
 	// 2. 绘制不透明的反射物体
 	//
 
 	// 开启反射绘制
-	mBasicObjectFX.SetReflectionState(true);
-	mBasicObjectFX.SetRenderDefaultWithStencil(md3dImmediateContext, 1);
+	mBasicEffect.SetReflectionState(true);
+	mBasicEffect.SetRenderDefaultWithStencil(md3dImmediateContext, 1);
 
-	mWalls[2].Draw(md3dImmediateContext, mBasicObjectFX);
-	mWalls[3].Draw(md3dImmediateContext, mBasicObjectFX);
-	mWalls[4].Draw(md3dImmediateContext, mBasicObjectFX);
-	mFloor.Draw(md3dImmediateContext, mBasicObjectFX);
-	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
+	mWalls[2].Draw(md3dImmediateContext, mBasicEffect);
+	mWalls[3].Draw(md3dImmediateContext, mBasicEffect);
+	mWalls[4].Draw(md3dImmediateContext, mBasicEffect);
+	mFloor.Draw(md3dImmediateContext, mBasicEffect);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ***********************
 	// 3. 绘制不透明反射物体的阴影
 	//
 
 	mWoodCrate.SetMaterial(mShadowMat);
-	mBasicObjectFX.SetShadowState(true);	// 反射开启，阴影开启			
-	mBasicObjectFX.SetRenderNoDoubleBlend(md3dImmediateContext, 1);
+	mBasicEffect.SetShadowState(true);	// 反射开启，阴影开启			
+	mBasicEffect.SetRenderNoDoubleBlend(md3dImmediateContext, 1);
 
-	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicEffect);
 
 	// 恢复到原来的状态
-	mBasicObjectFX.SetShadowState(false);
+	mBasicEffect.SetShadowState(false);
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 	
 	// ***********************
@@ -250,31 +250,31 @@ void GameApp::DrawScene()
 	//
 
 	// 关闭反射绘制
-	mBasicObjectFX.SetReflectionState(false);
-	mBasicObjectFX.SetRenderAlphaBlendWithStencil(md3dImmediateContext, 1);
+	mBasicEffect.SetReflectionState(false);
+	mBasicEffect.SetRenderAlphaBlendWithStencil(md3dImmediateContext, 1);
 
-	mMirror.Draw(md3dImmediateContext, mBasicObjectFX);
+	mMirror.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ************************
 	// 5. 绘制不透明的正常物体
 	//
-	mBasicObjectFX.SetRenderDefault(md3dImmediateContext);
+	mBasicEffect.SetRenderDefault(md3dImmediateContext);
 
 	for (auto& wall : mWalls)
-		wall.Draw(md3dImmediateContext, mBasicObjectFX);
-	mFloor.Draw(md3dImmediateContext, mBasicObjectFX);
-	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
+		wall.Draw(md3dImmediateContext, mBasicEffect);
+	mFloor.Draw(md3dImmediateContext, mBasicEffect);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ************************
 	// 6. 绘制不透明正常物体的阴影
 	//
 	mWoodCrate.SetMaterial(mShadowMat);
-	mBasicObjectFX.SetShadowState(true);	// 反射关闭，阴影开启
-	mBasicObjectFX.SetRenderNoDoubleBlend(md3dImmediateContext, 0);
+	mBasicEffect.SetShadowState(true);	// 反射关闭，阴影开启
+	mBasicEffect.SetRenderNoDoubleBlend(md3dImmediateContext, 0);
 
-	mWoodCrate.Draw(md3dImmediateContext, mBasicObjectFX);
+	mWoodCrate.Draw(md3dImmediateContext, mBasicEffect);
 
-	mBasicObjectFX.SetShadowState(false);		// 阴影关闭
+	mBasicEffect.SetShadowState(false);		// 阴影关闭
 	mWoodCrate.SetMaterial(mWoodCrateMat);
 
 	// ******************
@@ -384,20 +384,20 @@ bool GameApp::InitResource()
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
 	
-	mBasicObjectFX.SetViewMatrix(mCamera->GetViewXM());
-	mBasicObjectFX.SetEyePos(mCamera->GetPositionXM());
+	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
+	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mBasicObjectFX.SetProjMatrix(mCamera->GetProjXM());
+	mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 
 	// ******************
 	// 初始化不会变化的值
 	//
 
-	mBasicObjectFX.SetReflectionMatrix(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
+	mBasicEffect.SetReflectionMatrix(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
 	// 稍微高一点位置以显示阴影
-	mBasicObjectFX.SetShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f)));
-	mBasicObjectFX.SetRefShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f)));
+	mBasicEffect.SetShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, -10.0f, 1.0f)));
+	mBasicEffect.SetRefShadowMatrix(XMMatrixShadow(XMVectorSet(0.0f, 1.0f, 0.0f, 0.99f), XMVectorSet(0.0f, 10.0f, 30.0f, 1.0f)));
 
 	// 环境光
 	DirectionalLight dirLight;
@@ -405,7 +405,7 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	mBasicObjectFX.SetDirLight(0, dirLight);
+	mBasicEffect.SetDirLight(0, dirLight);
 	// 灯光
 	PointLight pointLight;
 	pointLight.Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
@@ -414,7 +414,7 @@ bool GameApp::InitResource()
 	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
 	pointLight.Range = 25.0f;
-	mBasicObjectFX.SetPointLight(0, pointLight);
+	mBasicEffect.SetPointLight(0, pointLight);
 
 	return true;
 }

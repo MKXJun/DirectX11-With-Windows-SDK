@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 float4 PS(BillboardVertex pIn) : SV_Target
 {

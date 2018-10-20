@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 // ÏñËØ×ÅÉ«Æ÷(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target

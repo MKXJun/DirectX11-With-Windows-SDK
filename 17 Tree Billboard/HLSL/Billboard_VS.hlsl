@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 PointSprite VS(PointSprite pIn)
 {

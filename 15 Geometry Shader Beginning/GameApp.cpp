@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicObjectFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -60,7 +60,7 @@ void GameApp::OnResize()
 		mTextFormat.GetAddressOf()));
 	
 	// 更新投影矩阵
-	mBasicObjectFX.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
+	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	
 }
 
@@ -78,13 +78,13 @@ void GameApp::UpdateScene(float dt)
 	// 更新每帧变化的值
 	if (mShowMode == Mode::SplitedTriangle)
 	{
-		mBasicObjectFX.SetWorldMatrix(XMMatrixIdentity());
+		mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	}
 	else
 	{
 		static float phi = 0.0f, theta = 0.0f;
 		phi += 0.2f * dt, theta += 0.3f * dt;
-		mBasicObjectFX.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
+		mBasicEffect.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
 	}
 
 	// 切换显示模式
@@ -96,7 +96,7 @@ void GameApp::UpdateScene(float dt)
 		UINT stride = sizeof(VertexPosColor);		// 跨越字节数
 		UINT offset = 0;							// 起始偏移量
 		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		mBasicObjectFX.SetRenderSplitedTriangle(md3dImmediateContext);
+		mBasicEffect.SetRenderSplitedTriangle(md3dImmediateContext);
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
@@ -106,7 +106,7 @@ void GameApp::UpdateScene(float dt)
 		UINT stride = sizeof(VertexPosNormalColor);		// 跨越字节数
 		UINT offset = 0;								// 起始偏移量
 		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		mBasicObjectFX.SetRenderCylinderNoCap(md3dImmediateContext);
+		mBasicEffect.SetRenderCylinderNoCap(md3dImmediateContext);
 	}
 
 	// 显示法向量
@@ -129,16 +129,16 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 应用常量缓冲区的变化
-	mBasicObjectFX.Apply(md3dImmediateContext);
+	mBasicEffect.Apply(md3dImmediateContext);
 	md3dImmediateContext->Draw(mVertexCount, 0);
 	// 绘制法向量，绘制完后记得归位
 	if (mShowMode == Mode::CylinderNoCapWithNormal)
 	{
-		mBasicObjectFX.SetRenderNormal(md3dImmediateContext);
+		mBasicEffect.SetRenderNormal(md3dImmediateContext);
 		// 应用常量缓冲区的变化
-		mBasicObjectFX.Apply(md3dImmediateContext);
+		mBasicEffect.Apply(md3dImmediateContext);
 		md3dImmediateContext->Draw(mVertexCount, 0);
-		mBasicObjectFX.SetRenderCylinderNoCap(md3dImmediateContext);
+		mBasicEffect.SetRenderCylinderNoCap(md3dImmediateContext);
 	}
 
 
@@ -183,17 +183,17 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
-	mBasicObjectFX.SetDirLight(0, dirLight);
+	mBasicEffect.SetDirLight(0, dirLight);
 	// 材质
 	Material material;
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
-	mBasicObjectFX.SetMaterial(material);
+	mBasicEffect.SetMaterial(material);
 	// 摄像机位置
-	mBasicObjectFX.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
+	mBasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
 	// 矩阵
-	mBasicObjectFX.SetWorldViewProjMatrix(
+	mBasicEffect.SetWorldViewProjMatrix(
 		XMMatrixIdentity(),
 		XMMatrixLookAtLH(
 			XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
@@ -202,7 +202,7 @@ bool GameApp::InitResource()
 		XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f)
 	);
 	// 圆柱高度
-	mBasicObjectFX.SetCylinderHeight(2.0f);
+	mBasicEffect.SetCylinderHeight(2.0f);
 
 
 
@@ -212,7 +212,7 @@ bool GameApp::InitResource()
 	UINT offset = 0;							// 起始偏移量
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
 	// 设置默认渲染状态
-	mBasicObjectFX.SetRenderSplitedTriangle(md3dImmediateContext);
+	mBasicEffect.SetRenderSplitedTriangle(md3dImmediateContext);
 
 
 	return true;

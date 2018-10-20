@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷(3D)
 Vertex3DOut VS_3D(Vertex3DIn pIn)

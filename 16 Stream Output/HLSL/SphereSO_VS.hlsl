@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 VertexPosNormalColor VS(VertexPosNormalColor pIn)
 {

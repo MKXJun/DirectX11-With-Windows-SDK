@@ -1,4 +1,4 @@
-#include "Triangle.fx"
+#include "Triangle.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷
 VertexOut VS(VertexIn pIn)

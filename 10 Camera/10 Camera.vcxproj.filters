@@ -73,9 +73,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Basic_PS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -86,6 +83,9 @@
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Basic_VS_3D.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

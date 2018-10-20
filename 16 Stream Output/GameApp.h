@@ -40,7 +40,7 @@ private:
 	bool mIsWireFrame;										// 是否为线框模式
 	bool mShowNormal;										// 是否显示法向量
 
-	BasicObjectFX mBasicObjectFX;							// 对象绘制特效管理类
+	BasicEffect mBasicEffect;							// 对象绘制特效管理类
 
 };
 

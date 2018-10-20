@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -64,7 +64,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicFX.SetProjMatrix(mCamera->GetProjXM());
+		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -119,9 +119,9 @@ void GameApp::UpdateScene(float dt)
 	cam1st->SetPosition(adjustedPos);
 
 	// 更新观察矩阵
-	mBasicFX.SetEyePos(mCamera->GetPositionXM());
+	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 	mCamera->UpdateViewMatrix();
-	mBasicFX.SetViewMatrix(mCamera->GetViewXM());
+	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
 
 	// ******************
 	// 视锥体裁剪开关
@@ -169,23 +169,23 @@ void GameApp::DrawScene()
 	if (mEnableInstancing)
 	{
 		// 硬件实例化绘制
-		mBasicFX.SetRenderDefault(md3dImmediateContext, BasicFX::RenderInstance);
-		mTrees.DrawInstanced(md3dImmediateContext, mBasicFX, refData);
+		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
+		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, refData);
 	}
 	else
 	{
 		// 遍历的形式逐个绘制
-		mBasicFX.SetRenderDefault(md3dImmediateContext, BasicFX::RenderObject);
+		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
 		for (FXMMATRIX mat : refData)
 		{
 			mTrees.SetWorldMatrix(mat);
-			mTrees.Draw(md3dImmediateContext, mBasicFX);
+			mTrees.Draw(md3dImmediateContext, mBasicEffect);
 		}
 	}
 
 	// 绘制地面
-	mBasicFX.SetRenderDefault(md3dImmediateContext, BasicFX::RenderObject);
-	mGround.Draw(md3dImmediateContext, mBasicFX);
+	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
+	mGround.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ******************
 	// 绘制Direct2D部分
@@ -237,8 +237,8 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
-	mBasicFX.SetViewMatrix(camera->GetViewXM());
-	mBasicFX.SetProjMatrix(camera->GetProjXM());
+	mBasicEffect.SetViewMatrix(camera->GetViewXM());
+	mBasicEffect.SetProjMatrix(camera->GetProjXM());
 
 	// ******************
 	// 初始化不会变化的值
@@ -257,7 +257,7 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicFX.SetDirLight(i, dirLight[i]);
+		mBasicEffect.SetDirLight(i, dirLight[i]);
 
 	return true;
 }

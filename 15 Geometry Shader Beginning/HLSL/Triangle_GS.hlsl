@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 [maxvertexcount(9)]
 void GS(triangle VertexPosHColor input[3], inout TriangleStream<VertexPosHColor> output)

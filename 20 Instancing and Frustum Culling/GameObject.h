@@ -54,9 +54,9 @@ public:
 	//
 	
 	// 绘制对象
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicFX& effect);
+	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 	// 绘制实例
-	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicFX & effect, const std::vector<DirectX::XMMATRIX>& data);
+	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
 
 private:
 	Model mModel;												// 模型

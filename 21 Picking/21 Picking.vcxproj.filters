@@ -110,7 +110,7 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicFX.cpp">
+    <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -120,9 +120,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Basic.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Basic_PS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -130,6 +127,9 @@
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\BasicObject_VS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

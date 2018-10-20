@@ -27,7 +27,7 @@ public:
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 	void SetWorldMatrix(DirectX::FXMMATRIX world);
 	// 绘制
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect);
+	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 private:
 	DirectX::XMFLOAT4X4 mWorldMatrix;				// 世界矩阵
 	Material mMaterial;								// 物体材质

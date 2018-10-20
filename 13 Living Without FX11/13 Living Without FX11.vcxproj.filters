@@ -51,7 +51,7 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicObjectFX.cpp">
+    <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -97,19 +97,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\BasicObject_PS_2D.hlsl">
+    <FxCompile Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject_PS_3D.hlsl">
+    <FxCompile Include="HLSL\Basic_PS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject.fx">
+    <FxCompile Include="HLSL\Basic_PS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject_VS_2D.hlsl">
+    <FxCompile Include="HLSL\Basic_VS_2D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\BasicObject_VS_3D.hlsl">
+    <FxCompile Include="HLSL\Basic_VS_3D.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

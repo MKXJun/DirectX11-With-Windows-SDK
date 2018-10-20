@@ -43,7 +43,7 @@ private:
 
 	std::wstring mPickedObjStr;								// 已经拾取的对象名
 
-	BasicFX mBasicFX;										// 对象渲染特效管理
+	BasicEffect mBasicEffect;										// 对象渲染特效管理
 	bool mEnableFrustumCulling;								// 视锥体裁剪开启
 	bool mEnableInstancing;									// 硬件实例化开启
 

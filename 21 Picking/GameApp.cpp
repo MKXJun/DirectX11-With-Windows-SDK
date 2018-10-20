@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	if (!mBasicFX.InitAll(md3dDevice))
+	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
 	if (!InitResource())
@@ -64,7 +64,7 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicFX.SetProjMatrix(mCamera->GetProjXM());
+		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	}
 }
 
@@ -148,15 +148,15 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制不需要纹理的模型
-	mBasicFX.SetTextureUsed(false);
-	mSphere.Draw(md3dImmediateContext, mBasicFX);
-	mCube.Draw(md3dImmediateContext, mBasicFX);
-	mCylinder.Draw(md3dImmediateContext, mBasicFX);
-	mTriangle.Draw(md3dImmediateContext, mBasicFX);
+	mBasicEffect.SetTextureUsed(false);
+	mSphere.Draw(md3dImmediateContext, mBasicEffect);
+	mCube.Draw(md3dImmediateContext, mBasicEffect);
+	mCylinder.Draw(md3dImmediateContext, mBasicEffect);
+	mTriangle.Draw(md3dImmediateContext, mBasicEffect);
 
 	// 绘制需要纹理的模型
-	mBasicFX.SetTextureUsed(true);
-	mHouse.Draw(md3dImmediateContext, mBasicFX);
+	mBasicEffect.SetTextureUsed(true);
+	mHouse.Draw(md3dImmediateContext, mBasicEffect);
 
 	// ******************
 	// 绘制Direct2D部分
@@ -220,8 +220,8 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	// 初始化并更新观察矩阵、投影矩阵(摄像机将被固定)
 	camera->UpdateViewMatrix();
-	mBasicFX.SetViewMatrix(camera->GetViewXM());
-	mBasicFX.SetProjMatrix(camera->GetProjXM());
+	mBasicEffect.SetViewMatrix(camera->GetViewXM());
+	mBasicEffect.SetProjMatrix(camera->GetProjXM());
 	
 
 	// ******************
@@ -234,10 +234,10 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 16.0f);
 	dirLight.Direction = XMFLOAT3(-0.707f, -0.707f, 0.707f);
-	mBasicFX.SetDirLight(0, dirLight);
+	mBasicEffect.SetDirLight(0, dirLight);
 
 	// 默认只按对象绘制
-	mBasicFX.SetRenderDefault(md3dImmediateContext, BasicFX::RenderObject);
+	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
 
 	return true;
 }

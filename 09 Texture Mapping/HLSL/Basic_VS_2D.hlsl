@@ -1,4 +1,4 @@
-#include "Basic.fx"
+#include "Basic.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷(2D)
 VertexOut VS_2D(VertexIn pIn)

@@ -38,7 +38,7 @@ public:
 
 
 	// 绘制对象
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect);
+	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 
 private:
 	Model mModel;												// 模型

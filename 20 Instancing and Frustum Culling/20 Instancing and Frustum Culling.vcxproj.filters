@@ -107,24 +107,24 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BasicFX.cpp">
-      <Filter>特效文件</Filter>
-    </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicEffect.cpp">
+      <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\BasicObject_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic.fx">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\BasicInstance_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\Basic_PS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

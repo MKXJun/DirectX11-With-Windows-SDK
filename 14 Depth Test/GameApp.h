@@ -40,7 +40,7 @@ private:
 	Material mShadowMat;									// 阴影材质
 	Material mWoodCrateMat;									// 木盒材质
 
-	BasicObjectFX mBasicObjectFX;							// 对象渲染特效管理
+	BasicEffect mBasicEffect;							// 对象渲染特效管理
 
 	std::shared_ptr<Camera> mCamera;						// 摄像机
 	CameraMode mCameraMode;									// 摄像机模式

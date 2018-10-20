@@ -47,7 +47,7 @@ private:
 
 	GameObject mGround;										// 地面
 	
-	BasicObjectFX mBasicObjectFX;							// 对象渲染特效管理
+	BasicEffect mBasicEffect;							// 对象渲染特效管理
 
 	CameraMode mCameraMode;									// 摄像机模式
 	std::shared_ptr<Camera> mCamera;						// 摄像机

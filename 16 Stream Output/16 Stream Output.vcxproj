@@ -119,7 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\BasicObject.fx">
+    <FxCompile Include="HLSL\Basic.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -405,7 +405,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BasicObjectFX.cpp" />
+    <ClCompile Include="BasicEffect.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="GameApp.cpp" />

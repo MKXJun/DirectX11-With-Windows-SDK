@@ -1,4 +1,4 @@
-#include "BasicObject.fx"
+#include "Basic.hlsli"
 
 [maxvertexcount(5)]
 void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)

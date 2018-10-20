@@ -53,7 +53,7 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 }
 
 
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicObjectFX& effect)
+void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {
 
 	UINT strides = sizeof(VertexPosNormalTex);

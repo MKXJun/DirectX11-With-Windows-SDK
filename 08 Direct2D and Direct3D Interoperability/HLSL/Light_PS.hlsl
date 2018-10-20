@@ -1,4 +1,4 @@
-#include "Light.fx"
+#include "Light.hlsli"
 
 // ÏñËØ×ÅÉ«Æ÷
 float4 PS(VertexOut pIn) : SV_Target

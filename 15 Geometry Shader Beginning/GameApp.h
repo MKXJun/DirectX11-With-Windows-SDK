@@ -37,7 +37,7 @@ private:
 	int mVertexCount;										// 顶点数目
 	Mode mShowMode;											// 当前显示模式
 
-	BasicObjectFX mBasicObjectFX;							// 对象渲染特效管理
+	BasicEffect mBasicEffect;							// 对象渲染特效管理
 
 };
 

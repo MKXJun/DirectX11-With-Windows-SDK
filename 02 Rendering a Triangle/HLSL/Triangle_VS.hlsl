@@ -1,10 +1,10 @@
 #include "Triangle.hlsli"
 
 // 顶点着色器
-VertexOut VS(VertexIn pIn)
+VertexOut VS(VertexIn vIn)
 {
-    VertexOut pOut;
-    pOut.posH = float4(pIn.pos, 1.0f);
-    pOut.color = pIn.color; // 这里alpha通道的值默认为1.0
-    return pOut;
+    VertexOut vOut;
+    vOut.posH = float4(vIn.pos, 1.0f);
+    vOut.color = vIn.color; // 这里alpha通道的值默认为1.0
+    return vOut;
 }

@@ -1,4 +1,5 @@
 #include "RenderStates.h"
+#include "d3dUtil.h"
 
 using namespace Microsoft::WRL;
 

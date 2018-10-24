@@ -1,7 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "d3dUtil.h"
+#include <d3d11_1.h>
+#include <DirectXMath.h>
 
 class Camera
 {

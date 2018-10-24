@@ -1,6 +1,6 @@
 #include "Basic.hlsli"
 
-VertexPosNormalColor VS(VertexPosNormalColor pIn)
+VertexPosNormalColor VS(VertexPosNormalColor vIn)
 {
-    return pIn;
+    return vIn;
 }

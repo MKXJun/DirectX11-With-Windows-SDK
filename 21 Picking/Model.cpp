@@ -1,6 +1,5 @@
 #include "Model.h"
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
+#include "d3dUtil.h"
 
 using namespace DirectX;
 
@@ -48,7 +47,7 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 		// 设置顶点缓冲区描述
 		D3D11_BUFFER_DESC vbd;
 		ZeroMemory(&vbd, sizeof(vbd));
-		vbd.Usage = D3D11_USAGE_DEFAULT;
+		vbd.Usage = D3D11_USAGE_IMMUTABLE;
 		vbd.ByteWidth = modelParts[i].vertexCount * (UINT)sizeof(VertexPosNormalTex);
 		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vbd.CPUAccessFlags = 0;
@@ -61,7 +60,7 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 		// 设置索引缓冲区描述
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
-		ibd.Usage = D3D11_USAGE_DEFAULT;
+		ibd.Usage = D3D11_USAGE_IMMUTABLE;
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.CPUAccessFlags = 0;
 		if (modelParts[i].vertexCount > 65535)
@@ -149,7 +148,7 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vert
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = modelParts[0].vertexCount * (UINT)sizeof(VertexPosNormalTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
@@ -162,7 +161,7 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vert
 	// 设置索引缓冲区描述
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
 	if (indexFormat == DXGI_FORMAT_R16_UINT)
 	{
 		ibd.ByteWidth = indexCount * (UINT)sizeof(WORD);

@@ -1,7 +1,5 @@
 #include "GameApp.h"
-#include <filesystem>
-#include <algorithm>
-
+#include "d3dUtil.h"
 using namespace DirectX;
 using namespace std::experimental;
 

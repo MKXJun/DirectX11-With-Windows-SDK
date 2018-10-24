@@ -1,8 +1,7 @@
 #include "Effects.h"
-#include "EffectHelper.h"
+#include "d3dUtil.h"
+#include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
 #include "Vertex.h"
-#include <d3dcompiler.h>
-#include <experimental/filesystem>
 using namespace DirectX;
 using namespace std::experimental;
 

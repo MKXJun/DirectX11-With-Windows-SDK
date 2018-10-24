@@ -1,6 +1,5 @@
 #include "GameApp.h"
-#include <filesystem>
-#include <algorithm>
+#include "d3dUtil.h"
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -317,7 +316,7 @@ void GameApp::ResetSplitedTriangle()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;
@@ -368,7 +367,7 @@ void GameApp::ResetSplitedSnow()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;
@@ -417,7 +416,7 @@ void GameApp::ResetSplitedSphere()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = (UINT)(vertices.size() * sizeof(VertexPosNormalColor));
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;

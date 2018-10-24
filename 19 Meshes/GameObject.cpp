@@ -1,9 +1,6 @@
 #include "GameObject.h"
-#include <filesystem>
-
+#include "d3dUtil.h"
 using namespace DirectX;
-using namespace Microsoft::WRL;
-using namespace std::experimental;
 
 GameObject::GameObject()
 {

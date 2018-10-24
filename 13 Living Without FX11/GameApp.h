@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 
+
 class GameApp : public D3DApp
 {
 public:

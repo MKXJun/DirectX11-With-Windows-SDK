@@ -1,7 +1,7 @@
 #include "Basic.hlsli"
 
-PointSprite VS(PointSprite pIn)
+PointSprite VS(PointSprite vIn)
 {
-    return pIn;
+    return vIn;
 }
 

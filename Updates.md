@@ -1,6 +1,14 @@
 更新记录
+2018/10/24 v18.3</br>
+-顶点/索引缓冲区的Usage改为D3D11_USAGE_IMMUTABLE</br>
+-顶点着色器变量名微调</br>
+-Vertex.h微调</br>
+-d3dUtil.h中的CreateDDSTexture2DArrayShaderResourceView更名为CreateDDSTexture2DArrayFromFile</br>
+-考虑到不使用预编译头，所有项目头文件结构大幅调整</br>
+-DXTK属性配置表微调</br>
+
 2018/10/20 v18.2</br>
--将BasicFX和BasicObjectFX都更名为BasicEffect
+-将BasicFX和BasicObjectFX都更名为BasicEffect</br>
 -将文件的.fx后缀改为.hlsli
 
 2018/10/19 v18.1</br>

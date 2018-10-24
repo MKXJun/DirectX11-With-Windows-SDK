@@ -1,7 +1,9 @@
 #ifndef RENDERSTATES_H
 #define RENDERSTATES_H
 
-#include "d3dUtil.h"
+#include <wrl/client.h>
+#include <d3d11_1.h>
+
 
 class RenderStates
 {

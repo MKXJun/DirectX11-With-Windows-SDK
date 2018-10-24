@@ -1,7 +1,6 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-#include <d3dcompiler.h>
 #include "d3dApp.h"
 
 class GameApp : public D3DApp
@@ -23,12 +22,7 @@ public:
 	void UpdateScene(float dt);
 	void DrawScene();
 
-	// objFileNameInOut为编译好的着色器二进制文件(.*so)，若有指定则优先寻找该文件并读取
-	// hlslFileName为着色器代码，若未找到着色器二进制文件则编译着色器代码
-	// 编译成功后，若指定了objFileNameInOut，则保存编译好的着色器二进制信息到该文件
-	// ppBlobOut输出着色器二进制信息
-	HRESULT CreateShaderFromFile(const WCHAR* objFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
-
+	
 private:
 	bool InitEffect();
 	bool InitResource();

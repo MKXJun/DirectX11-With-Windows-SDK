@@ -1,5 +1,5 @@
 //
-// 该头文件需要在包含特效类实现的源文件中使用，且必须晚于Effects.h包含
+// 该头文件需要在包含特效类实现的源文件中使用，且必须晚于Effects.h和d3dUtil.h包含
 // 
 
 #ifndef EFFECTHELPER_H

@@ -1,6 +1,8 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
+#include <DirectXCollision.h>
+#include <vector>
 #include "Vertex.h"
 #include "Camera.h"
 
@@ -25,8 +27,6 @@ struct Ray
 class Collision
 {
 public:
-	template<class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	// 线框顶点/索引数组
 	struct WireFrameData

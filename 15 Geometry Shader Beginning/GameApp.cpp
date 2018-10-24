@@ -1,7 +1,5 @@
 #include "GameApp.h"
-#include <filesystem>
-#include <algorithm>
-
+#include "d3dUtil.h"
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -235,7 +233,7 @@ void GameApp::ResetTriangle()
 	// …Ë÷√∂•µ„ª∫≥Â«¯√Ë ˆ
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
@@ -272,7 +270,7 @@ void GameApp::ResetRoundWire()
 	// …Ë÷√∂•µ„ª∫≥Â«¯√Ë ˆ
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;

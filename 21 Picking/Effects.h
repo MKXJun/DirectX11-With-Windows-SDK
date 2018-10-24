@@ -1,6 +1,5 @@
 #ifndef EFFECTS_H
 #define EFFECTS_H
-#include <vector>
 #include <memory>
 #include "LightHelper.h"
 #include "RenderStates.h"
@@ -47,7 +46,7 @@ public:
 
 	
 
-	// 初始化Basix.fx所需资源并初始化渲染状态
+	// 初始化Basic.fx所需资源并初始化渲染状态
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 

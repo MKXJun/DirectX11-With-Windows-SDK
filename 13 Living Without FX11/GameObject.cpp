@@ -1,7 +1,6 @@
 #include "GameObject.h"
-
+#include "d3dUtil.h"
 using namespace DirectX;
-using namespace Microsoft::WRL;
 
 GameObject::GameObject()
 	: mWorldMatrix(
@@ -27,7 +26,7 @@ void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData
 	// …Ë÷√∂•µ„ª∫≥Â«¯√Ë ˆ
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
@@ -42,7 +41,7 @@ void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData
 	mIndexCount = (int)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
 	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;

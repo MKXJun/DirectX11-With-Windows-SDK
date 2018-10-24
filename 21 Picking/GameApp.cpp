@@ -1,6 +1,5 @@
 #include "GameApp.h"
-#include <filesystem>
-#include <algorithm>
+#include "d3dUtil.h"
 
 using namespace DirectX;
 using namespace std::experimental;
@@ -175,10 +174,6 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
-	// 默认开启视锥体裁剪和硬件实例化
-	mEnableInstancing = true;
-	mEnableFrustumCulling = true;
-
 	// ******************
 	// 初始化游戏对象
 	//
@@ -209,7 +204,7 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化摄像机
 	//
-	mCameraMode = CameraMode::Free;
+	mCameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);

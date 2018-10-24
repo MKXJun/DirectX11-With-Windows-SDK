@@ -1,6 +1,4 @@
 #include "Camera.h"
-#include <Windows.h>
-#include <cmath>
 using namespace DirectX;
 
 Camera::Camera()
@@ -300,8 +298,7 @@ void ThirdPersonCamera::RotateX(float rad)
 
 void ThirdPersonCamera::RotateY(float rad)
 {
-	mTheta = fmod(mTheta - rad, XM_2PI);
-
+	mTheta = XMScalarModAngle(mTheta - rad);
 }
 
 void ThirdPersonCamera::Approach(float dist)

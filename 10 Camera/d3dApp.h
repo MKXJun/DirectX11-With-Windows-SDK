@@ -1,11 +1,12 @@
 #ifndef D3DAPP_H
 #define D3DAPP_H
 
-#include "d3dUtil.h"
+#include <wrl/client.h>
+#include <string>
 #include <d2d1.h>
 #include <dwrite.h>
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
+#include <d3d11_1.h>
+#include <DirectXMath.h>
 #include <Mouse.h>		// Mouse.h和Keyboard.h需要预先包含Windows.h
 #include <Keyboard.h>
 #include "GameTimer.h"

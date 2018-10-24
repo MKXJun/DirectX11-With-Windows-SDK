@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <DirectXCollision.h>
 #include "Effects.h"
 #include "ObjReader.h"
 #include "Geometry.h"

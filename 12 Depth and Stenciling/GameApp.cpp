@@ -1,7 +1,5 @@
 #include "GameApp.h"
-#include <filesystem>
-#include <algorithm>
-
+#include "d3dUtil.h"
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -299,48 +297,6 @@ void GameApp::DrawScene()
 	HR(mSwapChain->Present(0, 0));
 }
 
-HRESULT GameApp::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
-{
-	HRESULT hr = S_OK;
-
-	// 寻找是否有已经编译好的顶点着色器
-	if (objFileNameInOut && filesystem::exists(objFileNameInOut))
-	{
-		HR(D3DReadFileToBlob(objFileNameInOut, ppBlobOut));
-	}
-	else
-	{
-		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#ifdef _DEBUG
-		// 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
-		// 但仍然允许着色器进行优化操作
-		dwShaderFlags |= D3DCOMPILE_DEBUG;
-
-		// 在Debug环境下禁用优化以避免出现一些不合理的情况
-		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompileFromFile(hlslFileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, shaderModel,
-			dwShaderFlags, 0, ppBlobOut, errorBlob.GetAddressOf());
-		if (FAILED(hr))
-		{
-			if (errorBlob != nullptr)
-			{
-				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
-			}
-			return hr;
-		}
-
-		// 若指定了输出文件名，则将着色器二进制信息输出
-		if (objFileNameInOut)
-		{
-			HR(D3DWriteBlobToFile(*ppBlobOut, objFileNameInOut, FALSE));
-		}
-	}
-
-	return hr;
-}
-
 
 bool GameApp::InitEffect()
 {
@@ -576,7 +532,7 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
@@ -591,7 +547,7 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 	mIndexCount = (int)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_DEFAULT;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
 	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;

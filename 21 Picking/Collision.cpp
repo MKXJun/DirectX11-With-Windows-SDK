@@ -1,6 +1,5 @@
 #include "Collision.h"
 
-using namespace Microsoft::WRL;
 using namespace DirectX;
 
 Ray::Ray()

@@ -1,15 +1,15 @@
 #include "Basic.hlsli"
 
-VertexPosHWNormalColor VS(VertexPosNormalColor pIn)
+VertexPosHWNormalColor VS(VertexPosNormalColor vIn)
 {
-    VertexPosHWNormalColor pOut;
+    VertexPosHWNormalColor vOut;
     matrix viewProj = mul(gView, gProj);
-    float4 posW = mul(float4(pIn.PosL, 1.0f), gWorld);
+    float4 posW = mul(float4(vIn.PosL, 1.0f), gWorld);
 
-    pOut.PosH = mul(posW, viewProj);
-    pOut.PosW = posW.xyz;
-    pOut.NormalW = mul(pIn.NormalL, (float3x3) gWorldInvTranspose);
-    pOut.Color = pIn.Color;
-    return pOut;
+    vOut.PosH = mul(posW, viewProj);
+    vOut.PosW = posW.xyz;
+    vOut.NormalW = mul(vIn.NormalL, (float3x3) gWorldInvTranspose);
+    vOut.Color = vIn.Color;
+    return vOut;
 }
 

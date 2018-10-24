@@ -3,8 +3,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>..\DXTK\Inc;$(IncludePath)</IncludePath>
-    <LibraryPath>..\DXTK\Lib\$(PlatForm)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)DXTK\Inc;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)DXTK\Lib\$(PlatForm)\$(IntDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>

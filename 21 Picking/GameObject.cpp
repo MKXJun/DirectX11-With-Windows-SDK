@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "d3dUtil.h"
 using namespace DirectX;
 
 struct InstancedData

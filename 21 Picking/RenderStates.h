@@ -1,28 +1,8 @@
 #ifndef RENDERSTATES_H
 #define RENDERSTATES_H
 
-#include <d3d11_1.h>
 #include <wrl/client.h>
-#include "dxerr.h"
-
-// 移植过来的错误检查，该项目仅允许使用Unicode字符集
-#if defined(DEBUG) | defined(_DEBUG)
-#ifndef HR
-#define HR(x)                                              \
-{                                                          \
-	HRESULT hr = (x);                                      \
-	if(FAILED(hr))                                         \
-	{                                                      \
-		DXTrace(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
-	}                                                      \
-}
-#endif
-
-#else
-#ifndef HR
-#define HR(x) (x)
-#endif
-#endif 
+#include <d3d11_1.h>
 
 
 class RenderStates

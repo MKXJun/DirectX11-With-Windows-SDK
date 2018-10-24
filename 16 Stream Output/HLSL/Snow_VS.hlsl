@@ -1,10 +1,10 @@
 #include "Basic.hlsli"
 
-VertexPosHColor VS(VertexPosColor pIn)
+VertexPosHColor VS(VertexPosColor vIn)
 {
     matrix worldViewProj = mul(mul(gWorld, gView), gProj);
-    VertexPosHColor pOut;
-    pOut.Color = pIn.Color;
-    pOut.PosH = mul(float4(pIn.PosL, 1.0f), worldViewProj);
-    return pOut;
+    VertexPosHColor vOut;
+    vOut.Color = vIn.Color;
+    vOut.PosH = mul(float4(vIn.PosL, 1.0f), worldViewProj);
+    return vOut;
 }

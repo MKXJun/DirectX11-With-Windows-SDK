@@ -1,7 +1,10 @@
 #ifndef D3DAPP_H
 #define D3DAPP_H
 
-#include "d3dUtil.h"
+#include <wrl/client.h>
+#include <string>
+#include <d3d11_1.h>
+#include <DirectXMath.h>
 #include "GameTimer.h"
 
 // 添加所有要引用的库

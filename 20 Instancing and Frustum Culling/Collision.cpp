@@ -1,6 +1,5 @@
 #include "Collision.h"
 
-using namespace Microsoft::WRL;
 using namespace DirectX;
 
 Collision::WireFrameData Collision::CreateBoundingBox(const DirectX::BoundingBox & box, const DirectX::XMFLOAT4 & color)

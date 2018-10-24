@@ -1,8 +1,6 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#include <wrl/client.h>
-#include <D3D11_1.h>
 #include <DirectXCollision.h>
 #include <vector>
 #include "Vertex.h"
@@ -10,8 +8,6 @@
 class Collision
 {
 public:
-	template<class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	// 线框顶点/索引数组
 	struct WireFrameData

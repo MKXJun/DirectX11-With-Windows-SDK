@@ -1,5 +1,5 @@
 #include "d3dApp.h"
-#include <WindowsX.h>
+#include "d3dUtil.h"
 #include <sstream>
 
 namespace

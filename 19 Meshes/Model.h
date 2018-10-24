@@ -1,8 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <DDSTextureLoader.h>
-#include <WICTextureLoader.h>
+#include <DirectXCollision.h>
 #include "Effects.h"
 #include "ObjReader.h"
 #include "Geometry.h"

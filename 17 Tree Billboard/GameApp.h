@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 
+
 class GameApp : public D3DApp
 {
 public:
@@ -23,17 +24,6 @@ public:
 private:
 	bool InitResource();
 	void InitPointSpritesBuffer();
-
-	// 根据给定的DDS纹理文件集合，创建2D纹理数组
-	// 要求所有纹理的宽度和高度都一致
-	// 若maxMipMapSize为0，使用默认mipmap等级
-	// 否则，mipmap等级将不会超过maxMipMapSize
-	ComPtr<ID3D11ShaderResourceView> CreateDDSTexture2DArrayShaderResourceView(
-		ComPtr<ID3D11Device> device,
-		ComPtr<ID3D11DeviceContext> deviceContext,
-		const std::vector<std::wstring>& filenames,
-		int maxMipMapSize = 0);
-
 
 private:
 	

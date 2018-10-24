@@ -60,6 +60,9 @@
     <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">

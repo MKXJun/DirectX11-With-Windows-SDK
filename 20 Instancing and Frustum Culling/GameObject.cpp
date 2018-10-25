@@ -45,11 +45,14 @@ void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
-	vbd.ByteWidth = (UINT)count * sizeof(XMMATRIX) * 2;
+	vbd.ByteWidth = (UINT)count * sizeof(InstancedData);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 创建实例缓冲区
 	HR(device->CreateBuffer(&vbd, nullptr, mInstancedBuffer.ReleaseAndGetAddressOf()));
+
+	// 重新调整mCapacity
+	mCapacity = count;
 }
 
 
@@ -101,7 +104,6 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data)
 {
-	std::vector<XMMATRIX> acceptedData;
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
 	// 若传入的数据比实例缓冲区还大，需要重新分配

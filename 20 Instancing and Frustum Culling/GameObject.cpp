@@ -101,7 +101,6 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data)
 {
-	std::vector<XMMATRIX> acceptedData;
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
 	// 若传入的数据比实例缓冲区还大，需要重新分配
@@ -110,6 +109,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		ComPtr<ID3D11Device> device;
 		deviceContext->GetDevice(device.GetAddressOf());
 		ResizeBuffer(device, numInsts);
+		mCapacity *= 2;
 	}
 
 	HR(deviceContext->Map(mInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));

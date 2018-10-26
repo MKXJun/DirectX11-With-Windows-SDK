@@ -83,7 +83,7 @@ void GameApp::UpdateScene(float dt)
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
 	
-	if (mCameraMode == CameraMode::FirstPerson || mCameraMode == CameraMode::Free)
+	if (mCameraMode == CameraMode::Free)
 	{
 		// ********************
 		// 第一人称/自由摄像机的操作
@@ -91,33 +91,14 @@ void GameApp::UpdateScene(float dt)
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
-		{
-			if (mCameraMode == CameraMode::FirstPerson)
-				cam1st->Walk(dt * 3.0f);
-			else
-				cam1st->MoveForward(dt * 3.0f);
-		}
+			cam1st->MoveForward(dt * 3.0f);
 		if (keyState.IsKeyDown(Keyboard::S))
-		{
-			if (mCameraMode == CameraMode::FirstPerson)
-				cam1st->Walk(dt * -3.0f);
-			else
-				cam1st->MoveForward(dt * -3.0f);
-		}
+			cam1st->MoveForward(dt * -3.0f);
 		if (keyState.IsKeyDown(Keyboard::A))
 			cam1st->Strafe(dt * -3.0f);
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 将位置限制在[-8.9f, 8.9f]的区域内
-		// 不允许穿地
-		XMFLOAT3 adjustedPos;
-		XMStoreFloat3(&adjustedPos, cam1st->GetPositionXM());
-		cam1st->SetPosition(adjustedPos);
-
-		// 仅在第一人称模式移动箱子
-		if (mCameraMode == CameraMode::FirstPerson)
-			mWireFence.SetWorldMatrix(XMMatrixTranslation(adjustedPos.x, adjustedPos.y, adjustedPos.z));
 		// 视野旋转，防止开始的差值过大导致的突然旋转
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
@@ -501,6 +482,7 @@ bool GameApp::InitResource()
 	md3dImmediateContext->VSSetConstantBuffers(4, 1, mConstantBuffers[4].GetAddressOf());
 
 	md3dImmediateContext->PSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
+	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
 	md3dImmediateContext->PSSetConstantBuffers(2, 1, mConstantBuffers[2].GetAddressOf());
 	md3dImmediateContext->PSSetConstantBuffers(4, 1, mConstantBuffers[4].GetAddressOf());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);

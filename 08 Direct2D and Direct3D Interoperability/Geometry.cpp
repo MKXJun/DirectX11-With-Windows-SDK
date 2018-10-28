@@ -13,21 +13,22 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	// 放入顶端点
 	meshData.posVec.push_back(XMFLOAT3(0.0f, radius, 0.0f));
 	meshData.normalVec.push_back(XMFLOAT3(0.0f, 1.0f, 0.0f));
+
 	for (int i = 1; i < levels; ++i)
 	{
 		phi = per_phi * i;
-		for (int j = 0; j < slices; ++j)
+		// 需要slices + 1个顶点是因为 起点和终点需为同一点，但纹理坐标值不一致
+		for (int j = 0; j <= slices; ++j)
 		{
 			theta = per_theta * j;
 			x = radius * sinf(phi) * cosf(theta);
 			y = radius * cosf(phi);
 			z = radius * sinf(phi) * sinf(theta);
-			// 计算出局部坐标和法向量
+			// 计算出局部坐标、法向量和纹理坐标
 			XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
-			meshData.posVec.push_back(pos);
 			XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
+			meshData.posVec.push_back(pos);
 			meshData.normalVec.push_back(normal);
-
 		}
 	}
 	// 放入底端点
@@ -37,10 +38,10 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	// 逐渐放入索引
 	if (levels > 1)
 	{
-		for (int j = 1; j <= slices; ++j)
+		for (int j = 1; j <= slices + 1; ++j)
 		{
 			meshData.indexVec.push_back(0);
-			meshData.indexVec.push_back(j % slices + 1);
+			meshData.indexVec.push_back(j % (slices + 1) + 1);
 			meshData.indexVec.push_back(j);
 
 		}
@@ -49,16 +50,16 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 
 	for (int i = 1; i < levels - 1; ++i)
 	{
-		for (int j = 1; j <= slices; ++j)
+		for (int j = 1; j <= slices + 1; ++j)
 		{
 
-			meshData.indexVec.push_back((i - 1) * slices + j);
-			meshData.indexVec.push_back((i - 1) * slices + j % slices + 1);
-			meshData.indexVec.push_back(i * slices + j % slices + 1);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j % (slices + 1) + 1);
+			meshData.indexVec.push_back(i * (slices + 1) + j % (slices + 1) + 1);
 
-			meshData.indexVec.push_back(i * slices + j % slices + 1);
-			meshData.indexVec.push_back(i * slices + j);
-			meshData.indexVec.push_back((i - 1) * slices + j);
+			meshData.indexVec.push_back(i * (slices + 1) + j % (slices + 1) + 1);
+			meshData.indexVec.push_back(i * (slices + 1) + j);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j);
 
 		}
 
@@ -69,8 +70,8 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	{
 		for (int j = 1; j <= slices; ++j)
 		{
-			meshData.indexVec.push_back((levels - 2) * slices + j);
-			meshData.indexVec.push_back((levels - 2) * slices + j % slices + 1);
+			meshData.indexVec.push_back((levels - 2) * (slices + 1) + j);
+			meshData.indexVec.push_back((levels - 2) * (slices + 1) + j % (slices + 1) + 1);
 			meshData.indexVec.push_back((WORD)(meshData.posVec.size() - 1));
 		}
 	}
@@ -126,7 +127,7 @@ Geometry::MeshData Geometry::CreateBox(float width, float height, float depth)
 		meshData.normalVec[i + 16] = XMFLOAT3(0.0f, 0.0f, 1.0f);	// 背面
 		meshData.normalVec[i + 20] = XMFLOAT3(0.0f, 0.0f, -1.0f);	// 正面
 	}
-
+	
 	meshData.indexVec = {
 		0, 1, 2, 2, 3, 0,		// 顶面
 		4, 5, 6, 6, 7, 4,		// 底面
@@ -151,39 +152,39 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	meshData.posVec.push_back(XMFLOAT3(0.0f, h2, 0.0f));
 	meshData.normalVec.push_back(XMFLOAT3(0.0f, 1.0f, 0.0f));
 	// 放入顶端圆上各点
-	for (int i = 0; i < slices; ++i)
+	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		meshData.posVec.push_back(XMFLOAT3(cosf(theta), h2, sinf(theta)));
+		meshData.posVec.push_back(XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)));
 		meshData.normalVec.push_back(XMFLOAT3(0.0f, 1.0f, 0.0f));
 	}
 	// 逐渐放入索引
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec.push_back(offset);
-		meshData.indexVec.push_back(offset + i % slices + 1);
+		meshData.indexVec.push_back(offset + i % (slices + 1) + 1);
 		meshData.indexVec.push_back(offset + i);
 	}
 
 
+	// 放入底部圆上各点
+	for (int i = 0; i <= slices; ++i)
+	{
+		theta = i * per_theta;
+		meshData.posVec.push_back(XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)));
+		meshData.normalVec.push_back(XMFLOAT3(0.0f, -1.0f, 0.0f));
+	}
 	// 放入底端圆心
 	meshData.posVec.push_back(XMFLOAT3(0.0f, -h2, 0.0f));
 	meshData.normalVec.push_back(XMFLOAT3(0.0f, -1.0f, 0.0f));
-	// 放入底部圆上各点
-	for (int i = 0; i < slices; ++i)
-	{
-		theta = i * per_theta;
-		meshData.posVec.push_back(XMFLOAT3(cosf(theta), -h2, sinf(theta)));
-		meshData.normalVec.push_back(XMFLOAT3(0.0f, -1.0f, 0.0f));
 
-	}
 	// 逐渐放入索引
 	offset += slices + 1;
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec.push_back(offset);
 		meshData.indexVec.push_back(offset + i);
-		meshData.indexVec.push_back(offset + i % slices + 1);
+		meshData.indexVec.push_back(offset + i % (slices + 1) + 1);
 	}
 
 	return meshData;

@@ -3,8 +3,6 @@
 // 像素着色器(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
-	// 提前进行裁剪，对不符合要求的像素可以避免后续运算
-
     // 若不使用纹理，则使用默认白色
     float4 texColorA = float4(1.0f, 1.0f, 1.0f, 1.0f);
     float4 texColorD = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -13,6 +11,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     {
         texColorA = texA.Sample(sam, pIn.Tex);
         texColorD = texD.Sample(sam, pIn.Tex);
+        // 提前进行裁剪，对不符合要求的像素可以避免后续运算
         clip(texColorA.a - 0.1f);
         clip(texColorD.a - 0.1f);
     }

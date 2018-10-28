@@ -17,7 +17,8 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	for (int i = 1; i < levels; ++i)
 	{
 		phi = per_phi * i;
-		for (int j = 0; j < slices; ++j)
+		// 需要slices + 1个顶点是因为 起点和终点需为同一点，但纹理坐标值不一致
+		for (int j = 0; j <= slices; ++j)
 		{
 			theta = per_theta * j;
 			x = radius * sinf(phi) * cosf(theta);
@@ -35,10 +36,10 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	// 逐渐放入索引
 	if (levels > 1)
 	{
-		for (int j = 1; j <= slices; ++j)
+		for (int j = 1; j <= slices + 1; ++j)
 		{
 			meshData.indexVec.push_back(0);
-			meshData.indexVec.push_back(j % slices + 1);
+			meshData.indexVec.push_back(j % (slices + 1) + 1);
 			meshData.indexVec.push_back(j);
 			
 		}
@@ -47,16 +48,16 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 
 	for (int i = 1; i < levels - 1; ++i)
 	{
-		for (int j = 1; j <= slices; ++j)
+		for (int j = 1; j <= slices + 1; ++j)
 		{
 
-			meshData.indexVec.push_back((i - 1) * slices + j);
-			meshData.indexVec.push_back((i - 1) * slices + j % slices + 1);
-			meshData.indexVec.push_back(i * slices + j % slices + 1);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j % (slices + 1) + 1);
+			meshData.indexVec.push_back(i * (slices + 1) + j % (slices + 1) + 1);
 
-			meshData.indexVec.push_back(i * slices + j % slices + 1);
-			meshData.indexVec.push_back(i * slices + j);
-			meshData.indexVec.push_back((i - 1) * slices + j);
+			meshData.indexVec.push_back(i * (slices + 1) + j % (slices + 1) + 1);
+			meshData.indexVec.push_back(i * (slices + 1) + j);
+			meshData.indexVec.push_back((i - 1) * (slices + 1) + j);
 
 		}
 
@@ -67,8 +68,8 @@ Geometry::MeshData Geometry::CreateSphere(float radius, int levels, int slices)
 	{
 		for (int j = 1; j <= slices; ++j)
 		{
-			meshData.indexVec.push_back((levels - 2) * slices + j);
-			meshData.indexVec.push_back((levels - 2) * slices + j % slices + 1);
+			meshData.indexVec.push_back((levels - 2) * (slices + 1) + j);
+			meshData.indexVec.push_back((levels - 2) * (slices + 1) + j % (slices + 1) + 1);
 			meshData.indexVec.push_back((WORD)(meshData.vertexVec.size() - 1));
 		}
 	}
@@ -155,26 +156,26 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	// 放入顶端圆心
 	meshData.vertexVec.push_back({ XMFLOAT3(0.0f, h2, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.5f, 0.5f) });
 	// 放入顶端圆上各点
-	for (int i = 0; i < slices; ++i)
+	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		meshData.vertexVec.push_back({ XMFLOAT3(cosf(theta), h2, sinf(theta)), XMFLOAT3(0.0f, 1.0f, 0.0f),
+		meshData.vertexVec.push_back({ XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(0.0f, 1.0f, 0.0f),
 			XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) });
 	}
 	// 逐渐放入索引
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec.push_back(offset);
-		meshData.indexVec.push_back(offset + i % slices + 1);
+		meshData.indexVec.push_back(offset + i % (slices + 1) + 1);
 		meshData.indexVec.push_back(offset + i);
 	}
 
 
 	// 放入底部圆上各点
-	for (int i = 0; i < slices; ++i)
+	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		meshData.vertexVec.push_back({ XMFLOAT3(cosf(theta), -h2, sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
+		meshData.vertexVec.push_back({ XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
 			XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) });
 	}
 	// 放入底端圆心
@@ -186,7 +187,7 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	{
 		meshData.indexVec.push_back(offset);
 		meshData.indexVec.push_back(offset + i);
-		meshData.indexVec.push_back(offset + i % slices + 1);
+		meshData.indexVec.push_back(offset + i % (slices + 1) + 1);
 	}
 
 	return meshData;
@@ -229,6 +230,11 @@ Geometry::MeshData Geometry::CreateCylinderNoCap(float radius, float height, int
 	return meshData;
 }
 
+Geometry::MeshData Geometry::Create2DShow(const DirectX::XMFLOAT2 & center, const DirectX::XMFLOAT2 & scale)
+{
+	return Create2DShow(center.x, center.y, scale.x, scale.y);
+}
+
 Geometry::MeshData Geometry::Create2DShow(float centerX, float centerY, float scaleX, float scaleY)
 {
 	MeshData meshData;
@@ -242,3 +248,22 @@ Geometry::MeshData Geometry::Create2DShow(float centerX, float centerY, float sc
 	meshData.indexVec = { 0, 1, 2, 2, 3, 0 };
 	return meshData;
 }
+
+Geometry::MeshData Geometry::CreatePlane(const DirectX::XMFLOAT3 & center, const DirectX::XMFLOAT2 & planeSize, const DirectX::XMFLOAT2 & maxTexCoord)
+{
+	return CreatePlane(center.x, center.y, center.z, planeSize.x, planeSize.y, maxTexCoord.x, maxTexCoord.y);
+}
+
+Geometry::MeshData Geometry::CreatePlane(float centerX, float centerY, float centerZ, float width, float depth, float texU, float texV)
+{
+	MeshData meshData;
+	meshData.vertexVec.push_back({ XMFLOAT3(centerX - width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, texV) });
+	meshData.vertexVec.push_back({ XMFLOAT3(centerX - width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) });
+	meshData.vertexVec.push_back({ XMFLOAT3(centerX + width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(texU, 0.0f) });
+	meshData.vertexVec.push_back({ XMFLOAT3(centerX + width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(texU, texV) });
+
+	meshData.indexVec = { 0, 1, 2, 2, 3, 0 };
+	return meshData;
+}
+
+

@@ -1,4 +1,7 @@
 更新记录
+2018/10/29 v19.1</br>
+-从.fx换成.hlsli后就不需要人工标记"不需要生成"了
+
 2018/10/28 v19.0</br>
 -添加项目 Static Cube Mapping
 -修正Geometry类问题

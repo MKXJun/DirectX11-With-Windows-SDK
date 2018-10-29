@@ -61,8 +61,10 @@
     <FxCompile Include="HLSL\Cube_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Cube.hlsli">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Cube.hlsli">
       <Filter>着色器</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>

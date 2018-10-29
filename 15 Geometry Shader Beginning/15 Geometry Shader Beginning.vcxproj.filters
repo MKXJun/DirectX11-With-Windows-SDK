@@ -109,12 +109,12 @@
     <FxCompile Include="HLSL\Cylinder_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic.hlsli">
-      <Filter>着色器</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\LightHelper.hlsli">
+      <Filter>着色器</Filter>
+    </None>
+    <None Include="HLSL\Basic.hlsli">
       <Filter>着色器</Filter>
     </None>
   </ItemGroup>

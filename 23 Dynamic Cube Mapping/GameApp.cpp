@@ -231,10 +231,8 @@ void GameApp::DrawScene()
 	{
 	case SphereMode::None: text += L"ÎÞ"; break;
 	case SphereMode::Reflection: text += L"·´Éä"; break;
-	case SphereMode::Refraction: text += L"ÕÛÉä"; break;
+	case SphereMode::Refraction: text += L"ÕÛÉä\nÕÛÉäÂÊ: " + std::to_wstring(mEta); break;
 	}
-
-	text += L"\nÕÛÉäÂÊ: " + std::to_wstring(mEta);
 
 	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
 		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());

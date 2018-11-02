@@ -15,6 +15,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "22 Static Cube Mapping", "2
 		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23 Dynamic Cube Mapping", "23 Dynamic Cube Mapping\23 Dynamic Cube Mapping.vcxproj", "{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,6 +52,14 @@ Global
 		{BBC29A9B-A848-4AE7-9C01-56C1C83EACD4}.Release|x64.Build.0 = Release|x64
 		{BBC29A9B-A848-4AE7-9C01-56C1C83EACD4}.Release|x86.ActiveCfg = Release|Win32
 		{BBC29A9B-A848-4AE7-9C01-56C1C83EACD4}.Release|x86.Build.0 = Release|Win32
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Debug|x64.ActiveCfg = Debug|x64
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Debug|x64.Build.0 = Debug|x64
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Debug|x86.ActiveCfg = Debug|Win32
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Debug|x86.Build.0 = Debug|Win32
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Release|x64.ActiveCfg = Release|x64
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Release|x64.Build.0 = Release|x64
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Release|x86.ActiveCfg = Release|Win32
+		{B815DEA5-E4EA-4B6F-9024-5FA85987ED25}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

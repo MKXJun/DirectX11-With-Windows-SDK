@@ -1,9 +1,15 @@
 更新记录
+
+2018/11/2 v20.0</br>
+-添加项目 Dynamic Cube Mapping</br>
+-再次修正Geometry类圆柱显示问题</br>
+-修正项目21-22中关于GameObject类忘记转置的问题
+
 2018/10/29 v19.1</br>
 -从.fx换成.hlsli后就不需要人工标记"不需要生成"了
 
 2018/10/28 v19.0</br>
--添加项目 Static Cube Mapping
+-添加项目 Static Cube Mapping</br>
 -修正Geometry类问题
 
 2018/10/26 v18.5</br>

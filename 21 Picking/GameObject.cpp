@@ -128,7 +128,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	InstancedData * iter = reinterpret_cast<InstancedData *>(mappedData.pData);
 	for (auto& mat : data)
 	{
-		iter->world = mat;
+		iter->world = XMMatrixTranspose(mat);
 		iter->worldInvTranspose = XMMatrixInverse(nullptr, mat);	// 两次转置抵消
 		iter++;
 	}

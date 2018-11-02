@@ -171,6 +171,7 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	}
 
 
+	offset += (slices + 1) + 1;	
 	// 放入底部圆上各点
 	for (int i = 0; i <= slices; ++i)
 	{
@@ -182,7 +183,7 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	meshData.vertexVec.push_back({ XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.5f, 0.5f) });
 
 	// 逐渐放入索引
-	offset += slices + 1;
+	
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec.push_back(offset);

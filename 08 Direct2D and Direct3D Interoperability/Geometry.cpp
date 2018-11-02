@@ -179,7 +179,7 @@ Geometry::MeshData Geometry::CreateCylinder(float radius, float height, int slic
 	meshData.normalVec.push_back(XMFLOAT3(0.0f, -1.0f, 0.0f));
 
 	// Öğ½¥·ÅÈëË÷Òı
-	offset += slices + 1;
+	offset += (slices + 1) + 1;
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec.push_back(offset);

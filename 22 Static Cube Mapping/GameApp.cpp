@@ -257,7 +257,7 @@ bool GameApp::InitResource()
 		model.modelParts[0].texA.GetAddressOf()));
 	model.modelParts[0].texD = model.modelParts[0].texA;
 	mCylinder.SetModel(std::move(model));
-	mCylinder.SetWorldMatrix(XMMatrixTranslation(0.0f, -2.01f, 0.0f));
+	mCylinder.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.99f, 0.0f));
 
 	// ******************
 	// ³õÊ¼»¯ÉãÏñ»ú

@@ -12,7 +12,7 @@ Windows SDK支持版本：</br>
 -10.0.16299.0(已测试通过)</br>
 -更低版本的10.0.XXXXX.0(未测试，理论上可以通过</br>
 
-> 注意: 关于Windows SDK 8.1，鉴于DXTK现在已经删去了有关该SDK版本的项目，我现在无法测试它。但是可以确定的是，所有的示例教程项目理论是可以在该版本编译出来的，但需要**关闭符合模式**(/permissive-), 光是这样仅保证`Release`模式通过，若要在`Debug`模式下通过，还需要将`d3dApp.cpp`中所有ComPtr所使用的IUnknown::QueryInterface方法改写成使用ComPtr<T1>::As<T2>方法。
+> 注意: 如果非要使用Windows SDK 8.1，鉴于DXTK现在已经删去了有关该SDK版本的项目，我现在无法测试它。但是可以确定的是，所有的示例教程项目理论是可以在该版本编译出来的，但需要**关闭符合模式**(/permissive-)，光是这样仅保证`Release`模式通过，若要在`Debug`模式下通过，还需要将`d3dApp.cpp`中所有ComPtr所使用的`IUnknown::QueryInterface`方法改写成使用`ComPtr<T1>::As<T2>`方法。
 
 平台: 支持x86/x64, 可Debug/Release模式
 

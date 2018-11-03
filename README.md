@@ -8,7 +8,7 @@ IDE：Visual Studio 2017 Community
 Windows SDK支持版本：</br>
 -**10.0.17134.0(项目默认配置)**</br>
 -10.0.16299.0(已测试通过)</br>
--其余10.0.XXXXX.0未测试，理论上可以通过</br>
+-更低版本的10.0.XXXXX.0(未测试，理论上可以通过)</br>
 -8.1(需关闭符合模式(/permissive-), 这样仅保证Release模式通过，若要在Debug模式下通过，还需要将所有`ComPtr`所使用的`IUnknown::QueryInterface`方法改写成使用`ComPtr<T1>::As<T2>`方法)
 
 

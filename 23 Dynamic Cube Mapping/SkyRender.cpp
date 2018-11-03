@@ -126,15 +126,15 @@ DynamicSkyRender::DynamicSkyRender(ComPtr<ID3D11Device> device, ComPtr<ID3D11Dev
 
 void DynamicSkyRender::Cache(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {
-	deviceContext->OMGetRenderTargets(1, mCacheRTV.ReleaseAndGetAddressOf(), mCacheDSV.ReleaseAndGetAddressOf());
+	deviceContext->OMGetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.GetAddressOf());
 
 	// 清掉绑定在着色器的动态天空盒，需要立即生效
 	effect.SetTextureCube(nullptr);
 	effect.Apply(deviceContext);
 }
 
-void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, D3D11_TEXTURECUBE_FACE face,
-	const XMFLOAT3& pos, float nearZ, float farZ)
+void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const XMFLOAT3& pos,
+	D3D11_TEXTURECUBE_FACE face, float nearZ, float farZ)
 {
 	static XMVECTORF32 ups[6] = {
 		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +X
@@ -188,6 +188,10 @@ void DynamicSkyRender::Restore(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	effect.SetProjMatrix(camera.GetProjXM());
 	// 恢复绑定的动态天空盒
 	effect.SetTextureCube(mDynamicCubeMapSRV);
+
+	// 清空临时缓存的渲染目标视图和深度模板视图
+	mCacheDSV.Reset();
+	mCacheRTV.Reset();
 }
 
 ComPtr<ID3D11ShaderResourceView> DynamicSkyRender::GetDynamicTextureCube()
@@ -207,13 +211,8 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	// 1. 创建纹理数组
 	//
 
-	// texCube先用于获取出天空盒SRV对应的纹理
 	ComPtr<ID3D11Texture2D> texCube;
-	mTextureCubeSRV->GetResource(reinterpret_cast<ID3D11Resource**>(texCube.GetAddressOf()));
-	
-	// 获取天空盒纹理的信息
-	D3D11_TEXTURE2D_DESC texDesc, texCubeDesc;
-	texCube->GetDesc(&texCubeDesc);
+	D3D11_TEXTURE2D_DESC texDesc;
 
 	texDesc.Width = dynamicCubeSize;
 	texDesc.Height = dynamicCubeSize;
@@ -221,9 +220,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	texDesc.ArraySize = 6;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
-	// 当前由于D2D的支持而设置了BGRA格式，但也保留了允许RGBA的情况
-	texDesc.Format = (device->GetCreationFlags() & D3D11_CREATE_DEVICE_BGRA_SUPPORT ? 
-		DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM);
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
@@ -261,7 +258,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = -1;
+	srvDesc.TextureCube.MipLevels = -1;	// 使用所有的mip等级
 
 	HR(device->CreateShaderResourceView(
 		texCube.Get(),

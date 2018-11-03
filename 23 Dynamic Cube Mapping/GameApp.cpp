@@ -179,11 +179,11 @@ void GameApp::DrawScene()
 		switch (mSkyBoxMode)
 		{
 		case SkyBoxMode::Daylight: mDaylight->BeginCapture(
-			md3dImmediateContext, mBasicEffect, static_cast<D3D11_TEXTURECUBE_FACE>(i), XMFLOAT3()); break;
+			md3dImmediateContext, mBasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Sunset: mSunset->BeginCapture(
-			md3dImmediateContext, mBasicEffect, static_cast<D3D11_TEXTURECUBE_FACE>(i), XMFLOAT3()); break;
+			md3dImmediateContext, mBasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Desert: mDesert->BeginCapture(
-			md3dImmediateContext, mBasicEffect, static_cast<D3D11_TEXTURECUBE_FACE>(i), XMFLOAT3()); break;
+			md3dImmediateContext, mBasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		}
 
 		// 不绘制中心球
@@ -206,6 +206,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+	// 绘制中心球
 	DrawScene(true);
 	
 

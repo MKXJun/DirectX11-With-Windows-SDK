@@ -17,16 +17,16 @@ public:
 	SkyRender(ComPtr<ID3D11Device> device, 
 		ComPtr<ID3D11DeviceContext> deviceContext, 
 		const std::wstring& cubemapFilename, 
-		float skySphereRadius,
-		bool generateMips = false);
+		float skySphereRadius,		// 天空球半径
+		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 
 
 	// 需要提供天空盒的六张正方形贴图
 	SkyRender(ComPtr<ID3D11Device> device, 
 		ComPtr<ID3D11DeviceContext> deviceContext, 
 		const std::vector<std::wstring>& cubemapFilenames, 
-		float skySphereRadius,
-		bool generateMips = false);
+		float skySphereRadius,		// 天空球半径
+		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 
 
 	ComPtr<ID3D11ShaderResourceView> GetTextureCube();

@@ -1,5 +1,8 @@
 更新记录
 
+2018/11/4 v20.1</br>
+-修正Geometry类因多个重载支持无法编译通过的问题
+
 2018/11/2 v20.0</br>
 -添加项目 Dynamic Cube Mapping</br>
 -再次修正Geometry类圆柱显示问题</br>

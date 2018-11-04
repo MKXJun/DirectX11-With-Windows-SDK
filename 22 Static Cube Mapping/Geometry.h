@@ -27,11 +27,11 @@ public:
 
 
 	// 创建一个覆盖NDC屏幕的面
-	static MeshData Create2DShow(const DirectX::XMFLOAT2& center = { 0.0f, 0.0f }, const DirectX::XMFLOAT2& scale = { 1.0f, 1.0f });
+	static MeshData Create2DShow(const DirectX::XMFLOAT2& center, const DirectX::XMFLOAT2& scale = { 1.0f, 1.0f });
 	static MeshData Create2DShow(float centerX = 0.0f, float centerY = 0.0f, float scaleX = 1.0f, float scaleY = 1.0f);
 
 	// 创建一个平面
-	static MeshData CreatePlane(const DirectX::XMFLOAT3& center = {0.0f, 0.0f, 0.0f}, const DirectX::XMFLOAT2& planeSize = { 10.0f, 10.0f }, const DirectX::XMFLOAT2& maxTexCoord = { 1.0f, 1.0f });
+	static MeshData CreatePlane(const DirectX::XMFLOAT3& center, const DirectX::XMFLOAT2& planeSize = { 10.0f, 10.0f }, const DirectX::XMFLOAT2& maxTexCoord = { 1.0f, 1.0f });
 	static MeshData CreatePlane(float centerX = 0.0f, float centerY = 0.0f, float centerZ = 0.0f, float width = 10.0f, float depth = 10.0f, float texU = 1.0f, float texV = 1.0f);
 
 };

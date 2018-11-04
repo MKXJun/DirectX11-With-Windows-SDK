@@ -5,15 +5,18 @@ IDE：Visual Studio 2017 Community
 
 语言：C++/HLSL
 
-目前项目不依赖第三方库，但从微软官方项目中提取了下述模块到项目中：</br>
+目前项目不直接使用第三方库，而是从微软官方项目中提取了下述模块到项目中：</br>
 [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
 [DirectXTex/WICTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/WICTextureLoader)</br>
 [DXTK/Mouse(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXTK/Keyboard(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXUT/dxerr](https://github.com/Microsoft/DXUT/tree/master/Core)</br>
 
+D3DComplier：44以上版本
 
-Windows SDK版本：默认**10.0.17134.0**，理论上目前可以支持Windows 10 SDK的任何版本
+Windows SDK版本：默认**10.0.17134.0**，也可支持10.0.16299.0
+
+>注意: 该教程不考虑向下兼容。更低版本只能通过关闭`/permissive`来保证Release模式下的正常运行。如果还需要Debug模式，由于旧的SDK版本的`ComPtr`将`IUnknown::QueryInterface`设为`private`，只能更换为`ComPtr<T>::As`方法。
 
 平台: 支持x86/x64, 可Debug/Release模式
 
@@ -21,7 +24,7 @@ Windows SDK版本：默认**10.0.17134.0**，理论上目前可以支持Windows 
 ## 注意事项
 该项目作为教程演示项目，并不是以实现一个软引擎为目标，因此不会刻意进行引擎架构的组织。建议读者在跟随教程学习的同时要动手实践。
 
-**在删去DXTK库后，现在的任何一个项目都可以独自生成、运行了。**
+**现在的任何一个项目都可以独自生成、运行了。**
 
 ## 如何打开教程项目
 如果是从解决方案(.sln)打开的话，若要指定哪个项目，需要对项目右键-设为启动项。

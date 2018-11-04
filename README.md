@@ -26,7 +26,7 @@ Windows SDK版本：默认**10.0.17134.0**，理论上目前可以支持Windows 
 ## 如何打开教程项目
 如果是从解决方案(.sln)打开的话，若要指定哪个项目，需要对项目右键-设为启动项。
 
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.jpg)
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.png)
 
 然后对项目右键-选择生成，或者对整个解决方案进行生成都可以。
 

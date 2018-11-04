@@ -5,8 +5,8 @@
 #include <string>
 #include <d3d11_1.h>
 #include <DirectXMath.h>
-#include <Mouse.h>		// Mouse.h和Keyboard.h需要预先包含Windows.h
-#include <Keyboard.h>
+#include "Mouse.h"		// Mouse.h和Keyboard.h需要预先包含Windows.h
+#include "Keyboard.h"
 #include "GameTimer.h"
 
 // 添加所有要引用的库

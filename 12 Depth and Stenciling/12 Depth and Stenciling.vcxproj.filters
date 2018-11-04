@@ -16,15 +16,15 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{be456c06-1aec-424c-992b-191c428a98ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="通用文件">
+      <UniqueIdentifier>{0ca504bc-bbe2-461f-b46d-408d034c4951}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="d3dApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="dxerr.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GameApp.cpp">
@@ -48,15 +48,27 @@
     <ClCompile Include="d3dUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="dxerr.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="d3dApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="dxerr.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GameApp.h">
@@ -79,6 +91,21 @@
     </ClInclude>
     <ClInclude Include="d3dUtil.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dxerr.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>通用文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

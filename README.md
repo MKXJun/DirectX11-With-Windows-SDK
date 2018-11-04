@@ -5,9 +5,15 @@ IDE：Visual Studio 2017 Community
 
 语言：C++/HLSL
 
-项目依赖项：DXTK(目前仅使用其键鼠类和纹理加载)
+目前项目不依赖第三方库，但从微软官方项目中提取了下述模块到项目中：</br>
+[DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
+[DirectXTex/WICTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/WICTextureLoader)</br>
+[DXTK/Mouse(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
+[DXTK/Keyboard(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
+[DXUT/dxerr](https://github.com/Microsoft/DXUT/tree/master/Core)</br>
 
-Windows SDK版本：**10.0.17134.0(受限于DXTK，目前仅支持该版本)**
+
+Windows SDK版本：默认**10.0.17134.0**，理论上目前可以支持Windows 10 SDK的任何版本
 
 平台: 支持x86/x64, 可Debug/Release模式
 
@@ -15,18 +21,10 @@ Windows SDK版本：**10.0.17134.0(受限于DXTK，目前仅支持该版本)**
 ## 注意事项
 该项目作为教程演示项目，并不是以实现一个软引擎为目标，因此不会刻意进行引擎架构的组织。建议读者在跟随教程学习的同时要动手实践。
 
-**紧急事项(2018/9/3):如果现在DirectXTK无法通过编译，出现了下面的错误：**</font>
-
-**C7510 "Callback": 模板 从属名称的使用必须以"模板"为前缀 event.h**</font>
-
-**在**[**StackOverflow**](https://stackoverflow.com/questions/51864528/update-visual-studio-2017-now-getting-compile-error-c7510-callback-use-of-d)**找到了问题所在**
-
-**双击该错误，首先定位到316行，把:** `return DelegateHelper::Traits::Callback(Details::Forward(callback));` 修改为 `return DelegateHelper::Traits::template Callback(Details::Forward(callback));`
-
-**然后定位到324行，把:** `DelegateHelper::Traits::Callback(` **修改为** `DelegateHelper::Traits::template Callback(`
+**在删去DXTK库后，现在的任何一个项目都可以独自生成、运行了。**
 
 ## 如何打开教程项目
-若要指定哪个项目，需要对项目右键-设为启动项。
+如果是从解决方案(.sln)打开的话，若要指定哪个项目，需要对项目右键-设为启动项。
 
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.jpg)
 

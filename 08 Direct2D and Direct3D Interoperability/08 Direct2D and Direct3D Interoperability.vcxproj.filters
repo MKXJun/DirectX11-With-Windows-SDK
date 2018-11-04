@@ -16,11 +16,11 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{3946fc62-3cef-4e3c-bc07-81383830c0da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="通用文件">
+      <UniqueIdentifier>{d9656ee3-8e19-486b-a5f7-4f09a0f61394}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -39,11 +39,17 @@
     <ClCompile Include="d3dUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="dxerr.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dxerr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -61,6 +67,15 @@
     </ClInclude>
     <ClInclude Include="d3dUtil.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dxerr.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>通用文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

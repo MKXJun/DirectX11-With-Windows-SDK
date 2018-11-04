@@ -5,13 +5,13 @@
 #include <DirectXCollision.h>	// 已包含DirectXMath.h
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
-#include <DDSTextureLoader.h>	
-#include <WICTextureLoader.h>
 #include <wrl/client.h>
 #include <vector>
 #include <string>
 #include <filesystem>
 #include "dxerr.h"
+#include "DDSTextureLoader.h"	
+#include "WICTextureLoader.h"
 
 // 移植过来的错误检查，该项目仅允许使用Unicode字符集
 #if defined(DEBUG) | defined(_DEBUG)

@@ -10,31 +10,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube", "03 Rendering a Cube\03 Rendering a Cube.vcxproj", "{10FD2630-1709-4D22-853C-2EFE3A7EFD67}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard", "05 Mouse and Keyboard\05 Mouse and Keyboard.vcxproj", "{27BB9181-5063-485E-8A9F-3A56A82CE09E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting", "07 Lighting\07 Lighting.vcxproj", "{FC9AD1DA-C424-4567-A49C-DADCF83E7557}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability.vcxproj", "{7DCC8C3F-6626-4F9A-B132-6F0A30246026}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09 Texture Mapping", "09 Texture Mapping\09 Texture Mapping.vcxproj", "{D0C5DDCA-3CED-4CF3-9F0F-AA442DB14339}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10 Camera", "10 Camera\10 Camera.vcxproj", "{9D5EB926-A6FA-4B74-B3CB-38F049005F3D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E} = {E0B52AE7-E160-4D32-BF3F-910B785E5A8E}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2017_Win10", "DXTK\DirectXTK_Desktop_2017_Win10.vcxproj", "{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,14 +91,6 @@ Global
 		{9D5EB926-A6FA-4B74-B3CB-38F049005F3D}.Release|x64.Build.0 = Release|x64
 		{9D5EB926-A6FA-4B74-B3CB-38F049005F3D}.Release|x86.ActiveCfg = Release|Win32
 		{9D5EB926-A6FA-4B74-B3CB-38F049005F3D}.Release|x86.Build.0 = Release|Win32
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Debug|x64.ActiveCfg = Debug|x64
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Debug|x64.Build.0 = Debug|x64
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Debug|x86.ActiveCfg = Debug|Win32
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Debug|x86.Build.0 = Debug|Win32
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x64.ActiveCfg = Release|x64
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x64.Build.0 = Release|x64
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.ActiveCfg = Release|Win32
-		{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

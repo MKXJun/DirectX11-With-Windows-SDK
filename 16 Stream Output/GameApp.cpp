@@ -316,7 +316,7 @@ void GameApp::ResetSplitedTriangle()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// 这里需要允许流输出阶段通过GPU写入
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;
@@ -367,7 +367,7 @@ void GameApp::ResetSplitedSnow()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// 这里需要允许流输出阶段通过GPU写入
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;
@@ -416,7 +416,7 @@ void GameApp::ResetSplitedSphere()
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// 这里需要允许流输出阶段通过GPU写入
 	vbd.ByteWidth = (UINT)(vertices.size() * sizeof(VertexPosNormalColor));
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// 需要额外添加流输出标签
 	vbd.CPUAccessFlags = 0;

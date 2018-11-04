@@ -5,8 +5,6 @@
 #include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
-#include <DDSTextureLoader.h>	
-#include <WICTextureLoader.h>
 #include <wrl/client.h>
 #include <filesystem>
 #include <vector>

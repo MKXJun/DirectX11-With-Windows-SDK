@@ -66,6 +66,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="HLSL\Triangle.hlsli" />
+    <None Include="HLSL\Triangle.hlsli">
+      <Filter>着色器</Filter>
+    </None>
   </ItemGroup>
 </Project>

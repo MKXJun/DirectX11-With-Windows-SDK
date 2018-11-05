@@ -1,5 +1,8 @@
 更新记录
 
+2018/11/5 v20.2</br>
+-将调用IUnknown::QueryInterface改成ComPtr调用As方法
+
 2018/11/4 v20.1</br>
 -修正Geometry类因多个重载支持无法编译通过的问题
 -修正项目16无法运行的问题

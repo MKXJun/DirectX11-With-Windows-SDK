@@ -1,9 +1,9 @@
 # DirectX11 With Windows SDK系列教程与演示项目
 
 ## 基本配置
-IDE：Visual Studio 2017 Community
+**IDE**：Visual Studio 2017 Community
 
-语言：C++/HLSL
+**语言**：C++/HLSL
 
 目前项目不直接使用第三方库，而是从微软官方项目中提取了下述模块到项目中：</br>
 [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
@@ -12,13 +12,13 @@ IDE：Visual Studio 2017 Community
 [DXTK/Keyboard(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXUT/dxerr](https://github.com/Microsoft/DXUT/tree/master/Core)</br>
 
-D3DComplier：44以上版本
+**D3DComplier版本**：47（D3DCompileFromFile需要44以上版本支持）
 
-Windows SDK版本：默认**10.0.17134.0**，也可支持10.0.16299.0
+**Windows SDK版本**：默认**10.0.17134.0**，支持10.0.16299.0
 
->注意: 该教程不考虑向下兼容。更低版本只能通过关闭`/permissive`来保证Release模式下的正常运行。如果还需要Debug模式，由于旧的SDK版本的`ComPtr`将`IUnknown::QueryInterface`设为`private`，只能更换为`ComPtr<T>::As`方法。
+>注意: 更低版本的SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
 
-平台: 支持x86/x64, 可Debug/Release模式
+**平台**: 支持x86/x64, 可Debug/Release模式
 
 
 ## 注意事项

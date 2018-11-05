@@ -384,7 +384,7 @@ bool D3DApp::InitDirect3D()
 		d3dDriverType = driverTypes[driverTypeIndex];
 		hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
 			D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
-		
+
 		if (hr == E_INVALIDARG)
 		{
 			// DirectX 11.0 平台不承认D3D_FEATURE_LEVEL_11_1所以我们需要尝试特性等级11.0
@@ -414,8 +414,8 @@ bool D3DApp::InitDirect3D()
 		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m4xMsaaQuality);
 	assert(m4xMsaaQuality > 0);
 
-	
-	
+
+
 
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
 	ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
@@ -424,21 +424,21 @@ bool D3DApp::InitDirect3D()
 	ComPtr<IDXGIDevice1> dxgiDevice1 = nullptr;
 	ComPtr<IDXGIAdapter1> dxgiAdapter1 = nullptr;
 	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;
-	
+
 	// 为了正确创建 DXGI交换链，首先我们需要获取创建 D3D设备 的 DXGI工厂，否则会引发报错：
 	// "IDXGIFactory::CreateSwapChain: This function is being called with a device from a different IDXGIFactory."
 	// 从属关系为 DXGI工厂-> DXGI适配器 -> DXGI设备 {D3D11设备}
-	HR(md3dDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(dxgiDevice.GetAddressOf())));
+	HR(md3dDevice.As(&dxgiDevice));
 	HR(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
 	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(dxgiFactory1.GetAddressOf())));
-	
+
 	// 查看该对象是否包含IDXGIFactory2接口
-	hr = dxgiFactory1->QueryInterface(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(dxgiFactory2.GetAddressOf()));
+	hr = dxgiFactory1.As(&dxgiFactory2);
 	// 如果包含，则说明支持DX11.1
 	if (dxgiFactory2 != nullptr)
 	{
-		HR(md3dDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(md3dDevice1.GetAddressOf())));
-		HR(md3dImmediateContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(md3dImmediateContext1.GetAddressOf())));
+		HR(md3dDevice.As(&md3dDevice1));
+		HR(md3dImmediateContext.As(&md3dImmediateContext1));
 		// 填充各种结构体用以描述交换链
 		DXGI_SWAP_CHAIN_DESC1 sd;
 		ZeroMemory(&sd, sizeof(sd));
@@ -469,7 +469,7 @@ bool D3DApp::InitDirect3D()
 		fd.Windowed = TRUE;
 		// 为当前窗口创建交换链
 		HR(dxgiFactory2->CreateSwapChainForHwnd(md3dDevice.Get(), mhMainWnd, &sd, &fd, nullptr, mSwapChain1.GetAddressOf()));
-		mSwapChain1->QueryInterface(__uuidof(IDXGISwapChain), reinterpret_cast<void**>(mSwapChain.GetAddressOf()));
+		HR(mSwapChain1.As(&mSwapChain));
 	}
 	else
 	{
@@ -502,8 +502,8 @@ bool D3DApp::InitDirect3D()
 		sd.Flags = 0;
 		HR(dxgiFactory1->CreateSwapChain(md3dDevice.Get(), &sd, mSwapChain.GetAddressOf()));
 	}
-	
-	
+
+
 
 	// 可以禁止alt+enter全屏
 	dxgiFactory1->MakeWindowAssociation(mhMainWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);

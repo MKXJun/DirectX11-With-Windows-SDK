@@ -21,7 +21,7 @@ public:
 	struct CBChangesEveryFrame
 	{
 		DirectX::XMMATRIX view;
-		DirectX::XMFLOAT4 eyePos;
+		DirectX::XMVECTOR eyePos;
 	};
 
 	struct CBChangesOnResize

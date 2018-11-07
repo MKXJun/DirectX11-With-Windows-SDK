@@ -303,7 +303,7 @@ bool GameApp::InitResource()
 	mCameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
-	camera->SetPosition(XMFLOAT3());
+	camera->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
 		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),

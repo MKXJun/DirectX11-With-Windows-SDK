@@ -87,14 +87,13 @@ void GameApp::UpdateScene(float dt)
 	//
 
 	// 绕原点旋转
-	cam3rd->SetTarget(XMFLOAT3());
 	cam3rd->RotateX(mouseState.y * dt * 1.25f);
 	cam3rd->RotateY(mouseState.x * dt * 1.25f);
 	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 
 	// 更新观察矩阵，并更新每帧缓冲区
 	mCamera->UpdateViewMatrix();
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
+	mCBFrame.eyePos = mCamera->GetPositionXM();
 	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
 	
 
@@ -249,7 +248,7 @@ bool GameApp::InitResource()
 	material.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\water.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	mWater.SetBuffer(md3dDevice,
-		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(10.0f, 10.0f)));
+		Geometry::CreatePlane(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(10.0f, 10.0f)));
 	mWater.SetTexture(texture);
 	mWater.SetMaterial(material);
 
@@ -278,8 +277,6 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
-	mCBFrame.view = XMMatrixTranspose(mCamera->GetViewXM());
-	XMStoreFloat4(&mCBFrame.eyePos, mCamera->GetPositionXM());
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);

@@ -293,7 +293,7 @@ bool GameApp::InitResource()
 			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
 		XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
-	mBasicEffect.SetSphereCenter(XMFLOAT3());
+	mBasicEffect.SetSphereCenter(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	mBasicEffect.SetSphereRadius(2.0f);
 
 	return true;

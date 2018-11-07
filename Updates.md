@@ -1,5 +1,9 @@
 更新记录
 
+2018/11/7 v20.3</br>
+-修正第一/三人称视角程序窗口不在中心的问题
+-由于Windows SDK 8.1下DirectXMath.h的类构造函数为Trivial，需要人工初始化，如：XMFLOAT3(0.0f, 0.0f, 0.0f)。
+
 2018/11/5 v20.2</br>
 -将调用IUnknown::QueryInterface改成ComPtr调用As方法
 

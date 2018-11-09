@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK系列教程与演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-000000.svg) ![](https://img.shields.io/badge/Ver-20.4-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-20.4-519dd9.svg)
 
 ## 博客教程
 

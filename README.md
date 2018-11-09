@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK系列教程与演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-000000.svg) ![](https://img.shields.io/badge/Ver-20.4-519dd9.svg)
 
 ## 博客教程
 
@@ -35,10 +35,10 @@ QQ群号：727623616
 
 |               |默认配置|最低配置|
 |---------------|:------------:|:------:|
-|IDE            |**VS2017**        |VS2015(待测试)  |
+|IDE            |**VS2017**        |VS2015  |
 |D3DComplier版本|**47**            |44      |
 |Windows SDK版本|**10.0.17134.0**(支持10.0.16299.0)|8.1|
-|Windows开发环境|**Windows 10**    |Windows 7 SP1(待测试)|
+|Windows开发环境|**Windows 10**    |Windows 8.1|
 |平台           |**x86/x64支持**   |x86/x64支持|
 |配置           |**Debug/Release支持**|Debug/Release支持|
 

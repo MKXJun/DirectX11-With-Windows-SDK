@@ -207,7 +207,7 @@ const Camera & DynamicSkyRender::GetCamera() const
 void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCubeSize)
 {
 
-	//
+	// ******************
 	// 1. 创建纹理数组
 	//
 
@@ -229,7 +229,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	// 现在texCube用于新建纹理
 	HR(device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf()));
 
-	//
+	// ******************
 	// 2. 创建渲染目标视图
 	//
 
@@ -250,7 +250,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 			mDynamicCubeMapRTVs[i].GetAddressOf()));
 	}
 
-	//
+	// ******************
 	// 3. 创建着色器目标视图
 	//
 
@@ -265,7 +265,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 		&srvDesc,
 		mDynamicCubeMapSRV.GetAddressOf()));
 	
-	//
+	// ******************
 	// 4. 创建深度/模板缓冲区与对应的视图
 	//
 
@@ -295,7 +295,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 		&dsvDesc,
 		mDynamicCubeMapDSV.GetAddressOf()));
 
-	//
+	// ******************
 	// 5. 初始化视口
 	//
 

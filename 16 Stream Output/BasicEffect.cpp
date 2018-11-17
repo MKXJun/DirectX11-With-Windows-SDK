@@ -5,34 +5,7 @@
 using namespace DirectX;
 using namespace std::experimental;
 
-//
-// 这些结构体对应HLSL的结构体，仅供该文件使用。需要按16字节对齐
-//
 
-struct CBChangesEveryFrame
-{
-	DirectX::XMMATRIX world;
-	DirectX::XMMATRIX worldInvTranspose;
-};
-
-struct CBChangesOnResize
-{
-	DirectX::XMMATRIX proj;
-};
-
-
-struct CBChangesRarely
-{
-	DirectionalLight dirLight[BasicEffect::maxLights];
-	PointLight pointLight[BasicEffect::maxLights];
-	SpotLight spotLight[BasicEffect::maxLights];
-	Material material;
-	DirectX::XMMATRIX view;
-	DirectX::XMFLOAT3 sphereCenter;
-	float sphereRadius;
-	DirectX::XMFLOAT3 eyePos;
-	float pad;
-};
 
 
 //
@@ -41,6 +14,36 @@ struct CBChangesRarely
 
 class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 {
+public:
+
+	//
+	// 这些结构体对应HLSL的结构体。需要按16字节对齐
+	//
+
+	struct CBChangesEveryFrame
+	{
+		DirectX::XMMATRIX world;
+		DirectX::XMMATRIX worldInvTranspose;
+	};
+
+	struct CBChangesOnResize
+	{
+		DirectX::XMMATRIX proj;
+	};
+
+	struct CBChangesRarely
+	{
+		DirectionalLight dirLight[BasicEffect::maxLights];
+		PointLight pointLight[BasicEffect::maxLights];
+		SpotLight spotLight[BasicEffect::maxLights];
+		Material material;
+		DirectX::XMMATRIX view;
+		DirectX::XMFLOAT3 sphereCenter;
+		float sphereRadius;
+		DirectX::XMFLOAT3 eyePos;
+		float pad;
+	};
+
 public:
 	// 必须显式指定
 	Impl() = default;
@@ -133,6 +136,8 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!pImpl->cBufferPtrs.empty())
 		return true;
 
+	if (!RenderStates::IsInit())
+		throw std::exception("RenderStates need to be initialized first!");
 
 	const D3D11_SO_DECLARATION_ENTRY posColorLayout[2] = {
 		{ 0, "POSITION", 0, 0, 3, 0 },
@@ -221,8 +226,6 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalPS.GetAddressOf()));
 
 
-	// 初始化
-	RenderStates::InitAll(device);
 
 	pImpl->cBufferPtrs.assign({
 		&pImpl->cbFrame, 

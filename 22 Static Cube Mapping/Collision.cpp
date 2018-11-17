@@ -20,7 +20,7 @@ Ray::Ray(const DirectX::XMFLOAT3 & origin, const DirectX::XMFLOAT3 & direction)
 
 Ray Ray::ScreenToRay(const Camera & camera, float screenX, float screenY)
 {
-	//
+	// ******************
 	// 节选自DirectX::XMVector3Unproject函数，并省略了从世界坐标系到局部坐标系的变换
 	//
 	

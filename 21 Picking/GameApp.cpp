@@ -18,6 +18,9 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
+	// 务必先初始化所有渲染状态，以供下面的特效使用
+	RenderStates::InitAll(md3dDevice);
+
 	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 

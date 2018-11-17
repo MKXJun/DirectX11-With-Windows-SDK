@@ -426,7 +426,7 @@ bool GameApp::InitResource()
 	mCameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	mCamera = camera;
-	
+	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);

@@ -5,45 +5,6 @@
 using namespace DirectX;
 using namespace std::experimental;
 
-//
-// 这些结构体对应HLSL的结构体，仅供该文件使用。需要按16字节对齐
-//
-
-struct CBChangesEveryObjectDrawing
-{
-	DirectX::XMMATRIX world;
-	DirectX::XMMATRIX worldInvTranspose;
-};
-
-struct CBChangesEveryInstanceDrawing
-{
-	Material material;
-};
-
-struct CBDrawingStates
-{
-	int textureUsed;
-	DirectX::XMFLOAT3 pad;
-};
-
-struct CBChangesEveryFrame
-{
-	DirectX::XMMATRIX view;
-	DirectX::XMVECTOR eyePos;
-};
-
-struct CBChangesOnResize
-{
-	DirectX::XMMATRIX proj;
-};
-
-struct CBChangesRarely
-{
-	DirectionalLight dirLight[BasicEffect::maxLights];
-	PointLight pointLight[BasicEffect::maxLights];
-	SpotLight spotLight[BasicEffect::maxLights];
-};
-
 
 //
 // BasicEffect::Impl 需要先于BasicEffect的定义
@@ -51,6 +12,47 @@ struct CBChangesRarely
 
 class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 {
+
+public:
+	//
+	// 这些结构体对应HLSL的结构体。需要按16字节对齐
+	//
+
+	struct CBChangesEveryObjectDrawing
+	{
+		DirectX::XMMATRIX world;
+		DirectX::XMMATRIX worldInvTranspose;
+	};
+
+	struct CBChangesEveryInstanceDrawing
+	{
+		Material material;
+	};
+
+	struct CBDrawingStates
+	{
+		int textureUsed;
+		DirectX::XMFLOAT3 pad;
+	};
+
+	struct CBChangesEveryFrame
+	{
+		DirectX::XMMATRIX view;
+		DirectX::XMVECTOR eyePos;
+	};
+
+	struct CBChangesOnResize
+	{
+		DirectX::XMMATRIX proj;
+	};
+
+	struct CBChangesRarely
+	{
+		DirectionalLight dirLight[BasicEffect::maxLights];
+		PointLight pointLight[BasicEffect::maxLights];
+		SpotLight spotLight[BasicEffect::maxLights];
+	};
+
 public:
 	// 必须显式指定
 	Impl() = default;
@@ -137,6 +139,8 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!pImpl->cBufferPtrs.empty())
 		return true;
 
+	if (!RenderStates::IsInit())
+		throw std::exception("RenderStates need to be initialized first!");
 
 	ComPtr<ID3DBlob> blob;
 
@@ -178,8 +182,6 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	HR(pImpl->CreateShaderFromFile(L"HLSL\\Basic_PS.pso", L"HLSL\\Basic_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicPS.GetAddressOf()));
 
-	// 初始化
-	RenderStates::InitAll(device);
 
 	pImpl->cBufferPtrs.assign({
 		&pImpl->cbObjDrawing,

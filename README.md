@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK系列教程与演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-20.4-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.0-519dd9.svg)
 
 ## 博客教程
 
@@ -25,6 +25,7 @@ QQ群号：727623616
 目前所有项目无需依赖第三方库的编译，而是从微软官方项目中提取了下述模块到项目中：</br>
 [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
 [DirectXTex/WICTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/WICTextureLoader)</br>
+[DirectXTex/ScreenGrab](https://github.com/Microsoft/DirectXTex/tree/master/ScreenGrab)
 [DXTK/Mouse(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXTK/Keyboard(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXUT/dxerr](https://github.com/Microsoft/DXUT/tree/master/Core)</br>

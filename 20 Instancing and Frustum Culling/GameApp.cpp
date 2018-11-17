@@ -17,6 +17,9 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
+	// 务必先初始化所有渲染状态，以供下面的特效使用
+	RenderStates::InitAll(md3dDevice);
+
 	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
@@ -80,30 +83,23 @@ void GameApp::UpdateScene(float dt)
 	// 获取子类
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
 
-	if (mCameraMode == CameraMode::Free)
-	{
-		// ******************
-		// 自由摄像机的操作
-		//
+	// ******************
+	// 自由摄像机的操作
+	//
 
-		// 方向移动
-		if (keyState.IsKeyDown(Keyboard::W))
-		{
-			cam1st->MoveForward(dt * 3.0f);
-		}
-		if (keyState.IsKeyDown(Keyboard::S))
-		{
-			cam1st->MoveForward(dt * -3.0f);
-		}
-		if (keyState.IsKeyDown(Keyboard::A))
-			cam1st->Strafe(dt * -3.0f);
-		if (keyState.IsKeyDown(Keyboard::D))
-			cam1st->Strafe(dt * 3.0f);
+	// 方向移动
+	if (keyState.IsKeyDown(Keyboard::W))
+		cam1st->MoveForward(dt * 3.0f);
+	if (keyState.IsKeyDown(Keyboard::S))
+		cam1st->MoveForward(dt * -3.0f);
+	if (keyState.IsKeyDown(Keyboard::A))
+		cam1st->Strafe(dt * -3.0f);
+	if (keyState.IsKeyDown(Keyboard::D))
+		cam1st->Strafe(dt * 3.0f);
 
-		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
-	}
+	// 视野旋转，防止开始的差值过大导致的突然旋转
+	cam1st->Pitch(mouseState.y * dt * 1.25f);
+	cam1st->RotateY(mouseState.x * dt * 1.25f);
 
 	// ******************
 	// 更新摄像机相关
@@ -229,6 +225,7 @@ bool GameApp::InitResource()
 	mCameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
+	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
 		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),

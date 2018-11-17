@@ -327,7 +327,7 @@ bool GameApp::InitResource()
 	mCameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
-	
+	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 	camera->LookAt(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// 初始化仅在窗口大小变动时修改的值

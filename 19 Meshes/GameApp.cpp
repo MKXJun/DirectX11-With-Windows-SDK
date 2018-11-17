@@ -17,6 +17,9 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
+	// 务必先初始化所有渲染状态，以供下面的特效使用
+	RenderStates::InitAll(md3dDevice);
+
 	if (!mBasicEffect.InitAll(md3dDevice))
 		return false;
 
@@ -162,6 +165,7 @@ bool GameApp::InitResource()
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	mCamera = camera;
 	
+	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(10.0f);
 	camera->SetDistanceMinMax(6.0f, 100.0f);

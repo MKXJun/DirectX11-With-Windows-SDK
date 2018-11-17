@@ -1,7 +1,11 @@
 更新记录
 
+2018/11/17 v21.0</br>
+-添加项目 Render To Texture</br>
+-调整RenderStates的初始化
+
 2018/11/9 v20.4</br>
--添加AppVeyor，帮助检测项目编译情况(进行全属性配置编译)
+-添加AppVeyor，帮助检测项目编译情况(进行全属性配置编译)</br>
 -添加用于检测的解决方案DirectX11 With Windows SDK.sln
 
 2018/11/7 v20.3</br>

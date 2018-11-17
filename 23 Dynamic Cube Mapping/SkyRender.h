@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "GameObject.h"
+#include "Effects.h"
 #include "Camera.h"
 
 class SkyRender

@@ -218,8 +218,7 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 
 	texCubeDesc.Width = squareLength;
 	texCubeDesc.Height = squareLength;
-	// 例如64x48的天空盒，可以产生7级mipmap链，但天空盒的每个面是16x16，对应5级mipmap链，因此需要减2
-	texCubeDesc.MipLevels = (generateMips ? texDesc.MipLevels - 2 : 1);
+	texCubeDesc.MipLevels = (generateMips ? 0 : 1);	// 指定0的情况下将生成完整mipmap链
 	texCubeDesc.ArraySize = 6;
 	texCubeDesc.Format = texDesc.Format;
 	texCubeDesc.SampleDesc.Count = 1;
@@ -415,7 +414,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 
 	texCubeDesc.Width = texDesc.Width;
 	texCubeDesc.Height = texDesc.Height;
-	texCubeDesc.MipLevels = (generateMips ? texDesc.MipLevels : 1);
+	texCubeDesc.MipLevels = (generateMips ? 0 : 1); // 指定0的情况下将生成完整mipmap链
 	texCubeDesc.ArraySize = 6;
 	texCubeDesc.Format = texDesc.Format;
 	texCubeDesc.SampleDesc.Count = 1;

@@ -169,8 +169,8 @@ ComPtr<ID3D11ShaderResourceView> CreateDDSTexture2DArrayFromFile(
 }
 
 ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
-	ComPtr<ID3D11Device> device, 
-	ComPtr<ID3D11DeviceContext> deviceContext, 
+	ComPtr<ID3D11Device> device,
+	ComPtr<ID3D11DeviceContext> deviceContext,
 	std::wstring cubemapFileName,
 	bool generateMips)
 {
@@ -203,14 +203,14 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 		deviceContext->GenerateMips(srcTexSRV.Get());
 	}
 
-	
+
 	// ******************
 	// 2.创建包含6个纹理的数组
 	//
 
 	D3D11_TEXTURE2D_DESC texDesc, texCubeDesc;
 	srcTex->GetDesc(&texDesc);
-	
+
 	// 确保宽高比4:3
 	assert(texDesc.Width * 3 == texDesc.Height * 4);
 
@@ -218,8 +218,7 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 
 	texCubeDesc.Width = squareLength;
 	texCubeDesc.Height = squareLength;
-	// 例如64x48的天空盒，可以产生7级mipmap链，但天空盒的每个面是16x16，对应5级mipmap链，因此需要减2
-	texCubeDesc.MipLevels = (generateMips ? texDesc.MipLevels - 2 : 1);
+	texCubeDesc.MipLevels = (generateMips ? 0 : 1);	// 指定0的情况下将生成完整mipmap链
 	texCubeDesc.ArraySize = 6;
 	texCubeDesc.Format = texDesc.Format;
 	texCubeDesc.SampleDesc.Count = 1;
@@ -235,7 +234,7 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 	// ******************
 	// 3.选取原天空盒纹理的6个子正方形区域，拷贝到该数组中
 	//
-	
+
 	D3D11_BOX box;
 	// box坐标轴如下: 
 	//    front
@@ -331,7 +330,7 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 		// 下一个mipLevel的纹理宽高都是原来的1/2
 		squareLength /= 2;
 	}
-	
+
 
 	// ******************
 	// 4.创建立方体纹理的SRV
@@ -350,9 +349,9 @@ ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
-	Microsoft::WRL::ComPtr<ID3D11Device> device, 
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, 
-	std::vector<std::wstring> cubemapFileNames, 
+	Microsoft::WRL::ComPtr<ID3D11Device> device,
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
+	std::vector<std::wstring> cubemapFileNames,
 	bool generateMips)
 {
 	// 检查设备与设备上下文是否非空
@@ -365,7 +364,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 	// ******************
 	// 1.读取纹理
 	//
-	
+
 	std::vector<ComPtr<ID3D11Texture2D>> srcTex(6);
 	std::vector<ComPtr<ID3D11ShaderResourceView>> srcTexSRV(6);
 	UINT width, height;
@@ -405,7 +404,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 		// 使用dxtex.exe(DirectX Texture Tool)将所有的图片转成一致的数据格式
 		assert(texDesc.Format == format);
 	}
-	
+
 	// ******************
 	// 2.创建包含6个纹理的数组
 	//
@@ -415,7 +414,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 
 	texCubeDesc.Width = texDesc.Width;
 	texCubeDesc.Height = texDesc.Height;
-	texCubeDesc.MipLevels = (generateMips ? texDesc.MipLevels : 1);
+	texCubeDesc.MipLevels = (generateMips ? 0 : 1); // 指定0的情况下将生成完整mipmap链
 	texCubeDesc.ArraySize = 6;
 	texCubeDesc.Format = texDesc.Format;
 	texCubeDesc.SampleDesc.Count = 1;
@@ -444,7 +443,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
 				nullptr);
 		}
 	}
-	
+
 	// ******************
 	// 4.创建立方体纹理的SRV
 	//

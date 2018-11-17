@@ -3,6 +3,9 @@
 2018/11/17 v21.0</br>
 -添加项目 Render To Texture</br>
 -调整RenderStates的初始化
+-调整初始化2D纹理时MipLevels的赋值
+-删除以10个为单位的解决方案
+-项目SDK版本更新至(17763)
 
 2018/11/9 v20.4</br>
 -添加AppVeyor，帮助检测项目编译情况(进行全属性配置编译)</br>

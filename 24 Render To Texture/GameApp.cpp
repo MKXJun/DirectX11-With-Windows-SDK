@@ -206,6 +206,9 @@ void GameApp::DrawScene()
 		md3dImmediateContext->IASetVertexBuffers(0, 1, mFullScreenShow.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
 		md3dImmediateContext->IASetIndexBuffer(mFullScreenShow.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
+		// 务必解除绑定在着色器上的资源，因为下一帧开始它会作为渲染目标
+		mScreenFadeEffect.SetTexture(nullptr);
+		mScreenFadeEffect.Apply(md3dImmediateContext);
 	}
 	
 	// 若截屏键Q按下，则分别保存到output.dds和output.png中

@@ -387,7 +387,7 @@ bool D3DApp::InitDirect3D()
 
 		if (hr == E_INVALIDARG)
 		{
-			// DirectX 11.0 平台不承认D3D_FEATURE_LEVEL_11_1所以我们需要尝试特性等级11.0
+			// DirectX 11.0 平台不承认D3D_FEATURE_LEVEL_11_1所以我们需要尝试特性等级11.0以及以下的版本
 			hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
 				D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
 		}

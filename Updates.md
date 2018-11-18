@@ -1,12 +1,13 @@
 更新记录
 2018/11/18 v21.1</br>
--调整D3DApp
+-调整D3DApp</br>
+-修复项目24异常
 
 2018/11/17 v21.0</br>
 -添加项目 Render To Texture</br>
--调整RenderStates的初始化
--调整初始化2D纹理时MipLevels的赋值
--删除以10个为单位的解决方案
+-调整RenderStates的初始化</br>
+-调整初始化2D纹理时MipLevels的赋值</br>
+-删除以10个为单位的解决方案</br>
 -项目SDK版本更新至(17763)
 
 2018/11/9 v20.4</br>

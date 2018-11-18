@@ -133,7 +133,7 @@ void D3DApp::OnResize()
 	ComPtr<ID3D11Texture2D> backBuffer;
 	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
-	HR(md3dDevice->CreateRenderTargetView(backBuffer.Get(), 0, mRenderTargetView.GetAddressOf()));
+	HR(md3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, mRenderTargetView.GetAddressOf()));
 	
 	
 	backBuffer.Reset();
@@ -419,11 +419,8 @@ bool D3DApp::InitDirect3D()
 
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
 	ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
-	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;
-
-	ComPtr<IDXGIDevice1> dxgiDevice1 = nullptr;
-	ComPtr<IDXGIAdapter1> dxgiAdapter1 = nullptr;
-	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;
+	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;	// DX11.0(包含DXGI1.1)的接口类
+	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;	// DX11.1(包含DXGI1.2)特有的接口类
 
 	// 为了正确创建 DXGI交换链，首先我们需要获取创建 D3D设备 的 DXGI工厂，否则会引发报错：
 	// "IDXGIFactory::CreateSwapChain: This function is being called with a device from a different IDXGIFactory."

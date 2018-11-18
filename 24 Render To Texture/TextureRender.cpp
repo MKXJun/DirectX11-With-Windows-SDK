@@ -19,7 +19,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	texDesc.ArraySize = 1;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
-	texDesc.Format = (device->GetCreationFlags() & D3D11_CREATE_DEVICE_BGRA_SUPPORT ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM);
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
@@ -29,7 +29,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	HR(device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf()));
 
 	// ******************
-	// 2. 创建渲染目标视图
+	// 2. 创建纹理对应的渲染目标视图
 	//
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
@@ -43,7 +43,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 		mOutputTextureRTV.GetAddressOf()));
 	
 	// ******************
-	// 3. 创建着色器目标视图
+	// 3. 创建纹理对应的着色器资源视图
 	//
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -58,7 +58,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 		mOutputTextureSRV.GetAddressOf()));
 
 	// ******************
-	// 4. 创建深度/模板缓冲区与对应的视图
+	// 4. 创建与纹理等宽高的深度/模板缓冲区和对应的视图
 	//
 
 	texDesc.Width = texWidth;

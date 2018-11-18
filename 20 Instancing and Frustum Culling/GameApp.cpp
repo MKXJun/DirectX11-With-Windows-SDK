@@ -259,6 +259,7 @@ bool GameApp::InitResource()
 
 void GameApp::CreateRandomTrees()
 {
+	srand((unsigned)time(nullptr));
 	// ³õÊ¼»¯Ê÷
 	mObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
 	mTrees.SetModel(Model(md3dDevice, mObjReader));

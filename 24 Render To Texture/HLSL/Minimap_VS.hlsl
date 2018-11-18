@@ -1,6 +1,6 @@
 #include "Minimap.hlsli"
 
-// 顶点着色器(2D)
+// 顶点着色器
 VertexPosHTex VS(VertexPosNormalTex vIn)
 {
     VertexPosHTex vOut;

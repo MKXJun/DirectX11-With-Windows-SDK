@@ -333,7 +333,7 @@ bool GameApp::InitResource()
 	// 
 
 	mBasicEffect.SetViewMatrix(mMinimapCamera->GetViewXM());
-	mBasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// 使用正交矩阵(中心在原点)
+	mBasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// 使用正交投影矩阵(中心在摄像机位置)
 	// 关闭雾效
 	mBasicEffect.SetFogState(false);
 	mMinimapRender->Begin(md3dImmediateContext);
@@ -386,6 +386,7 @@ void GameApp::DrawScene(bool drawMinimap)
 
 void GameApp::CreateRandomTrees()
 {
+	srand((unsigned)time(nullptr));
 	// 初始化树
 	mObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
 	mTrees.SetModel(Model(md3dDevice, mObjReader));

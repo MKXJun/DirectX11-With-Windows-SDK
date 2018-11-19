@@ -68,8 +68,8 @@ public:
 	std::vector<CBufferBase*> cBufferPtrs;					// 统一管理上面所有的常量缓冲区
 
 
-	ComPtr<ID3D11VertexShader> basicObjectVS;
-	ComPtr<ID3D11PixelShader> basicObjectPS;
+	ComPtr<ID3D11VertexShader> basicVS;
+	ComPtr<ID3D11PixelShader> basicPS;
 
 	ComPtr<ID3D11VertexShader> billboardVS;
 	ComPtr<ID3D11GeometryShader> billboardGS;
@@ -140,13 +140,13 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	// ******************
 	// 常规3D绘制
 	//
-	HR(CreateShaderFromFile(L"HLSL\\BasicObject_VS.vso", L"HLSL\\BasicObject_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicObjectVS.GetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Basic_VS.vso", L"HLSL\\Basic_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicVS.GetAddressOf()));
 	// 创建顶点输入布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout), blob->GetBufferPointer(),
 		blob->GetBufferSize(), pImpl->vertexPosNormalTexLayout.GetAddressOf()));
-	HR(CreateShaderFromFile(L"HLSL\\BasicObject_PS.pso", L"HLSL\\BasicObject_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicObjectPS.GetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Basic_PS.pso", L"HLSL\\Basic_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->basicPS.GetAddressOf()));
 
 
 	// ******************
@@ -183,10 +183,10 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosNormalTexLayout.Get());
-	deviceContext->VSSetShader(pImpl->basicObjectVS.Get(), nullptr, 0);
+	deviceContext->VSSetShader(pImpl->basicVS.Get(), nullptr, 0);
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->basicObjectPS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->basicPS.Get(), nullptr, 0);
 	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
 	deviceContext->OMSetDepthStencilState(nullptr, 0);
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);

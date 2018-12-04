@@ -61,6 +61,7 @@ void GameTimer::Reset()
 	mBaseTime = currTime;
 	mPrevTime = currTime;
 	mStopTime = 0;
+	mPausedTime = 0;	// 涉及到多次Reset的话需要将其归0
 	mStopped  = false;
 }
 

@@ -110,7 +110,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建顶点着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_VS.vso", L"HLSL\\ScreenFade_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_VS.cso", L"HLSL\\ScreenFade_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadeVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
@@ -120,7 +120,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建像素着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_PS.pso", L"HLSL\\ScreenFade_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_PS.cso", L"HLSL\\ScreenFade_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadePS.GetAddressOf()));
 
 

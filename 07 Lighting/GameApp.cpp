@@ -114,14 +114,14 @@ bool GameApp::InitEffect()
 	ComPtr<ID3DBlob> blob;
 
 	// 创建顶点着色器
-	HR(CreateShaderFromFile(L"HLSL\\Light_VS.vso", L"HLSL\\Light_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Light_VS.cso", L"HLSL\\Light_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));
 	// 创建并绑定顶点布局
 	HR(md3dDevice->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout.GetAddressOf()));
 
 	// 创建像素着色器
-	HR(CreateShaderFromFile(L"HLSL\\Light_PS.vso", L"HLSL\\Light_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Light_PS.cso", L"HLSL\\Light_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader.GetAddressOf()));
 
 	return true;

@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.1-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.3-519dd9.svg)
 
 ## 博客教程
 
@@ -38,18 +38,23 @@ QQ群号：727623616
 |               |默认配置          |最低配置   |
 |---------------|:----------------:|:---------:|
 |IDE            |**VS2017**        |VS2015     |
-|D3DComplier版本|**47**            |44         |
+|D3DComplier版本|**47**            |46         |
 |Windows SDK版本|**10.0.17763.0**  |8.1        |
-|Windows开发环境|**Windows 10**    |Windows 8.1|
+|Windows开发环境|**Windows 10**    |Windows 7(需更新至SP1)|
 |平台           |**x86/x64支持**   |x86/x64支持|
 |配置           |**Debug/Release支持**|Debug/Release支持|
 
->注意: 比10.0.16299.0更低版本的Windows SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
+>注意: 
+>1. 比10.0.16299.0更低版本的Windows SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
+>2. Win7系统首先需要更新系统至SP1，并选择所有的项目按下面的配置属性添加宏：
 
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.png)
 
 ## 如何打开教程项目
 
 **DirectX11 With Windows SDK.sln包含目前所有项目，同时用于编译测试。建议一次性生成所有项目，比单独生成会快很多。**
+
+若当前的SDK版本与项目的不一致，请选择项目-重定解决方案目标，将SDK设置为当前你所拥有的版本。
 
 若要指定运行哪个项目，需要对项目右键-设为启动项。
 

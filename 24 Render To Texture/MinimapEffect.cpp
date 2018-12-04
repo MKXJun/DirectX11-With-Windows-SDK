@@ -113,7 +113,7 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建顶点着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\Minimap_VS.vso", L"HLSL\\Minimap_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Minimap_VS.cso", L"HLSL\\Minimap_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->minimapVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
@@ -123,7 +123,7 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建像素着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\Minimap_PS.pso", L"HLSL\\Minimap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Minimap_PS.cso", L"HLSL\\Minimap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->minimapPS.GetAddressOf()));
 
 

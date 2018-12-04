@@ -33,10 +33,14 @@
 // 着色器编译相关函数
 //
 
-// objFileNameInOut为编译好的着色器二进制文件(.*so)，若有指定则优先寻找该文件并读取
-// hlslFileName为着色器代码，若未找到着色器二进制文件则编译着色器代码
-// 编译成功后，若指定了objFileNameInOut，则保存编译好的着色器二进制信息到该文件
-// ppBlobOut输出着色器二进制信息
+// ------------------------------
+// CreateShaderFromFile函数
+// ------------------------------
+// [In]objFileNameInOut 编译好的着色器二进制文件(.cso)，若有指定则优先寻找该文件并读取
+// [In]hlslFileName     着色器代码，若未找到着色器二进制文件则编译着色器代码
+// [In]entryPoint       入口点(指定开始的函数)
+// [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
+// [Out]ppBlobOut       输出着色器二进制信息
 HRESULT CreateShaderFromFile(const WCHAR* objFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
 
 

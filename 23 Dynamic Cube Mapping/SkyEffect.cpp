@@ -98,7 +98,7 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建顶点着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\Sky_VS.vso", L"HLSL\\Sky_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Sky_VS.cso", L"HLSL\\Sky_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->skyVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPos::inputLayout, ARRAYSIZE(VertexPos::inputLayout),
@@ -108,7 +108,7 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建像素着色器
 	//
 
-	HR(CreateShaderFromFile(L"HLSL\\Sky_PS.pso", L"HLSL\\Sky_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Sky_PS.cso", L"HLSL\\Sky_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->skyPS.GetAddressOf()));
 
 

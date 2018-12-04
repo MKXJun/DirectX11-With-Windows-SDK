@@ -13,5 +13,6 @@ DXTK/Lib
 *.gso
 *.hso
 *.mbo
+*.inc
 
 

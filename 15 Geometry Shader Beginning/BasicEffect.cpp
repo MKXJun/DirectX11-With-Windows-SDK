@@ -47,12 +47,6 @@ public:
 	Impl() = default;
 	~Impl() = default;
 
-	// objFileNameInOut为编译好的着色器二进制文件(.*so)，若有指定则优先寻找该文件并读取
-	// hlslFileName为着色器代码，若未找到着色器二进制文件则编译着色器代码
-	// 编译成功后，若指定了objFileNameInOut，则保存编译好的着色器二进制信息到该文件
-	// ppBlobOut输出着色器二进制信息
-	HRESULT CreateShaderFromFile(const WCHAR* objFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
-
 public:
 	// 需要16字节对齐的优先放在前面
 	CBufferObject<0, CBChangesEveryFrame>   cbFrame;		// 每次对象绘制的常量缓冲区
@@ -121,7 +115,6 @@ BasicEffect & BasicEffect::Get()
 	return *pInstance;
 }
 
-
 bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 {
 	if (!device)
@@ -136,37 +129,37 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	ComPtr<ID3DBlob> blob;
 
 	// 创建顶点着色器和顶点布局
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_VS.vso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.GetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Triangle_VS.cso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.GetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleVS.GetAddressOf()));
 	HR(device->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosColorLayout.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_VS.vso", L"HLSL\\Cylinder_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Cylinder_VS.cso", L"HLSL\\Cylinder_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderVS.GetAddressOf()));
 	HR(device->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosNormalColorLayout.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_VS.vso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Normal_VS.cso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalVS.GetAddressOf()));
 
 	// 创建像素着色器
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_PS.pso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Triangle_PS.cso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->trianglePS.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_PS.pso", L"HLSL\\Cylinder_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Cylinder_PS.cso", L"HLSL\\Cylinder_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderPS.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_PS.pso", L"HLSL\\Normal_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Normal_PS.cso", L"HLSL\\Normal_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalPS.GetAddressOf()));
 
 	// 创建几何着色器
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Triangle_GS.gso", L"HLSL\\Triangle_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Triangle_GS.cso", L"HLSL\\Triangle_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleGS.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Cylinder_GS.gso", L"HLSL\\Cylinder_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Cylinder_GS.cso", L"HLSL\\Cylinder_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->cylinderGS.GetAddressOf()));
 
-	HR(pImpl->CreateShaderFromFile(L"HLSL\\Normal_GS.gso", L"HLSL\\Normal_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Normal_GS.cso", L"HLSL\\Normal_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalGS.GetAddressOf()));
 
 
@@ -324,51 +317,8 @@ void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	}
 }
 
-//
-// BasicEffect::Impl实现部分
-//
 
 
-HRESULT BasicEffect::Impl::CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
-{
-	HRESULT hr = S_OK;
 
-	// 寻找是否有已经编译好的顶点着色器
-	if (objFileNameInOut && filesystem::exists(objFileNameInOut))
-	{
-		HR(D3DReadFileToBlob(objFileNameInOut, ppBlobOut));
-	}
-	else
-	{
-		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#ifdef _DEBUG
-		// 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
-		// 但仍然允许着色器进行优化操作
-		dwShaderFlags |= D3DCOMPILE_DEBUG;
-
-		// 在Debug环境下禁用优化以避免出现一些不合理的情况
-		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompileFromFile(hlslFileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, shaderModel,
-			dwShaderFlags, 0, ppBlobOut, errorBlob.GetAddressOf());
-		if (FAILED(hr))
-		{
-			if (errorBlob != nullptr)
-			{
-				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
-			}
-			return hr;
-		}
-
-		// 若指定了输出文件名，则将着色器二进制信息输出
-		if (objFileNameInOut)
-		{
-			HR(D3DWriteBlobToFile(*ppBlobOut, objFileNameInOut, FALSE));
-		}
-	}
-
-	return hr;
-}
 
 

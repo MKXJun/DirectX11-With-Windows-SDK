@@ -33,6 +33,14 @@ QQ群号：727623616
 
 作为教程演示项目，并不是以实现一个软引擎为目标，因此不会刻意进行引擎架构的组织。建议读者在跟随教程学习的同时要动手实践。
 
+## 如何打开教程项目
+
+**DirectX11 With Windows SDK.sln包含目前所有项目，同时用于编译测试。建议一次性生成所有项目，比单独生成会快很多。**
+
+若要指定运行哪个项目，需要对项目右键-设为启动项。
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.png)
+
 ## 配置表
 
 |               |默认配置          |最低配置   |
@@ -45,21 +53,14 @@ QQ群号：727623616
 |配置           |**Debug/Release支持**|Debug/Release支持|
 
 >注意: 
->1. 比10.0.16299.0更低版本的Windows SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
->2. Win7系统如果没有安装SP1以及KB2670838补丁，将无法看到Direct2D的文本显示。
->3. Win7系统在VS中选择所有的项目按下面的配置属性添加宏：
+>1. 若当前的SDK版本与项目的不一致，请选择项目-重定解决方案目标，将SDK设置为当前你所拥有的版本。VS2015还需要修改平台工具集。
+>2. 比10.0.16299.0更低版本的Windows SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
+>3. Win7系统如果没有安装SP1以及KB2670838补丁，将无法看到Direct2D的文本显示。
+>4. Win7系统在VS中选择所有的项目按下面的配置属性添加宏：
 
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.png)
 
-## 如何打开教程项目
 
-**DirectX11 With Windows SDK.sln包含目前所有项目，同时用于编译测试。建议一次性生成所有项目，比单独生成会快很多。**
-
-若当前的SDK版本与项目的不一致，请选择项目-重定解决方案目标，将SDK设置为当前你所拥有的版本。
-
-若要指定运行哪个项目，需要对项目右键-设为启动项。
-
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.png)
 
 
 

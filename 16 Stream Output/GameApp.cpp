@@ -49,16 +49,32 @@ void GameApp::OnResize()
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HR(md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf()));
-
+	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
 	surface.Reset();
-	// 创建固定颜色刷和文本格式
-	HR(md2dRenderTarget->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::White),
-		mColorBrush.GetAddressOf()));
-	HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-		mTextFormat.GetAddressOf()));
+
+	if (hr == E_NOINTERFACE)
+	{
+		OutputDebugString(L"\n警告：Direct2D与Direct3D互操作性功能受限，你将无法看到文本信息。现提供下述可选方法：\n"
+			"1. 对于Win7系统，需要更新至Win7 SP1，并安装KB2670838补丁以支持Direct2D显示。\n"
+			"2. 自行完成Direct3D 10.1与Direct2D的交互。详情参阅："
+			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
+			"3. 使用别的字体库，比如FreeType。\n\n");
+	}
+	else if (hr == S_OK)
+	{
+		// 创建固定颜色刷和文本格式
+		HR(md2dRenderTarget->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::White),
+			mColorBrush.GetAddressOf()));
+		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
+			mTextFormat.GetAddressOf()));
+	}
+	else
+	{
+		// 报告异常问题
+		assert(md2dRenderTarget);
+	}
 
 	// 更新投影矩阵
 	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
@@ -214,37 +230,40 @@ void GameApp::DrawScene()
 	// ******************
 	// 绘制Direct2D部分
 	//
-	md2dRenderTarget->BeginDraw();
-	std::wstring text = L"切换分形：Q-三角形(面/线框) W-雪花(线框) E-球(面/线框)\n"
-		L"主键盘数字1 - 7：分形阶数，越高越精细\n"
-		L"M-面/线框切换\n\n"
-		L"当前阶数: " + std::to_wstring(mCurrIndex + 1) + L"\n"
-		"当前分形: ";
-	if (mShowMode == Mode::SplitedTriangle)
-		text += L"三角形";
-	else if (mShowMode == Mode::SplitedSnow)
-		text += L"雪花";
-	else
-		text += L"球";
-
-	if (mIsWireFrame)
-		text += L"(线框)";
-	else
-		text += L"(面)";
-
-	if (mShowMode == Mode::SplitedSphere)
+	if (md2dRenderTarget != nullptr)
 	{
-		if (mShowNormal)
-			text += L"(N-关闭法向量)";
+		md2dRenderTarget->BeginDraw();
+		std::wstring text = L"切换分形：Q-三角形(面/线框) W-雪花(线框) E-球(面/线框)\n"
+			L"主键盘数字1 - 7：分形阶数，越高越精细\n"
+			L"M-面/线框切换\n\n"
+			L"当前阶数: " + std::to_wstring(mCurrIndex + 1) + L"\n"
+			"当前分形: ";
+		if (mShowMode == Mode::SplitedTriangle)
+			text += L"三角形";
+		else if (mShowMode == Mode::SplitedSnow)
+			text += L"雪花";
 		else
-			text += L"(N-开启法向量)";
+			text += L"球";
+
+		if (mIsWireFrame)
+			text += L"(线框)";
+		else
+			text += L"(面)";
+
+		if (mShowMode == Mode::SplitedSphere)
+		{
+			if (mShowNormal)
+				text += L"(N-关闭法向量)";
+			else
+				text += L"(N-开启法向量)";
+		}
+
+
+
+		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
+		HR(md2dRenderTarget->EndDraw());
 	}
-
-
-
-	md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-		D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-	HR(md2dRenderTarget->EndDraw());
 
 	HR(mSwapChain->Present(0, 0));
 

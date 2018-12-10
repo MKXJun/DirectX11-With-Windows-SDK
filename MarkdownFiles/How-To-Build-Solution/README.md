@@ -29,7 +29,7 @@
 
 在项目属性-C/C++ -预处理器中按下面的方式添加宏：
 
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/003.png)
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/003.png)
 
 然后重新编译解决方案/项目即可。
 

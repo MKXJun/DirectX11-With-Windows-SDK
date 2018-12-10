@@ -52,7 +52,7 @@ QQ群号：727623616
 |平台           |**x86/x64支持**   |x86/x64支持|
 |配置           |**Debug/Release支持**|Debug/Release支持|
 
-如果无法编译通过，或无法正常运行，首先请点击：[无法编译、运行教程项目的解决方法](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution)
+**如果无法编译通过，或无法正常运行，首先请点击：[无法编译、运行教程项目的解决方法](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution)**
 
 ## 更新记录
 

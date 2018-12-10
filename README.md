@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.4-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.5-519dd9.svg)
 
 ## 博客教程
 
@@ -52,17 +52,7 @@ QQ群号：727623616
 |平台           |**x86/x64支持**   |x86/x64支持|
 |配置           |**Debug/Release支持**|Debug/Release支持|
 
->注意: 
->1. 若当前的SDK版本与项目的不一致，请选择项目-重定解决方案目标，将SDK设置为当前你所拥有的版本。VS2015还需要修改平台工具集。
->2. 比10.0.16299.0更低版本的Windows SDK需要在项目设置-配置属性-C/C++-语言-符合模式 设为否，才能正常编译。
->3. Win7系统如果没有安装SP1以及KB2670838补丁，将无法看到Direct2D的文本显示。
->4. Win7系统在VS中选择所有的项目按下面的配置属性添加宏：
-
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.png)
-
-
-
-
+如果无法编译通过，或无法正常运行，首先请点击：[无法编译、运行教程项目的解决方法](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution)
 
 ## 更新记录
 

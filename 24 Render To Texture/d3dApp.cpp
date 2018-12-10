@@ -30,10 +30,6 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mResizing(false),
 	mEnable4xMsaa(false),
 	m4xMsaaQuality(0),
-
-	mMouse(std::make_unique<DirectX::Mouse>()),
-	mKeyboard(std::make_unique<DirectX::Keyboard>()),
-
 	md3dDevice(nullptr),
 	md3dImmediateContext(nullptr),
 	mSwapChain(nullptr),
@@ -106,6 +102,9 @@ int D3DApp::Run()
 
 bool D3DApp::Init()
 {
+	mMouse = std::make_unique<DirectX::Mouse>();
+	mKeyboard = std::make_unique<DirectX::Keyboard>();
+
 	if (!InitMainWindow())
 		return false;
 

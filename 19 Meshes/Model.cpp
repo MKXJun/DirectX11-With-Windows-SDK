@@ -83,31 +83,38 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 
 		// 创建环境光对应纹理
 		auto& strA = part.texStrA;
-		if (strA.substr(strA.size() - 3, 3) == L"dds")
+		if (strA.size() > 4)
 		{
-			HR(CreateDDSTextureFromFile(device.Get(), strA.c_str(), nullptr,
-				modelParts[i].texA.GetAddressOf()));
+			if (strA.substr(strA.size() - 3, 3) == L"dds")
+			{
+				HR(CreateDDSTextureFromFile(device.Get(), strA.c_str(), nullptr,
+					modelParts[i].texA.GetAddressOf()));
+			}
+			else
+			{
+				HR(CreateWICTextureFromFile(device.Get(), strA.c_str(), nullptr,
+					modelParts[i].texA.GetAddressOf()));
+			}
 		}
-		else if (part.texStrA.size() != 0)
-		{
-			HR(CreateWICTextureFromFile(device.Get(), strA.c_str(), nullptr,
-				modelParts[i].texA.GetAddressOf()));
-		}
+		
 		// 创建漫射光对应纹理
 		auto& strD = part.texStrD;
 		if (strA == strD)
 		{
 			modelParts[i].texD = modelParts[i].texA;
 		}
-		else if (strD.substr(strD.size() - 3, 3) == L"dds")
+		else if (strD.size() > 4)
 		{
-			HR(CreateDDSTextureFromFile(device.Get(), strD.c_str(), nullptr,
-				modelParts[i].texD.GetAddressOf()));
-		}
-		else if (part.texStrA.size() != 0)
-		{
-			HR(CreateWICTextureFromFile(device.Get(), strD.c_str(), nullptr,
-				modelParts[i].texD.GetAddressOf()));
+			if (strD.substr(strD.size() - 3, 3) == L"dds")
+			{
+				HR(CreateDDSTextureFromFile(device.Get(), strD.c_str(), nullptr,
+					modelParts[i].texD.GetAddressOf()));
+			}
+			else
+			{
+				HR(CreateWICTextureFromFile(device.Get(), strD.c_str(), nullptr,
+					modelParts[i].texD.GetAddressOf()));
+			}
 		}
 
 		modelParts[i].material = part.material;

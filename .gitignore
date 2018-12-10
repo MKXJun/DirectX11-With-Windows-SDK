@@ -13,6 +13,8 @@ x64/
 *.mbo
 *.inc
 *.ilk
+*.iobj
+*.ipdb
 *.pdb
 !dxtex.exe
 *.exe

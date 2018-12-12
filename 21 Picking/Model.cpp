@@ -17,19 +17,17 @@ Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
 	SetMesh(device, meshData);
 }
 
-Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices)
+template<class VertexType, class IndexType>
+Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
 {
 	SetMesh(device, vertices, indices);
 }
 
-Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices)
-{
-	SetMesh(device, vertices, indices);
-}
 
-Model::Model(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vertices, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
+Model::Model(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize, UINT vertexCount,
+	const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
 {
-	SetMesh(device, vertices, vertexCount, indices, indexCount, indexFormat);
+	SetMesh(device, vertices, vertexSize, vertexCount, indices, indexCount, indexFormat);
 }
 
 void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
@@ -123,24 +121,23 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 
 }
 
+template<class VertexType, class IndexType>
+void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
+{
+	static_assert(sizeof(IndexType) == 2 || sizeof(IndexType) == 4, "The size of IndexType must be 2 bytes or 4 bytes!");
+	static_assert(std::is_unsigned<IndexType>::value, "IndexType must be unsigned integer!");
+	SetMesh(device, vertices.data(), sizeof(VertexType),
+		(UINT)vertices.size(), indices.data(), (UINT)indices.size(),
+		(sizeof(IndexType) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT));
+
+}
+
 void Model::SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
 {
 	SetMesh(device, meshData.vertexVec, meshData.indexVec);
 }
 
-void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<WORD>& indices)
-{
-	SetMesh(device, vertices.data(), (UINT)vertices.size(), indices.data(),
-		(UINT)indices.size(), DXGI_FORMAT_R16_UINT);
-}
-
-void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexPosNormalTex>& vertices, const std::vector<DWORD>& indices)
-{
-	SetMesh(device, vertices.data(), (UINT)vertices.size(), indices.data(),
-		(UINT)indices.size(), DXGI_FORMAT_R32_UINT);
-}
-
-void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vertices, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
+void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT vertexSize, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
 {
 	modelParts.resize(1);
 
@@ -148,11 +145,15 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vert
 	modelParts[0].indexCount = indexCount;
 	modelParts[0].indexFormat = indexFormat;
 
+	modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	modelParts[0].material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = modelParts[0].vertexCount * (UINT)sizeof(VertexPosNormalTex);
+	vbd.ByteWidth = vertexSize * vertexCount;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -180,6 +181,7 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const VertexPosNormalTex * vert
 	HR(device->CreateBuffer(&ibd, &InitData, modelParts[0].indexBuffer.ReleaseAndGetAddressOf()));
 
 }
+
 
 
 

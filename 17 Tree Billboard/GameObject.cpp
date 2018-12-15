@@ -42,7 +42,7 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {
 	// 设置顶点/索引缓冲区
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mVertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &strides, &offsets);
 	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);

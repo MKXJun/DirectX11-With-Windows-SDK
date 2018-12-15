@@ -532,10 +532,11 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 	mIndexBuffer.Reset();
 
 	// 设置顶点缓冲区描述
+	mVertexStride = sizeof(VertexType);
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexType);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * mVertexStride;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -584,7 +585,7 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 设置顶点/索引缓冲区
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mVertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &strides, &offsets);
 	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);

@@ -301,10 +301,11 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 
 
 	// 设置顶点缓冲区描述
+	mVertexStride = sizeof(VertexType);
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexType);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * mVertexStride;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区

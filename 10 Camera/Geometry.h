@@ -72,13 +72,6 @@ private:
 		DirectX::XMFLOAT4 tangent;
 		DirectX::XMFLOAT4 color;
 		DirectX::XMFLOAT2 tex;
-
-		VertexData() = default;
-		VertexData(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& normal,
-			const DirectX::XMFLOAT4& tangent, const DirectX::XMFLOAT4& color, const DirectX::XMFLOAT2& tex)
-			: pos(pos), normal(normal), tangent(tangent), color(color), tex(tex)
-		{
-		}
 	};
 
 	template<class VertexType>
@@ -134,7 +127,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateSphere(float ra
 	float x, y, z;
 
 	// 放入顶端点
-	vertexData = VertexData(XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 0.0f));
+	vertexData = { XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 	for (int i = 1; i < levels; ++i)
@@ -151,14 +144,14 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateSphere(float ra
 			XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
 			XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
 
-			vertexData = VertexData(pos, normal, XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, phi / XM_PI));
+			vertexData = { pos, normal, XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, phi / XM_PI) };
 			InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 		}
 	}
 
 	// 放入底端点
-	vertexData = VertexData(XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
-		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 1.0f));
+	vertexData = { XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
+		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 1.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 
@@ -317,16 +310,16 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 	VertexData vertexData;
 
 	// 放入顶端圆心
-	vertexData = VertexData(XMFLOAT3(0.0f, h2, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f),
-		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f));
+	vertexData = { XMFLOAT3(0.0f, h2, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f),
+		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 	// 放入顶端圆上各点
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		vertexData = VertexData(XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(0.0f, 1.0f, 0.0f),
-			XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f));
+		vertexData = { XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(0.0f, 1.0f, 0.0f),
+			XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
 		InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 	}
 
@@ -334,14 +327,14 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		vertexData = VertexData(XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
-			XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f));
+		vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
+			XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
 		InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 	}
 
 	// 放入底端圆心
-	vertexData = VertexData(XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
-		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f));
+	vertexData = { XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
+		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 	// 逐渐放入顶部三角形索引
@@ -353,6 +346,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 	}
 
 	// 逐渐放入底部三角形索引
+	offset += slices + 2;
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec[iIndex++] = offset;
@@ -384,7 +378,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		vertexData = VertexData{ XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
+		vertexData = { XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
 			XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, 0.0f) };
 		InsertVertexElement(meshData.vertexVec[i], vertexData);
 	}
@@ -393,7 +387,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
-		vertexData = VertexData{ XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
+		vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
 			XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, 1.0f) };
 		InsertVertexElement(meshData.vertexVec[(slices + 1) + i], vertexData);
 	}
@@ -432,19 +426,19 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::Create2DShow(float ce
 	VertexData vertexData;
 	IndexType vIndex = 0;
 
-	vertexData = VertexData{ XMFLOAT3(centerX - scaleX, centerY - scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+	vertexData = { XMFLOAT3(centerX - scaleX, centerY - scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 1.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX - scaleX, centerY + scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+	vertexData = { XMFLOAT3(centerX - scaleX, centerY + scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX + scaleX, centerY + scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+	vertexData = { XMFLOAT3(centerX + scaleX, centerY + scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(1.0f, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX + scaleX, centerY - scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
+	vertexData = { XMFLOAT3(centerX + scaleX, centerY - scaleY, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(1.0f, 1.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
@@ -470,19 +464,19 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreatePlane(float cen
 	VertexData vertexData;
 	IndexType vIndex = 0;
 
-	vertexData = VertexData{ XMFLOAT3(centerX - width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
+	vertexData = { XMFLOAT3(centerX - width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, texV) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX - width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
+	vertexData = { XMFLOAT3(centerX - width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX + width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
+	vertexData = { XMFLOAT3(centerX + width / 2, centerY, centerZ + depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(texU, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	vertexData = VertexData{ XMFLOAT3(centerX + width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
+	vertexData = { XMFLOAT3(centerX + width / 2, centerY, centerZ - depth / 2), XMFLOAT3(0.0f, 1.0f, 0.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(texU, texV) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 

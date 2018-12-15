@@ -53,7 +53,8 @@ public:
 		DirectX::XMFLOAT3 GetPosition() const;
 
 		// 设置缓冲区
-		void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
+		template<class VertexType, class IndexType>
+		void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
 		// 设置纹理
 		void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
 		// 设置材质
@@ -69,7 +70,8 @@ public:
 		ComPtr<ID3D11ShaderResourceView> mTexture;		// 纹理
 		ComPtr<ID3D11Buffer> mVertexBuffer;				// 顶点缓冲区
 		ComPtr<ID3D11Buffer> mIndexBuffer;				// 索引缓冲区
-		int mIndexCount;								// 索引数目	
+		UINT mVertexStride;								// 顶点字节大小
+		UINT mIndexCount;								// 索引数目	
 	};
 
 	// 摄像机模式

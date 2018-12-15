@@ -91,7 +91,7 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
 {
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mModel.vertexStride;
 	UINT offsets = 0;
 
 	for (auto& part : mModel.modelParts)
@@ -136,7 +136,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 
 	deviceContext->Unmap(mInstancedBuffer.Get(), 0);
 
-	UINT strides[2] = { sizeof(VertexPosNormalTex), sizeof(InstancedData) };
+	UINT strides[2] = { mModel.vertexStride, sizeof(InstancedData) };
 	UINT offsets[2] = { 0, 0 };
 	ID3D11Buffer * buffers[2] = { nullptr, mInstancedBuffer.Get() };
 	for (auto& part : mModel.modelParts)

@@ -2,18 +2,25 @@
 #include "d3dUtil.h"
 using namespace DirectX;
 
-GameObject::GameObject()
+struct InstancedData
 {
-	XMStoreFloat4x4(&mWorldMatrix, XMMatrixIdentity());
+	XMMATRIX world;
+	XMMATRIX worldInvTranspose;
+};
+
+GameObject::GameObject()
+	: mWorldMatrix(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f)
+{
 }
 
-
-DirectX::XMFLOAT3 GameObject::GetPosition() const
+XMFLOAT3 GameObject::GetPosition() const
 {
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
-
-
 
 BoundingBox GameObject::GetBoundingBox() const
 {
@@ -25,6 +32,14 @@ BoundingBox GameObject::GetBoundingBox() const
 BoundingBox GameObject::GetLocalBoundingBox() const
 {
 	return mModel.boundingBox;
+}
+
+BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
+{
+	BoundingOrientedBox box;
+	BoundingOrientedBox::CreateFromBoundingBox(box, mModel.boundingBox);
+	box.Transform(box, XMLoadFloat4x4(&mWorldMatrix));
+	return box;
 }
 
 void GameObject::SetModel(Model && model)
@@ -49,11 +64,9 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
 
-
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
+void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
 {
-
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mModel.vertexStride;
 	UINT offsets = 0;
 
 	for (auto& part : mModel.modelParts)
@@ -61,14 +74,15 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& ef
 		// 设置顶点/索引缓冲区
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
-		
+
 		// 更新数据并应用
 		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
 		effect.SetTextureAmbient(part.texA);
 		effect.SetTextureDiffuse(part.texD);
 		effect.SetMaterial(part.material);
-		effect.Apply(deviceContext);
 		
+		effect.Apply(deviceContext);
+
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);
 	}
 }

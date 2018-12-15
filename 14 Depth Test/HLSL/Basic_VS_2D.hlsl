@@ -1,10 +1,10 @@
 #include "Basic.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷(2D)
-Vertex2DOut VS_2D(Vertex2DIn vIn)
+VertexPosHTex VS_2D(VertexPosTex vIn)
 {
-    Vertex2DOut vOut;
-    vOut.PosH = float4(vIn.Pos, 1.0f);
+    VertexPosHTex vOut;
+    vOut.PosH = float4(vIn.PosL, 1.0f);
     vOut.Tex = vIn.Tex;
     return vOut;
 }

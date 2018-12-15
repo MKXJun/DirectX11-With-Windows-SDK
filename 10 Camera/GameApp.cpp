@@ -260,7 +260,7 @@ bool GameApp::InitEffect()
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_2D.cso", L"HLSL\\Basic_VS_2D.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
 	// 创建顶点布局(2D)
-	HR(md3dDevice->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
+	HR(md3dDevice->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout2D.GetAddressOf()));
 
 	// 创建像素着色器(2D)
@@ -413,17 +413,19 @@ DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
 
-void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData)
+template<class VertexType, class IndexType>
+void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
 	// 设置顶点缓冲区描述
+	mVertexStride = sizeof(VertexType);
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * mVertexStride;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -434,11 +436,11 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 
 
 	// 设置索引缓冲区描述
-	mIndexCount = (int)meshData.indexVec.size();
+	mIndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
+	ibd.ByteWidth = mIndexCount * sizeof(IndexType);
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	// 新建索引缓冲区
@@ -467,7 +469,7 @@ void GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 设置顶点/索引缓冲区
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mVertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &strides, &offsets);
 	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);

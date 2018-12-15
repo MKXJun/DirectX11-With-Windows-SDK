@@ -1,7 +1,7 @@
 #include "Basic.hlsli"
 
 // 像素着色器(3D)
-float4 PS_3D(Vertex3DOut pIn) : SV_Target
+float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
 {
 	// 提前进行裁剪，对不符合要求的像素可以避免后续运算
     float4 texColor = tex.Sample(sam, pIn.Tex);

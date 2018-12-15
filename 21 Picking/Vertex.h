@@ -20,7 +20,7 @@ struct VertexPosColor
 struct VertexPosTex
 {
 	DirectX::XMFLOAT3 pos;
-	DirectX::XMFLOAT3 tex;
+	DirectX::XMFLOAT2 tex;
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[2];
 };
 
@@ -48,5 +48,13 @@ struct VertexPosNormalTex
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[3];
 };
 
+struct VertexPosNormalTangentTex
+{
+	DirectX::XMFLOAT3 pos;
+	DirectX::XMFLOAT3 normal;
+	DirectX::XMFLOAT4 tangent;
+	DirectX::XMFLOAT2 tex;
+	static const D3D11_INPUT_ELEMENT_DESC inputLayout[4];
+};
 
 #endif

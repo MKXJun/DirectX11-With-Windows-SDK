@@ -73,25 +73,19 @@ void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyE
 
 void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 {
-	Geometry::MeshData sphere = Geometry::CreateSphere(skySphereRadius);
-	size_t size = sphere.vertexVec.size();
-	std::vector<XMFLOAT3> vertices(size);
-	for (size_t i = 0; i < size; ++i)
-	{
-		vertices[i] = sphere.vertexVec[i].pos;
-	}
+	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 
 	// 顶点缓冲区创建
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)vertices.size();
+	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)sphere.vertexVec.size();
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = vertices.data();
+	InitData.pSysMem = sphere.vertexVec.data();
 
 	HR(device->CreateBuffer(&vbd, &InitData, &mVertexBuffer));
 

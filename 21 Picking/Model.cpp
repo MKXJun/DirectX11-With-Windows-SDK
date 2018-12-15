@@ -12,18 +12,6 @@ Model::Model(ComPtr<ID3D11Device> device, const ObjReader & model)
 	SetModel(device, model);
 }
 
-Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
-{
-	SetMesh(device, meshData);
-}
-
-template<class VertexType, class IndexType>
-Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
-{
-	SetMesh(device, vertices, indices);
-}
-
-
 Model::Model(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize, UINT vertexCount,
 	const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
 {
@@ -32,6 +20,8 @@ Model::Model(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize,
 
 void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 {
+	vertexStride = sizeof(VertexPosNormalTex);
+
 	modelParts.resize(model.objParts.size());
 
 	// ´´½¨°üÎ§ºÐ
@@ -121,24 +111,10 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 
 }
 
-template<class VertexType, class IndexType>
-void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
-{
-	static_assert(sizeof(IndexType) == 2 || sizeof(IndexType) == 4, "The size of IndexType must be 2 bytes or 4 bytes!");
-	static_assert(std::is_unsigned<IndexType>::value, "IndexType must be unsigned integer!");
-	SetMesh(device, vertices.data(), sizeof(VertexType),
-		(UINT)vertices.size(), indices.data(), (UINT)indices.size(),
-		(sizeof(IndexType) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT));
-
-}
-
-void Model::SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData & meshData)
-{
-	SetMesh(device, meshData.vertexVec, meshData.indexVec);
-}
-
 void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT vertexSize, UINT vertexCount, const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
 {
+	vertexStride = vertexSize;
+
 	modelParts.resize(1);
 
 	modelParts[0].vertexCount = vertexCount;

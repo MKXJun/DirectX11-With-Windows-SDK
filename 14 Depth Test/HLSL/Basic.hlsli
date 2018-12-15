@@ -40,14 +40,20 @@ cbuffer CBChangesRarely : register(b4)
 
 
 
-struct Vertex3DIn
+struct VertexPosNormalTex
 {
     float3 PosL : POSITION;
     float3 NormalL : NORMAL;
     float2 Tex : TEXCOORD;
 };
 
-struct Vertex3DOut
+struct VertexPosTex
+{
+    float3 PosL : POSITION;
+    float2 Tex : TEXCOORD;
+};
+
+struct VertexPosHWNormalTex
 {
     float4 PosH : SV_POSITION;
     float3 PosW : POSITION; // 在世界中的位置
@@ -55,13 +61,7 @@ struct Vertex3DOut
     float2 Tex : TEXCOORD;
 };
 
-struct Vertex2DIn
-{
-    float3 Pos : POSITION;
-    float2 Tex : TEXCOORD;
-};
-
-struct Vertex2DOut
+struct VertexPosHTex
 {
     float4 PosH : SV_POSITION;
     float2 Tex : TEXCOORD;

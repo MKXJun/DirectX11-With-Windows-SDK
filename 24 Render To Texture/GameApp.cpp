@@ -196,7 +196,8 @@ void GameApp::DrawScene()
 	// 绘制主场景
 	DrawScene(false);
 
-	UINT strides[1] = { sizeof(VertexPosNormalTex) };
+	// 此处用于小地图和屏幕绘制
+	UINT strides[1] = { sizeof(VertexPosTex) };
 	UINT offsets[1] = { 0 };
 	
 	// 小地图特效应用

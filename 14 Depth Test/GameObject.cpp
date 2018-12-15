@@ -17,41 +17,7 @@ DirectX::XMFLOAT3 GameObject::GetPosition() const
 }
 
 
-void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData)
-{
-	// 释放旧资源
-	mVertexBuffer.Reset();
-	mIndexBuffer.Reset();
 
-	// 设置顶点缓冲区描述
-	D3D11_BUFFER_DESC vbd;
-	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	// 新建顶点缓冲区
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = meshData.vertexVec.data();
-	HR(device->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf()));
-
-
-	// 设置索引缓冲区描述
-	mIndexCount = (int)meshData.indexVec.size();
-	D3D11_BUFFER_DESC ibd;
-	ZeroMemory(&ibd, sizeof(ibd));
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	// 新建索引缓冲区
-	InitData.pSysMem = meshData.indexVec.data();
-	HR(device->CreateBuffer(&ibd, &InitData, mIndexBuffer.GetAddressOf()));
-
-
-
-}
 
 void GameObject::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
 {
@@ -72,8 +38,6 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 {
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }
-
-
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {

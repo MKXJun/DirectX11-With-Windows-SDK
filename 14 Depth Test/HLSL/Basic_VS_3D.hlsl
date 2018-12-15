@@ -1,9 +1,9 @@
 #include "Basic.hlsli"
 
 // ¶¥µã×ÅÉ«Æ÷(3D)
-Vertex3DOut VS_3D(Vertex3DIn vIn)
+VertexPosHWNormalTex VS_3D(VertexPosNormalTex vIn)
 {
-    Vertex3DOut vOut;
+    VertexPosHWNormalTex vOut;
     
     matrix viewProj = mul(gView, gProj);
     float4 posW = mul(float4(vIn.PosL, 1.0f), gWorld);

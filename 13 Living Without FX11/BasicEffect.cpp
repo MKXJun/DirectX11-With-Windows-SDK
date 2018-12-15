@@ -140,7 +140,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_2D.cso", L"HLSL\\Basic_VS_2D.hlsl", "VS", "vs_5_0", blob.GetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->vertexShader2D.GetAddressOf()));
 	// 创建顶点布局(2D)
-	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
+	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexLayout2D.GetAddressOf()));
 
 	// 创建像素着色器(2D)

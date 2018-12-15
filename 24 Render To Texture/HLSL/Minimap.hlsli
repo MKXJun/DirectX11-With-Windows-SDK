@@ -18,10 +18,9 @@ cbuffer CBDrawingStates : register(b1)
 }
 
 
-struct VertexPosNormalTex
+struct VertexPosTex
 {
     float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
     float2 Tex : TEXCOORD;
 };
 

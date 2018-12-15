@@ -135,6 +135,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dApp.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="LightHelper.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Light.hlsli">

@@ -39,7 +39,7 @@ private:
 	GameObject mTriangle;									// 三角形
 	DirectX::BoundingSphere mBoundingSphere;				// 球的包围盒
 
-	Geometry::MeshData mTriangleMesh;						// 三角形网格模型
+	Geometry::MeshData<> mTriangleMesh;						// 三角形网格模型
 
 	std::wstring mPickedObjStr;								// 已经拾取的对象名
 

@@ -13,10 +13,9 @@ cbuffer CBChangesRarely : register(b1)
     matrix gWorldViewProj;
 }
 
-struct VertexPosNormalTex
+struct VertexPosTex
 {
     float3 PosL : POSITION;
-    float3 NormalW : NORMAL;
     float2 Tex : TEXCOORD;
 };
 

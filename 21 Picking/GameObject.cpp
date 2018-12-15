@@ -17,7 +17,7 @@ GameObject::GameObject()
 {
 }
 
-DirectX::XMFLOAT3 GameObject::GetPosition() const
+XMFLOAT3 GameObject::GetPosition() const
 {
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
@@ -29,7 +29,7 @@ BoundingBox GameObject::GetBoundingBox() const
 	return box;
 }
 
-DirectX::BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
+BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
 {
 	BoundingOrientedBox box;
 	BoundingOrientedBox::CreateFromBoundingBox(box, mModel.boundingBox);
@@ -91,7 +91,7 @@ void GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
 {
-	UINT strides = sizeof(VertexPosNormalTex);
+	UINT strides = mModel.vertexStride;
 	UINT offsets = 0;
 
 	for (auto& part : mModel.modelParts)
@@ -105,6 +105,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 		effect.SetTextureAmbient(part.texA);
 		effect.SetTextureDiffuse(part.texD);
 		effect.SetMaterial(part.material);
+		
 		effect.Apply(deviceContext);
 
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);
@@ -135,7 +136,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 
 	deviceContext->Unmap(mInstancedBuffer.Get(), 0);
 
-	UINT strides[2] = { sizeof(VertexPosNormalTex), sizeof(InstancedData) };
+	UINT strides[2] = { mModel.vertexStride, sizeof(InstancedData) };
 	UINT offsets[2] = { 0, 0 };
 	ID3D11Buffer * buffers[2] = { nullptr, mInstancedBuffer.Get() };
 	for (auto& part : mModel.modelParts)

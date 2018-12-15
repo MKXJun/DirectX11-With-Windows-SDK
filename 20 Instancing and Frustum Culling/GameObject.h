@@ -24,6 +24,7 @@ public:
 
 	DirectX::BoundingBox GetLocalBoundingBox() const;
 	DirectX::BoundingBox GetBoundingBox() const;
+	DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
 
 	//
 	// ÉèÖÃÊµÀı»º³åÇø

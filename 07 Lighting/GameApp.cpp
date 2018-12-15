@@ -3,12 +3,6 @@
 using namespace DirectX;
 using namespace std::experimental;
 
-const D3D11_INPUT_ELEMENT_DESC GameApp::VertexPosNormalColor::inputLayout[3] = {
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
-};
-
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance)
 {
@@ -79,17 +73,17 @@ void GameApp::UpdateScene(float dt)
 	// 键盘切换模型类型
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
 	{
-		Geometry::MeshData meshData = Geometry::CreateBox();
+		auto meshData = Geometry::CreateBox<VertexPosNormalColor>();
 		ResetMesh(meshData);
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::W))
 	{
-		Geometry::MeshData meshData = Geometry::CreateSphere();
+		auto meshData = Geometry::CreateSphere<VertexPosNormalColor>();
 		ResetMesh(meshData);
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::E))
 	{
-		Geometry::MeshData meshData = Geometry::CreateCylinder();
+		auto meshData = Geometry::CreateCylinder<VertexPosNormalColor>();
 		ResetMesh(meshData);
 	}
 }
@@ -130,7 +124,7 @@ bool GameApp::InitEffect()
 bool GameApp::InitResource()
 {
 	// 初始化网格模型
-	Geometry::MeshData meshData = Geometry::CreateBox();
+	auto meshData = Geometry::CreateBox<VertexPosNormalColor>();
 	ResetMesh(meshData);
 
 
@@ -210,32 +204,23 @@ bool GameApp::InitResource()
 	return true;
 }
 
-bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
+bool GameApp::ResetMesh(const Geometry::MeshData<VertexPosNormalColor>& meshData)
 {
 	// 释放旧资源
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	size_t vertexSize = meshData.posVec.size();
-	std::vector<VertexPosNormalColor> vertices(vertexSize);
-	for (size_t i = 0; i < vertexSize; ++i)
-	{
-		vertices[i].pos = meshData.posVec[i];
-		vertices[i].normal = meshData.normalVec[i];
-		vertices[i].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
-
 	// 设置顶点缓冲区描述
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)vertices.size() * sizeof(VertexPosNormalColor);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalColor);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices.data();
+	InitData.pSysMem = meshData.vertexVec.data();
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf()));
 
 	// 输入装配阶段的顶点缓冲区设置
@@ -247,11 +232,11 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 
 
 	// 设置索引缓冲区描述
-	mIndexCount = (int)meshData.indexVec.size();
+	mIndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
+	ibd.ByteWidth = mIndexCount * sizeof(WORD);
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	// 新建索引缓冲区

@@ -89,7 +89,7 @@ void GameApp::UpdateScene(float dt)
 		// 播放木箱动画
 		mCurrMode = ShowMode::WoodCrate;
 		md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
-		Geometry::MeshData meshData = Geometry::CreateBox();
+		auto meshData = Geometry::CreateBox();
 		ResetMesh(meshData);
 		md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
@@ -100,7 +100,7 @@ void GameApp::UpdateScene(float dt)
 		mCurrMode = ShowMode::FireAnim;
 		mCurrFrame = 0;
 		md3dImmediateContext->IASetInputLayout(mVertexLayout2D.Get());
-		Geometry::MeshData meshData = Geometry::Create2DShow();
+		auto meshData = Geometry::Create2DShow();
 		ResetMesh(meshData);
 		md3dImmediateContext->VSSetShader(mVertexShader2D.Get(), nullptr, 0);
 		md3dImmediateContext->PSSetShader(mPixelShader2D.Get(), nullptr, 0);
@@ -167,7 +167,7 @@ bool GameApp::InitEffect()
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_2D.cso", L"HLSL\\Basic_VS_2D.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
 	// 创建顶点布局(2D)
-	HR(md3dDevice->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
+	HR(md3dDevice->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout2D.GetAddressOf()));
 
 	// 创建像素着色器(2D)
@@ -191,7 +191,7 @@ bool GameApp::InitEffect()
 bool GameApp::InitResource()
 {
 	// 初始化网格模型并设置到输入装配阶段
-	Geometry::MeshData meshData = Geometry::CreateBox();
+	auto meshData = Geometry::CreateBox();
 	ResetMesh(meshData);
 
 	// ******************
@@ -291,8 +291,8 @@ bool GameApp::InitResource()
 
 	return true;
 }
-
-bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
+template<class VertexType>
+bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 {
 	// 释放旧资源
 	mVertexBuffer.Reset();
@@ -304,7 +304,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex);
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexType);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
@@ -314,7 +314,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf()));
 
 	// 输入装配阶段的顶点缓冲区设置
-	UINT stride = sizeof(VertexPosNormalTex);	// 跨越字节数
+	UINT stride = sizeof(VertexType);			// 跨越字节数
 	UINT offset = 0;							// 起始偏移量
 
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
@@ -322,7 +322,7 @@ bool GameApp::ResetMesh(const Geometry::MeshData & meshData)
 
 
 	// 设置索引缓冲区描述
-	mIndexCount = (int)meshData.indexVec.size();
+	mIndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;

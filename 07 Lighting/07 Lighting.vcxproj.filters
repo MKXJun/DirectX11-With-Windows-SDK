@@ -48,6 +48,9 @@
     <ClCompile Include="dxerr.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d3dApp.h">
@@ -76,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="dxerr.h">
       <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

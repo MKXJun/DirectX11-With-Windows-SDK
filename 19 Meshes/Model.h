@@ -30,7 +30,9 @@ struct Model
 	
 	Model();
 	Model(ComPtr<ID3D11Device> device, const ObjReader& model);
-	Model(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
+	// 设置缓冲区
+	template<class VertexType, class IndexType>
+	Model(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
 	
 	template<class VertexType, class IndexType>
 	Model(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices);
@@ -47,8 +49,8 @@ struct Model
 	//
 	// 设置网格
 	//
-
-	void SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData& meshData);
+	template<class VertexType, class IndexType>
+	void SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
 
 	template<class VertexType, class IndexType>
 	void SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices);
@@ -58,9 +60,40 @@ struct Model
 
 	std::vector<ModelPart> modelParts;
 	DirectX::BoundingBox boundingBox;
+	UINT vertexStride;
 };
 
 
+
+
+template<class VertexType, class IndexType>
+inline Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+{
+	SetMesh(device, meshData);
+}
+
+template<class VertexType, class IndexType>
+inline Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
+{
+	SetMesh(device, vertices, indices);
+}
+
+template<class VertexType, class IndexType>
+inline void Model::SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+{
+	SetMesh(device, meshData.vertexVec, meshData.indexVec);
+}
+
+template<class VertexType, class IndexType>
+inline void Model::SetMesh(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
+{
+	static_assert(sizeof(IndexType) == 2 || sizeof(IndexType) == 4, "The size of IndexType must be 2 bytes or 4 bytes!");
+	static_assert(std::is_unsigned<IndexType>::value, "IndexType must be unsigned integer!");
+	SetMesh(device, vertices.data(), sizeof(VertexType),
+		(UINT)vertices.size(), indices.data(), (UINT)indices.size(),
+		(sizeof(IndexType) == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT));
+
+}
 
 
 

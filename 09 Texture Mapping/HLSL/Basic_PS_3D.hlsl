@@ -1,7 +1,7 @@
 #include "Basic.hlsli"
 
 // 像素着色器(3D)
-float4 PS_3D(VertexOut pIn) : SV_Target
+float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
 {
     // 标准化法向量
     pIn.NormalW = normalize(pIn.NormalW);

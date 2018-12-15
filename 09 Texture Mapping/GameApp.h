@@ -44,7 +44,9 @@ public:
 private:
 	bool InitEffect();
 	bool InitResource();
-	bool ResetMesh(const Geometry::MeshData& meshData);
+
+	template<class VertexType>
+	bool ResetMesh(const Geometry::MeshData<VertexType>& meshData);
 
 
 private:
@@ -58,7 +60,7 @@ private:
 	ComPtr<ID3D11Buffer> mVertexBuffer;						// 顶点缓冲区
 	ComPtr<ID3D11Buffer> mIndexBuffer;						// 索引缓冲区
 	ComPtr<ID3D11Buffer> mConstantBuffers[2];				// 常量缓冲区
-	int mIndexCount;										// 绘制物体的索引数组大小
+	UINT mIndexCount;										// 绘制物体的索引数组大小
 	int mCurrFrame;											// 当前火焰动画播放到第几帧
 	ShowMode mCurrMode;										// 当前显示的模式
 

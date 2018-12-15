@@ -8,15 +8,6 @@
 class GameApp : public D3DApp
 {
 public:
-	struct VertexPosNormalColor
-	{
-		DirectX::XMFLOAT3 pos;
-		DirectX::XMFLOAT3 normal;
-		DirectX::XMFLOAT4 color;
-		static const D3D11_INPUT_ELEMENT_DESC inputLayout[3];
-	};
-
-	
 
 	struct VSConstantBuffer
 	{
@@ -51,7 +42,7 @@ public:
 private:
 	bool InitEffect();
 	bool InitResource();
-	bool ResetMesh(const Geometry::MeshData& meshData);
+	bool ResetMesh(const Geometry::MeshData<VertexPosNormalColor>& meshData);
 
 
 private:
@@ -59,7 +50,7 @@ private:
 	ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
 	ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
 	ComPtr<ID3D11Buffer> mConstantBuffers[2];	// 常量缓冲区
-	int mIndexCount;							// 绘制物体的索引数组大小
+	UINT mIndexCount;							// 绘制物体的索引数组大小
 
 	ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
 	ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器

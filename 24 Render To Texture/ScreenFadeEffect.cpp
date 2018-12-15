@@ -46,7 +46,7 @@ public:
 	ComPtr<ID3D11VertexShader> screenFadeVS;
 	ComPtr<ID3D11PixelShader> screenFadePS;
 
-	ComPtr<ID3D11InputLayout> vertexPosNormalTexLayout;
+	ComPtr<ID3D11InputLayout> vertexPosTexLayout;
 
 	ComPtr<ID3D11ShaderResourceView> texture;			// 用于淡入淡出的纹理
 };
@@ -113,8 +113,8 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_VS.cso", L"HLSL\\ScreenFade_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadeVS.GetAddressOf()));
 	// 创建顶点布局
-	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosNormalTexLayout.GetAddressOf()));
+	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
+		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosTexLayout.GetAddressOf()));
 
 	// ******************
 	// 创建像素着色器
@@ -141,7 +141,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 
 void ScreenFadeEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalTexLayout.Get());
+	deviceContext->IASetInputLayout(pImpl->vertexPosTexLayout.Get());
 	deviceContext->VSSetShader(pImpl->screenFadeVS.Get(), nullptr, 0);
 	deviceContext->PSSetShader(pImpl->screenFadePS.Get(), nullptr, 0);
 

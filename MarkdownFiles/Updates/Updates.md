@@ -1,5 +1,9 @@
 更新记录
 
+2018/12/13 v21.7</br>
+-Geometry现支持多种形式的顶点(除VertexPosSize)</br>
+-项目代码大幅度调整，为Geometry进行适配
+
 2018/12/12 v21.6</br>
 -修复Model使用Geometry时无法显示的异常
 

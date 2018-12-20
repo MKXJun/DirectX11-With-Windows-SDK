@@ -129,25 +129,38 @@ void GameApp::UpdateScene(float dt)
 			XMMatrixRotationY(theta));
 	}
 
+	bool hitObject = false;
 	if (ray.Hit(mBoundingSphere))
 	{
 		mPickedObjStr = L"球体";
+		hitObject = true;
 	}
 	else if (ray.Hit(mCube.GetBoundingOrientedBox()))
 	{
 		mPickedObjStr = L"立方体";
+		hitObject = true;
 	}
 	else if (ray.Hit(mCylinder.GetBoundingOrientedBox()))
 	{
 		mPickedObjStr = L"圆柱体";
+		hitObject = true;
 	}
 	else if (ray.Hit(mHouse.GetBoundingOrientedBox()))
 	{
 		mPickedObjStr = L"房屋";
+		hitObject = true;
 	}
 	else if (ray.Hit(V[0], V[1], V[2]))
 	{
 		mPickedObjStr = L"三角形";
+		hitObject = true;
+	}
+
+	if (hitObject == true && mMouseTracker.leftButton == Mouse::ButtonStateTracker::PRESSED)
+	{
+		std::wstring wstr = L"你点击了";
+		wstr += mPickedObjStr + L"!";
+		MessageBox(nullptr, wstr.c_str(), L"注意", 0);
 	}
 
 	// 重置滚轮值

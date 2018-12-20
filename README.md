@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.7-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.8-519dd9.svg)
 
 ## 博客教程
 
@@ -36,6 +36,8 @@ QQ群号：727623616
 ## 如何打开教程项目
 
 **DirectX11 With Windows SDK.sln包含目前所有项目，同时用于编译测试。建议一次性生成所有项目，比单独生成会快很多。**
+
+**对于Win7系统，请选择DirectX11 With Windows SDK(Win7).sln打开**
 
 若要指定运行哪个项目，需要对项目右键-设为启动项。
 

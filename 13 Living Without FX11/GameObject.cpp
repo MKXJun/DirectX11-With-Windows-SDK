@@ -34,7 +34,7 @@ void GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
 	mWorldMatrix = world;
 }
 
-void GameObject::SetWorldMatrix(FXMMATRIX world)
+void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 {
 	XMStoreFloat4x4(&mWorldMatrix, world);
 }

@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.8-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-21.8-519dd9.svg)
 
 ## 博客教程
 
@@ -35,11 +35,13 @@ QQ群号：727623616
 
 ## 如何打开教程项目
 
-**DirectX11 With Windows SDK.sln包含目前所有项目，同时用于编译测试。建议一次性生成所有项目，比单独生成会快很多。**
+**对于Win10系统，请选择DirectX11 With Windows SDK.sln打开**
 
-**对于Win7系统，请选择DirectX11 With Windows SDK(Win7).sln打开**
+**对于Win7和Win8.x的系统，请选择DirectX11 With Windows SDK(Win7).sln打开**
 
-若要指定运行哪个项目，需要对项目右键-设为启动项。
+建议一次性生成所有项目，比单独生成会快很多。Win8.x及以下的系统建议使用Win8.1 SDK的版本来生成。
+
+生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
 
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/001.png)
 
@@ -48,7 +50,7 @@ QQ群号：727623616
 |               |默认配置          |最低配置   |
 |---------------|:----------------:|:---------:|
 |IDE            |**VS2017**        |VS2015     |
-|D3DComplier版本|**47**            |46         |
+|D3DComplier版本|**47**            |47         |
 |Windows SDK版本|**10.0.17763.0**  |8.1        |
 |Windows开发环境|**Windows 10**    |Windows 7  |
 |平台           |**x86/x64支持**   |x86/x64支持|

@@ -57,7 +57,7 @@ public:
 		void SetMaterial(const Material & material);
 		// …Ë÷√æÿ’Û
 		void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
-		void SetWorldMatrix(DirectX::FXMMATRIX world);
+		void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 		// ªÊ÷∆
 		void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
 	private:

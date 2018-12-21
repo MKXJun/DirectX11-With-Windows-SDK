@@ -48,7 +48,7 @@ public:
 	//
 
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
-	void SetWorldMatrix(DirectX::FXMMATRIX world);
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 
 	//
 	// »æÖÆ

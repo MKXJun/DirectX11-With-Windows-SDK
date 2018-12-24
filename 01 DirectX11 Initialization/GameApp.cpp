@@ -30,7 +30,6 @@ void GameApp::UpdateScene(float dt)
 
 void GameApp::DrawScene()
 {
-	HR(E_NOINTERFACE);
 	assert(md3dImmediateContext);
 	assert(mSwapChain);
 	static float blue[4] = { 0.0f, 0.0f, 1.0f, 1.0f };	// RGBA = (0,0,255,255)

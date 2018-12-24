@@ -46,9 +46,6 @@
     <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="dxerr.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="Mouse.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -71,9 +68,6 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>通用文件</Filter>

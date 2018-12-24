@@ -148,7 +148,7 @@ void D3DApp::OnResize()
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	// 要使用 4X MSAA? --需要给交换链设置MASS参数
+	// 要使用 4X MSAA?
 	if (mEnable4xMsaa)
 	{
 		depthStencilDesc.SampleDesc.Count = 4;

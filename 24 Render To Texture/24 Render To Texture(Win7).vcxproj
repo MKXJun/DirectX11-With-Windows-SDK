@@ -139,7 +139,6 @@
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="DDSTextureLoader.h" />
-    <ClInclude Include="dxerr.h" />
     <ClInclude Include="EffectHelper.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="GameApp.h" />
@@ -164,7 +163,6 @@
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
-    <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameTimer.cpp" />

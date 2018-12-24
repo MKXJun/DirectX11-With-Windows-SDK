@@ -178,7 +178,6 @@
   <ItemGroup>
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
-    <ClInclude Include="dxerr.h" />
     <ClInclude Include="GameApp.h" />
     <ClInclude Include="GameTimer.h" />
     <ClInclude Include="Geometry.h" />
@@ -190,7 +189,6 @@
   <ItemGroup>
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
-    <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="Geometry.cpp" />

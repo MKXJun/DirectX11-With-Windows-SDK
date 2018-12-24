@@ -69,9 +69,6 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="dxerr.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="Mouse.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -126,9 +123,6 @@
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="dxerr.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="Mouse.cpp">

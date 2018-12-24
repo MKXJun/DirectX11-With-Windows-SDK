@@ -1,7 +1,5 @@
 #include "d3dUtil.h"
 
-using namespace Microsoft::WRL;
-using namespace std::experimental;
 
 HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRESULT hr,
 	_In_opt_ const WCHAR* strMsg, _In_ bool bPopMsgBox)
@@ -32,7 +30,7 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		strBufferError, 256, nullptr);
 
-	WCHAR* errorStr = wcsrchr(strBufferError, L'\r');
+	WCHAR* errorStr = wcsrchr(strBufferError, L'\r');	
 	if (errorStr)
 	{
 		errorStr[0] = L'\0';	// 擦除FormatMessageW带来的换行符(把\r\n的\r置换为\0即可)
@@ -61,49 +59,6 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 		int nResult = MessageBoxW(GetForegroundWindow(), strBuffer, L"错误", MB_YESNO | MB_ICONERROR);
 		if (nResult == IDYES)
 			DebugBreak();
-	}
-
-	return hr;
-}
-
-HRESULT CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName,
-	LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
-{
-	HRESULT hr = S_OK;
-
-	// 寻找是否有已经编译好的顶点着色器
-	if (objFileNameInOut && filesystem::exists(objFileNameInOut))
-	{
-		HR(D3DReadFileToBlob(objFileNameInOut, ppBlobOut));
-	}
-	else
-	{
-		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#ifdef _DEBUG
-		// 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
-		// 但仍然允许着色器进行优化操作
-		dwShaderFlags |= D3DCOMPILE_DEBUG;
-
-		// 在Debug环境下禁用优化以避免出现一些不合理的情况
-		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompileFromFile(hlslFileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, shaderModel,
-			dwShaderFlags, 0, ppBlobOut, errorBlob.GetAddressOf());
-		if (FAILED(hr))
-		{
-			if (errorBlob != nullptr)
-			{
-				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
-			}
-			return hr;
-		}
-
-		// 若指定了输出文件名，则将着色器二进制信息输出
-		if (objFileNameInOut)
-		{
-			HR(D3DWriteBlobToFile(*ppBlobOut, objFileNameInOut, FALSE));
-		}
 	}
 
 	return hr;

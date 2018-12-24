@@ -30,8 +30,8 @@
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>通用文件</Filter>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,9 +46,6 @@
     </ClInclude>
     <ClInclude Include="d3dUtil.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="dxerr.h">
-      <Filter>通用文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

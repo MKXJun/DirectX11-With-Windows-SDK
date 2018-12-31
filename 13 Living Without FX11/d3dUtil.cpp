@@ -66,15 +66,15 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 	return hr;
 }
 
-HRESULT CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslFileName,
+HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslFileName,
 	LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 
 	// 寻找是否有已经编译好的顶点着色器
-	if (objFileNameInOut && filesystem::exists(objFileNameInOut))
+	if (csoFileNameInOut && filesystem::exists(csoFileNameInOut))
 	{
-		HR(D3DReadFileToBlob(objFileNameInOut, ppBlobOut));
+		HR(D3DReadFileToBlob(csoFileNameInOut, ppBlobOut));
 	}
 	else
 	{
@@ -100,9 +100,9 @@ HRESULT CreateShaderFromFile(const WCHAR * objFileNameInOut, const WCHAR * hlslF
 		}
 
 		// 若指定了输出文件名，则将着色器二进制信息输出
-		if (objFileNameInOut)
+		if (csoFileNameInOut)
 		{
-			HR(D3DWriteBlobToFile(*ppBlobOut, objFileNameInOut, FALSE));
+			HR(D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, FALSE));
 		}
 	}
 

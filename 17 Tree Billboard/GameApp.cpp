@@ -6,8 +6,6 @@ using namespace std::experimental;
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance)
 {
-	// 开启4倍多重采样
-	mEnable4xMsaa = true;
 }
 
 GameApp::~GameApp()

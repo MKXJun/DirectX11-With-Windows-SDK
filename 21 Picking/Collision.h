@@ -1,3 +1,12 @@
+//***************************************************************************************
+// Collision.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 提供一些封装好的对象和碰撞检测方法
+// 注意：WireFrameData目前仍未经过稳定测试，未来有可能会移植到Geometry.h中
+// Provide encapsulated collision classes and detection method.
+//***************************************************************************************
+
 #ifndef COLLISION_H
 #define COLLISION_H
 

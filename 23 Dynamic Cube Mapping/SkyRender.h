@@ -1,3 +1,11 @@
+//***************************************************************************************
+// SkyRender.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 天空盒加载与渲染类
+// Skybox loader and render classes.
+//***************************************************************************************
+
 #ifndef SKYRENDER_H
 #define SKYRENDER_H
 

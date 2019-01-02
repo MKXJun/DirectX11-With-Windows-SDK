@@ -1,3 +1,11 @@
+//***************************************************************************************
+// Effects.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 简易特效管理框架
+// Simple effect management framework.
+//***************************************************************************************
+
 #ifndef EFFECTS_H
 #define EFFECTS_H
 #include <memory>

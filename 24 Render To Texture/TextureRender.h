@@ -1,3 +1,11 @@
+//***************************************************************************************
+// TextureRender.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// ‰÷»æµΩŒ∆¿Ì¿‡
+// Render-To-Texture class.
+//***************************************************************************************
+
 #ifndef TEXTURERENDER_H
 #define TEXTURERENDER_H
 

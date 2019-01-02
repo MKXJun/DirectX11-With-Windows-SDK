@@ -1,3 +1,11 @@
+//***************************************************************************************
+// GameObject.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 简易游戏对象
+// Simple game object.
+//***************************************************************************************
+
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 

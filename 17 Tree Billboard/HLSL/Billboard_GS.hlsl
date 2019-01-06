@@ -2,7 +2,7 @@
 
 // 节省内存资源，先用float4向量声明。
 static const float4 gVec[2] = { float4(0.0f, 1.0f, 0.0f, 0.0f), float4(1.0f, 1.0f, 1.0f, 0.0f) };
-static const float2 gTex[4] = (float2[4])gVec;
+static const float2 gTexCoord[4] = (float2[4])gVec;
 
 [maxvertexcount(4)]
 void GS(point PointSprite input[1], uint primID : SV_PrimitiveID, 
@@ -44,7 +44,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
         gOut.PosW = v[i].xyz;
         gOut.PosH = mul(v[i], viewProj);
         gOut.NormalW = look;
-        gOut.Tex = gTex[i];
+        gOut.Tex = gTexCoord[i];
         gOut.PrimID = primID;
         output.Append(gOut);
     }

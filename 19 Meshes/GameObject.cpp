@@ -77,8 +77,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 		// 更新数据并应用
 		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
-		effect.SetTextureAmbient(part.texA);
-		effect.SetTextureDiffuse(part.texD);
+		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
 		
 		effect.Apply(deviceContext);

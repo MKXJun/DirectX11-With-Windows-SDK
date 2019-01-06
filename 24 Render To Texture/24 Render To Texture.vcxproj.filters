@@ -24,9 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
@@ -93,11 +90,11 @@
     <ClCompile Include="MinimapEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dxerr.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="Keyboard.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -159,6 +156,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TextureRender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTrace.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

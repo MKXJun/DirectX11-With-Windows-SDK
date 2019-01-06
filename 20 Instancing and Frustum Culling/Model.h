@@ -21,8 +21,7 @@ struct ModelPart
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	Material material;
-	ComPtr<ID3D11ShaderResourceView> texA;
-	ComPtr<ID3D11ShaderResourceView> texD;
+	ComPtr<ID3D11ShaderResourceView> texDiffuse;
 	ComPtr<ID3D11Buffer> vertexBuffer;
 	ComPtr<ID3D11Buffer> indexBuffer;
 	UINT vertexCount;

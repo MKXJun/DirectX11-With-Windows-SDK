@@ -3,5 +3,5 @@
 // ÏñËØ×ÅÉ«Æ÷(2D)
 float4 PS_2D(VertexPosHTex pIn) : SV_Target
 {
-    return tex.Sample(samLinear, pIn.Tex);
+    return gTex.Sample(gSamLinear, pIn.Tex);
 }

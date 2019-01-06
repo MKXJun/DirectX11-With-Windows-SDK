@@ -69,39 +69,20 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 		// 新建索引缓冲区
 		HR(device->CreateBuffer(&ibd, &InitData, modelParts[i].indexBuffer.ReleaseAndGetAddressOf()));
 
-		// 创建环境光对应纹理
-		auto& strA = part.texStrA;
-		if (strA.size() > 4)
-		{
-			if (strA.substr(strA.size() - 3, 3) == L"dds")
-			{
-				HR(CreateDDSTextureFromFile(device.Get(), strA.c_str(), nullptr,
-					modelParts[i].texA.GetAddressOf()));
-			}
-			else
-			{
-				HR(CreateWICTextureFromFile(device.Get(), strA.c_str(), nullptr,
-					modelParts[i].texA.GetAddressOf()));
-			}
-		}
 		
 		// 创建漫射光对应纹理
-		auto& strD = part.texStrD;
-		if (strA == strD)
-		{
-			modelParts[i].texD = modelParts[i].texA;
-		}
-		else if (strD.size() > 4)
+		auto& strD = part.texStrDiffuse;
+		if (strD.size() > 4)
 		{
 			if (strD.substr(strD.size() - 3, 3) == L"dds")
 			{
 				HR(CreateDDSTextureFromFile(device.Get(), strD.c_str(), nullptr,
-					modelParts[i].texD.GetAddressOf()));
+					modelParts[i].texDiffuse.GetAddressOf()));
 			}
 			else
 			{
 				HR(CreateWICTextureFromFile(device.Get(), strD.c_str(), nullptr,
-					modelParts[i].texD.GetAddressOf()));
+					modelParts[i].texDiffuse.GetAddressOf()));
 			}
 		}
 

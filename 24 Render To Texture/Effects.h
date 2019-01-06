@@ -65,9 +65,6 @@ public:
 
 	// 默认状态来绘制
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type);
-	
-	// 默认2D状态来绘制
-	void Set2DRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
 
 	//
 	// 矩阵设置
@@ -94,7 +91,6 @@ public:
 
 	void SetTextureUsed(bool isUsed);
 
-	void SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture);
 	void SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture);
 
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);

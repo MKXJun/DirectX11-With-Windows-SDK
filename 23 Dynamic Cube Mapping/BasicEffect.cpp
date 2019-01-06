@@ -18,13 +18,13 @@ public:
 	// 这些结构体对应HLSL的结构体。需要按16字节对齐
 	//
 
-	struct CBChangesEveryObjectDrawing
+	struct CBChangesEveryInstanceDrawing
 	{
 		DirectX::XMMATRIX world;
 		DirectX::XMMATRIX worldInvTranspose;
 	};
 
-	struct CBChangesEveryInstanceDrawing
+	struct CBChangesEveryObjectDrawing
 	{
 		Material material;
 	};
@@ -62,8 +62,8 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
-	CBufferObject<0, CBChangesEveryObjectDrawing>	cbObjDrawing;		// 每次对象绘制的常量缓冲区
-	CBufferObject<1, CBChangesEveryInstanceDrawing> cbInstDrawing;		// 每次实例绘制的常量缓冲区
+	CBufferObject<0, CBChangesEveryInstanceDrawing>	cbInstDrawing;		// 每次实例绘制的常量缓冲区
+	CBufferObject<1, CBChangesEveryObjectDrawing>	cbObjDrawing;		// 每次对象绘制的常量缓冲区
 	CBufferObject<2, CBDrawingStates>				cbStates;			// 每次绘制状态改变的常量缓冲区
 	CBufferObject<3, CBChangesEveryFrame>			cbFrame;			// 每帧绘制的常量缓冲区
 	CBufferObject<4, CBChangesOnResize>				cbOnResize;			// 每次窗口大小变更的常量缓冲区
@@ -78,12 +78,9 @@ public:
 	ComPtr<ID3D11PixelShader> basicPS;
 
 	ComPtr<ID3D11InputLayout> instancePosNormalTexLayout;	
-	ComPtr<ID3D11InputLayout> instancePosColorLayout;
 	ComPtr<ID3D11InputLayout> vertexPosNormalTexLayout;		
-	ComPtr<ID3D11InputLayout> vertexPosColorLayout;
 
-	ComPtr<ID3D11ShaderResourceView> textureA;				// 环境光对应使用的纹理
-	ComPtr<ID3D11ShaderResourceView> textureD;				// 漫射光对应使用的纹理
+	ComPtr<ID3D11ShaderResourceView> textureDiffuse;		// 漫反射纹理
 	ComPtr<ID3D11ShaderResourceView> textureCube;			// 天空盒纹理
 };
 
@@ -181,8 +178,8 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 
 
 	pImpl->cBufferPtrs.assign({
-		&pImpl->cbObjDrawing,
-		&pImpl->cbInstDrawing, 
+		&pImpl->cbInstDrawing,
+		&pImpl->cbObjDrawing, 
 		&pImpl->cbStates,
 		&pImpl->cbFrame, 
 		&pImpl->cbOnResize, 
@@ -226,7 +223,7 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, Re
 
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
-	auto& cBuffer = pImpl->cbObjDrawing;
+	auto& cBuffer = pImpl->cbInstDrawing;
 	cBuffer.data.world = XMMatrixTranspose(W);
 	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);
 	pImpl->isDirty = cBuffer.isDirty = true;
@@ -248,8 +245,8 @@ void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 
 void XM_CALLCONV BasicEffect::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
 {
-	pImpl->cbObjDrawing.data.world = XMMatrixTranspose(W);
-	pImpl->cbObjDrawing.data.worldInvTranspose = XMMatrixInverse(nullptr, W);
+	pImpl->cbInstDrawing.data.world = XMMatrixTranspose(W);
+	pImpl->cbInstDrawing.data.worldInvTranspose = XMMatrixInverse(nullptr, W);
 	pImpl->cbFrame.data.view = XMMatrixTranspose(V);
 	pImpl->cbOnResize.data.proj = XMMatrixTranspose(P);
 
@@ -281,7 +278,7 @@ void BasicEffect::SetSpotLight(size_t pos, const SpotLight & spotLight)
 
 void BasicEffect::SetMaterial(const Material & material)
 {
-	auto& cBuffer = pImpl->cbInstDrawing;
+	auto& cBuffer = pImpl->cbObjDrawing;
 	cBuffer.data.material = material;
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
@@ -293,14 +290,9 @@ void BasicEffect::SetTextureUsed(bool isUsed)
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture)
+void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> textureDiffuse)
 {
-	pImpl->textureA = texture;
-}
-
-void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture)
-{
-	pImpl->textureD = texture;
+	pImpl->textureDiffuse = textureDiffuse;
 }
 
 void BasicEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> textureCube)
@@ -350,9 +342,8 @@ void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	pCBuffers[5]->BindPS(deviceContext);
 
 	// 设置纹理
-	deviceContext->PSSetShaderResources(0, 1, pImpl->textureA.GetAddressOf());
-	deviceContext->PSSetShaderResources(1, 1, pImpl->textureD.GetAddressOf());
-	deviceContext->PSSetShaderResources(2, 1, pImpl->textureCube.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->textureDiffuse.GetAddressOf());
+	deviceContext->PSSetShaderResources(1, 1, pImpl->textureCube.GetAddressOf());
 
 	if (pImpl->isDirty)
 	{

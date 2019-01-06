@@ -90,7 +90,6 @@ public:
 
 	void SetTextureUsed(bool isUsed);
 
-	void SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture);
 	void SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture);
 	
 

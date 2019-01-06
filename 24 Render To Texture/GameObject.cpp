@@ -17,7 +17,7 @@ GameObject::GameObject()
 {
 }
 
-DirectX::XMFLOAT3 GameObject::GetPosition() const
+XMFLOAT3 GameObject::GetPosition() const
 {
 	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
 }
@@ -29,7 +29,7 @@ BoundingBox GameObject::GetBoundingBox() const
 	return box;
 }
 
-DirectX::BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
+BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
 {
 	BoundingOrientedBox box;
 	BoundingOrientedBox::CreateFromBoundingBox(box, mModel.boundingBox);
@@ -102,8 +102,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 		// 更新数据并应用
 		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
-		effect.SetTextureAmbient(part.texA);
-		effect.SetTextureDiffuse(part.texD);
+		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
 		
 		effect.Apply(deviceContext);
@@ -148,8 +147,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
-		effect.SetTextureAmbient(part.texA);
-		effect.SetTextureDiffuse(part.texD);
+		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
 		effect.Apply(deviceContext);
 

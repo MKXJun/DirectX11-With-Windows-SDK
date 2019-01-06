@@ -4,7 +4,7 @@
 float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
 {
 	// 提前进行裁剪，对不符合要求的像素可以避免后续运算
-    float4 texColor = tex.Sample(sam, pIn.Tex);
+    float4 texColor = gTex.Sample(gSam, pIn.Tex);
     clip(texColor.a - 0.1f);
 
     // 标准化法向量

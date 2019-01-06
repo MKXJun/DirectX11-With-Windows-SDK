@@ -4,10 +4,8 @@
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
 	// 提前进行裁剪，对不符合要求的像素可以避免后续运算
-    float4 texColorA = texA.Sample(sam, pIn.Tex);
-    float4 texColorD = texD.Sample(sam, pIn.Tex);
-    clip(texColorA.a - 0.1f);
-    clip(texColorD.a - 0.1f);
+    float4 texColor = gDiffuseMap.Sample(gSam, pIn.Tex);
+    clip(texColor.a - 0.1f);
 
     // 标准化法向量
     pIn.NormalW = normalize(pIn.NormalW);
@@ -52,7 +50,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     }
   
     
-    float4 litColor = texColorA * ambient + texColorD * diffuse + spec;
-    litColor.a = texColorD.a * gMaterial.Diffuse.a;
+    float4 litColor = texColor * (ambient + diffuse) + spec;
+    litColor.a = texColor.a * gMaterial.Diffuse.a;
     return litColor;
 }

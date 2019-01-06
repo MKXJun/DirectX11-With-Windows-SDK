@@ -72,6 +72,9 @@
     <ClInclude Include="WICTextureLoader.h">
       <Filter>通用文件</Filter>
     </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -118,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

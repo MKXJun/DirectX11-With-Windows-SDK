@@ -1,8 +1,8 @@
 #include "LightHelper.hlsli"
 
-Texture2D tex : register(t0);
-Texture2DArray texArray : register(t1);
-SamplerState sam : register(s0);
+Texture2D gTex : register(t0);
+Texture2DArray gTexArray : register(t1);
+SamplerState gSam : register(s0);
 
 
 cbuffer CBChangesEveryDrawing : register(b0)

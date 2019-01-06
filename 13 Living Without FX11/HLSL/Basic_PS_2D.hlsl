@@ -3,7 +3,7 @@
 // ÏñËØ×ÅÉ«Æ÷(2D)
 float4 PS_2D(VertexPosHTex pIn) : SV_Target
 {
-    float4 color = tex.Sample(sam, pIn.Tex);
+    float4 color = gTex.Sample(gSam, pIn.Tex);
     clip(color.a - 0.1f);
     return color;
 }

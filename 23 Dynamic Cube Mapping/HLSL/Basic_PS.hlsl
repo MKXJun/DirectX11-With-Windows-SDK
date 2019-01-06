@@ -4,16 +4,13 @@
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
     // 若不使用纹理，则使用默认白色
-    float4 texColorA = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    float4 texColorD = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
     if (gTextureUsed)
     {
-        texColorA = texA.Sample(sam, pIn.Tex);
-        texColorD = texD.Sample(sam, pIn.Tex);
-        	// 提前进行裁剪，对不符合要求的像素可以避免后续运算
-        clip(texColorA.a - 0.1f);
-        clip(texColorD.a - 0.1f);
+        texColor = gDiffuseMap.Sample(gSam, pIn.Tex);
+        // 提前进行裁剪，对不符合要求的像素可以避免后续运算
+        clip(texColor.a - 0.1f);
     }
     
     // 标准化法向量
@@ -58,13 +55,13 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
         spec += S;
     }
   
-    float4 litColor = texColorA * ambient + texColorD * diffuse + spec;
+    float4 litColor = texColor * (ambient + diffuse) + spec;
     // 反射
     if (gReflectionEnabled)
     {
         float3 incident = -toEyeW;
         float3 reflectionVector = reflect(incident, pIn.NormalW);
-        float4 reflectionColor = texCube.Sample(sam, reflectionVector);
+        float4 reflectionColor = gTexCube.Sample(gSam, reflectionVector);
 
         litColor += gMaterial.Reflect * reflectionColor;
     }
@@ -73,11 +70,11 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     {
         float3 incident = -toEyeW;
         float3 refractionVector = refract(incident, pIn.NormalW, gEta);
-        float4 refractionColor = texCube.Sample(sam, refractionVector);
+        float4 refractionColor = gTexCube.Sample(gSam, refractionVector);
 
         litColor += gMaterial.Reflect * refractionColor;
     }
 
-    litColor.a = texColorD.a * gMaterial.Diffuse.a;
+    litColor.a = texColor.a * gMaterial.Diffuse.a;
     return litColor;
 }

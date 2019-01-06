@@ -91,8 +91,7 @@ public:
 
 	void SetTextureUsed(bool isUsed);
 
-	void SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture);
-	void SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> textureDiffuse);
 	void SetTextureCube(ComPtr<ID3D11ShaderResourceView> textureCube);
 
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);

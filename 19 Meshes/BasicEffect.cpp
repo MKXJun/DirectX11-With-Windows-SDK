@@ -64,8 +64,7 @@ public:
 
 	ComPtr<ID3D11InputLayout> vertexPosNormalTexLayout;		// 3D顶点输入布局
 
-	ComPtr<ID3D11ShaderResourceView> textureA;				// 环境光对应使用的纹理
-	ComPtr<ID3D11ShaderResourceView> textureD;				// 漫射光对应使用的纹理
+	ComPtr<ID3D11ShaderResourceView> textureDiffuse;		// 漫反射紋理
 };
 
 //
@@ -228,14 +227,9 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTextureAmbient(ComPtr<ID3D11ShaderResourceView> texture)
+void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> textureDiffuse)
 {
-	pImpl->textureA = texture;
-}
-
-void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture)
-{
-	pImpl->textureD = texture;
+	pImpl->textureDiffuse = textureDiffuse;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
@@ -258,8 +252,7 @@ void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	pCBuffers[3]->BindPS(deviceContext);
 
 	// 设置纹理
-	deviceContext->PSSetShaderResources(0, 1, pImpl->textureA.GetAddressOf());
-	deviceContext->PSSetShaderResources(1, 1, pImpl->textureD.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->textureDiffuse.GetAddressOf());
 
 	if (pImpl->isDirty)
 	{

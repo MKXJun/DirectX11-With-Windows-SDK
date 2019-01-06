@@ -75,8 +75,8 @@
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>通用文件</Filter>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,8 +134,8 @@
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="dxerr.h">
-      <Filter>通用文件</Filter>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

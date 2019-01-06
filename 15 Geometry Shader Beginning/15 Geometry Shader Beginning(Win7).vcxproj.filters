@@ -63,6 +63,9 @@
     <ClInclude Include="Effects.h">
       <Filter>特效文件</Filter>
     </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="d3dApp.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

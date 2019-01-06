@@ -250,8 +250,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), 
 		L"Texture\\stone.dds", 
 		nullptr, 
-		model.modelParts[0].texA.GetAddressOf()));
-	model.modelParts[0].texD = model.modelParts[0].texA;
+		model.modelParts[0].texDiffuse.GetAddressOf()));
 	mSphere.SetModel(std::move(model));
 	// 地面
 	model.SetMesh(md3dDevice, 
@@ -263,8 +262,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(),
 		L"Texture\\floor.dds",
 		nullptr,
-		model.modelParts[0].texA.GetAddressOf()));
-	model.modelParts[0].texD = model.modelParts[0].texA;
+		model.modelParts[0].texDiffuse.GetAddressOf()));
 	mGround.SetModel(std::move(model));
 	// 柱体
 	model.SetMesh(md3dDevice,
@@ -276,8 +274,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(),
 		L"Texture\\bricks.dds",
 		nullptr,
-		model.modelParts[0].texA.GetAddressOf()));
-	model.modelParts[0].texD = model.modelParts[0].texA;
+		model.modelParts[0].texDiffuse.GetAddressOf()));
 	mCylinder.SetModel(std::move(model));
 	mCylinder.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.99f, 0.0f));
 
@@ -306,7 +303,7 @@ bool GameApp::InitResource()
 	// 方向光
 	DirectionalLight dirLight[4];
 	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	dirLight[0].Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];

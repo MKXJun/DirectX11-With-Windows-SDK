@@ -1,17 +1,16 @@
 #include "LightHelper.hlsli"
 
-Texture2D texA : register(t0);
-Texture2D texD : register(t1);
-SamplerState sam : register(s0);
+Texture2D gDiffuseMap : register(t0);
+SamplerState gSam : register(s0);
 
 
-cbuffer CBChangesEveryObjectDrawing : register(b0)
+cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {
     matrix gWorld;
     matrix gWorldInvTranspose;
 }
 
-cbuffer CBChangesEveryInstanceDrawing : register(b1)
+cbuffer CBChangesEveryObjectDrawing : register(b1)
 {
     Material gMaterial;
 }

@@ -1,6 +1,6 @@
 
-TextureCube texCube : register(t0);
-SamplerState sam : register(s0);
+TextureCube gTexCube : register(t0);
+SamplerState gSam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
 {

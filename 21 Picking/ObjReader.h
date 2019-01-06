@@ -46,15 +46,14 @@ public:
 		std::vector<VertexPosNormalTex> vertices;	// 顶点集合
 		std::vector<WORD> indices16;				// 顶点数不超过65535时使用
 		std::vector<DWORD> indices32;				// 顶点数超过65535时使用
-		std::wstring texStrA;						// 环境光纹理文件名，需为相对路径，且在mbo必须占260字节
-		std::wstring texStrD;						// 漫射光纹理文件名，需为相对路径，在mbo必须占260字节
+		std::wstring texStrDiffuse;					// 漫射光纹理文件名，需为相对路径，在mbo必须占260字节
 	};
 
 	// 指定.mbo文件的情况下，若.mbo文件存在，优先读取该文件
 	// 否则会读取.obj文件
 	// 若.obj文件被读取，且提供了.mbo文件的路径，则会根据已经读取的数据创建.mbo文件
 	bool Read(const wchar_t* mboFileName, const wchar_t* objFileName);
-
+	
 	bool ReadObj(const wchar_t* objFileName);
 	bool ReadMbo(const wchar_t* mboFileName);
 	bool WriteMbo(const wchar_t* mboFileName);
@@ -76,7 +75,6 @@ public:
 
 public:
 	std::map<std::wstring, Material> materials;
-	std::map<std::wstring, std::wstring> mapKaStrs;
 	std::map<std::wstring, std::wstring> mapKdStrs;
 };
 

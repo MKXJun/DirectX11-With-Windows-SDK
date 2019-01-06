@@ -46,7 +46,7 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
     }
     
 
-    float4 texColor = tex.Sample(samLinear, pIn.Tex);
+    float4 texColor = gTex.Sample(gSamLinear, pIn.Tex);
     float4 litColor = texColor * (ambient + diffuse) + spec;
     litColor.a = texColor.a * gMaterial.Diffuse.a;
 	

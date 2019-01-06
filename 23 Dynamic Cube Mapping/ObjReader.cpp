@@ -150,8 +150,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			mtlName = mtlName.substr(beg, ed - beg);
 
 			objParts.back().material = mtlReader.materials[mtlName];
-			objParts.back().texStrA = mtlReader.mapKaStrs[mtlName];
-			objParts.back().texStrD = mtlReader.mapKdStrs[mtlName];
+			objParts.back().texStrDiffuse = mtlReader.mapKdStrs[mtlName];
 		}
 		else if (wstr == L"f")
 		{
@@ -212,7 +211,6 @@ bool ObjReader::ReadMbo(const wchar_t * mboFileName)
 	// [AABB盒顶点vMax] 12字节
 	// [AABB盒顶点vMin] 12字节
 	// [Part
-	//   [环境光材质文件名]520字节
 	//   [漫射光材质文件名]520字节
 	//   [材质]64字节
 	//   [顶点数]4字节
@@ -239,12 +237,9 @@ bool ObjReader::ReadMbo(const wchar_t * mboFileName)
 	for (UINT i = 0; i < parts; ++i)
 	{
 		wchar_t filePath[MAX_PATH];
-		// [环境光材质文件名]520字节
-		fin.read(reinterpret_cast<char*>(filePath), MAX_PATH * sizeof(wchar_t));
-		objParts[i].texStrA = filePath;
 		// [漫射光材质文件名]520字节
 		fin.read(reinterpret_cast<char*>(filePath), MAX_PATH * sizeof(wchar_t));
-		objParts[i].texStrD = filePath;
+		objParts[i].texStrDiffuse = filePath;
 		// [材质]64字节
 		fin.read(reinterpret_cast<char*>(&objParts[i].material), sizeof(Material));
 		UINT vertexCount, indexCount;
@@ -304,10 +299,7 @@ bool ObjReader::WriteMbo(const wchar_t * mboFileName)
 	for (UINT i = 0; i < parts; ++i)
 	{
 		wchar_t filePath[MAX_PATH];
-		wcscpy_s(filePath, objParts[i].texStrA.c_str());
-		// [环境光材质文件名]520字节
-		fout.write(reinterpret_cast<const char*>(filePath), MAX_PATH * sizeof(wchar_t));
-		wcscpy_s(filePath, objParts[i].texStrD.c_str());
+		wcscpy_s(filePath, objParts[i].texStrDiffuse.c_str());
 		// [漫射光材质文件名]520字节
 		fout.write(reinterpret_cast<const char*>(filePath), MAX_PATH * sizeof(wchar_t));
 		// [材质]64字节
@@ -368,7 +360,6 @@ void ObjReader::AddVertex(const VertexPosNormalTex& vertex, DWORD vpi, DWORD vti
 bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 {
 	materials.clear();
-	mapKaStrs.clear();
 	mapKdStrs.clear();
 
 
@@ -457,10 +448,10 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			materials[currMtl].Ambient.w = alpha;
 			materials[currMtl].Diffuse.w = alpha;
 		}
-		else if (wstr == L"map_Ka" || wstr == L"map_Kd")
+		else if (wstr == L"map_Kd")
 		{
 			//
-			// map_Ka为环境光反射使用的纹理，map_Kd为漫反射使用的纹理
+			// map_Kd为漫反射使用的纹理
 			//
 			std::wstring fileName;
 			std::getline(wfin, fileName);
@@ -481,10 +472,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			else
 				pos += 1;
 
-			if (wstr == L"map_Ka")
-				mapKaStrs[currMtl] = dir.erase(pos) + fileName;
-			else
-				mapKdStrs[currMtl] = dir.erase(pos) + fileName;
+			mapKdStrs[currMtl] = dir.erase(pos) + fileName;
 		}
 	}
 

@@ -5,7 +5,7 @@
 
 目前对应的博客更新：
 
-[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)（优先保证最新）
+**[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)（优先保证最新）**
 
 [CSDN](https://blog.csdn.net/x_jun96/article/details/80293670)
 
@@ -59,7 +59,7 @@ QQ群号：727623616
 
 ## 一些有用的代码模块
 
-**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/Modules/)
+**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/Modules/)**
 
 ## 更新记录
 

@@ -6,10 +6,11 @@
 
 2019/1/9 v1.22.1</br>
 -修正第三人称摄像机的旋转</br>
+-第三人称摄像机添加方法SetRotationX和SetRotationY</br>
 -修正某些BasicEffect常量缓冲区标记更新索引不一致问题
 
 2019/1/6 v1.22.0</br>
--添加项目25 Normal Mapping</br>
+-**添加项目25 Normal Mapping**</br>
 -添加DXTrace</br>
 -调整mbo格式以及物体材质</br>
 -添加Modules文件夹，存放可复用的模块

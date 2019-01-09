@@ -122,12 +122,16 @@ public:
 	float GetRotationX() const;
 	// 获取绕Y轴的旋转方向
 	float GetRotationY() const;
-	// 绕物体垂直旋转
+	// 绕物体垂直旋转(注意上下视野角度Phi限制在[pi/6, pi/2])
 	void RotateX(float rad);
 	// 绕物体水平旋转
 	void RotateY(float rad);
 	// 拉近物体
 	void Approach(float dist);
+	// 设置初始绕X轴的弧度(注意上下视野角度Phi限制在[pi/6, pi/2])
+	void SetRotationX(float phi);
+	// 设置初始绕Y轴的弧度
+	void SetRotationY(float theta);
 	// 设置并绑定待跟踪物体的位置
 	void SetTarget(const DirectX::XMFLOAT3& target);
 	// 设置初始距离

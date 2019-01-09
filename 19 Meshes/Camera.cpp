@@ -311,6 +311,22 @@ void ThirdPersonCamera::Approach(float dist)
 		mDistance = mMaxDist;
 }
 
+void ThirdPersonCamera::SetRotationX(float phi)
+{
+	mPhi = XMScalarModAngle(phi);
+	// 将上下视野角度Phi限制在[pi/6, pi/2]，
+	// 即余弦值[0, cos(pi/6)]之间
+	if (mPhi < XM_PI / 6)
+		mPhi = XM_PI / 6;
+	else if (mPhi > XM_PIDIV2)
+		mPhi = XM_PIDIV2;
+}
+
+void ThirdPersonCamera::SetRotationY(float theta)
+{
+	mTheta = XMScalarModAngle(theta);
+}
+
 void ThirdPersonCamera::SetTarget(const DirectX::XMFLOAT3 & target)
 {
 	mTarget = target;

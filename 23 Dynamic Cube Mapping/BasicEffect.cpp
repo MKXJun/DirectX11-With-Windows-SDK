@@ -251,7 +251,7 @@ void XM_CALLCONV BasicEffect::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, C
 	pImpl->cbOnResize.data.proj = XMMatrixTranspose(P);
 
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	pCBuffers[0]->isDirty = pCBuffers[2]->isDirty = pCBuffers[3]->isDirty = true;
+	pCBuffers[0]->isDirty = pCBuffers[3]->isDirty = pCBuffers[4]->isDirty = true;
 	pImpl->isDirty = true;
 }
 

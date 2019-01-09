@@ -330,8 +330,8 @@ void ThirdPersonCamera::SetDistanceMinMax(float minDist, float maxDist)
 void ThirdPersonCamera::UpdateViewMatrix()
 {
 	// ÇòÃæ×ø±êÏµ
-	float x = mTarget.x - mDistance * sinf(mPhi) * cosf(mTheta);
-	float z = mTarget.z - mDistance * sinf(mPhi) * sinf(mTheta);
+	float x = mTarget.x + mDistance * sinf(mPhi) * cosf(mTheta);
+	float z = mTarget.z + mDistance * sinf(mPhi) * sinf(mTheta);
 	float y = mTarget.y + mDistance * cosf(mPhi);
 	mPosition = { x, y, z };
 	XMVECTOR P = XMLoadFloat3(&mPosition);

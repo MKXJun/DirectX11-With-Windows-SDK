@@ -278,7 +278,7 @@ HRESULT CreateWICTexture2DArrayFromFile(
 	{
 		// 由于这些纹理并不会被GPU使用，我们使用D3D11_USAGE_STAGING枚举值
 		// 使得CPU可以读取资源
-		hResult = CreateWICTextureFromFileEx(d3dDevice, d3dDeviceContext,
+		hResult = CreateWICTextureFromFileEx(d3dDevice,
 			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 			0, WIC_LOADER_DEFAULT, (ID3D11Resource**)&srcTexVec[i], nullptr);

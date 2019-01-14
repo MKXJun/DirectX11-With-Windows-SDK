@@ -19,7 +19,8 @@ SkyRender::SkyRender(
 			device.Get(),
 			cubemapFilename.c_str(),
 			nullptr,
-			mTextureCubeSRV.GetAddressOf()
+			mTextureCubeSRV.GetAddressOf(),
+			generateMips
 		));
 	}
 	else
@@ -29,7 +30,8 @@ SkyRender::SkyRender(
 			deviceContext.Get(),
 			cubemapFilename,
 			nullptr,
-			mTextureCubeSRV.GetAddressOf()
+			mTextureCubeSRV.GetAddressOf(),
+			generateMips
 		));
 	}
 

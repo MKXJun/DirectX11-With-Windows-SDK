@@ -6,7 +6,8 @@
 
 2019/1/14 v1.22.2</br>
 -移除d3dUtil、EffectHelper对DXTrace的依赖</br>
--修改函数`CreateWICTextureCubeFromFile`为`CreateWICTexture2DCubeFromFile`
+-修改函数`CreateWICTextureCubeFromFile`为`CreateWICTexture2DCubeFromFile`</br>
+-修复天空盒无法创建mipmaps的问题
 
 2019/1/9 v1.22.1</br>
 -修正第三人称摄像机的旋转</br>

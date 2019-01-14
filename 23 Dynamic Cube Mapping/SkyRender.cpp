@@ -29,7 +29,8 @@ SkyRender::SkyRender(
 			deviceContext.Get(),
 			cubemapFilename,
 			nullptr,
-			mTextureCubeSRV.GetAddressOf()
+			mTextureCubeSRV.GetAddressOf(),
+			generateMips
 		));
 	}
 
@@ -49,7 +50,8 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 		deviceContext.Get(),
 		cubemapFilenames,
 		nullptr,
-		mTextureCubeSRV.GetAddressOf()
+		mTextureCubeSRV.GetAddressOf(),
+		generateMips
 	));
 
 	InitResource(device, skySphereRadius);

@@ -1,5 +1,6 @@
 #include "GameApp.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 using namespace DirectX;
 using namespace std::experimental;
 

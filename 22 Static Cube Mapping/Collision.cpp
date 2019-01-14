@@ -10,10 +10,10 @@ Ray::Ray()
 Ray::Ray(const DirectX::XMFLOAT3 & origin, const DirectX::XMFLOAT3 & direction)
 	: origin(origin)
 {
-	// 射线的direction长度必须为1.0f，误差在10e-5f内
+	// 射线的direction长度必须为1.0f，误差在1e-5f内
 	XMVECTOR dirLength = XMVector3Length(XMLoadFloat3(&direction));
 	XMVECTOR error = XMVectorAbs(dirLength - XMVectorSplatOne());
-	assert(XMVector3Less(error, XMVectorReplicate(10e-5f)));
+	assert(XMVector3Less(error, XMVectorReplicate(1e-5f)));
 
 	XMStoreFloat3(&this->direction, XMVector3Normalize(XMLoadFloat3(&direction)));
 }

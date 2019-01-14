@@ -1,5 +1,6 @@
 #include "GameApp.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -269,14 +270,17 @@ bool GameApp::InitResource()
 	//
 
 	// 初始化树纹理资源
-	mTreeTexArray = CreateDDSTexture2DArrayFromFile(
-		md3dDevice,
-		md3dImmediateContext,
+	ComPtr<ID3D11Texture2D> test;
+	HR(CreateDDSTexture2DArrayFromFile(
+		md3dDevice.Get(),
+		md3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 			L"Texture\\tree0.dds",
 			L"Texture\\tree1.dds",
 			L"Texture\\tree2.dds",
-			L"Texture\\tree3.dds"});
+			L"Texture\\tree3.dds"},
+		test.GetAddressOf(),
+		mTreeTexArray.GetAddressOf()));
 	mBasicEffect.SetTextureArray(mTreeTexArray);
 
 	// 初始化点精灵缓冲区

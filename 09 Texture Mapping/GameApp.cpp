@@ -1,5 +1,6 @@
 #include "GameApp.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 using namespace DirectX;
 using namespace std::experimental;
 
@@ -111,8 +112,8 @@ void GameApp::UpdateScene(float dt)
 	{
 		// 更新常量缓冲区，让立方体转起来
 		static float phi = 0.0f, theta = 0.0f;
-		phi += 0.00003f, theta += 0.00005f;
-		XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
+		//phi += 0.00003f, theta += 0.00005f;
+		XMMATRIX W = XMMatrixScaling(2.0f, 2.0f, 1.0f) * XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 		mVSConstantBuffer.world = XMMatrixTranspose(W);
 		mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 		md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &mVSConstantBuffer, 0, 0);
@@ -137,7 +138,7 @@ void GameApp::DrawScene()
 	assert(md3dImmediateContext);
 	assert(mSwapChain);
 
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::White));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	
 	// 绘制几何模型
@@ -188,6 +189,11 @@ bool GameApp::InitEffect()
 	return true;
 }
 
+uint32_t ColorRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	return (r | (g << 8) | (b << 16) | (a << 24));
+}
+
 bool GameApp::InitResource()
 {
 	// 初始化网格模型并设置到输入装配阶段
@@ -210,8 +216,53 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化纹理和采样器状态
 	
+	uint32_t black = ColorRGBA(0, 0, 0, 255), orange = ColorRGBA(255, 108, 0, 255);
+
+	// 纹理内存映射，用黑色初始化
+	std::vector<uint32_t> textureArrayMap(128 * 128, black);
+	uint32_t(*textureMap)[128] = reinterpret_cast<uint32_t(*)[128]>(textureArrayMap.data());
+
+	for (int y = 7; y <= 17; ++y)
+		for (int x = 25 - y; x <= 102 + y; ++x)
+			textureMap[y][x] = textureMap[127 - y][x] = orange;
+
+	for (int y = 18; y <= 109; ++y)
+		for (int x = 7; x <= 120; ++x)
+			textureMap[y][x] = orange;
+
+	// 创建纹理数组
+	D3D11_TEXTURE2D_DESC texArrayDesc;
+	texArrayDesc.Width = 128;
+	texArrayDesc.Height = 128;
+	texArrayDesc.MipLevels = 1;
+	texArrayDesc.ArraySize = 1;
+	texArrayDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texArrayDesc.SampleDesc.Count = 1;		// 不使用多重采样
+	texArrayDesc.SampleDesc.Quality = 0;
+	texArrayDesc.Usage = D3D11_USAGE_DEFAULT;
+	texArrayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texArrayDesc.CPUAccessFlags = 0;
+	texArrayDesc.MiscFlags = 0;	// 指定需要生成mipmap
+
+	D3D11_SUBRESOURCE_DATA sd;
+	uint32_t * pData = textureArrayMap.data();
+	sd.pSysMem = pData;
+	sd.SysMemPitch = 128 * sizeof(uint32_t);
+	sd.SysMemSlicePitch = 128 * 128 * sizeof(uint32_t);
+
+
+	ComPtr<ID3D11Texture2D> tex;
+	HR(md3dDevice->CreateTexture2D(&texArrayDesc, &sd, tex.GetAddressOf()));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	HR(md3dDevice->CreateShaderResourceView(tex.Get(), &srvDesc, mWoodCrate.GetAddressOf()));
+
 	// 初始化木箱纹理
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, mWoodCrate.GetAddressOf()));
+	//HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, mWoodCrate.GetAddressOf()));
 	// 初始化火焰纹理
 	WCHAR strFile[40];
 	mFireAnim.resize(120);

@@ -46,7 +46,7 @@ struct CBufferBase
 	bool isDirty;
 	ComPtr<ID3D11Buffer> cBuffer;
 
-	virtual void CreateBuffer(ComPtr<ID3D11Device> device) = 0;
+	virtual HRESULT CreateBuffer(ComPtr<ID3D11Device> device) = 0;
 	virtual void UpdateBuffer(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
 	virtual void BindVS(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
 	virtual void BindHS(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
@@ -61,17 +61,17 @@ struct CBufferObject : CBufferBase
 {
 	T data;
 
-	void CreateBuffer(ComPtr<ID3D11Device> device) override
+	HRESULT CreateBuffer(ComPtr<ID3D11Device> device) override
 	{
 		if (cBuffer != nullptr)
-			return;
+			return S_OK;
 		D3D11_BUFFER_DESC cbd;
 		ZeroMemory(&cbd, sizeof(cbd));
 		cbd.Usage = D3D11_USAGE_DEFAULT;
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbd.CPUAccessFlags = 0;
 		cbd.ByteWidth = sizeof(T);
-		HR(device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf()));
+		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
 	}
 
 	void UpdateBuffer(ComPtr<ID3D11DeviceContext> deviceContext) override
@@ -117,3 +117,4 @@ struct CBufferObject : CBufferBase
 
 
 #endif
+

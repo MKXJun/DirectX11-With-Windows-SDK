@@ -1,6 +1,7 @@
 #include "SkyRender.h"
 #include "Geometry.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -23,12 +24,13 @@ SkyRender::SkyRender(
 	}
 	else
 	{
-		mTextureCubeSRV = CreateWICTextureCubeFromFile(
-			device,
-			deviceContext,
+		HR(CreateWICTexture2DCubeFromFile(
+			device.Get(),
+			deviceContext.Get(),
 			cubemapFilename,
-			generateMips
-		);
+			nullptr,
+			mTextureCubeSRV.GetAddressOf()
+		));
 	}
 
 	InitResource(device, skySphereRadius);
@@ -42,12 +44,13 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 {
 	// ÃÏø’∫–Œ∆¿Ìº”‘ÿ
 
-	mTextureCubeSRV = CreateWICTextureCubeFromFile(
-		device,
-		deviceContext,
+	HR(CreateWICTexture2DCubeFromFile(
+		device.Get(),
+		deviceContext.Get(),
 		cubemapFilenames,
-		generateMips
-	);
+		nullptr,
+		mTextureCubeSRV.GetAddressOf()
+	));
 
 	InitResource(device, skySphereRadius);
 }

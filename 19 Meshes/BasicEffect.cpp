@@ -1,6 +1,7 @@
 #include "Effects.h"
 #include "d3dUtil.h"
 #include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
+#include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
 using namespace std::experimental;
@@ -143,7 +144,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 创建常量缓冲区
 	for (auto& pBuffer : pImpl->cBufferPtrs)
 	{
-		pBuffer->CreateBuffer(device);
+		HR(pBuffer->CreateBuffer(device));
 	}
 
 	return true;

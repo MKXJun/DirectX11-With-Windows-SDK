@@ -1,13 +1,14 @@
 #include "SkyRender.h"
 #include "Geometry.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
 SkyRender::SkyRender(
-	ComPtr<ID3D11Device> device, 
-	ComPtr<ID3D11DeviceContext> deviceContext, 
-	const std::wstring & cubemapFilename, 
+	ComPtr<ID3D11Device> device,
+	ComPtr<ID3D11DeviceContext> deviceContext,
+	const std::wstring & cubemapFilename,
 	float skySphereRadius,
 	bool generateMips)
 {
@@ -23,31 +24,33 @@ SkyRender::SkyRender(
 	}
 	else
 	{
-		mTextureCubeSRV = CreateWICTextureCubeFromFile(
-			device,
-			deviceContext,
+		HR(CreateWICTexture2DCubeFromFile(
+			device.Get(),
+			deviceContext.Get(),
 			cubemapFilename,
-			generateMips
-		);
+			nullptr,
+			mTextureCubeSRV.GetAddressOf()
+		));
 	}
 
 	InitResource(device, skySphereRadius);
 }
 
-SkyRender::SkyRender(ComPtr<ID3D11Device> device, 
-	ComPtr<ID3D11DeviceContext> deviceContext, 
-	const std::vector<std::wstring>& cubemapFilenames, 
+SkyRender::SkyRender(ComPtr<ID3D11Device> device,
+	ComPtr<ID3D11DeviceContext> deviceContext,
+	const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius,
 	bool generateMips)
 {
 	// ÃÏø’∫–Œ∆¿Ìº”‘ÿ
 
-	mTextureCubeSRV = CreateWICTextureCubeFromFile(
-		device,
-		deviceContext,
+	HR(CreateWICTexture2DCubeFromFile(
+		device.Get(),
+		deviceContext.Get(),
 		cubemapFilenames,
-		generateMips
-	);
+		nullptr,
+		mTextureCubeSRV.GetAddressOf()
+	));
 
 	InitResource(device, skySphereRadius);
 }

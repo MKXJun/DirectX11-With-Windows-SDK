@@ -1,5 +1,6 @@
 #include "GameApp.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance)

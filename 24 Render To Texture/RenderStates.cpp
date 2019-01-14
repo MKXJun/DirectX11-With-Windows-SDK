@@ -1,5 +1,6 @@
 #include "RenderStates.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 
 using namespace Microsoft::WRL;
 

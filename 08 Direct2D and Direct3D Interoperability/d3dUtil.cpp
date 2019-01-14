@@ -1,6 +1,5 @@
 #include "d3dUtil.h"
 
-using namespace Microsoft::WRL;
 using namespace std::experimental;
 
 HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslFileName,
@@ -11,7 +10,7 @@ HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslF
 	// 寻找是否有已经编译好的顶点着色器
 	if (csoFileNameInOut && filesystem::exists(csoFileNameInOut))
 	{
-		HR(D3DReadFileToBlob(csoFileNameInOut, ppBlobOut));
+		return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
 	}
 	else
 	{
@@ -24,22 +23,23 @@ HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslF
 		// 在Debug环境下禁用优化以避免出现一些不合理的情况
 		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-		ComPtr<ID3DBlob> errorBlob = nullptr;
+		ID3DBlob* errorBlob = nullptr;
 		hr = D3DCompileFromFile(hlslFileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, shaderModel,
-			dwShaderFlags, 0, ppBlobOut, errorBlob.GetAddressOf());
+			dwShaderFlags, 0, ppBlobOut, &errorBlob);
 		if (FAILED(hr))
 		{
 			if (errorBlob != nullptr)
 			{
 				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
 			}
+			SAFE_RELEASE(errorBlob);
 			return hr;
 		}
 
 		// 若指定了输出文件名，则将着色器二进制信息输出
 		if (csoFileNameInOut)
 		{
-			HR(D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, FALSE));
+			return D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, FALSE);
 		}
 	}
 

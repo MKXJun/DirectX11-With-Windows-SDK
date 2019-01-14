@@ -1,5 +1,6 @@
 #include "d3dApp.h"
 #include "d3dUtil.h"
+#include "DXTrace.h"
 #include <sstream>
 
 namespace
@@ -20,7 +21,7 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 D3DApp::D3DApp(HINSTANCE hInstance)
 	: mhAppInst(hInstance),
-	mMainWndCaption(L"Direct2D and Direct3D Interoperability"),
+	mMainWndCaption(L"Texture Mapping"),
 	mClientWidth(800),
 	mClientHeight(600),
 	mhMainWnd(nullptr),

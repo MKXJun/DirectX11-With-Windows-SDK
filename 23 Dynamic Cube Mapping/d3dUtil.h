@@ -11,15 +11,21 @@
 
 #include <d3d11_1.h>			// 已包含Windows.h
 #include <DirectXCollision.h>	// 已包含DirectXMath.h
+#include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
-#include <wrl/client.h>
 #include <filesystem>
 #include <vector>
 #include <string>
-#include "DXTrace.h"
 #include "DDSTextureLoader.h"	
 #include "WICTextureLoader.h"
+
+//
+// 宏相关
+//
+
+// 安全COM组件释放宏
+#define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 //
 // 着色器编译相关函数
@@ -33,48 +39,95 @@
 // [In]entryPoint       入口点(指定开始的函数)
 // [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
 // [Out]ppBlobOut       输出着色器二进制信息
-HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut);
-
+HRESULT CreateShaderFromFile(const WCHAR* csoFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
 
 //
 // 纹理数组相关函数
 //
 
-// 根据给定的DDS纹理文件集合，创建2D纹理数组
-// 要求所有纹理的宽度和高度都一致
-// 若maxMipMapSize为0，使用默认mipmap等级
-// 否则，mipmap等级将不会超过maxMipMapSize
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateDDSTexture2DArrayFromFile(
-	Microsoft::WRL::ComPtr<ID3D11Device> device,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
-	const std::vector<std::wstring>& filenames,
-	UINT maxMipMapSize = 0);
+// ------------------------------
+// CreateDDSTexture2DArrayFromFile函数
+// ------------------------------
+// 该函数要求所有的dds纹理的宽高、数据格式、mip等级一致
+// [In]d3dDevice			D3D设备
+// [In]d3dDeviceContext		D3D设备上下文
+// [In]fileNames			dds文件名数组
+// [OutOpt]textureArray		输出的纹理数组资源
+// [OutOpt]textureArrayView 输出的纹理数组资源视图
+// [In]generateMips			是否生成mipmaps
+HRESULT CreateDDSTexture2DArrayFromFile(
+	ID3D11Device * d3dDevice,
+	ID3D11DeviceContext * d3dDeviceContext,
+	const std::vector<std::wstring>& fileNames,
+	ID3D11Texture2D** textureArray,
+	ID3D11ShaderResourceView** textureArrayView,
+	bool generateMips = false);
 
+// ------------------------------
+// CreateWICTexture2DArrayFromFile函数
+// ------------------------------
+// 该函数要求所有的dds纹理的宽高、数据格式、mip等级一致
+// [In]d3dDevice			D3D设备
+// [In]d3dDeviceContext		D3D设备上下文
+// [In]fileNames			dds文件名数组
+// [OutOpt]textureArray		输出的纹理数组资源
+// [OutOpt]textureArrayView 输出的纹理数组资源视图
+// [In]generateMips			是否生成mipmaps
+HRESULT CreateWICTexture2DArrayFromFile(
+	ID3D11Device * d3dDevice,
+	ID3D11DeviceContext * d3dDeviceContext,
+	const std::vector<std::wstring>& fileNames,
+	ID3D11Texture2D** textureArray,
+	ID3D11ShaderResourceView** textureArrayView,
+	bool generateMips = false);
 
 
 //
 // 纹理立方体相关函数
 //
 
-// 根据给定的一张包含立方体六个面的纹理，创建纹理立方体
+
+// ------------------------------
+// CreateWICTexture2DCubeFromFile函数
+// ------------------------------
+// 根据给定的一张包含立方体六个面的位图，创建纹理立方体
 // 要求纹理宽高比为4:3，且按下面形式布局:
 // .  +Y .  .
 // -X +Z +X -Z 
 // .  -Y .  .
-// 该函数默认不生成mipmap(即等级仅为1)，若需要则设置generateMips为true
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
-	Microsoft::WRL::ComPtr<ID3D11Device> device,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
-	std::wstring cubemapFileName,
+// [In]d3dDevice			D3D设备
+// [In]d3dDeviceContext		D3D设备上下文
+// [In]cubeMapFileName		位图文件名
+// [OutOpt]textureArray		输出的纹理数组资源
+// [OutOpt]textureCubeView	输出的纹理立方体资源视图
+// [In]generateMips			是否生成mipmaps
+HRESULT CreateWICTexture2DCubeFromFile(
+	ID3D11Device * d3dDevice,
+	ID3D11DeviceContext * d3dDeviceContext,
+	const std::wstring& cubeMapFileName,
+	ID3D11Texture2D** textureArray,
+	ID3D11ShaderResourceView** textureCubeView,
 	bool generateMips = false);
 
+// ------------------------------
+// CreateWICTexture2DCubeFromFile函数
+// ------------------------------
 // 根据按D3D11_TEXTURECUBE_FACE索引顺序给定的六张纹理，创建纹理立方体
-// 要求纹理是同样大小的正方形
-// 该函数默认不生成mipmap(即等级仅为1)，若需要则设置generateMips为true
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateWICTextureCubeFromFile(
-	Microsoft::WRL::ComPtr<ID3D11Device> device,
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
-	std::vector<std::wstring> cubemapFileNames,
+// 要求位图是同样宽高、数据格式的正方形
+// 你也可以给定超过6张的纹理，然后在获取到纹理数组的基础上自行创建更多的资源视图
+// [In]d3dDevice			D3D设备
+// [In]d3dDeviceContext		D3D设备上下文
+// [In]cubeMapFileNames		位图文件名数组
+// [OutOpt]textureArray		输出的纹理数组资源
+// [OutOpt]textureCubeView	输出的纹理立方体资源视图
+// [In]generateMips			是否生成mipmaps
+HRESULT CreateWICTexture2DCubeFromFile(
+	ID3D11Device * d3dDevice,
+	ID3D11DeviceContext * d3dDeviceContext,
+	const std::vector<std::wstring>& cubeMapFileNames,
+	ID3D11Texture2D** textureArray,
+	ID3D11ShaderResourceView** textureCubeView,
 	bool generateMips = false);
+
 
 #endif

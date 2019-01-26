@@ -56,11 +56,11 @@ protected:
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DX11
+	// Direct3D 11
 	ComPtr<ID3D11Device> md3dDevice;                    // D3D11设备
 	ComPtr<ID3D11DeviceContext> md3dImmediateContext;   // D3D11设备上下文
 	ComPtr<IDXGISwapChain> mSwapChain;                  // D3D11交换链
-	// DX11.1
+	// Direct3D 11.1
 	ComPtr<ID3D11Device1> md3dDevice1;                  // D3D11.1设备
 	ComPtr<ID3D11DeviceContext1> md3dImmediateContext1; // D3D11.1设备上下文
 	ComPtr<IDXGISwapChain1> mSwapChain1;                // D3D11.1交换链

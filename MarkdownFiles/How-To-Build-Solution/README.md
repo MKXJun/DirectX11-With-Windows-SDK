@@ -20,6 +20,30 @@
 
 具体可以参考 [触发-(标准符合性)](https://docs.microsoft.com/zh-cn/cpp/build/reference/permissive-standards-conformance?view=vs-2017)
 
+## Debug模式下打开程序出现D3D11CreateDevice Failed
+
+这种情况下Release模式应该还是可以运行的，现在查看调试输出窗口应该会有如下信息
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/003.png)
+
+目前已经确认是你电脑的Win10系统没有安装图形工具。首先点击Win-Windows 管理工具-服务
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/004.png)
+
+找到服务(本地)中的Windows Update项，如果没有启用，则将它启动。
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/005.png)
+
+然后右键Win-设置，搜索：管理可选功能，进去后查看现在可选功能是否包含了图形工具，若没有则添加该功能，安装完成后可以看到：
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/006.png)
+
+现在应该可以进行调试了
+
+## 提示Direct3D Feature Level 11 unsupported
+
+出现这个说明你的显卡不支持特性等级11.0，你可以尝试给特性等级数组添加`D3D_FEATURE_LEVEL_10_1`和`D3D_FEATURE_LEVEL_10_0`，然后将所有的HLSL编译器使用的着色器模型下调至`Shader Model 4.0`，还要在所有`CreateShaderFromFile`函数中下调。
+
 # Windows 7系统无法直接运行的解决方法
 
 在编写该项目的时候一开始是只考虑了Win 10 系统，没有考虑向下兼容的，但现在既然要做到兼容(可能是部分兼容)，还需要在原有的项目基础进行一些额外的配置。
@@ -29,15 +53,15 @@
 
 在项目属性-C/C++ -预处理器中按下面的方式添加宏：
 
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/003.png)
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/007.png)
 
 然后重新编译解决方案/项目即可。
 
-## 从08开始的项目无法看到文字
+## 从本教程项目08起都无法看到文字
 
 考虑到不应该只是因为无法看到文字就让程序运行不了，经过修改后，如果你的系统不支持DirectX 11.1，则将不会显示文字。如果你想要在Windows 7系统上看到项目的文字，则需要：
 1. 更新Windows 7系统直到安装了Service Pack 1
-2. 安装KB2670838补丁(此补丁可能有些不稳定)
+2. 安装KB2670838补丁
 
 ## 缺少d3dCompiler_47.dll
 
@@ -46,6 +70,3 @@ Windows SDK 8.1对应`C:\Program Files (x86)\Windows Kits\8.1\Redist\D3D`，然�
 
 ## 缺少api-ms-win-core-libraryloader-l1-1-0.dll
 出现该问题是因为将不合适的`d3dCompiler_47.dll`拉入到项目或系统环境中，参照上一条进行操作。
-
-
-

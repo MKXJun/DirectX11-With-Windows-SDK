@@ -73,7 +73,6 @@ public:
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W);
 	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V);
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
-	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P);
 
 
 

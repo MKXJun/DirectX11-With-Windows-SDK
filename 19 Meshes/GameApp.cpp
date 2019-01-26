@@ -192,7 +192,9 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
-	mBasicEffect.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	mBasicEffect.SetViewMatrix(camera->GetViewXM());
+	mBasicEffect.SetProjMatrix(camera->GetProjXM());
 	mBasicEffect.SetEyePos(camera->GetPositionXM());
 	
 	// ******************

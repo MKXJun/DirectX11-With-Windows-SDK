@@ -388,7 +388,7 @@ bool D3DApp::InitDirect3D()
 
 		if (hr == E_INVALIDARG)
 		{
-			// DirectX 11.0 平台不承认D3D_FEATURE_LEVEL_11_1所以我们需要尝试特性等级11.0以及以下的版本
+			// Direct3D 11.0 的API不承认D3D_FEATURE_LEVEL_11_1，所以我们需要尝试特性等级11.0以及以下的版本
 			hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
 				D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
 		}
@@ -420,19 +420,18 @@ bool D3DApp::InitDirect3D()
 
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
 	ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
-	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;	// DX11.0(包含DXGI1.1)的接口类
-	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;	// DX11.1(包含DXGI1.2)特有的接口类
+	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;	// D3D11.0(包含DXGI1.1)的接口类
+	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;	// D3D11.1(包含DXGI1.2)特有的接口类
 
 	// 为了正确创建 DXGI交换链，首先我们需要获取创建 D3D设备 的 DXGI工厂，否则会引发报错：
 	// "IDXGIFactory::CreateSwapChain: This function is being called with a device from a different IDXGIFactory."
-	// 从属关系为 DXGI工厂-> DXGI适配器 -> DXGI设备 {D3D11设备}
 	HR(md3dDevice.As(&dxgiDevice));
 	HR(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
 	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(dxgiFactory1.GetAddressOf())));
 
 	// 查看该对象是否包含IDXGIFactory2接口
 	hr = dxgiFactory1.As(&dxgiFactory2);
-	// 如果包含，则说明支持DX11.1
+	// 如果包含，则说明支持D3D11.1
 	if (dxgiFactory2 != nullptr)
 	{
 		HR(md3dDevice.As(&md3dDevice1));

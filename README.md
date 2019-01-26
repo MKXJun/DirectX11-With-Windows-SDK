@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.22.2-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.22.3-519dd9.svg)
 
 ## 博客教程
 
@@ -14,7 +14,6 @@
 QQ群号：727623616
 
 欢迎大家来交流，以及项目有什么问题也可以在这里提出。
-
 
 ## 项目概述
 
@@ -61,7 +60,11 @@ QQ群号：727623616
 
 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/Modules/)**
 
+## 使用Direct3D 11.1(Windows SDK)编写的魔方
+
+**[点此查看](https://github.com/MKXJun/Rubik-Cube)**
+
 ## 更新记录
 
-**[点此查看更新记录](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
+**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
 

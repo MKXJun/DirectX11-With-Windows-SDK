@@ -214,14 +214,12 @@ bool GameApp::InitResource()
 	// 摄像机位置
 	mBasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
 	// 矩阵
-	mBasicEffect.SetWorldViewProjMatrix(
-		XMMatrixIdentity(),
-		XMMatrixLookAtLH(
-			XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
-			XMVectorZero(),
-			XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
-		XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f)
-	);
+	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	mBasicEffect.SetViewMatrix(XMMatrixLookAtLH(
+		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
+		XMVectorZero(),
+		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)));
+	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	// 圆柱高度
 	mBasicEffect.SetCylinderHeight(2.0f);
 

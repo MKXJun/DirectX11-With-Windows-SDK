@@ -244,18 +244,6 @@ void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicEffect::SetWorldViewProjMatrix(FXMMATRIX W, CXMMATRIX V, CXMMATRIX P)
-{
-	pImpl->cbInstDrawing.data.world = XMMatrixTranspose(W);
-	pImpl->cbInstDrawing.data.worldInvTranspose = XMMatrixInverse(nullptr, W);
-	pImpl->cbFrame.data.view = XMMatrixTranspose(V);
-	pImpl->cbOnResize.data.proj = XMMatrixTranspose(P);
-
-	auto& pCBuffers = pImpl->cBufferPtrs;
-	pCBuffers[0]->isDirty = pCBuffers[3]->isDirty = pCBuffers[4]->isDirty = true;
-	pImpl->isDirty = true;
-}
-
 void BasicEffect::SetDirLight(size_t pos, const DirectionalLight & dirLight)
 {
 	auto& cBuffer = pImpl->cbRarely;

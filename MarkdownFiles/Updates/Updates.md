@@ -4,6 +4,11 @@
 中版本号 项目添加<br>
 小版本号 项目调整(随中版本号添加归零)
 
+2019/1/27 v1.22.3</br>
+-调整注释</br>
+-移除BasicEffect::SetWorldViewProjMatrix方法</br>
+-更新教程无法编译、运行的方法
+
 2019/1/14 v1.22.2</br>
 -移除d3dUtil、EffectHelper对DXTrace的依赖</br>
 -修改函数`CreateWICTextureCubeFromFile`为`CreateWICTexture2DCubeFromFile`</br>

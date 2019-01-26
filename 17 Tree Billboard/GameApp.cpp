@@ -336,7 +336,9 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
 
-	mBasicEffect.SetWorldViewProjMatrix(XMMatrixIdentity(), camera->GetViewXM(), camera->GetProjXM());
+	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	mBasicEffect.SetViewMatrix(camera->GetViewXM());
+	mBasicEffect.SetProjMatrix(camera->GetProjXM());
 	mBasicEffect.SetEyePos(camera->GetPositionXM());
 
 	// ******************

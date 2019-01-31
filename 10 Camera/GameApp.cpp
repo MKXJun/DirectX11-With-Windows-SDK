@@ -165,9 +165,10 @@ void GameApp::UpdateScene(float dt)
 			cam1st->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
 			mCamera = cam1st;
 		}
-		XMFLOAT3 pos = mWoodCrate.GetPosition();
-		XMFLOAT3 target = (!pos.x && !pos.z ? XMFLOAT3{0.0f, 0.0f, 1.0f} : XMFLOAT3{});
-		cam1st->LookAt(pos, target, XMFLOAT3(0.0f, 1.0f, 0.0f));
+
+		cam1st->LookTo(mWoodCrate.GetPosition(),
+			XMFLOAT3(0.0f, 0.0f, 1.0f),
+			XMFLOAT3(0.0f, 1.0f, 0.0f));
 		
 		mCameraMode = CameraMode::FirstPerson;
 	}
@@ -183,8 +184,6 @@ void GameApp::UpdateScene(float dt)
 		cam3rd->SetTarget(target);
 		cam3rd->SetDistance(8.0f);
 		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
-		// 初始化时朝物体后方看
-		// cam3rd->RotateY(-XM_PIDIV2);
 		
 		mCameraMode = CameraMode::ThirdPerson;
 	}
@@ -198,10 +197,10 @@ void GameApp::UpdateScene(float dt)
 		}
 		// 从箱子上方开始
 		XMFLOAT3 pos = mWoodCrate.GetPosition();
-		XMFLOAT3 look {0.0f, 0.0f, 1.0f};
-		XMFLOAT3 up {0.0f, 1.0f, 0.0f};
+		XMFLOAT3 to = XMFLOAT3(0.0f, 0.0f, 1.0f);
+		XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		pos.y += 3;
-		cam1st->LookTo(pos, look, up);
+		cam1st->LookTo(pos, to, up);
 
 		mCameraMode = CameraMode::Free;
 	}
@@ -304,19 +303,19 @@ bool GameApp::InitResource()
 	// 初始化游戏对象
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化木箱
-	CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf());
+	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf()));
 	mWoodCrate.SetBuffer(md3dDevice, Geometry::CreateBox());
 	mWoodCrate.SetTexture(texture);
 	
 	// 初始化地板
-	CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf());
+	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	mFloor.SetBuffer(md3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	mFloor.SetTexture(texture);
 
 	// 初始化墙体
 	mWalls.resize(4);
-	CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\brick.dds", nullptr, texture.ReleaseAndGetAddressOf());
+	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\brick.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	// 这里控制墙体四个面的生成
 	for (int i = 0; i < 4; ++i)
 	{

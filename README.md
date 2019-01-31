@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.22.3-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.23.0-519dd9.svg)
 
 ## 博客教程
 
@@ -29,7 +29,7 @@ QQ群号：727623616
 [DXTK/Mouse(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 [DXTK/Keyboard(源码上有所修改)](https://github.com/Microsoft/DirectXTK/tree/master/Src)</br>
 
-作为教程演示项目，并不是以实现一个软引擎为目标，因此不会刻意进行引擎架构的组织。建议读者在跟随教程学习的同时要动手实践。
+作为教程演示项目，这里并不是以实现一个软引擎为目标。建议读者在跟随教程学习的同时要动手实践。
 
 ## 如何打开教程项目
 
@@ -60,7 +60,7 @@ QQ群号：727623616
 
 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/Modules/)**
 
-## 使用Direct3D 11.1(Windows SDK)编写的魔方
+## 使用Direct3D 11.x(Windows SDK)编写的魔方
 
 **[点此查看](https://github.com/MKXJun/Rubik-Cube)**
 

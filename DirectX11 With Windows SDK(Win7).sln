@@ -47,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D In
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25 Normal Mapping(Win7)", "25 Normal Mapping\25 Normal Mapping(Win7).vcxproj", "{8B530EC3-C203-443D-8C6A-0C3449A7B77A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning(Win7)", "26 Compute Shader Beginning\26 Compute Shader Beginning(Win7).vcxproj", "{8E432F8C-E8E8-4BA0-B512-131DE7018070}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -231,6 +233,14 @@ Global
 		{8B530EC3-C203-443D-8C6A-0C3449A7B77A}.Release|x64.Build.0 = Release|x64
 		{8B530EC3-C203-443D-8C6A-0C3449A7B77A}.Release|x86.ActiveCfg = Release|Win32
 		{8B530EC3-C203-443D-8C6A-0C3449A7B77A}.Release|x86.Build.0 = Release|Win32
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Debug|x64.ActiveCfg = Debug|x64
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Debug|x64.Build.0 = Debug|x64
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Debug|x86.ActiveCfg = Debug|Win32
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Debug|x86.Build.0 = Debug|Win32
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x64.ActiveCfg = Release|x64
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x64.Build.0 = Release|x64
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x86.ActiveCfg = Release|Win32
+		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -39,11 +39,15 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-	// 更新常量缓冲区，让立方体转起来
+	
 	static float phi = 0.0f, theta = 0.0f;
 	phi += 0.00003f, theta += 0.00005f;
 	mCBuffer.world = XMMatrixTranspose(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
-	md3dImmediateContext->UpdateSubresource(mConstantBuffer.Get(), 0, nullptr, &mCBuffer, 0, 0);
+	// 更新常量缓冲区，让立方体转起来
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(mCBuffer), &mCBuffer, sizeof(mCBuffer));
+	md3dImmediateContext->Unmap(mConstantBuffer.Get(), 0);
 }
 
 void GameApp::DrawScene()
@@ -154,10 +158,10 @@ bool GameApp::InitResource()
 	// 设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
-	cbd.Usage = D3D11_USAGE_DEFAULT;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.ByteWidth = sizeof(ConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = 0;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 新建常量缓冲区，不使用初始数据
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffer.GetAddressOf()));
 

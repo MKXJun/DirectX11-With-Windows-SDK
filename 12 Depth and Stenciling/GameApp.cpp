@@ -79,9 +79,12 @@ void GameApp::OnResize()
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mCBChangesOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
-		md3dImmediateContext->VSSetConstantBuffers(3, 1, mConstantBuffers[3].GetAddressOf());
+		mCBOnResize.proj = XMMatrixTranspose(mCamera->GetProjXM());
+
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HR(md3dImmediateContext->Map(mConstantBuffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+		memcpy_s(mappedData.pData, sizeof(CBChangesOnResize), &mCBOnResize, sizeof(CBChangesOnResize));
+		md3dImmediateContext->Unmap(mConstantBuffers[3].Get(), 0);
 	}
 }
 
@@ -185,7 +188,10 @@ void GameApp::UpdateScene(float dt)
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 	
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[2].Get(), 0, nullptr, &mCBFrame, 0, 0);
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBChangesEveryFrame), &mCBFrame, sizeof(CBChangesEveryFrame));
+	md3dImmediateContext->Unmap(mConstantBuffers[2].Get(), 0);
 }
 
 void GameApp::DrawScene()
@@ -217,8 +223,11 @@ void GameApp::DrawScene()
 	//
 
 	// 开启反射绘制
-	XMINT4 reflectionState = { 1, 0, 0, 0 };
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &reflectionState, 0, 0);
+	mCBStates.isReflection = true;
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBDrawingStates), &mCBStates, sizeof(CBDrawingStates));
+	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
 	
 	// 绘制不透明物体，需要顺时针裁剪
 	// 仅对模板值为1的镜面区域绘制
@@ -247,9 +256,11 @@ void GameApp::DrawScene()
 	mMirror.Draw(md3dImmediateContext);
 	
 	// 关闭反射绘制
-	reflectionState.x = 0;
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &reflectionState, 0, 0);
-	
+	mCBStates.isReflection = false;
+	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBDrawingStates), &mCBStates, sizeof(CBDrawingStates));
+	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
+
 
 	// ************************
 	// 4. 绘制不透明的正常物体
@@ -335,13 +346,13 @@ bool GameApp::InitResource()
 	// 设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
-	cbd.Usage = D3D11_USAGE_DEFAULT;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = 0;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 新建用于VS和PS的常量缓冲区
 	cbd.ByteWidth = sizeof(CBChangesEveryDrawing);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
-	cbd.ByteWidth = 16;
+	cbd.ByteWidth = sizeof(CBDrawingStates);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
 	cbd.ByteWidth = sizeof(CBChangesEveryFrame);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[2].GetAddressOf()));
@@ -455,7 +466,7 @@ bool GameApp::InitResource()
 
 	// 初始化仅在窗口大小变动时修改的值
 	mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
-	mCBChangesOnReSize.proj = XMMatrixTranspose(mCamera->GetProjXM());
+	mCBOnResize.proj = XMMatrixTranspose(mCamera->GetProjXM());
 
 	// 初始化不会变化的值
 	mCBRarely.reflection = XMMatrixTranspose(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
@@ -478,9 +489,14 @@ bool GameApp::InitResource()
 
 
 	// 更新不容易被修改的常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[3].Get(), 0, nullptr, &mCBChangesOnReSize, 0, 0);
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[4].Get(), 0, nullptr, &mCBRarely, 0, 0);
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBChangesOnResize), &mCBOnResize, sizeof(CBChangesOnResize));
+	md3dImmediateContext->Unmap(mConstantBuffers[3].Get(), 0);
 
+	HR(md3dImmediateContext->Map(mConstantBuffers[4].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBChangesRarely), &mCBRarely, sizeof(CBChangesRarely));
+	md3dImmediateContext->Unmap(mConstantBuffers[4].Get(), 0);
 	// 初始化所有渲染状态
 	RenderStates::InitAll(md3dDevice);
 	
@@ -599,7 +615,11 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	cbDrawing.world = XMMatrixTranspose(W);
 	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);
 	cbDrawing.material = mMaterial;
-	deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &cbDrawing, 0, 0);
+
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(CBChangesEveryDrawing), &cbDrawing, sizeof(CBChangesEveryDrawing));
+	deviceContext->Unmap(cBuffer.Get(), 0);
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, mTexture.GetAddressOf());
 	// 可以开始绘制

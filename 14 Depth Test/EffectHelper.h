@@ -67,9 +67,9 @@ struct CBufferObject : CBufferBase
 			return S_OK;
 		D3D11_BUFFER_DESC cbd;
 		ZeroMemory(&cbd, sizeof(cbd));
-		cbd.Usage = D3D11_USAGE_DEFAULT;
+		cbd.Usage = D3D11_USAGE_DYNAMIC;
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.CPUAccessFlags = 0;
+		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		cbd.ByteWidth = sizeof(T);
 		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
 	}
@@ -79,7 +79,10 @@ struct CBufferObject : CBufferBase
 		if (isDirty)
 		{
 			isDirty = false;
-			deviceContext->UpdateSubresource(cBuffer.Get(), 0, nullptr, &data, 0, 0);
+			D3D11_MAPPED_SUBRESOURCE mappedData;
+			deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+			memcpy_s(mappedData.pData, sizeof(T), &data, sizeof(T));
+			deviceContext->Unmap(cBuffer.Get(), 0);
 		}
 	}
 

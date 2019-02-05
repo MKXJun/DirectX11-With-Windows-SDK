@@ -34,8 +34,12 @@ static HRESULT CreateTexture2DArray(
 // 函数定义部分
 //
 
-HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslFileName,
-	LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
+HRESULT CreateShaderFromFile(
+	const WCHAR * csoFileNameInOut,
+	const WCHAR * hlslFileName,
+	LPCSTR entryPoint,
+	LPCSTR shaderModel,
+	ID3DBlob ** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 
@@ -207,41 +211,41 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	//
 
 	UINT arraySize = (UINT)fileNames.size();
-	std::vector<ID3D11Texture2D*> srcTex(arraySize);
-	std::vector<D3D11_TEXTURE2D_DESC> texDesc(arraySize);
+	std::vector<ID3D11Texture2D*> srcTexVec(arraySize);
+	std::vector<D3D11_TEXTURE2D_DESC> texDescVec(arraySize);
 	for (UINT i = 0; i < arraySize; ++i)
 	{
 		// 由于这些纹理并不会被GPU使用，我们使用D3D11_USAGE_STAGING枚举值
 		// 使得CPU可以读取资源
-		hResult = CreateDDSTextureFromFileEx(d3dDevice, d3dDeviceContext,
+		hResult = CreateDDSTextureFromFileEx(d3dDevice,
 			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-			0, false, (ID3D11Resource**)&srcTex[i], nullptr);
+			0, false, (ID3D11Resource**)&srcTexVec[i], nullptr);
 
 		// 读取失败则释放之前读取的纹理并返回
 		if (FAILED(hResult))
 		{
 			for (UINT j = 0; j < i; ++j)
-				SAFE_RELEASE(srcTex[j]);
+				SAFE_RELEASE(srcTexVec[j]);
 			return hResult;
 		}
 
 		// 读取创建好的纹理信息
-		srcTex[i]->GetDesc(&texDesc[i]);
+		srcTexVec[i]->GetDesc(&texDescVec[i]);
 
 		// 需要检验所有纹理的mipLevels，宽度和高度，数据格式是否一致，
 		// 若存在数据格式不一致的情况，请使用dxtex.exe(DirectX Texture Tool)
 		// 将所有的图片转成一致的数据格式
-		if (texDesc[i].MipLevels != texDesc[0].MipLevels || texDesc[i].Width != texDesc[0].Width ||
-			texDesc[i].Height != texDesc[0].Height || texDesc[i].Format != texDesc[0].Format)
+		if (texDescVec[i].MipLevels != texDescVec[0].MipLevels || texDescVec[i].Width != texDescVec[0].Width ||
+			texDescVec[i].Height != texDescVec[0].Height || texDescVec[i].Format != texDescVec[0].Format)
 		{
 			for (UINT j = 0; j < i; ++j)
-				SAFE_RELEASE(srcTex[j]);
+				SAFE_RELEASE(srcTexVec[j]);
 			return E_FAIL;
 		}
 	}
 
-	hResult = CreateTexture2DArray(d3dDevice, d3dDeviceContext, srcTex,
+	hResult = CreateTexture2DArray(d3dDevice, d3dDeviceContext, srcTexVec,
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE | (generateMips ? D3D11_BIND_RENDER_TARGET : 0),
 		0,
@@ -250,7 +254,7 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 		textureArrayView);
 
 	for (UINT i = 0; i < arraySize; ++i)
-		SAFE_RELEASE(srcTex[i]);
+		SAFE_RELEASE(srcTexVec[i]);
 	return hResult;
 }
 
@@ -272,41 +276,41 @@ HRESULT CreateWICTexture2DArrayFromFile(
 	//
 
 	UINT arraySize = (UINT)fileNames.size();
-	std::vector<ID3D11Texture2D*> srcTex(arraySize);
-	std::vector<D3D11_TEXTURE2D_DESC> texDesc(arraySize);
+	std::vector<ID3D11Texture2D*> srcTexVec(arraySize);
+	std::vector<D3D11_TEXTURE2D_DESC> texDescVec(arraySize);
 	for (UINT i = 0; i < arraySize; ++i)
 	{
 		// 由于这些纹理并不会被GPU使用，我们使用D3D11_USAGE_STAGING枚举值
 		// 使得CPU可以读取资源
-		hResult = CreateWICTextureFromFileEx(d3dDevice, d3dDeviceContext,
+		hResult = CreateWICTextureFromFileEx(d3dDevice,
 			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
-			0, WIC_LOADER_DEFAULT, (ID3D11Resource**)&srcTex[i], nullptr);
+			0, WIC_LOADER_DEFAULT, (ID3D11Resource**)&srcTexVec[i], nullptr);
 
 		// 读取失败则释放之前读取的纹理并返回
 		if (FAILED(hResult))
 		{
 			for (UINT j = 0; j < i; ++j)
-				SAFE_RELEASE(srcTex[j]);
+				SAFE_RELEASE(srcTexVec[j]);
 			return hResult;
 		}
 
 		// 读取创建好的纹理信息
-		srcTex[i]->GetDesc(&texDesc[i]);
+		srcTexVec[i]->GetDesc(&texDescVec[i]);
 
 		// 需要检验所有纹理的mipLevels，宽度和高度，数据格式是否一致，
 		// 若存在数据格式不一致的情况，请使用图像处理软件统一处理，
 		// 将所有的图片转成一致的数据格式
-		if (texDesc[i].MipLevels != texDesc[0].MipLevels || texDesc[i].Width != texDesc[0].Width ||
-			texDesc[i].Height != texDesc[0].Height || texDesc[i].Format != texDesc[0].Format)
+		if (texDescVec[i].MipLevels != texDescVec[0].MipLevels || texDescVec[i].Width != texDescVec[0].Width ||
+			texDescVec[i].Height != texDescVec[0].Height || texDescVec[i].Format != texDescVec[0].Format)
 		{
 			for (UINT j = 0; j < i; ++j)
-				SAFE_RELEASE(srcTex[j]);
+				SAFE_RELEASE(srcTexVec[j]);
 			return E_FAIL;
 		}
 	}
 
-	hResult = CreateTexture2DArray(d3dDevice, d3dDeviceContext, srcTex,
+	hResult = CreateTexture2DArray(d3dDevice, d3dDeviceContext, srcTexVec,
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE | (generateMips ? D3D11_BIND_RENDER_TARGET : 0),
 		0,
@@ -315,7 +319,7 @@ HRESULT CreateWICTexture2DArrayFromFile(
 		textureArrayView);
 
 	for (UINT i = 0; i < arraySize; ++i)
-		SAFE_RELEASE(srcTex[i]);
+		SAFE_RELEASE(srcTexVec[i]);
 	return hResult;
 }
 
@@ -340,15 +344,9 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11ShaderResourceView* srcTexSRV = nullptr;
 
 	// 该资源用于GPU复制
-	HRESULT hResult = CreateWICTextureFromFileEx(d3dDevice,
-		d3dDeviceContext,
+	HRESULT hResult = CreateWICTextureFromFile(d3dDevice,
+		(generateMips ? d3dDeviceContext : nullptr),
 		cubeMapFileName.c_str(),
-		0,
-		D3D11_USAGE_DEFAULT,
-		D3D11_BIND_SHADER_RESOURCE | (generateMips ? D3D11_BIND_RENDER_TARGET : 0),
-		0,
-		(generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0),
-		WIC_LOADER_DEFAULT,
 		(ID3D11Resource**)&srcTex,
 		(generateMips ? &srcTexSRV : nullptr));
 
@@ -369,13 +367,6 @@ HRESULT CreateWICTexture2DCubeFromFile(
 		return E_FAIL;
 	}
 
-	// (可选)生成mipmap链
-	if (generateMips)
-	{
-		d3dDeviceContext->GenerateMips(srcTexSRV);
-	}
-
-
 	// ******************
 	// 创建包含6个纹理的数组
 	//
@@ -383,7 +374,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	UINT squareLength = texDesc.Width / 4;
 	texArrayDesc.Width = squareLength;
 	texArrayDesc.Height = squareLength;
-	texArrayDesc.MipLevels = (generateMips ? 0 : 1);	// 指定0的情况下将生成完整mipmap链
+	texArrayDesc.MipLevels = (generateMips ? texDesc.MipLevels - 2 : 1);	// 立方体的mip等级比整张位图的少2
 	texArrayDesc.ArraySize = 6;
 	texArrayDesc.Format = texDesc.Format;
 	texArrayDesc.SampleDesc.Count = 1;
@@ -561,15 +552,9 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	for (UINT i = 0; i < arraySize; ++i)
 	{
 		// 该资源用于GPU复制
-		hResult = CreateWICTextureFromFileEx(d3dDevice,
-			d3dDeviceContext,
+		hResult = CreateWICTextureFromFile(d3dDevice,
+			(generateMips ? d3dDeviceContext : nullptr),
 			cubeMapFileNames[i].c_str(),
-			0,
-			D3D11_USAGE_DEFAULT,
-			D3D11_BIND_SHADER_RESOURCE | (generateMips ? D3D11_BIND_RENDER_TARGET : 0),
-			0,
-			(generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0),
-			WIC_LOADER_DEFAULT,
 			(ID3D11Resource**)&srcTexVec[i],
 			(generateMips ? &srcTexSRVVec[i] : nullptr));
 
@@ -591,24 +576,13 @@ HRESULT CreateWICTexture2DCubeFromFile(
 		}
 	}
 
-	if (generateMips)
-	{
-		// (可选)生成mipmap链
-		for (UINT i = 0; i < arraySize; ++i)
-			d3dDeviceContext->GenerateMips(srcTexSRVVec[i]);
-	}
-
-	// ******************
-	// 创建纹理的数组
-	//
-
 	// ******************
 	// 创建纹理数组
 	//
 	D3D11_TEXTURE2D_DESC texArrayDesc;
 	texArrayDesc.Width = texDescVec[0].Width;
 	texArrayDesc.Height = texDescVec[0].Height;
-	texArrayDesc.MipLevels = (generateMips ? 0 : 1);	// 指定0的情况下将生成完整mipmap链
+	texArrayDesc.MipLevels = (generateMips ? texDescVec[0].MipLevels : 1);
 	texArrayDesc.ArraySize = arraySize;
 	texArrayDesc.Format = texDescVec[0].Format;
 	texArrayDesc.SampleDesc.Count = 1;

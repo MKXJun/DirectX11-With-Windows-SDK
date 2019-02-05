@@ -21,7 +21,10 @@ cbuffer PSConstantBuffer : register(b1)
 	int gNumDirLight;
 	int gNumPointLight;
 	int gNumSpotLight;
+    float gPad1;
+
     float3 gEyePosW;
+    float gPad2;
 }
 
 

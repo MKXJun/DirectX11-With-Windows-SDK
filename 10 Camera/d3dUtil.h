@@ -40,8 +40,12 @@
 // [In]entryPoint       入口点(指定开始的函数)
 // [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
 // [Out]ppBlobOut       输出着色器二进制信息
-HRESULT CreateShaderFromFile(const WCHAR* csoFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
-
+HRESULT CreateShaderFromFile(
+	const WCHAR* csoFileNameInOut,
+	const WCHAR* hlslFileName,
+	LPCSTR entryPoint,
+	LPCSTR shaderModel,
+	ID3DBlob** ppBlobOut);
 
 
 

@@ -110,13 +110,17 @@ void GameApp::UpdateScene(float dt)
 
 	if (mCurrMode == ShowMode::WoodCrate)
 	{
-		// 更新常量缓冲区，让立方体转起来
 		static float phi = 0.0f, theta = 0.0f;
 		phi += 0.00003f, theta += 0.00005f;
 		XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 		mVSConstantBuffer.world = XMMatrixTranspose(W);
 		mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &mVSConstantBuffer, 0, 0);
+
+		// 更新常量缓冲区，让立方体转起来
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HR(md3dImmediateContext->Map(mConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+		memcpy_s(mappedData.pData, sizeof(VSConstantBuffer), &mVSConstantBuffer, sizeof(VSConstantBuffer));
+		md3dImmediateContext->Unmap(mConstantBuffers[0].Get(), 0);
 	}
 	else if (mCurrMode == ShowMode::FireAnim)
 	{
@@ -199,10 +203,10 @@ bool GameApp::InitResource()
 	// 设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
-	cbd.Usage = D3D11_USAGE_DEFAULT;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.ByteWidth = sizeof(VSConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = 0;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 新建用于VS和PS的常量缓冲区
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
 	cbd.ByteWidth = sizeof(PSConstantBuffer);
@@ -268,7 +272,10 @@ bool GameApp::InitResource()
 	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
 	// 更新PS常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &mPSConstantBuffer, sizeof(PSConstantBuffer));
+	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源

@@ -14,6 +14,7 @@ cbuffer CBChangesEveryDrawing : register(b0)
 cbuffer CBDrawingStates : register(b1)
 {
     int gIsReflection;
+    float3 gPad1;
 }
 
 cbuffer CBChangesEveryFrame : register(b2)
@@ -36,7 +37,7 @@ cbuffer CBChangesRarely : register(b4)
 	int gNumDirLight;
 	int gNumPointLight;
 	int gNumSpotLight;
-	float gPad;
+	float gPad2;
 }
 
 

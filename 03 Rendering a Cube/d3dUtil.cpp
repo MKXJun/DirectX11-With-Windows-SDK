@@ -2,8 +2,12 @@
 
 using namespace std::experimental;
 
-HRESULT CreateShaderFromFile(const WCHAR * csoFileNameInOut, const WCHAR * hlslFileName,
-	LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob ** ppBlobOut)
+HRESULT CreateShaderFromFile(
+	const WCHAR* csoFileNameInOut,
+	const WCHAR* hlslFileName,
+	LPCSTR entryPoint,
+	LPCSTR shaderModel,
+	ID3DBlob** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 

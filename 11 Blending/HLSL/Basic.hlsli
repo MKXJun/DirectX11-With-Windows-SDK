@@ -30,6 +30,7 @@ cbuffer CBChangesRarely : register(b3)
 	int gNumDirLight;
 	int gNumPointLight;
 	int gNumSpotLight;
+    float gPad;
 }
 
 

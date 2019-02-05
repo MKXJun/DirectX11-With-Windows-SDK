@@ -38,13 +38,11 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-	// 更新常量缓冲区，让立方体转起来
 	static float phi = 0.0f, theta = 0.0f;
 	phi += 0.00003f, theta += 0.00005f;
 	XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 	mVSConstantBuffer.world = XMMatrixTranspose(W);
 	mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置可以抵消
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[0].Get(), 0, nullptr, &mVSConstantBuffer, 0, 0);
 
 	// 键盘切换灯光类型
 	Keyboard::State state = mKeyboard->GetState();
@@ -87,6 +85,16 @@ void GameApp::UpdateScene(float dt)
 		auto meshData = Geometry::CreateCylinder<VertexPosNormalColor>();
 		ResetMesh(meshData);
 	}
+
+	// 更新常量缓冲区，让立方体转起来
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(VSConstantBuffer), &mVSConstantBuffer, sizeof(VSConstantBuffer));
+	md3dImmediateContext->Unmap(mConstantBuffers[0].Get(), 0);
+
+	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &mPSConstantBuffer, sizeof(PSConstantBuffer));
+	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
 }
 
 void GameApp::DrawScene()
@@ -133,10 +141,10 @@ bool GameApp::InitResource()
 	// 设置常量缓冲区描述
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
-	cbd.Usage = D3D11_USAGE_DEFAULT;
+	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.ByteWidth = sizeof(VSConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.CPUAccessFlags = 0;
+	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 新建用于VS和PS的常量缓冲区
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
 	cbd.ByteWidth = sizeof(PSConstantBuffer);

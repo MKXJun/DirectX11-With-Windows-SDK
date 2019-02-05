@@ -41,7 +41,127 @@
 // [In]entryPoint       入口点(指定开始的函数)
 // [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
 // [Out]ppBlobOut       输出着色器二进制信息
-HRESULT CreateShaderFromFile(const WCHAR* csoFileNameInOut, const WCHAR* hlslFileName, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppBlobOut);
+HRESULT CreateShaderFromFile(
+	const WCHAR* csoFileNameInOut,
+	const WCHAR* hlslFileName,
+	LPCSTR entryPoint,
+	LPCSTR shaderModel,
+	ID3DBlob** ppBlobOut);
+
+//
+// 缓冲区相关函数
+//
+
+// ------------------------------
+// CreateVertexBuffer函数
+// ------------------------------
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数
+// [Out]vertexBuffer		输出的顶点缓冲区
+// [InOpt]dynamic			是否需要CPU经常更新
+// [InOpt]streamOutput		是否还用于流输出阶段
+HRESULT CreateVertexBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** vertexBuffer,
+	/* 可选扩展部分 */
+	bool dynamic = false,
+	bool streamOutput = false);
+
+// ------------------------------
+// CreateIndexBuffer函数
+// ------------------------------
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数
+// [Out]indexBuffer			输出的索引缓冲区
+// [InOpt]dynamic			是否需要CPU经常更新
+HRESULT CreateIndexBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** indexBuffer,
+	/* 可选扩展部分 */
+	bool dynamic = false);
+
+// ------------------------------
+// CreateConstantBuffer函数
+// ------------------------------
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数，必须是16的倍数
+// [Out]indexBuffer			输出的索引缓冲区
+// [InOpt]cpuUpdates		是否允许CPU更新
+// [InOpt]gpuUpdates		是否允许GPU更新
+HRESULT CreateConstantBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** constantBuffer,
+	/* 可选扩展部分 */
+	bool cpuUpdates = true,
+	bool gpuUpdates = false);
+
+// ------------------------------
+// CreateStructuredBuffer函数
+// ------------------------------
+// 如果需要创建Append/Consume Buffer，需指定cpuUpdates为false, gpuUpdates为true
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数
+// [In]structuredByteStride 每个结构体的字节数
+// [Out]structuredBuffer	输出的结构化缓冲区
+// [InOpt]cpuUpdates		是否允许CPU更新
+// [InOpt]gpuUpdates		是否允许使用RWStructuredBuffer
+HRESULT CreateStructuredBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	UINT structuredByteStride,
+	ID3D11Buffer ** structuredBuffer,
+	/* 可选扩展部分 */
+	bool cpuUpdates = false,
+	bool gpuUpdates = false);
+
+// ------------------------------
+// CreateTypedBuffer函数
+// ------------------------------
+// 如果需要创建Append/Consume Buffer，需指定cpuUpdates为false, gpuUpdates为true
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数
+// [Out]typedBuffer			输出的有类型的缓冲区
+// [InOpt]cpuUpdates		是否允许CPU更新
+// [InOpt]gpuUpdates		是否允许使用RWBuffer
+HRESULT CreateTypedBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** typedBuffer,
+	/* 可选扩展部分 */
+	bool cpuUpdates = false,
+	bool gpuUpdates = false);
+
+// ------------------------------
+// CreateRawBuffer函数
+// ------------------------------
+// [In]d3dDevice			D3D设备
+// [In]data					初始化数据
+// [In]byteWidth			缓冲区字节数
+// [Out]rawBuffer			输出的字节地址缓冲区
+// [InOpt]cpuUpdates		是否允许CPU更新
+// [InOpt]gpuUpdates		是否允许使用RWByteAddressBuffer
+HRESULT CreateRawBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** rawBuffer,
+	/* 可选扩展部分 */
+	/* 可选扩展部分 */
+	bool cpuUpdates = false,
+	bool gpuUpdates = false);
 
 //
 // 纹理数组相关函数

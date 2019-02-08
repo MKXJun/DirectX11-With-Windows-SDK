@@ -1,6 +1,6 @@
-#include "Effects.h"
+ï»¿#include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -8,7 +8,7 @@ using namespace std::experimental;
 
 
 //
-// ScreenFadeEffect::Impl ĞèÒªÏÈÓÚScreenFadeEffectµÄ¶¨Òå
+// ScreenFadeEffect::Impl éœ€è¦å…ˆäºScreenFadeEffectçš„å®šä¹‰
 //
 
 class ScreenFadeEffect::Impl : public AlignedType<ScreenFadeEffect::Impl>
@@ -16,7 +16,7 @@ class ScreenFadeEffect::Impl : public AlignedType<ScreenFadeEffect::Impl>
 public:
 
 	//
-	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
+	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
 	//
 
 	struct CBChangesEveryFrame
@@ -32,24 +32,24 @@ public:
 
 
 public:
-	// ±ØĞëÏÔÊ½Ö¸¶¨
+	// å¿…é¡»æ˜¾å¼æŒ‡å®š
 	Impl() = default;
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// Ã¿Ö¡ĞŞ¸ÄµÄ³£Á¿»º³åÇø
-	CBufferObject<1, CBChangesRarely>	cbRarely;		// ºÜÉÙĞŞ¸ÄµÄ³£Á¿»º³åÇø
+	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// æ¯å¸§ä¿®æ”¹çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<1, CBChangesRarely>	cbRarely;		// å¾ˆå°‘ä¿®æ”¹çš„å¸¸é‡ç¼“å†²åŒº
 	
 
-	BOOL isDirty;										// ÊÇ·ñÓĞÖµ±ä¸ü
-	std::vector<CBufferBase*> cBufferPtrs;				// Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
+	BOOL isDirty;										// æ˜¯å¦æœ‰å€¼å˜æ›´
+	std::vector<CBufferBase*> cBufferPtrs;				// ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
 
 	ComPtr<ID3D11VertexShader> screenFadeVS;
 	ComPtr<ID3D11PixelShader> screenFadePS;
 
 	ComPtr<ID3D11InputLayout> vertexPosTexLayout;
 
-	ComPtr<ID3D11ShaderResourceView> texture;			// ÓÃÓÚµ­Èëµ­³öµÄÎÆÀí
+	ComPtr<ID3D11ShaderResourceView> texture;			// ç”¨äºæ·¡å…¥æ·¡å‡ºçš„çº¹ç†
 };
 
 
@@ -60,7 +60,7 @@ public:
 
 namespace
 {
-	// ScreenFadeEffectµ¥Àı
+	// ScreenFadeEffectå•ä¾‹
 	static ScreenFadeEffect * pInstance = nullptr;
 }
 
@@ -108,17 +108,17 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	ComPtr<ID3DBlob> blob;
 
 	// ******************
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_VS.cso", L"HLSL\\ScreenFade_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadeVS.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosTexLayout.GetAddressOf()));
 
 	// ******************
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_PS.cso", L"HLSL\\ScreenFade_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -131,7 +131,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 		&pImpl->cbRarely
 		});
 
-	// ´´½¨³£Á¿»º³åÇø
+	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
 	for (auto& pBuffer : pImpl->cBufferPtrs)
 	{
 		HR(pBuffer->CreateBuffer(device));
@@ -186,10 +186,10 @@ void ScreenFadeEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
 void ScreenFadeEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
+	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
-	// ÉèÖÃSRV
+	// è®¾ç½®SRV
 	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
 
 	if (pImpl->isDirty)

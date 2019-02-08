@@ -1,13 +1,13 @@
 #include "Basic.hlsli"
 
-// 顶点着色器(3D)
+// 椤剁偣鐫�鑹插櫒(3D)
 VertexPosHWNormalTex VS_3D(VertexPosNormalTex vIn)
 {
     VertexPosHWNormalTex vOut;
     
     matrix viewProj = mul(gView, gProj);
     float4 posW = mul(float4(vIn.PosL, 1.0f), gWorld);
-    // 若当前在绘制反射物体，先进行反射操作
+    // 鑻ュ綋鍓嶅湪缁樺埗鍙嶅皠鐗╀綋锛屽厛杩涜鍙嶅皠鎿嶄綔
     [flatten]
     if (gIsReflection)
     {

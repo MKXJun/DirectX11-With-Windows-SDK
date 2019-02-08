@@ -1,4 +1,4 @@
-#ifndef GAMEAPP_H
+ï»¿#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -9,7 +9,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -26,25 +26,25 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> mFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	GameObject mBoltAnim;									// ÉÁµç¶¯»­
-	GameObject mWoodCrate;									// Ä¾ºĞ
-	GameObject mFloor;										// µØ°å
-	std::vector<GameObject> mWalls;							// Ç½±Ú
-	GameObject mMirror;										// ¾µÃæ
+	GameObject mBoltAnim;									// é—ªç”µåŠ¨ç”»
+	GameObject mWoodCrate;									// æœ¨ç›’
+	GameObject mFloor;										// åœ°æ¿
+	std::vector<GameObject> mWalls;							// å¢™å£
+	GameObject mMirror;										// é•œé¢
 
-	std::vector<ComPtr<ID3D11ShaderResourceView>> mBoltSRVs;// ÉÁµç¶¯»­ÎÆÀí
+	std::vector<ComPtr<ID3D11ShaderResourceView>> mBoltSRVs;// é—ªç”µåŠ¨ç”»çº¹ç†
 
-	Material mShadowMat;									// ÒõÓ°²ÄÖÊ
-	Material mWoodCrateMat;									// Ä¾ºĞ²ÄÖÊ
+	Material mShadowMat;									// é˜´å½±æè´¨
+	Material mWoodCrateMat;									// æœ¨ç›’æè´¨
 
-	BasicEffect mBasicEffect;							// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	BasicEffect mBasicEffect;							// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
 
-	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
-	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
+	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
 };
 

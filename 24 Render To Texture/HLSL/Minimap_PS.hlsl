@@ -1,9 +1,9 @@
 #include "Minimap.hlsli"
 
-// ÏñËØ×ÅÉ«Æ÷
+// åƒç´ ç€è‰²å™¨
 float4 PS(VertexPosHTex pIn) : SV_Target
 {
-    // ÒªÇóTexµÄÈ¡Öµ·¶Î§¶¼ÔÚ[0.0f, 1.0f], yÖµ¶ÔÓ¦ÊÀ½ç×ø±êzÖá
+    // è¦æ±‚Texçš„å–å€¼èŒƒå›´éƒ½åœ¨[0.0f, 1.0f], yå€¼å¯¹åº”ä¸–ç•Œåæ ‡zè½´
     float2 PosW = pIn.Tex * float2(gRectW.zw - gRectW.xy) + gRectW.xy;
     
     float4 color = gTex.Sample(gSam, pIn.Tex);

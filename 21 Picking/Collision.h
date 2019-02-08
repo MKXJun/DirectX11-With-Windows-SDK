@@ -1,9 +1,9 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // Collision.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// Ìá¹©Ò»Ğ©·â×°ºÃµÄ¶ÔÏóºÍÅö×²¼ì²â·½·¨
-// ×¢Òâ£ºWireFrameDataÄ¿Ç°ÈÔÎ´¾­¹ıÎÈ¶¨²âÊÔ£¬Î´À´ÓĞ¿ÉÄÜ»áÒÆÖ²µ½Geometry.hÖĞ
+// æä¾›ä¸€äº›å°è£…å¥½çš„å¯¹è±¡å’Œç¢°æ’æ£€æµ‹æ–¹æ³•
+// æ³¨æ„ï¼šWireFrameDataç›®å‰ä»æœªç»è¿‡ç¨³å®šæµ‹è¯•ï¼Œæœªæ¥æœ‰å¯èƒ½ä¼šç§»æ¤åˆ°Geometry.hä¸­
 // Provide encapsulated collision classes and detection method.
 //***************************************************************************************
 
@@ -28,8 +28,8 @@ struct Ray
 	bool Hit(const DirectX::BoundingSphere& sphere, float* pOutDist = nullptr, float maxDist = FLT_MAX);
 	bool XM_CALLCONV Hit(DirectX::FXMVECTOR V0, DirectX::FXMVECTOR V1, DirectX::FXMVECTOR V2, float* pOutDist = nullptr, float maxDist = FLT_MAX);
 
-	DirectX::XMFLOAT3 origin;		// ÉäÏßÔ­µã
-	DirectX::XMFLOAT3 direction;	// µ¥Î»·½ÏòÏòÁ¿
+	DirectX::XMFLOAT3 origin;		// å°„çº¿åŸç‚¹
+	DirectX::XMFLOAT3 direction;	// å•ä½æ–¹å‘å‘é‡
 };
 
 
@@ -37,37 +37,37 @@ class Collision
 {
 public:
 
-	// Ïß¿ò¶¥µã/Ë÷ÒıÊı×é
+	// çº¿æ¡†é¡¶ç‚¹/ç´¢å¼•æ•°ç»„
 	struct WireFrameData
 	{
-		std::vector<VertexPosColor> vertexVec;		// ¶¥µãÊı×é
-		std::vector<WORD> indexVec;					// Ë÷ÒıÊı×é
+		std::vector<VertexPosColor> vertexVec;		// é¡¶ç‚¹æ•°ç»„
+		std::vector<WORD> indexVec;					// ç´¢å¼•æ•°ç»„
 	};
 
 	//
-	// °üÎ§ºĞÏß¿òµÄ´´½¨
+	// åŒ…å›´ç›’çº¿æ¡†çš„åˆ›å»º
 	//
 
-	// ´´½¨AABBºĞÏß¿ò
+	// åˆ›å»ºAABBç›’çº¿æ¡†
 	static WireFrameData CreateBoundingBox(const DirectX::BoundingBox& box, const DirectX::XMFLOAT4& color);
-	// ´´½¨OBBºĞÏß¿ò
+	// åˆ›å»ºOBBç›’çº¿æ¡†
 	static WireFrameData CreateBoundingOrientedBox(const DirectX::BoundingOrientedBox& box, const DirectX::XMFLOAT4& color);
-	// ´´½¨°üÎ§ÇòÏß¿ò
+	// åˆ›å»ºåŒ…å›´çƒçº¿æ¡†
 	static WireFrameData CreateBoundingSphere(const DirectX::BoundingSphere& sphere, const DirectX::XMFLOAT4& color, int slices = 20);
-	// ´´½¨ÊÓ×¶ÌåÏß¿ò
+	// åˆ›å»ºè§†é”¥ä½“çº¿æ¡†
 	static WireFrameData CreateBoundingFrustum(const DirectX::BoundingFrustum& frustum, const DirectX::XMFLOAT4& color);
 
 	//
-	// ÈıÖÖµÈ¼ÛµÄ²âÊÔÊÓ×¶Ìå²Ã¼ôµÄ·½·¨£¬»ñÈ¡ËùÓĞÓëÊÓ×¶ÌåÅö×²µÄÅö×²Ìå¶ÔÓ¦µÄÊÀ½ç¾ØÕóÊı×é
+	// ä¸‰ç§ç­‰ä»·çš„æµ‹è¯•è§†é”¥ä½“è£å‰ªçš„æ–¹æ³•ï¼Œè·å–æ‰€æœ‰ä¸è§†é”¥ä½“ç¢°æ’çš„ç¢°æ’ä½“å¯¹åº”çš„ä¸–ç•ŒçŸ©é˜µæ•°ç»„
 	//
 
-	// ÊÓ×¶Ìå²Ã¼ô
+	// è§†é”¥ä½“è£å‰ª
 	static std::vector<DirectX::XMMATRIX> XM_CALLCONV FrustumCulling(
 		const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
-	// ÊÓ×¶Ìå²Ã¼ô2
+	// è§†é”¥ä½“è£å‰ª2
 	static std::vector<DirectX::XMMATRIX> XM_CALLCONV FrustumCulling2(
 		const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
-	// ÊÓ×¶Ìå²Ã¼ô3
+	// è§†é”¥ä½“è£å‰ª3
 	static std::vector<DirectX::XMMATRIX> XM_CALLCONV FrustumCulling3(
 		const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
 

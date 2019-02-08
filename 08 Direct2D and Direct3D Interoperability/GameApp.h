@@ -1,4 +1,4 @@
-#ifndef GAMEAPP_H
+ï»¿#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -47,24 +47,24 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;	// µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> mFont;					// ×ÖÌå
-	ComPtr<IDWriteTextFormat> mTextFormat;		// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;	// å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> mFont;					// å­—ä½“
+	ComPtr<IDWriteTextFormat> mTextFormat;		// æ–‡æœ¬æ ¼å¼
 	
-	ComPtr<ID3D11InputLayout> mVertexLayout;	// ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11Buffer> mVertexBuffer;			// ¶¥µã»º³åÇø
-	ComPtr<ID3D11Buffer> mIndexBuffer;			// Ë÷Òı»º³åÇø
-	ComPtr<ID3D11Buffer> mConstantBuffers[2];	// ³£Á¿»º³åÇø
-	UINT mIndexCount;							// »æÖÆÎïÌåµÄË÷ÒıÊı×é´óĞ¡
+	ComPtr<ID3D11InputLayout> mVertexLayout;	// é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11Buffer> mVertexBuffer;			// é¡¶ç‚¹ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> mIndexBuffer;			// ç´¢å¼•ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> mConstantBuffers[2];	// å¸¸é‡ç¼“å†²åŒº
+	UINT mIndexCount;							// ç»˜åˆ¶ç‰©ä½“çš„ç´¢å¼•æ•°ç»„å¤§å°
 
-	ComPtr<ID3D11VertexShader> mVertexShader;	// ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> mPixelShader;		// ÏñËØ×ÅÉ«Æ÷
-	VSConstantBuffer mVSConstantBuffer;			// ÓÃÓÚĞŞ¸ÄÓÃÓÚVSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
-	PSConstantBuffer mPSConstantBuffer;			// ÓÃÓÚĞŞ¸ÄÓÃÓÚPSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
+	ComPtr<ID3D11VertexShader> mVertexShader;	// é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> mPixelShader;		// åƒç´ ç€è‰²å™¨
+	VSConstantBuffer mVSConstantBuffer;			// ç”¨äºä¿®æ”¹ç”¨äºVSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
+	PSConstantBuffer mPSConstantBuffer;			// ç”¨äºä¿®æ”¹ç”¨äºPSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
 
-	DirectionalLight mDirLight;					// Ä¬ÈÏ»·¾³¹â
-	PointLight mPointLight;						// Ä¬ÈÏµã¹â
-	SpotLight mSpotLight;						// Ä¬ÈÏ»ã¾Û¹â
+	DirectionalLight mDirLight;					// é»˜è®¤ç¯å¢ƒå…‰
+	PointLight mPointLight;						// é»˜è®¤ç‚¹å…‰
+	SpotLight mSpotLight;						// é»˜è®¤æ±‡èšå…‰
 	
 };
 

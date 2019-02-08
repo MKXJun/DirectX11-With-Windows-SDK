@@ -1,6 +1,6 @@
-#include "Effects.h"
+ï»¿#include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -8,14 +8,14 @@ using namespace std::experimental;
 
 
 //
-// SkyEffect::Impl ĞèÒªÏÈÓÚSkyEffectµÄ¶¨Òå
+// SkyEffect::Impl éœ€è¦å…ˆäºSkyEffectçš„å®šä¹‰
 //
 
 class SkyEffect::Impl : public AlignedType<SkyEffect::Impl>
 {
 public:
 	//
-	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå£¬½ö¹©¸ÃÎÄ¼şÊ¹ÓÃ¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
+	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ï¼Œä»…ä¾›è¯¥æ–‡ä»¶ä½¿ç”¨ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
 	//
 
 	struct CBChangesEveryFrame
@@ -24,22 +24,22 @@ public:
 	};
 
 public:
-	// ±ØĞëÏÔÊ½Ö¸¶¨
+	// å¿…é¡»æ˜¾å¼æŒ‡å®š
 	Impl() = default;
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame>	cbFrame;	// Ã¿Ö¡»æÖÆµÄ³£Á¿»º³åÇø
+	CBufferObject<0, CBChangesEveryFrame>	cbFrame;	// æ¯å¸§ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
 
-	BOOL isDirty;										// ÊÇ·ñÓĞÖµ±ä¸ü
-	std::vector<CBufferBase*> cBufferPtrs;				// Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
+	BOOL isDirty;										// æ˜¯å¦æœ‰å€¼å˜æ›´
+	std::vector<CBufferBase*> cBufferPtrs;				// ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
 
 	ComPtr<ID3D11VertexShader> skyVS;
 	ComPtr<ID3D11PixelShader> skyPS;
 
 	ComPtr<ID3D11InputLayout> vertexPosLayout;
 
-	ComPtr<ID3D11ShaderResourceView> textureCube;			// Ìì¿ÕºĞÎÆÀí
+	ComPtr<ID3D11ShaderResourceView> textureCube;			// å¤©ç©ºç›’çº¹ç†
 };
 
 //
@@ -48,7 +48,7 @@ public:
 
 namespace
 {
-	// SkyEffectµ¥Àı
+	// SkyEffectå•ä¾‹
 	static SkyEffect * pInstance = nullptr;
 }
 
@@ -96,17 +96,17 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	ComPtr<ID3DBlob> blob;
 	
 	// ******************
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Sky_VS.cso", L"HLSL\\Sky_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->skyVS.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(device->CreateInputLayout(VertexPos::inputLayout, ARRAYSIZE(VertexPos::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosLayout.GetAddressOf()));
 
 	// ******************
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Sky_PS.cso", L"HLSL\\Sky_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -117,7 +117,7 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 		&pImpl->cbFrame,
 	});
 
-	// ´´½¨³£Á¿»º³åÇø
+	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
 	for (auto& pBuffer : pImpl->cBufferPtrs)
 	{
 		HR(pBuffer->CreateBuffer(device));
@@ -164,10 +164,10 @@ void SkyEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> textureCube)
 void SkyEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
+	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
 	pCBuffers[0]->BindVS(deviceContext);
 	
-	// ÉèÖÃSRV
+	// è®¾ç½®SRV
 	deviceContext->PSSetShaderResources(0, 1, pImpl->textureCube.GetAddressOf());
 
 	if (pImpl->isDirty)

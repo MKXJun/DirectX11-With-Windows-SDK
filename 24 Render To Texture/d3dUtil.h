@@ -1,16 +1,16 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // d3dUtil.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3DÊµÓÃ¹¤¾ß¼¯
+// D3Då®ç”¨å·¥å…·é›†
 // Direct3D utility tools.
 //***************************************************************************************
 
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// ÒÑ°üº¬Windows.h
-#include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
+#include <d3d11_1.h>			// å·²åŒ…å«Windows.h
+#include <DirectXCollision.h>	// å·²åŒ…å«DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -23,24 +23,24 @@
 #include "WICTextureLoader.h"
 
 //
-// ºêÏà¹Ø
+// å®ç›¸å…³
 //
 
-// °²È«COM×é¼şÊÍ·Åºê
+// å®‰å…¨COMç»„ä»¶é‡Šæ”¾å®
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 //
-// ×ÅÉ«Æ÷±àÒëÏà¹Øº¯Êı
+// ç€è‰²å™¨ç¼–è¯‘ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// CreateShaderFromFileº¯Êı
+// CreateShaderFromFileå‡½æ•°
 // ------------------------------
-// [In]csoFileNameInOut ±àÒëºÃµÄ×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼ş(.cso)£¬ÈôÓĞÖ¸¶¨ÔòÓÅÏÈÑ°ÕÒ¸ÃÎÄ¼ş²¢¶ÁÈ¡
-// [In]hlslFileName     ×ÅÉ«Æ÷´úÂë£¬ÈôÎ´ÕÒµ½×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼şÔò±àÒë×ÅÉ«Æ÷´úÂë
-// [In]entryPoint       Èë¿Úµã(Ö¸¶¨¿ªÊ¼µÄº¯Êı)
-// [In]shaderModel      ×ÅÉ«Æ÷Ä£ĞÍ£¬¸ñÊ½Îª"*s_5_0"£¬*¿ÉÒÔÎªc,d,g,h,p,vÖ®Ò»
-// [Out]ppBlobOut       Êä³ö×ÅÉ«Æ÷¶ş½øÖÆĞÅÏ¢
+// [In]csoFileNameInOut ç¼–è¯‘å¥½çš„ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶(.cso)ï¼Œè‹¥æœ‰æŒ‡å®šåˆ™ä¼˜å…ˆå¯»æ‰¾è¯¥æ–‡ä»¶å¹¶è¯»å–
+// [In]hlslFileName     ç€è‰²å™¨ä»£ç ï¼Œè‹¥æœªæ‰¾åˆ°ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶åˆ™ç¼–è¯‘ç€è‰²å™¨ä»£ç 
+// [In]entryPoint       å…¥å£ç‚¹(æŒ‡å®šå¼€å§‹çš„å‡½æ•°)
+// [In]shaderModel      ç€è‰²å™¨æ¨¡å‹ï¼Œæ ¼å¼ä¸º"*s_5_0"ï¼Œ*å¯ä»¥ä¸ºc,d,g,h,p,vä¹‹ä¸€
+// [Out]ppBlobOut       è¾“å‡ºç€è‰²å™¨äºŒè¿›åˆ¶ä¿¡æ¯
 HRESULT CreateShaderFromFile(
 	const WCHAR* csoFileNameInOut,
 	const WCHAR* hlslFileName,
@@ -49,19 +49,19 @@ HRESULT CreateShaderFromFile(
 	ID3DBlob** ppBlobOut);
 
 //
-// ÎÆÀíÊı×éÏà¹Øº¯Êı
+// çº¹ç†æ•°ç»„ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// CreateDDSTexture2DArrayFromFileº¯Êı
+// CreateDDSTexture2DArrayFromFileå‡½æ•°
 // ------------------------------
-// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]fileNames			ddsÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateDDSTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -71,15 +71,15 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	bool generateMips = false);
 
 // ------------------------------
-// CreateWICTexture2DArrayFromFileº¯Êı
+// CreateWICTexture2DArrayFromFileå‡½æ•°
 // ------------------------------
-// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]fileNames			ddsÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -90,24 +90,24 @@ HRESULT CreateWICTexture2DArrayFromFile(
 
 
 //
-// ÎÆÀíÁ¢·½ÌåÏà¹Øº¯Êı
+// çº¹ç†ç«‹æ–¹ä½“ç›¸å…³å‡½æ•°
 //
 
 
 // ------------------------------
-// CreateWICTexture2DCubeFromFileº¯Êı
+// CreateWICTexture2DCubeFromFileå‡½æ•°
 // ------------------------------
-// ¸ù¾İ¸ø¶¨µÄÒ»ÕÅ°üº¬Á¢·½ÌåÁù¸öÃæµÄÎ»Í¼£¬´´½¨ÎÆÀíÁ¢·½Ìå
-// ÒªÇóÎÆÀí¿í¸ß±ÈÎª4:3£¬ÇÒ°´ÏÂÃæĞÎÊ½²¼¾Ö:
+// æ ¹æ®ç»™å®šçš„ä¸€å¼ åŒ…å«ç«‹æ–¹ä½“å…­ä¸ªé¢çš„ä½å›¾ï¼Œåˆ›å»ºçº¹ç†ç«‹æ–¹ä½“
+// è¦æ±‚çº¹ç†å®½é«˜æ¯”ä¸º4:3ï¼Œä¸”æŒ‰ä¸‹é¢å½¢å¼å¸ƒå±€:
 // .  +Y .  .
 // -X +Z +X -Z 
 // .  -Y .  .
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]cubeMapFileName		Î»Í¼ÎÄ¼şÃû
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureCubeView	Êä³öµÄÎÆÀíÁ¢·½Ìå×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]cubeMapFileName		ä½å›¾æ–‡ä»¶å
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureCubeView	è¾“å‡ºçš„çº¹ç†ç«‹æ–¹ä½“èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -117,17 +117,17 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	bool generateMips = false);
 
 // ------------------------------
-// CreateWICTexture2DCubeFromFileº¯Êı
+// CreateWICTexture2DCubeFromFileå‡½æ•°
 // ------------------------------
-// ¸ù¾İ°´D3D11_TEXTURECUBE_FACEË÷ÒıË³Ğò¸ø¶¨µÄÁùÕÅÎÆÀí£¬´´½¨ÎÆÀíÁ¢·½Ìå
-// ÒªÇóÎ»Í¼ÊÇÍ¬Ñù¿í¸ß¡¢Êı¾İ¸ñÊ½µÄÕı·½ĞÎ
-// ÄãÒ²¿ÉÒÔ¸ø¶¨³¬¹ı6ÕÅµÄÎÆÀí£¬È»ºóÔÚ»ñÈ¡µ½ÎÆÀíÊı×éµÄ»ù´¡ÉÏ×ÔĞĞ´´½¨¸ü¶àµÄ×ÊÔ´ÊÓÍ¼
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]cubeMapFileNames		Î»Í¼ÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureCubeView	Êä³öµÄÎÆÀíÁ¢·½Ìå×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// æ ¹æ®æŒ‰D3D11_TEXTURECUBE_FACEç´¢å¼•é¡ºåºç»™å®šçš„å…­å¼ çº¹ç†ï¼Œåˆ›å»ºçº¹ç†ç«‹æ–¹ä½“
+// è¦æ±‚ä½å›¾æ˜¯åŒæ ·å®½é«˜ã€æ•°æ®æ ¼å¼çš„æ­£æ–¹å½¢
+// ä½ ä¹Ÿå¯ä»¥ç»™å®šè¶…è¿‡6å¼ çš„çº¹ç†ï¼Œç„¶ååœ¨è·å–åˆ°çº¹ç†æ•°ç»„çš„åŸºç¡€ä¸Šè‡ªè¡Œåˆ›å»ºæ›´å¤šçš„èµ„æºè§†å›¾
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]cubeMapFileNames		ä½å›¾æ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureCubeView	è¾“å‡ºçš„çº¹ç†ç«‹æ–¹ä½“èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,

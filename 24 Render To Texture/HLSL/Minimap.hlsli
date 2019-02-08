@@ -4,17 +4,17 @@ SamplerState gSam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
 {
-    float3 gEyePosW;            // ÉãÏñ»úÎ»ÖÃ
+    float3 gEyePosW;            // æ‘„åƒæœºä½ç½®
     float gPad;
 }
 
 cbuffer CBDrawingStates : register(b1)
 {
-    int gFogEnabled;            // ÊÇ·ñ·¶Î§¿ÉÊÓ
-    float gVisibleRange;        // 3DÊÀ½ç¿ÉÊÓ·¶Î§
+    int gFogEnabled;            // æ˜¯å¦èŒƒå›´å¯è§†
+    float gVisibleRange;        // 3Dä¸–ç•Œå¯è§†èŒƒå›´
     float2 gPad2;
-    float4 gRectW;              // Ğ¡µØÍ¼xOzÆ½Ãæ¶ÔÓ¦3DÊÀ½ç¾ØĞÎÇøÓò(Left, Front, Right, Back)
-    float4 gInvisibleColor;     // ²»¿ÉÊÓÇé¿öÏÂµÄÑÕÉ«
+    float4 gRectW;              // å°åœ°å›¾xOzå¹³é¢å¯¹åº”3Dä¸–ç•ŒçŸ©å½¢åŒºåŸŸ(Left, Front, Right, Back)
+    float4 gInvisibleColor;     // ä¸å¯è§†æƒ…å†µä¸‹çš„é¢œè‰²
 }
 
 

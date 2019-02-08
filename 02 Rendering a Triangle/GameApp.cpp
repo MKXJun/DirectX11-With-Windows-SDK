@@ -1,4 +1,4 @@
-#include "GameApp.h"
+ï»¿#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -51,7 +51,7 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), black);
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// »æÖÆÈý½ÇÐÎ
+	// ç»˜åˆ¶ä¸‰è§’å½¢
 	md3dImmediateContext->Draw(3, 0);
 	HR(mSwapChain->Present(0, 0));
 }
@@ -60,14 +60,14 @@ bool GameApp::InitEffect()
 {
 	ComPtr<ID3DBlob> blob;
 
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_VS.cso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader.GetAddressOf()));
-	// ´´½¨²¢°ó¶¨¶¥µã²¼¾Ö
+	// åˆ›å»ºå¹¶ç»‘å®šé¡¶ç‚¹å¸ƒå±€
 	HR(md3dDevice->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout.GetAddressOf()));
 
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_PS.cso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader.GetAddressOf()));
 
@@ -76,21 +76,21 @@ bool GameApp::InitEffect()
 
 bool GameApp::InitResource()
 {
-	// ÉèÖÃÈý½ÇÐÎ¶¥µã
+	// è®¾ç½®ä¸‰è§’å½¢é¡¶ç‚¹
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(0.0f, 0.5f, 0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
 		{ XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) },
 		{ XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }
 	};
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// ÐÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
@@ -98,17 +98,17 @@ bool GameApp::InitResource()
 
 
 	// ******************
-	// ¸øäÖÈ¾¹ÜÏß¸÷¸ö½×¶Î°ó¶¨ºÃËùÐè×ÊÔ´
+	// ç»™æ¸²æŸ“ç®¡çº¿å„ä¸ªé˜¶æ®µç»‘å®šå¥½æ‰€éœ€èµ„æº
 
-	// ÊäÈë×°Åä½×¶ÎµÄ¶¥µã»º³åÇøÉèÖÃ
-	UINT stride = sizeof(VertexPosColor);	// ¿çÔ½×Ö½ÚÊý
-	UINT offset = 0;						// ÆðÊ¼Æ«ÒÆÁ¿
+	// è¾“å…¥è£…é…é˜¶æ®µçš„é¡¶ç‚¹ç¼“å†²åŒºè®¾ç½®
+	UINT stride = sizeof(VertexPosColor);	// è·¨è¶Šå­—èŠ‚æ•°
+	UINT offset = 0;						// èµ·å§‹åç§»é‡
 
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-	// ÉèÖÃÍ¼ÔªÀàÐÍ£¬Éè¶¨ÊäÈë²¼¾Ö
+	// è®¾ç½®å›¾å…ƒç±»åž‹ï¼Œè®¾å®šè¾“å…¥å¸ƒå±€
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetInputLayout(mVertexLayout.Get());
-	// ½«×ÅÉ«Æ÷°ó¶¨µ½äÖÈ¾¹ÜÏß
+	// å°†ç€è‰²å™¨ç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿
 	md3dImmediateContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 	md3dImmediateContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 

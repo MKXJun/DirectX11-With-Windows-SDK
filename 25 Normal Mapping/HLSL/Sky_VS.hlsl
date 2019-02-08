@@ -4,7 +4,7 @@ VertexPosHL VS(VertexPos vIn)
 {
     VertexPosHL vOut;
     
-    // ÉèÖÃz = wÊ¹µÃz/w = 1(Ìì¿ÕºĞ±£³ÖÔÚÔ¶Æ½Ãæ)
+    // è®¾ç½®z = wä½¿å¾—z/w = 1(å¤©ç©ºç›’ä¿æŒåœ¨è¿œå¹³é¢)
     float4 posH = mul(float4(vIn.PosL, 1.0f), gWorldViewProj);
     vOut.PosH = posH.xyww;
     vOut.PosL = vIn.PosL;

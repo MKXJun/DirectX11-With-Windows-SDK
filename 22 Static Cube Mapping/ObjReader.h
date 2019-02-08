@@ -1,21 +1,21 @@
-// *******************************************************************************
+ï»¿// *******************************************************************************
 // ObjReader.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// - ÐÞÕýÁË¼ÓÔØ³öÀ´µÄÄ£ÐÍÊÇ¾µÏñµÄÎÊÌâ(ÓÒÊÖ×ø±êÏµ±ä»»Îª×óÊÖ×ø±êÏµ)
+// - ä¿®æ­£äº†åŠ è½½å‡ºæ¥çš„æ¨¡åž‹æ˜¯é•œåƒçš„é—®é¢˜(å³æ‰‹åæ ‡ç³»å˜æ¢ä¸ºå·¦æ‰‹åæ ‡ç³»)
 // Modified By X_Jun(MKXJun)
 // 2018/9/12 v1.1
 // 
-// - ObjReaderÖ§³ÖÍ¨¹ý.objÎÄ¼þÒýÓÃ.mtl(²ÄÖÊ)£¬²¢ÇÒ.mtl(²ÄÖÊ)Ö§³ÖÒýÓÃÎÆÀí¡£
-// - ²»Ö§³ÖÊ¹ÓÃ/½«ÏÂÒ»ÐÐµÄÄÚÈÝÁ¬½ÓÔÚÒ»Æð±íÊ¾Ò»ÐÐ
-// - ²»Ö§³ÖË÷ÒýÎª¸ºÊý
-// - ²»Ö§³ÖÊ¹ÓÃÀàËÆ1//2ÕâÑùµÄ¶¥µã£¨¼´²»°üº¬ÎÆÀí×ø±êµÄ¶¥µã£©
-// - ¶Ô.mtlÎÄ¼þºÍÎÆÀíµÄÒýÓÃ±ØÐëÒÔÏà¶ÔÂ·¾¶µÄÐÎÊ½Ìá¹©£¬ÇÒÃ»ÓÐÖ§³Ö.ºÍ..Á½ÖÖÂ·¾¶¸ñÊ½¡£
-// - Èô.mtl²ÄÖÊÎÄ¼þ²»´æÔÚ£¬ÔòÄÚ²¿»áÊ¹ÓÃÄ¬ÈÏ²ÄÖÊÖµ
-// - Èô.mtlÄÚ²¿Ã»ÓÐÖ¸¶¨ÎÆÀíÎÄ¼þÒýÓÃ£¬ÐèÒªÁíÍâ×ÔÐÐ¼ÓÔØÎÆÀí
-// - ÒªÇóÍø¸ñÖ»ÄÜÒÔÈý½ÇÐÎ¹¹Ôì
-// - .mboÎÄ¼þÊÇÒ»ÖÖ¶þ½øÖÆÎÄ¼þ£¬ÓÃÓÚ¼Ó¿ìÄ£ÐÍ¼ÓÔØµÄËÙ¶È£¬ÄÚ²¿¸ñÊ½ÊÇ×Ô¶¨ÒåµÄ
-// - .mboÎÄ¼þÒÑ¾­Éú³É²»ÄÜËæÒâ¸Ä±äÎÄ¼þÎ»ÖÃ£¬ÈôÒªÇ¨ÒÆÏà¹ØÎÄ¼þÐèÒªÖØÐÂÉú³É.mboÎÄ¼þ
+// - ObjReaderæ”¯æŒé€šè¿‡.objæ–‡ä»¶å¼•ç”¨.mtl(æè´¨)ï¼Œå¹¶ä¸”.mtl(æè´¨)æ”¯æŒå¼•ç”¨çº¹ç†ã€‚
+// - ä¸æ”¯æŒä½¿ç”¨/å°†ä¸‹ä¸€è¡Œçš„å†…å®¹è¿žæŽ¥åœ¨ä¸€èµ·è¡¨ç¤ºä¸€è¡Œ
+// - ä¸æ”¯æŒç´¢å¼•ä¸ºè´Ÿæ•°
+// - ä¸æ”¯æŒä½¿ç”¨ç±»ä¼¼1//2è¿™æ ·çš„é¡¶ç‚¹ï¼ˆå³ä¸åŒ…å«çº¹ç†åæ ‡çš„é¡¶ç‚¹ï¼‰
+// - å¯¹.mtlæ–‡ä»¶å’Œçº¹ç†çš„å¼•ç”¨å¿…é¡»ä»¥ç›¸å¯¹è·¯å¾„çš„å½¢å¼æä¾›ï¼Œä¸”æ²¡æœ‰æ”¯æŒ.å’Œ..ä¸¤ç§è·¯å¾„æ ¼å¼ã€‚
+// - è‹¥.mtlæè´¨æ–‡ä»¶ä¸å­˜åœ¨ï¼Œåˆ™å†…éƒ¨ä¼šä½¿ç”¨é»˜è®¤æè´¨å€¼
+// - è‹¥.mtlå†…éƒ¨æ²¡æœ‰æŒ‡å®šçº¹ç†æ–‡ä»¶å¼•ç”¨ï¼Œéœ€è¦å¦å¤–è‡ªè¡ŒåŠ è½½çº¹ç†
+// - è¦æ±‚ç½‘æ ¼åªèƒ½ä»¥ä¸‰è§’å½¢æž„é€ 
+// - .mboæ–‡ä»¶æ˜¯ä¸€ç§äºŒè¿›åˆ¶æ–‡ä»¶ï¼Œç”¨äºŽåŠ å¿«æ¨¡åž‹åŠ è½½çš„é€Ÿåº¦ï¼Œå†…éƒ¨æ ¼å¼æ˜¯è‡ªå®šä¹‰çš„
+// - .mboæ–‡ä»¶å·²ç»ç”Ÿæˆä¸èƒ½éšæ„æ”¹å˜æ–‡ä»¶ä½ç½®ï¼Œè‹¥è¦è¿ç§»ç›¸å…³æ–‡ä»¶éœ€è¦é‡æ–°ç”Ÿæˆ.mboæ–‡ä»¶
 //
 // Created By X_Jun(MKXJun)
 // 2018/9/9 v1.0
@@ -42,16 +42,16 @@ class ObjReader
 public:
 	struct ObjPart
 	{
-		Material material;							// ²ÄÖÊ
-		std::vector<VertexPosNormalTex> vertices;	// ¶¥µã¼¯ºÏ
-		std::vector<WORD> indices16;				// ¶¥µãÊý²»³¬¹ý65535Ê±Ê¹ÓÃ
-		std::vector<DWORD> indices32;				// ¶¥µãÊý³¬¹ý65535Ê±Ê¹ÓÃ
-		std::wstring texStrDiffuse;					// ÂþÉä¹âÎÆÀíÎÄ¼þÃû£¬ÐèÎªÏà¶ÔÂ·¾¶£¬ÔÚmbo±ØÐëÕ¼260×Ö½Ú
+		Material material;							// æè´¨
+		std::vector<VertexPosNormalTex> vertices;	// é¡¶ç‚¹é›†åˆ
+		std::vector<WORD> indices16;				// é¡¶ç‚¹æ•°ä¸è¶…è¿‡65535æ—¶ä½¿ç”¨
+		std::vector<DWORD> indices32;				// é¡¶ç‚¹æ•°è¶…è¿‡65535æ—¶ä½¿ç”¨
+		std::wstring texStrDiffuse;					// æ¼«å°„å…‰çº¹ç†æ–‡ä»¶åï¼Œéœ€ä¸ºç›¸å¯¹è·¯å¾„ï¼Œåœ¨mboå¿…é¡»å 260å­—èŠ‚
 	};
 
-	// Ö¸¶¨.mboÎÄ¼þµÄÇé¿öÏÂ£¬Èô.mboÎÄ¼þ´æÔÚ£¬ÓÅÏÈ¶ÁÈ¡¸ÃÎÄ¼þ
-	// ·ñÔò»á¶ÁÈ¡.objÎÄ¼þ
-	// Èô.objÎÄ¼þ±»¶ÁÈ¡£¬ÇÒÌá¹©ÁË.mboÎÄ¼þµÄÂ·¾¶£¬Ôò»á¸ù¾ÝÒÑ¾­¶ÁÈ¡µÄÊý¾Ý´´½¨.mboÎÄ¼þ
+	// æŒ‡å®š.mboæ–‡ä»¶çš„æƒ…å†µä¸‹ï¼Œè‹¥.mboæ–‡ä»¶å­˜åœ¨ï¼Œä¼˜å…ˆè¯»å–è¯¥æ–‡ä»¶
+	// å¦åˆ™ä¼šè¯»å–.objæ–‡ä»¶
+	// è‹¥.objæ–‡ä»¶è¢«è¯»å–ï¼Œä¸”æä¾›äº†.mboæ–‡ä»¶çš„è·¯å¾„ï¼Œåˆ™ä¼šæ ¹æ®å·²ç»è¯»å–çš„æ•°æ®åˆ›å»º.mboæ–‡ä»¶
 	bool Read(const wchar_t* mboFileName, const wchar_t* objFileName);
 	
 	bool ReadObj(const wchar_t* objFileName);
@@ -59,11 +59,11 @@ public:
 	bool WriteMbo(const wchar_t* mboFileName);
 public:
 	std::vector<ObjPart> objParts;
-	DirectX::XMFLOAT3 vMin, vMax;					// AABBºÐË«¶¥µã
+	DirectX::XMFLOAT3 vMin, vMax;					// AABBç›’åŒé¡¶ç‚¹
 private:
 	void AddVertex(const VertexPosNormalTex& vertex, DWORD vpi, DWORD vti, DWORD vni);
 
-	// »º´æÓÐv/vt/vn×Ö·û´®ÐÅÏ¢
+	// ç¼“å­˜æœ‰v/vt/vnå­—ç¬¦ä¸²ä¿¡æ¯
 	std::unordered_map<std::wstring, DWORD> vertexCache;
 };
 

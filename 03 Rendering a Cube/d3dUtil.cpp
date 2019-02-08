@@ -1,4 +1,4 @@
-#include "d3dUtil.h"
+ï»¿#include "d3dUtil.h"
 
 using namespace std::experimental;
 
@@ -11,7 +11,7 @@ HRESULT CreateShaderFromFile(
 {
 	HRESULT hr = S_OK;
 
-	// Ñ°ÕÒÊÇ·ñÓÐÒÑ¾­±àÒëºÃµÄ¶¥µã×ÅÉ«Æ÷
+	// å¯»æ‰¾æ˜¯å¦æœ‰å·²ç»ç¼–è¯‘å¥½çš„é¡¶ç‚¹ç€è‰²å™¨
 	if (csoFileNameInOut && filesystem::exists(csoFileNameInOut))
 	{
 		return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
@@ -20,11 +20,11 @@ HRESULT CreateShaderFromFile(
 	{
 		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
-		// ÉèÖÃ D3DCOMPILE_DEBUG ±êÖ¾ÓÃÓÚ»ñÈ¡×ÅÉ«Æ÷µ÷ÊÔÐÅÏ¢¡£¸Ã±êÖ¾¿ÉÒÔÌáÉýµ÷ÊÔÌåÑé£¬
-		// µ«ÈÔÈ»ÔÊÐí×ÅÉ«Æ÷½øÐÐÓÅ»¯²Ù×÷
+		// è®¾ç½® D3DCOMPILE_DEBUG æ ‡å¿—ç”¨äºŽèŽ·å–ç€è‰²å™¨è°ƒè¯•ä¿¡æ¯ã€‚è¯¥æ ‡å¿—å¯ä»¥æå‡è°ƒè¯•ä½“éªŒï¼Œ
+		// ä½†ä»ç„¶å…è®¸ç€è‰²å™¨è¿›è¡Œä¼˜åŒ–æ“ä½œ
 		dwShaderFlags |= D3DCOMPILE_DEBUG;
 
-		// ÔÚDebug»·¾³ÏÂ½ûÓÃÓÅ»¯ÒÔ±ÜÃâ³öÏÖÒ»Ð©²»ºÏÀíµÄÇé¿ö
+		// åœ¨DebugçŽ¯å¢ƒä¸‹ç¦ç”¨ä¼˜åŒ–ä»¥é¿å…å‡ºçŽ°ä¸€äº›ä¸åˆç†çš„æƒ…å†µ
 		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 		ID3DBlob* errorBlob = nullptr;
@@ -40,7 +40,7 @@ HRESULT CreateShaderFromFile(
 			return hr;
 		}
 
-		// ÈôÖ¸¶¨ÁËÊä³öÎÄ¼þÃû£¬Ôò½«×ÅÉ«Æ÷¶þ½øÖÆÐÅÏ¢Êä³ö
+		// è‹¥æŒ‡å®šäº†è¾“å‡ºæ–‡ä»¶åï¼Œåˆ™å°†ç€è‰²å™¨äºŒè¿›åˆ¶ä¿¡æ¯è¾“å‡º
 		if (csoFileNameInOut)
 		{
 			return D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, FALSE);

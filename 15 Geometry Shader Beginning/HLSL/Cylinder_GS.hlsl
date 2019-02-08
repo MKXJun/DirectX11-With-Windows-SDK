@@ -1,11 +1,11 @@
 #include "Basic.hlsli"
 
-// Ò»¸öv0v1Ïß¶ÎÊä³ö6¸öÈý½ÇÐÎ¶¥µã
+// ä¸€ä¸ªv0v1çº¿æ®µè¾“å‡º6ä¸ªä¸‰è§’å½¢é¡¶ç‚¹
 [maxvertexcount(6)]
 void GS(line VertexPosHWNormalColor input[2], inout TriangleStream<VertexPosHWNormalColor> output)
 {
     // *****************************
-    // ÒªÇóÔ²ÏßÊÇË³Ê±ÕëµÄ£¬È»ºó×Ôµ×ÏòÉÏ¹¹ÔìÔ²Öù²àÃæ           
+    // è¦æ±‚åœ†çº¿æ˜¯é¡ºæ—¶é’ˆçš„ï¼Œç„¶åŽè‡ªåº•å‘ä¸Šæž„é€ åœ†æŸ±ä¾§é¢           
     //   -->      v2____v3
 	//  ______     |\   |
 	// /      \    | \  |

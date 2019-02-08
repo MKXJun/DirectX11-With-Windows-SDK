@@ -22,7 +22,7 @@ cbuffer CBDrawingStates : register(b2)
     int gTextureUsed;
     int gReflectionEnabled;
     int gRefractionEnabled;
-    float gEta; // ¿ÕÆø/½éÖÊÕÛÉä±È
+    float gEta; // ç©ºæ°”/ä»‹è´¨æŠ˜å°„æ¯”
 }
 
 cbuffer CBChangesEveryFrame : register(b3)
@@ -81,17 +81,17 @@ struct InstancePosNormalTangentTex
 struct VertexPosHWNormalTex
 {
     float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // ÔÚÊÀ½çÖĞµÄÎ»ÖÃ
-    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖĞµÄ·½Ïò
+    float3 PosW : POSITION; // åœ¨ä¸–ç•Œä¸­çš„ä½ç½®
+    float3 NormalW : NORMAL; // æ³•å‘é‡åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
     float2 Tex : TEXCOORD;
 };
 
 struct VertexPosHWNormalTangentTex
 {
     float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // ÔÚÊÀ½çÖĞµÄÎ»ÖÃ
-    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖĞµÄ·½Ïò
-    float4 TangentW : TANGENT; // ÇĞÏßÔÚÊÀ½çÖĞµÄ·½Ïò
+    float3 PosW : POSITION; // åœ¨ä¸–ç•Œä¸­çš„ä½ç½®
+    float3 NormalW : NORMAL; // æ³•å‘é‡åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
+    float4 TangentW : TANGENT; // åˆ‡çº¿åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
     float2 Tex : TEXCOORD;
 };
 
@@ -102,17 +102,17 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample,
     float3 unitNormalW,
     float4 tangentW)
 {
-    // ½«¶ÁÈ¡µ½·¨ÏòÁ¿ÖĞµÄÃ¿¸ö·ÖÁ¿´Ó[0, 1]»¹Ô­µ½[-1, 1]
+    // å°†è¯»å–åˆ°æ³•å‘é‡ä¸­çš„æ¯ä¸ªåˆ†é‡ä»[0, 1]è¿˜åŸåˆ°[-1, 1]
     float3 normalT = 2.0f * normalMapSample - 1.0f;
 
-    // ¹¹½¨Î»ÓÚÊÀ½ç×ø±êÏµµÄÇĞÏß¿Õ¼ä
+    // æ„å»ºä½äºä¸–ç•Œåæ ‡ç³»çš„åˆ‡çº¿ç©ºé—´
     float3 N = unitNormalW;
-    float3 T = normalize(tangentW.xyz - dot(tangentW.xyz, N) * N); // Ê©ÃÜÌØÕı½»»¯
+    float3 T = normalize(tangentW.xyz - dot(tangentW.xyz, N) * N); // æ–½å¯†ç‰¹æ­£äº¤åŒ–
     float3 B = cross(N, T);
 
     float3x3 TBN = float3x3(T, B, N);
 
-    // ½«°¼Í¹·¨ÏòÁ¿´ÓÇĞÏß¿Õ¼ä±ä»»µ½ÊÀ½ç×ø±êÏµ
+    // å°†å‡¹å‡¸æ³•å‘é‡ä»åˆ‡çº¿ç©ºé—´å˜æ¢åˆ°ä¸–ç•Œåæ ‡ç³»
     float3 bumpedNormalW = mul(normalT, TBN);
 
     return bumpedNormalW;

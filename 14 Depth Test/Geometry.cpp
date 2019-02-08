@@ -1,4 +1,4 @@
-#include "Geometry.h"
+﻿#include "Geometry.h"
 
 const std::map<std::string, std::pair<size_t, size_t>> Geometry::semanticSizeMap = {
 	{"POSITION", std::pair<size_t, size_t>(0, 12)},

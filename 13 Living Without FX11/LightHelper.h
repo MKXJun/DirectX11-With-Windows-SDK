@@ -1,11 +1,11 @@
-#ifndef LIGHTHELPER_H
+ï»¿#ifndef LIGHTHELPER_H
 #define LIGHTHELPER_H
 
 #include <cstring>
 #include <DirectXMath.h>
 
 
-// »·¾³¹â
+// ç¯å¢ƒå…‰
 struct DirectionalLight
 {
 	DirectionalLight() { memset(this, 0, sizeof(DirectionalLight)); }
@@ -14,10 +14,10 @@ struct DirectionalLight
 	DirectX::XMFLOAT4 Diffuse;
 	DirectX::XMFLOAT4 Specular;
 	DirectX::XMFLOAT3 Direction;
-	float Pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float Pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// µã¹â
+// ç‚¹å…‰
 struct PointLight
 {
 	PointLight() { memset(this, 0, sizeof(PointLight)); }
@@ -26,16 +26,16 @@ struct PointLight
 	DirectX::XMFLOAT4 Diffuse;
 	DirectX::XMFLOAT4 Specular;
 
-	// ´ò°ü³É4DÏòÁ¿: (Position, Range)
+	// æ‰“åŒ…æˆ4Då‘é‡: (Position, Range)
 	DirectX::XMFLOAT3 Position;
 	float Range;
 
-	// ´ò°ü³É4DÏòÁ¿: (A0, A1, A2, Pad)
+	// æ‰“åŒ…æˆ4Då‘é‡: (A0, A1, A2, Pad)
 	DirectX::XMFLOAT3 Att;
-	float Pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float Pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// ¾Û¹âµÆ
+// èšå…‰ç¯
 struct SpotLight
 {
 	SpotLight() { memset(this, 0, sizeof(SpotLight)); }
@@ -44,27 +44,27 @@ struct SpotLight
 	DirectX::XMFLOAT4 Diffuse;
 	DirectX::XMFLOAT4 Specular;
 
-	// ´ò°ü³É4DÏòÁ¿: (Position, Range)
+	// æ‰“åŒ…æˆ4Då‘é‡: (Position, Range)
 	DirectX::XMFLOAT3 Position;
 	float Range;
 
-	// ´ò°ü³É4DÏòÁ¿: (Direction, Spot)
+	// æ‰“åŒ…æˆ4Då‘é‡: (Direction, Spot)
 	DirectX::XMFLOAT3 Direction;
 	float Spot;
 
-	// ´ò°ü³É4DÏòÁ¿: (Att, Pad)
+	// æ‰“åŒ…æˆ4Då‘é‡: (Att, Pad)
 	DirectX::XMFLOAT3 Att;
-	float Pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float Pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// ÎïÌå±íÃæ²ÄÖÊ
+// ç‰©ä½“è¡¨é¢æè´¨
 struct Material
 {
 	Material() { memset(this, 0, sizeof(Material)); }
 
 	DirectX::XMFLOAT4 Ambient;
 	DirectX::XMFLOAT4 Diffuse;
-	DirectX::XMFLOAT4 Specular; // w = ¾µÃæ·´ÉäÇ¿¶È
+	DirectX::XMFLOAT4 Specular; // w = é•œé¢åå°„å¼ºåº¦
 	DirectX::XMFLOAT4 Reflect;
 };
 

@@ -1,15 +1,15 @@
 #include "Basic.hlsli"
 
-// ÏñËØ×ÅÉ«Æ÷(3D)
+// åƒç´ ç€è‰²å™¨(3D)
 float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
 {
-    // ±ê×¼»¯·¨ÏòÁ¿
+    // æ ‡å‡†åŒ–æ³•å‘é‡
     pIn.NormalW = normalize(pIn.NormalW);
 
-    // ¶¥µãÖ¸ÏòÑÛ¾¦µÄÏòÁ¿
+    // é¡¶ç‚¹æŒ‡å‘çœ¼ç›çš„å‘é‡
     float3 toEyeW = normalize(gEyePosW - pIn.PosW);
 
-    // ³õÊ¼»¯Îª0 
+    // åˆå§‹åŒ–ä¸º0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -17,7 +17,7 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
     float4 D = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f);
     int i;
-	// Ç¿ÖÆÕ¹¿ªÑ­»·ÒÔ¼õÉÙÖ¸ÁîÊı
+	// å¼ºåˆ¶å±•å¼€å¾ªç¯ä»¥å‡å°‘æŒ‡ä»¤æ•°
 	[unroll]
     for (i = 0; i < gNumDirLight; ++i)
     {

@@ -1,4 +1,4 @@
-#include "d3dApp.h"
+ï»¿#include "d3dApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 #include <sstream>
@@ -41,14 +41,14 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
 
 
-	// ÈÃÒ»¸öÈ«¾ÖÖ¸Õë»ñÈ¡Õâ¸öÀà£¬ÕâÑùÎÒÃÇ¾Í¿ÉÒÔÔÚWindowsÏûÏ¢´¦ÀíµÄ»Øµ÷º¯Êı
-	// ÈÃÕâ¸öÀàµ÷ÓÃÄÚ²¿µÄ»Øµ÷º¯ÊıÁË
+	// è®©ä¸€ä¸ªå…¨å±€æŒ‡é’ˆè·å–è¿™ä¸ªç±»ï¼Œè¿™æ ·æˆ‘ä»¬å°±å¯ä»¥åœ¨Windowsæ¶ˆæ¯å¤„ç†çš„å›è°ƒå‡½æ•°
+	// è®©è¿™ä¸ªç±»è°ƒç”¨å†…éƒ¨çš„å›è°ƒå‡½æ•°äº†
 	gd3dApp = this;
 }
 
 D3DApp::~D3DApp()
 {
-	// »Ö¸´ËùÓĞÄ¬ÈÏÉè¶¨
+	// æ¢å¤æ‰€æœ‰é»˜è®¤è®¾å®š
 	if (md3dImmediateContext)
 		md3dImmediateContext->ClearState();
 }
@@ -128,14 +128,14 @@ void D3DApp::OnResize()
 		assert(mSwapChain1);
 	}
 
-	// ÊÍ·Å½»»»Á´µÄÏà¹Ø×ÊÔ´
+	// é‡Šæ”¾äº¤æ¢é“¾çš„ç›¸å…³èµ„æº
 	mRenderTargetView.Reset();
 	mDepthStencilView.Reset();
 	mDepthStencilBuffer.Reset();
 
-	// ÖØÉè½»»»Á´²¢ÇÒÖØĞÂ´´½¨äÖÈ¾Ä¿±êÊÓÍ¼
+	// é‡è®¾äº¤æ¢é“¾å¹¶ä¸”é‡æ–°åˆ›å»ºæ¸²æŸ“ç›®æ ‡è§†å›¾
 	ComPtr<ID3D11Texture2D> backBuffer;
-	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_B8G8R8A8_UNORM, 0));	// ×¢Òâ´Ë´¦DXGI_FORMAT_B8G8R8A8_UNORM
+	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_B8G8R8A8_UNORM, 0));	// æ³¨æ„æ­¤å¤„DXGI_FORMAT_B8G8R8A8_UNORM
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
 	HR(md3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, mRenderTargetView.GetAddressOf()));
 	backBuffer.Reset();
@@ -149,7 +149,7 @@ void D3DApp::OnResize()
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	// ÒªÊ¹ÓÃ 4X MSAA?
+	// è¦ä½¿ç”¨ 4X MSAA?
 	if (mEnable4xMsaa)
 	{
 		depthStencilDesc.SampleDesc.Count = 4;
@@ -167,15 +167,15 @@ void D3DApp::OnResize()
 	depthStencilDesc.CPUAccessFlags = 0;
 	depthStencilDesc.MiscFlags = 0;
 
-	// ´´½¨Éî¶È»º³åÇøÒÔ¼°Éî¶ÈÄ£°åÊÓÍ¼
+	// åˆ›å»ºæ·±åº¦ç¼“å†²åŒºä»¥åŠæ·±åº¦æ¨¡æ¿è§†å›¾
 	HR(md3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, mDepthStencilBuffer.GetAddressOf()));
 	HR(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer.Get(), nullptr, mDepthStencilView.GetAddressOf()));
 
 
-	// ½«äÖÈ¾Ä¿±êÊÓÍ¼ºÍÉî¶È/Ä£°å»º³åÇø½áºÏµ½¹ÜÏß
+	// å°†æ¸²æŸ“ç›®æ ‡è§†å›¾å’Œæ·±åº¦/æ¨¡æ¿ç¼“å†²åŒºç»“åˆåˆ°ç®¡çº¿
 	md3dImmediateContext->OMSetRenderTargets(1, mRenderTargetView.GetAddressOf(), mDepthStencilView.Get());
 
-	// ÉèÖÃÊÓ¿Ú±ä»»
+	// è®¾ç½®è§†å£å˜æ¢
 	mScreenViewport.TopLeftX = 0;
 	mScreenViewport.TopLeftY = 0;
 	mScreenViewport.Width = static_cast<float>(mClientWidth);
@@ -296,7 +296,7 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 
-		// ¼à²âÕâĞ©¼üÅÌ/Êó±êÊÂ¼ş
+		// ç›‘æµ‹è¿™äº›é”®ç›˜/é¼ æ ‡äº‹ä»¶
 	case WM_INPUT:
 
 	case WM_LBUTTONDOWN:
@@ -376,12 +376,12 @@ bool D3DApp::InitDirect3D()
 {
 	HRESULT hr = S_OK;
 
-	// ´´½¨D3DÉè±¸ ºÍ D3DÉè±¸ÉÏÏÂÎÄ
-	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;	// Direct2DĞèÒªÖ§³ÖBGRA¸ñÊ½
+	// åˆ›å»ºD3Dè®¾å¤‡ å’Œ D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;	// Direct2Déœ€è¦æ”¯æŒBGRAæ ¼å¼
 #if defined(DEBUG) || defined(_DEBUG)  
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	// Çı¶¯ÀàĞÍÊı×é
+	// é©±åŠ¨ç±»å‹æ•°ç»„
 	D3D_DRIVER_TYPE driverTypes[] =
 	{
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -390,7 +390,7 @@ bool D3DApp::InitDirect3D()
 	};
 	UINT numDriverTypes = ARRAYSIZE(driverTypes);
 
-	// ÌØĞÔµÈ¼¶Êı×é
+	// ç‰¹æ€§ç­‰çº§æ•°ç»„
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_1,
@@ -408,7 +408,7 @@ bool D3DApp::InitDirect3D()
 
 		if (hr == E_INVALIDARG)
 		{
-			// Direct3D 11.0 µÄAPI²»³ĞÈÏD3D_FEATURE_LEVEL_11_1£¬ËùÒÔÎÒÃÇĞèÒª³¢ÊÔÌØĞÔµÈ¼¶11.0ÒÔ¼°ÒÔÏÂµÄ°æ±¾
+			// Direct3D 11.0 çš„APIä¸æ‰¿è®¤D3D_FEATURE_LEVEL_11_1ï¼Œæ‰€ä»¥æˆ‘ä»¬éœ€è¦å°è¯•ç‰¹æ€§ç­‰çº§11.0ä»¥åŠä»¥ä¸‹çš„ç‰ˆæœ¬
 			hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
 				D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
 		}
@@ -423,16 +423,16 @@ bool D3DApp::InitDirect3D()
 		return false;
 	}
 
-	// ¼ì²âÊÇ·ñÖ§³ÖÌØĞÔµÈ¼¶11.0»ò11.1
+	// æ£€æµ‹æ˜¯å¦æ”¯æŒç‰¹æ€§ç­‰çº§11.0æˆ–11.1
 	if (featureLevel != D3D_FEATURE_LEVEL_11_0 && featureLevel != D3D_FEATURE_LEVEL_11_1)
 	{
 		MessageBox(0, L"Direct3D Feature Level 11 unsupported.", 0, 0);
 		return false;
 	}
 
-	// ¼ì²â MSAAÖ§³ÖµÄÖÊÁ¿µÈ¼¶
+	// æ£€æµ‹ MSAAæ”¯æŒçš„è´¨é‡ç­‰çº§
 	md3dDevice->CheckMultisampleQualityLevels(
-		DXGI_FORMAT_B8G8R8A8_UNORM, 4, &m4xMsaaQuality);	// ×¢Òâ´Ë´¦DXGI_FORMAT_B8G8R8A8_UNORM
+		DXGI_FORMAT_B8G8R8A8_UNORM, 4, &m4xMsaaQuality);	// æ³¨æ„æ­¤å¤„DXGI_FORMAT_B8G8R8A8_UNORM
 	assert(m4xMsaaQuality > 0);
 
 
@@ -440,29 +440,29 @@ bool D3DApp::InitDirect3D()
 
 	ComPtr<IDXGIDevice> dxgiDevice = nullptr;
 	ComPtr<IDXGIAdapter> dxgiAdapter = nullptr;
-	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;	// D3D11.0(°üº¬DXGI1.1)µÄ½Ó¿ÚÀà
-	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;	// D3D11.1(°üº¬DXGI1.2)ÌØÓĞµÄ½Ó¿ÚÀà
+	ComPtr<IDXGIFactory1> dxgiFactory1 = nullptr;	// D3D11.0(åŒ…å«DXGI1.1)çš„æ¥å£ç±»
+	ComPtr<IDXGIFactory2> dxgiFactory2 = nullptr;	// D3D11.1(åŒ…å«DXGI1.2)ç‰¹æœ‰çš„æ¥å£ç±»
 
-	// ÎªÁËÕıÈ·´´½¨ DXGI½»»»Á´£¬Ê×ÏÈÎÒÃÇĞèÒª»ñÈ¡´´½¨ D3DÉè±¸ µÄ DXGI¹¤³§£¬·ñÔò»áÒı·¢±¨´í£º
+	// ä¸ºäº†æ­£ç¡®åˆ›å»º DXGIäº¤æ¢é“¾ï¼Œé¦–å…ˆæˆ‘ä»¬éœ€è¦è·å–åˆ›å»º D3Dè®¾å¤‡ çš„ DXGIå·¥å‚ï¼Œå¦åˆ™ä¼šå¼•å‘æŠ¥é”™ï¼š
 	// "IDXGIFactory::CreateSwapChain: This function is being called with a device from a different IDXGIFactory."
 	HR(md3dDevice.As(&dxgiDevice));
 	HR(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
 	HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(dxgiFactory1.GetAddressOf())));
 
-	// ²é¿´¸Ã¶ÔÏóÊÇ·ñ°üº¬IDXGIFactory2½Ó¿Ú
+	// æŸ¥çœ‹è¯¥å¯¹è±¡æ˜¯å¦åŒ…å«IDXGIFactory2æ¥å£
 	hr = dxgiFactory1.As(&dxgiFactory2);
-	// Èç¹û°üº¬£¬ÔòËµÃ÷Ö§³ÖD3D11.1
+	// å¦‚æœåŒ…å«ï¼Œåˆ™è¯´æ˜æ”¯æŒD3D11.1
 	if (dxgiFactory2 != nullptr)
 	{
 		HR(md3dDevice.As(&md3dDevice1));
 		HR(md3dImmediateContext.As(&md3dImmediateContext1));
-		// Ìî³ä¸÷ÖÖ½á¹¹ÌåÓÃÒÔÃèÊö½»»»Á´
+		// å¡«å……å„ç§ç»“æ„ä½“ç”¨ä»¥æè¿°äº¤æ¢é“¾
 		DXGI_SWAP_CHAIN_DESC1 sd;
 		ZeroMemory(&sd, sizeof(sd));
 		sd.Width = mClientWidth;
 		sd.Height = mClientHeight;
-		sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;		// ×¢Òâ´Ë´¦DXGI_FORMAT_B8G8R8A8_UNORM
-		// ÊÇ·ñ¿ªÆô4±¶¶àÖØ²ÉÑù£¿
+		sd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;		// æ³¨æ„æ­¤å¤„DXGI_FORMAT_B8G8R8A8_UNORM
+		// æ˜¯å¦å¼€å¯4å€å¤šé‡é‡‡æ ·ï¼Ÿ
 		if (mEnable4xMsaa)
 		{
 			sd.SampleDesc.Count = 4;
@@ -484,23 +484,23 @@ bool D3DApp::InitDirect3D()
 		fd.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		fd.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		fd.Windowed = TRUE;
-		// Îªµ±Ç°´°¿Ú´´½¨½»»»Á´
+		// ä¸ºå½“å‰çª—å£åˆ›å»ºäº¤æ¢é“¾
 		HR(dxgiFactory2->CreateSwapChainForHwnd(md3dDevice.Get(), mhMainWnd, &sd, &fd, nullptr, mSwapChain1.GetAddressOf()));
 		HR(mSwapChain1.As(&mSwapChain));
 	}
 	else
 	{
-		// Ìî³äDXGI_SWAP_CHAIN_DESCÓÃÒÔÃèÊö½»»»Á´
+		// å¡«å……DXGI_SWAP_CHAIN_DESCç”¨ä»¥æè¿°äº¤æ¢é“¾
 		DXGI_SWAP_CHAIN_DESC sd;
 		ZeroMemory(&sd, sizeof(sd));
 		sd.BufferDesc.Width = mClientWidth;
 		sd.BufferDesc.Height = mClientHeight;
 		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// ×¢Òâ´Ë´¦DXGI_FORMAT_B8G8R8A8_UNORM
+		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;	// æ³¨æ„æ­¤å¤„DXGI_FORMAT_B8G8R8A8_UNORM
 		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		// ÊÇ·ñ¿ªÆô4±¶¶àÖØ²ÉÑù£¿
+		// æ˜¯å¦å¼€å¯4å€å¤šé‡é‡‡æ ·ï¼Ÿ
 		if (mEnable4xMsaa)
 		{
 			sd.SampleDesc.Count = 4;
@@ -522,12 +522,12 @@ bool D3DApp::InitDirect3D()
 
 
 
-	// ¿ÉÒÔ½ûÖ¹alt+enterÈ«ÆÁ
+	// å¯ä»¥ç¦æ­¢alt+enterå…¨å±
 	dxgiFactory1->MakeWindowAssociation(mhMainWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
 
 
-	// Ã¿µ±´°¿Ú±»ÖØĞÂµ÷Õû´óĞ¡µÄÊ±ºò£¬¶¼ĞèÒªµ÷ÓÃÕâ¸öOnResizeº¯Êı¡£ÏÖÔÚµ÷ÓÃ
-	// ÒÔ±ÜÃâ´úÂëÖØ¸´
+	// æ¯å½“çª—å£è¢«é‡æ–°è°ƒæ•´å¤§å°çš„æ—¶å€™ï¼Œéƒ½éœ€è¦è°ƒç”¨è¿™ä¸ªOnResizeå‡½æ•°ã€‚ç°åœ¨è°ƒç”¨
+	// ä»¥é¿å…ä»£ç é‡å¤
 	OnResize();
 
 	return true;
@@ -538,7 +538,7 @@ bool D3DApp::InitDirect3D()
 
 void D3DApp::CalculateFrameStats()
 {
-	// ¸Ã´úÂë¼ÆËãÃ¿ÃëÖ¡ËÙ£¬²¢¼ÆËãÃ¿Ò»Ö¡äÖÈ¾ĞèÒªµÄÊ±¼ä£¬ÏÔÊ¾ÔÚ´°¿Ú±êÌâ
+	// è¯¥ä»£ç è®¡ç®—æ¯ç§’å¸§é€Ÿï¼Œå¹¶è®¡ç®—æ¯ä¸€å¸§æ¸²æŸ“éœ€è¦çš„æ—¶é—´ï¼Œæ˜¾ç¤ºåœ¨çª—å£æ ‡é¢˜
 	static int frameCnt = 0;
 	static float timeElapsed = 0.0f;
 

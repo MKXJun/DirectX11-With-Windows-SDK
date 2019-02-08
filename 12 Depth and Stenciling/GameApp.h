@@ -1,4 +1,4 @@
-#ifndef GAMEAPP_H
+ï»¿#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -46,41 +46,41 @@ public:
 		int numDirLight;
 		int numPointLight;
 		int numSpotLight;
-		float pad;		// ´ò°ü±£Ö¤16×Ö½Ú¶ÔÆë
+		float pad;		// æ‰“åŒ…ä¿è¯16å­—èŠ‚å¯¹é½
 	};
 
-	// Ò»¸ö¾¡¿ÉÄÜĞ¡µÄÓÎÏ·¶ÔÏóÀà
+	// ä¸€ä¸ªå°½å¯èƒ½å°çš„æ¸¸æˆå¯¹è±¡ç±»
 	class GameObject
 	{
 	public:
 		GameObject();
 
-		// »ñÈ¡Î»ÖÃ
+		// è·å–ä½ç½®
 		DirectX::XMFLOAT3 GetPosition() const;
 
-		// ÉèÖÃ»º³åÇø
+		// è®¾ç½®ç¼“å†²åŒº
 		template<class VertexType, class IndexType>
 		void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
-		// ÉèÖÃÎÆÀí
+		// è®¾ç½®çº¹ç†
 		void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
-		// ÉèÖÃ²ÄÖÊ
+		// è®¾ç½®æè´¨
 		void SetMaterial(const Material& material);
-		// ÉèÖÃ¾ØÕó
+		// è®¾ç½®çŸ©é˜µ
 		void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 		void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
-		// »æÖÆ
+		// ç»˜åˆ¶
 		void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
 	private:
-		DirectX::XMFLOAT4X4 mWorldMatrix;				// ÊÀ½ç¾ØÕó
-		Material mMaterial;								// ÎïÌå²ÄÖÊ
-		ComPtr<ID3D11ShaderResourceView> mTexture;		// ÎÆÀí
-		ComPtr<ID3D11Buffer> mVertexBuffer;				// ¶¥µã»º³åÇø
-		ComPtr<ID3D11Buffer> mIndexBuffer;				// Ë÷Òı»º³åÇø
-		UINT mVertexStride;								// ¶¥µã×Ö½Ú´óĞ¡
-		UINT mIndexCount;								// Ë÷ÒıÊıÄ¿	
+		DirectX::XMFLOAT4X4 mWorldMatrix;				// ä¸–ç•ŒçŸ©é˜µ
+		Material mMaterial;								// ç‰©ä½“æè´¨
+		ComPtr<ID3D11ShaderResourceView> mTexture;		// çº¹ç†
+		ComPtr<ID3D11Buffer> mVertexBuffer;				// é¡¶ç‚¹ç¼“å†²åŒº
+		ComPtr<ID3D11Buffer> mIndexBuffer;				// ç´¢å¼•ç¼“å†²åŒº
+		UINT mVertexStride;								// é¡¶ç‚¹å­—èŠ‚å¤§å°
+		UINT mIndexCount;								// ç´¢å¼•æ•°ç›®	
 	};
 
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -98,34 +98,34 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> mFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	ComPtr<ID3D11InputLayout> mVertexLayout2D;				// ÓÃÓÚ2DµÄ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11InputLayout> mVertexLayout3D;				// ÓÃÓÚ3DµÄ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11Buffer> mConstantBuffers[5];				// ³£Á¿»º³åÇø
+	ComPtr<ID3D11InputLayout> mVertexLayout2D;				// ç”¨äº2Dçš„é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11InputLayout> mVertexLayout3D;				// ç”¨äº3Dçš„é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11Buffer> mConstantBuffers[5];				// å¸¸é‡ç¼“å†²åŒº
 
-	GameObject mWireFence;									// Àé°ÊºĞ
-	GameObject mFloor;										// µØ°å
-	std::vector<GameObject> mWalls;							// Ç½±Ú
-	GameObject mWater;										// Ë®
-	GameObject mMirror;										// ¾µÃæ
+	GameObject mWireFence;									// ç¯±ç¬†ç›’
+	GameObject mFloor;										// åœ°æ¿
+	std::vector<GameObject> mWalls;							// å¢™å£
+	GameObject mWater;										// æ°´
+	GameObject mMirror;										// é•œé¢
 
-	ComPtr<ID3D11VertexShader> mVertexShader3D;				// ÓÃÓÚ3DµÄ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> mPixelShader3D;				// ÓÃÓÚ3DµÄÏñËØ×ÅÉ«Æ÷
-	ComPtr<ID3D11VertexShader> mVertexShader2D;				// ÓÃÓÚ2DµÄ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> mPixelShader2D;				// ÓÃÓÚ2DµÄÏñËØ×ÅÉ«Æ÷
+	ComPtr<ID3D11VertexShader> mVertexShader3D;				// ç”¨äº3Dçš„é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> mPixelShader3D;				// ç”¨äº3Dçš„åƒç´ ç€è‰²å™¨
+	ComPtr<ID3D11VertexShader> mVertexShader2D;				// ç”¨äº2Dçš„é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> mPixelShader2D;				// ç”¨äº2Dçš„åƒç´ ç€è‰²å™¨
 
-	CBDrawingStates mCBStates;								// ¸Ã»º³åÇø´æ·Å»æÖÆ×´Ì¬µÄ±äÁ¿ 
-	CBChangesEveryFrame mCBFrame;							// ¸Ã»º³åÇø´æ·Å½öÔÚÃ¿Ò»Ö¡½øĞĞ¸üĞÂµÄ±äÁ¿
-	CBChangesOnResize mCBOnResize;							// ¸Ã»º³åÇø´æ·Å½öÔÚ´°¿Ú´óĞ¡±ä»¯Ê±¸üĞÂµÄ±äÁ¿
-	CBChangesRarely mCBRarely;								// ¸Ã»º³åÇø´æ·Å²»»áÔÙ½øĞĞĞŞ¸ÄµÄ±äÁ¿
+	CBDrawingStates mCBStates;								// è¯¥ç¼“å†²åŒºå­˜æ”¾ç»˜åˆ¶çŠ¶æ€çš„å˜é‡ 
+	CBChangesEveryFrame mCBFrame;							// è¯¥ç¼“å†²åŒºå­˜æ”¾ä»…åœ¨æ¯ä¸€å¸§è¿›è¡Œæ›´æ–°çš„å˜é‡
+	CBChangesOnResize mCBOnResize;							// è¯¥ç¼“å†²åŒºå­˜æ”¾ä»…åœ¨çª—å£å¤§å°å˜åŒ–æ—¶æ›´æ–°çš„å˜é‡
+	CBChangesRarely mCBRarely;								// è¯¥ç¼“å†²åŒºå­˜æ”¾ä¸ä¼šå†è¿›è¡Œä¿®æ”¹çš„å˜é‡
 
-	ComPtr<ID3D11SamplerState> mSamplerState;				// ²ÉÑùÆ÷×´Ì¬
+	ComPtr<ID3D11SamplerState> mSamplerState;				// é‡‡æ ·å™¨çŠ¶æ€
 
-	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
-	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
+	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
 };
 

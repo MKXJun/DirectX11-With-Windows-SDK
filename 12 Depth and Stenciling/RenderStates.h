@@ -1,8 +1,8 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // RenderStates.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// Ìá¹©Ò»Ğ©äÖÈ¾×´Ì¬
+// æä¾›ä¸€äº›æ¸²æŸ“çŠ¶æ€
 // Provide some render states.
 //***************************************************************************************
 
@@ -21,25 +21,25 @@ public:
 	static bool IsInit();
 
 	static void InitAll(ComPtr<ID3D11Device> device);
-	// Ê¹ÓÃComPtrÎŞĞèÊÖ¹¤ÊÍ·Å
+	// ä½¿ç”¨ComPtræ— éœ€æ‰‹å·¥é‡Šæ”¾
 
 public:
-	static ComPtr<ID3D11RasterizerState> RSWireframe;		// ¹âÕ¤»¯Æ÷×´Ì¬£ºÏß¿òÄ£Ê½
-	static ComPtr<ID3D11RasterizerState> RSNoCull;			// ¹âÕ¤»¯Æ÷×´Ì¬£ºÎŞ±³Ãæ²Ã¼ôÄ£Ê½
-	static ComPtr<ID3D11RasterizerState> RSCullClockWise;	// ¹âÕ¤»¯Æ÷×´Ì¬£ºË³Ê±Õë²Ã¼ôÄ£Ê½
+	static ComPtr<ID3D11RasterizerState> RSWireframe;		// å…‰æ …åŒ–å™¨çŠ¶æ€ï¼šçº¿æ¡†æ¨¡å¼
+	static ComPtr<ID3D11RasterizerState> RSNoCull;			// å…‰æ …åŒ–å™¨çŠ¶æ€ï¼šæ— èƒŒé¢è£å‰ªæ¨¡å¼
+	static ComPtr<ID3D11RasterizerState> RSCullClockWise;	// å…‰æ …åŒ–å™¨çŠ¶æ€ï¼šé¡ºæ—¶é’ˆè£å‰ªæ¨¡å¼
 
-	static ComPtr<ID3D11SamplerState> SSLinearWrap;			// ²ÉÑùÆ÷×´Ì¬£ºÏßĞÔ¹ıÂË
-	static ComPtr<ID3D11SamplerState> SSAnistropicWrap;		// ²ÉÑùÆ÷×´Ì¬£º¸÷ÏîÒìĞÔ¹ıÂË
+	static ComPtr<ID3D11SamplerState> SSLinearWrap;			// é‡‡æ ·å™¨çŠ¶æ€ï¼šçº¿æ€§è¿‡æ»¤
+	static ComPtr<ID3D11SamplerState> SSAnistropicWrap;		// é‡‡æ ·å™¨çŠ¶æ€ï¼šå„é¡¹å¼‚æ€§è¿‡æ»¤
 
-	static ComPtr<ID3D11BlendState> BSNoColorWrite;		// »ìºÏ×´Ì¬£º²»Ğ´ÈëÑÕÉ«
-	static ComPtr<ID3D11BlendState> BSTransparent;		// »ìºÏ×´Ì¬£ºÍ¸Ã÷»ìºÏ
-	static ComPtr<ID3D11BlendState> BSAlphaToCoverage;	// »ìºÏ×´Ì¬£ºAlpha-To-Coverage
+	static ComPtr<ID3D11BlendState> BSNoColorWrite;		// æ··åˆçŠ¶æ€ï¼šä¸å†™å…¥é¢œè‰²
+	static ComPtr<ID3D11BlendState> BSTransparent;		// æ··åˆçŠ¶æ€ï¼šé€æ˜æ··åˆ
+	static ComPtr<ID3D11BlendState> BSAlphaToCoverage;	// æ··åˆçŠ¶æ€ï¼šAlpha-To-Coverage
 
-	static ComPtr<ID3D11DepthStencilState> DSSMarkMirror;		// Éî¶È/Ä£°å×´Ì¬£º±ê¼Ç¾µÃæÇøÓò
-	static ComPtr<ID3D11DepthStencilState> DSSDrawReflection;	// Éî¶È/Ä£°å×´Ì¬£º»æÖÆ·´ÉäÇøÓò
-	static ComPtr<ID3D11DepthStencilState> DSSNoDoubleBlend;	// Éî¶È/Ä£°å×´Ì¬£ºÎŞ¶ş´Î»ìºÏÇøÓò
-	static ComPtr<ID3D11DepthStencilState> DSSNoDepthTest;		// Éî¶È/Ä£°å×´Ì¬£º¹Ø±ÕÉî¶È²âÊÔ
-	static ComPtr<ID3D11DepthStencilState> DSSNoDepthWrite;		// Éî¶È/Ä£°å×´Ì¬£º½öÉî¶È²âÊÔ£¬²»Ğ´ÈëÉî¶ÈÖµ
+	static ComPtr<ID3D11DepthStencilState> DSSMarkMirror;		// æ·±åº¦/æ¨¡æ¿çŠ¶æ€ï¼šæ ‡è®°é•œé¢åŒºåŸŸ
+	static ComPtr<ID3D11DepthStencilState> DSSDrawReflection;	// æ·±åº¦/æ¨¡æ¿çŠ¶æ€ï¼šç»˜åˆ¶åå°„åŒºåŸŸ
+	static ComPtr<ID3D11DepthStencilState> DSSNoDoubleBlend;	// æ·±åº¦/æ¨¡æ¿çŠ¶æ€ï¼šæ— äºŒæ¬¡æ··åˆåŒºåŸŸ
+	static ComPtr<ID3D11DepthStencilState> DSSNoDepthTest;		// æ·±åº¦/æ¨¡æ¿çŠ¶æ€ï¼šå…³é—­æ·±åº¦æµ‹è¯•
+	static ComPtr<ID3D11DepthStencilState> DSSNoDepthWrite;		// æ·±åº¦/æ¨¡æ¿çŠ¶æ€ï¼šä»…æ·±åº¦æµ‹è¯•ï¼Œä¸å†™å…¥æ·±åº¦å€¼
 };
 
 

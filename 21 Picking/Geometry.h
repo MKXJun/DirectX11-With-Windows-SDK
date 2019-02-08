@@ -1,8 +1,8 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // Geometry.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// Éú³É³£¼ûµÄ¼¸ºÎÌåÍø¸ñÄ£ĞÍ
+// ç”Ÿæˆå¸¸è§çš„å‡ ä½•ä½“ç½‘æ ¼æ¨¡å‹
 // Generate common geometry meshes.
 //***************************************************************************************
 
@@ -17,45 +17,45 @@
 class Geometry
 {
 public:
-	// Íø¸ñÊı¾İ
+	// ç½‘æ ¼æ•°æ®
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	struct MeshData
 	{
-		std::vector<VertexType> vertexVec;	// ¶¥µãÊı×é
-		std::vector<IndexType> indexVec;	// Ë÷ÒıÊı×é
+		std::vector<VertexType> vertexVec;	// é¡¶ç‚¹æ•°ç»„
+		std::vector<IndexType> indexVec;	// ç´¢å¼•æ•°ç»„
 
 		MeshData()
 		{
-			// Ğè¼ìÑéË÷ÒıÀàĞÍºÏ·¨ĞÔ
+			// éœ€æ£€éªŒç´¢å¼•ç±»å‹åˆæ³•æ€§
 			static_assert(sizeof(IndexType) == 2 || sizeof(IndexType) == 4, "The size of IndexType must be 2 bytes or 4 bytes!");
 			static_assert(std::is_unsigned<IndexType>::value, "IndexType must be unsigned integer!");
 		}
 	};
 
-	// ´´½¨ÇòÌåÍø¸ñÊı¾İ£¬levelsºÍslicesÔ½´ó£¬¾«¶ÈÔ½¸ß¡£
+	// åˆ›å»ºçƒä½“ç½‘æ ¼æ•°æ®ï¼Œlevelså’Œslicesè¶Šå¤§ï¼Œç²¾åº¦è¶Šé«˜ã€‚
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> CreateSphere(float radius = 1.0f, int levels = 20, int slices = 20, 
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 
-	// ´´½¨Á¢·½ÌåÍø¸ñÊı¾İ
+	// åˆ›å»ºç«‹æ–¹ä½“ç½‘æ ¼æ•°æ®
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> CreateBox(float width = 2.0f, float height = 2.0f, float depth = 2.0f,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
-	// ´´½¨Ô²ÖùÌåÍø¸ñÊı¾İ£¬slicesÔ½´ó£¬¾«¶ÈÔ½¸ß¡£
+	// åˆ›å»ºåœ†æŸ±ä½“ç½‘æ ¼æ•°æ®ï¼Œslicesè¶Šå¤§ï¼Œç²¾åº¦è¶Šé«˜ã€‚
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> CreateCylinder(float radius = 1.0f, float height = 2.0f, int slices = 20,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	
 
-	// ´´½¨Ö»ÓĞÔ²ÖùÌå²àÃæµÄÍø¸ñÊı¾İ£¬slicesÔ½´ó£¬¾«¶ÈÔ½¸ß
+	// åˆ›å»ºåªæœ‰åœ†æŸ±ä½“ä¾§é¢çš„ç½‘æ ¼æ•°æ®ï¼Œslicesè¶Šå¤§ï¼Œç²¾åº¦è¶Šé«˜
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, int slices = 20,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
-	// ´´½¨Ò»¸ö¸²¸ÇNDCÆÁÄ»µÄÃæ
+	// åˆ›å»ºä¸€ä¸ªè¦†ç›–NDCå±å¹•çš„é¢
 	template<class VertexType = VertexPosTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> Create2DShow(const DirectX::XMFLOAT2& center, const DirectX::XMFLOAT2& scale = { 1.0f, 1.0f },
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
@@ -63,7 +63,7 @@ public:
 	static MeshData<VertexType, IndexType> Create2DShow(float centerX = 0.0f, float centerY = 0.0f, float scaleX = 1.0f, float scaleY = 1.0f,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
-	// ´´½¨Ò»¸öÆ½Ãæ
+	// åˆ›å»ºä¸€ä¸ªå¹³é¢
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	static MeshData<VertexType, IndexType> CreatePlane(const DirectX::XMFLOAT3& center, const DirectX::XMFLOAT2& planeSize = { 10.0f, 10.0f },
 		const DirectX::XMFLOAT2& maxTexCoord = { 1.0f, 1.0f }, const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
@@ -95,10 +95,10 @@ private:
 
 
 //
-// ¼¸ºÎÌå·½·¨µÄÊµÏÖ
+// å‡ ä½•ä½“æ–¹æ³•çš„å®ç°
 //
 
-// ¸ù¾İÄ¿±ê¶¥µãÀàĞÍÑ¡ÔñĞÔ½«Êı¾İ²åÈë
+// æ ¹æ®ç›®æ ‡é¡¶ç‚¹ç±»å‹é€‰æ‹©æ€§å°†æ•°æ®æ’å…¥
 template<class VertexType>
 inline void Geometry::InsertVertexElement(VertexType& vertexDst, const VertexData& vertexSrc)
 {
@@ -134,21 +134,21 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateSphere(float ra
 	float per_theta = XM_2PI / slices;
 	float x, y, z;
 
-	// ·ÅÈë¶¥¶Ëµã
+	// æ”¾å…¥é¡¶ç«¯ç‚¹
 	vertexData = { XMFLOAT3(0.0f, radius, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 0.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 	for (int i = 1; i < levels; ++i)
 	{
 		phi = per_phi * i;
-		// ĞèÒªslices + 1¸ö¶¥µãÊÇÒòÎª ÆğµãºÍÖÕµãĞèÎªÍ¬Ò»µã£¬µ«ÎÆÀí×ø±êÖµ²»Ò»ÖÂ
+		// éœ€è¦slices + 1ä¸ªé¡¶ç‚¹æ˜¯å› ä¸º èµ·ç‚¹å’Œç»ˆç‚¹éœ€ä¸ºåŒä¸€ç‚¹ï¼Œä½†çº¹ç†åæ ‡å€¼ä¸ä¸€è‡´
 		for (int j = 0; j <= slices; ++j)
 		{
 			theta = per_theta * j;
 			x = radius * sinf(phi) * cosf(theta);
 			y = radius * cosf(phi);
 			z = radius * sinf(phi) * sinf(theta);
-			// ¼ÆËã³ö¾Ö²¿×ø±ê¡¢·¨ÏòÁ¿¡¢TangentÏòÁ¿ºÍÎÆÀí×ø±ê
+			// è®¡ç®—å‡ºå±€éƒ¨åæ ‡ã€æ³•å‘é‡ã€Tangentå‘é‡å’Œçº¹ç†åæ ‡
 			XMFLOAT3 pos = XMFLOAT3(x, y, z), normal;
 			XMStoreFloat3(&normal, XMVector3Normalize(XMLoadFloat3(&pos)));
 
@@ -157,13 +157,13 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateSphere(float ra
 		}
 	}
 
-	// ·ÅÈëµ×¶Ëµã
+	// æ”¾å…¥åº•ç«¯ç‚¹
 	vertexData = { XMFLOAT3(0.0f, -radius, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
 		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.0f, 1.0f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
 
-	// Öğ½¥·ÅÈëË÷Òı
+	// é€æ¸æ”¾å…¥ç´¢å¼•
 	if (levels > 1)
 	{
 		for (int j = 1; j <= slices; ++j)
@@ -189,7 +189,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateSphere(float ra
 		}
 	}
 
-	// Öğ½¥·ÅÈëË÷Òı
+	// é€æ¸æ”¾å…¥ç´¢å¼•
 	if (levels > 1)
 	{
 		for (int j = 1; j <= slices; ++j)
@@ -217,32 +217,32 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateBox(float width
 	float w2 = width / 2, h2 = height / 2, d2 = depth / 2;
 
 
-	// ¶¥Ãæ
+	// é¡¶é¢
 	vertexDataArr[0].pos = XMFLOAT3(-w2, h2, -d2);
 	vertexDataArr[1].pos = XMFLOAT3(-w2, h2, d2);
 	vertexDataArr[2].pos = XMFLOAT3(w2, h2, d2);
 	vertexDataArr[3].pos = XMFLOAT3(w2, h2, -d2);
-	// µ×Ãæ
+	// åº•é¢
 	vertexDataArr[4].pos = XMFLOAT3(w2, -h2, -d2);
 	vertexDataArr[5].pos = XMFLOAT3(w2, -h2, d2);
 	vertexDataArr[6].pos = XMFLOAT3(-w2, -h2, d2);
 	vertexDataArr[7].pos = XMFLOAT3(-w2, -h2, -d2);
-	// ×óÃæ
+	// å·¦é¢
 	vertexDataArr[8].pos = XMFLOAT3(-w2, -h2, d2);
 	vertexDataArr[9].pos = XMFLOAT3(-w2, h2, d2);
 	vertexDataArr[10].pos = XMFLOAT3(-w2, h2, -d2);
 	vertexDataArr[11].pos = XMFLOAT3(-w2, -h2, -d2);
-	// ÓÒÃæ
+	// å³é¢
 	vertexDataArr[12].pos = XMFLOAT3(w2, -h2, -d2);
 	vertexDataArr[13].pos = XMFLOAT3(w2, h2, -d2);
 	vertexDataArr[14].pos = XMFLOAT3(w2, h2, d2);
 	vertexDataArr[15].pos = XMFLOAT3(w2, -h2, d2);
-	// Ç°Ãæ
+	// å‰é¢
 	vertexDataArr[16].pos = XMFLOAT3(w2, -h2, d2);
 	vertexDataArr[17].pos = XMFLOAT3(w2, h2, d2);
 	vertexDataArr[18].pos = XMFLOAT3(-w2, h2, d2);
 	vertexDataArr[19].pos = XMFLOAT3(-w2, -h2, d2);
-	// ºóÃæ
+	// åé¢
 	vertexDataArr[20].pos = XMFLOAT3(-w2, -h2, -d2);
 	vertexDataArr[21].pos = XMFLOAT3(-w2, h2, -d2);
 	vertexDataArr[22].pos = XMFLOAT3(w2, h2, -d2);
@@ -250,27 +250,27 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateBox(float width
 
 	for (int i = 0; i < 4; ++i)
 	{
-		vertexDataArr[i].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);		// ¶¥Ãæ
+		vertexDataArr[i].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);		// é¡¶é¢
 		vertexDataArr[i].tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i].color = color;
 
-		vertexDataArr[i + 4].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);	// µ×Ãæ
+		vertexDataArr[i + 4].normal = XMFLOAT3(0.0f, -1.0f, 0.0f);	// åº•é¢
 		vertexDataArr[i + 4].tangent = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i + 4].color = color;
 
-		vertexDataArr[i + 8].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);	// ×óÃæ
+		vertexDataArr[i + 8].normal = XMFLOAT3(-1.0f, 0.0f, 0.0f);	// å·¦é¢
 		vertexDataArr[i + 8].tangent = XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f);
 		vertexDataArr[i + 8].color = color;
 
-		vertexDataArr[i + 12].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);	// ÓÒÃæ
+		vertexDataArr[i + 12].normal = XMFLOAT3(1.0f, 0.0f, 0.0f);	// å³é¢
 		vertexDataArr[i + 12].tangent = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 		vertexDataArr[i + 12].color = color;
 
-		vertexDataArr[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);	// Ç°Ãæ
+		vertexDataArr[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);	// å‰é¢
 		vertexDataArr[i + 16].tangent = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i + 16].color = color;
 
-		vertexDataArr[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f); // ºóÃæ
+		vertexDataArr[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f); // åé¢
 		vertexDataArr[i + 20].tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i + 20].color = color;
 	}
@@ -289,12 +289,12 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateBox(float width
 	}
 
 	meshData.indexVec = {
-		0, 1, 2, 2, 3, 0,		// ¶¥Ãæ
-		4, 5, 6, 6, 7, 4,		// µ×Ãæ
-		8, 9, 10, 10, 11, 8,	// ×óÃæ
-		12, 13, 14, 14, 15, 12,	// ÓÒÃæ
-		16, 17, 18, 18, 19, 16, // ±³Ãæ
-		20, 21, 22, 22, 23, 20	// ÕıÃæ
+		0, 1, 2, 2, 3, 0,		// é¡¶é¢
+		4, 5, 6, 6, 7, 4,		// åº•é¢
+		8, 9, 10, 10, 11, 8,	// å·¦é¢
+		12, 13, 14, 14, 15, 12,	// å³é¢
+		16, 17, 18, 18, 19, 16, // èƒŒé¢
+		20, 21, 22, 22, 23, 20	// æ­£é¢
 	};
 
 	return meshData;
@@ -317,12 +317,12 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 	IndexType offset = 2 * (slices + 1);
 	VertexData vertexData;
 
-	// ·ÅÈë¶¥¶ËÔ²ĞÄ
+	// æ”¾å…¥é¡¶ç«¯åœ†å¿ƒ
 	vertexData = { XMFLOAT3(0.0f, h2, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f),
 		XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	// ·ÅÈë¶¥¶ËÔ²ÉÏ¸÷µã
+	// æ”¾å…¥é¡¶ç«¯åœ†ä¸Šå„ç‚¹
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
@@ -331,7 +331,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 		InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 	}
 
-	// ·ÅÈëµ×²¿Ô²ÉÏ¸÷µã
+	// æ”¾å…¥åº•éƒ¨åœ†ä¸Šå„ç‚¹
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
@@ -340,12 +340,12 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 		InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 	}
 
-	// ·ÅÈëµ×¶ËÔ²ĞÄ
+	// æ”¾å…¥åº•ç«¯åœ†å¿ƒ
 	vertexData = { XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
 		XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
 	InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 
-	// Öğ½¥·ÅÈë¶¥²¿Èı½ÇĞÎË÷Òı
+	// é€æ¸æ”¾å…¥é¡¶éƒ¨ä¸‰è§’å½¢ç´¢å¼•
 	for (int i = 1; i <= slices; ++i)
 	{
 		meshData.indexVec[iIndex++] = offset;
@@ -353,7 +353,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinder(float 
 		meshData.indexVec[iIndex++] = offset + i;
 	}
 
-	// Öğ½¥·ÅÈëµ×²¿Èı½ÇĞÎË÷Òı
+	// é€æ¸æ”¾å…¥åº•éƒ¨ä¸‰è§’å½¢ç´¢å¼•
 	offset += slices + 2;
 	for (int i = 1; i <= slices; ++i)
 	{
@@ -382,7 +382,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 
 	VertexData vertexData;
 
-	// ·ÅÈë²àÃæ¶¥¶Ëµã
+	// æ”¾å…¥ä¾§é¢é¡¶ç«¯ç‚¹
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
@@ -391,7 +391,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 		InsertVertexElement(meshData.vertexVec[i], vertexData);
 	}
 
-	// ·ÅÈë²àÃæµ×¶Ëµã
+	// æ”¾å…¥ä¾§é¢åº•ç«¯ç‚¹
 	for (int i = 0; i <= slices; ++i)
 	{
 		theta = i * per_theta;
@@ -400,7 +400,7 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 		InsertVertexElement(meshData.vertexVec[(slices + 1) + i], vertexData);
 	}
 
-	// ·ÅÈëË÷Òı
+	// æ”¾å…¥ç´¢å¼•
 	for (int i = 0; i < slices; ++i)
 	{
 		meshData.indexVec[iIndex++] = i;

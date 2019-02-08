@@ -1,6 +1,6 @@
 #include "Basic.hlsli"
 
-// ¶¥µã×ÅÉ«Æ÷
+// é¡¶ç‚¹ç€è‰²å™¨
 VertexPosHWNormalTex VS(VertexPosNormalTex vIn)
 {
     VertexPosHWNormalTex vOut;

@@ -21,7 +21,7 @@ cbuffer CBDrawingStates : register(b2)
     int gTextureUsed;
     int gReflectionEnabled;
     int gRefractionEnabled;
-    float gEta; // ¿ÕÆø/½éÖÊÕÛÉä±È
+    float gEta; // ç©ºæ°”/ä»‹è´¨æŠ˜å°„æ¯”
 }
 
 cbuffer CBChangesEveryFrame : register(b3)
@@ -53,8 +53,8 @@ struct VertexPosNormalTex
 struct VertexPosHWNormalTex
 {
     float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // ÔÚÊÀ½çÖĞµÄÎ»ÖÃ
-    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖĞµÄ·½Ïò
+    float3 PosW : POSITION; // åœ¨ä¸–ç•Œä¸­çš„ä½ç½®
+    float3 NormalW : NORMAL; // æ³•å‘é‡åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
     float2 Tex : TEXCOORD;
 };
 

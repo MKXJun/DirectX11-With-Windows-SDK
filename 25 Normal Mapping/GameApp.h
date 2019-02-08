@@ -1,4 +1,4 @@
-#ifndef GAMEAPP_H
+ï»¿#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -10,9 +10,9 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
-	// µØÃæÄ£Ê½
+	// åœ°é¢æ¨¡å¼
 	enum class GroundMode { Floor, Stones };
 
 public:
@@ -31,38 +31,38 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> mFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	ComPtr<ID3D11ShaderResourceView> mFloorDiffuse;			// µØ°åÎÆÀí
-	ComPtr<ID3D11ShaderResourceView> mStonesDiffuse;		// ¶ìÂÑÊ¯ÃæÎÆÀí
+	ComPtr<ID3D11ShaderResourceView> mFloorDiffuse;			// åœ°æ¿çº¹ç†
+	ComPtr<ID3D11ShaderResourceView> mStonesDiffuse;		// é¹…åµçŸ³é¢çº¹ç†
 
-	Model mGroundModel;										// µØÃæÍø¸ñÄ£ĞÍ
-	Model mGroundTModel;									// ´øÇĞÏßµÄµØÃæÍø¸ñÄ£ĞÍ
+	Model mGroundModel;										// åœ°é¢ç½‘æ ¼æ¨¡å‹
+	Model mGroundTModel;									// å¸¦åˆ‡çº¿çš„åœ°é¢ç½‘æ ¼æ¨¡å‹
 
-	GameObject mSphere;										// Çò
-	GameObject mGround;										// µØÃæ
-	GameObject mGroundT;									// ´øÇĞÏßÏòÁ¿µÄµØÃæ
-	GameObject mCylinder;									// Ô²Öù
-	GameObject mCylinderT;									// ´øÇĞÏßÏòÁ¿µÄÔ²Öù
-	GroundMode mGroundMode;									// µØÃæÄ£Ê½
+	GameObject mSphere;										// çƒ
+	GameObject mGround;										// åœ°é¢
+	GameObject mGroundT;									// å¸¦åˆ‡çº¿å‘é‡çš„åœ°é¢
+	GameObject mCylinder;									// åœ†æŸ±
+	GameObject mCylinderT;									// å¸¦åˆ‡çº¿å‘é‡çš„åœ†æŸ±
+	GroundMode mGroundMode;									// åœ°é¢æ¨¡å¼
 
-	ComPtr<ID3D11ShaderResourceView> mBricksNormalMap;		// ×©¿é·¨ÏßÌùÍ¼
-	ComPtr<ID3D11ShaderResourceView> mFloorNormalMap;		// µØÃæ·¨ÏßÌùÍ¼
-	ComPtr<ID3D11ShaderResourceView> mStonesNormalMap;		// Ê¯Í·µØÃæ·¨ÏßÌùÍ¼
-	bool mEnableNormalMap;									// ¿ªÆô·¨ÏßÌùÍ¼
+	ComPtr<ID3D11ShaderResourceView> mBricksNormalMap;		// ç –å—æ³•çº¿è´´å›¾
+	ComPtr<ID3D11ShaderResourceView> mFloorNormalMap;		// åœ°é¢æ³•çº¿è´´å›¾
+	ComPtr<ID3D11ShaderResourceView> mStonesNormalMap;		// çŸ³å¤´åœ°é¢æ³•çº¿è´´å›¾
+	bool mEnableNormalMap;									// å¼€å¯æ³•çº¿è´´å›¾
 
-	BasicEffect mBasicEffect;								// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
-	SkyEffect mSkyEffect;									// Ìì¿ÕºĞÌØĞ§¹ÜÀí
+	BasicEffect mBasicEffect;								// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	SkyEffect mSkyEffect;									// å¤©ç©ºç›’ç‰¹æ•ˆç®¡ç†
 	
 
-	std::unique_ptr<DynamicSkyRender> mDaylight;			// Ìì¿ÕºĞ(°×Ìì)
+	std::unique_ptr<DynamicSkyRender> mDaylight;			// å¤©ç©ºç›’(ç™½å¤©)
 
-	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
-	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
+	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
-	ObjReader mObjReader;									// Ä£ĞÍ¶ÁÈ¡¶ÔÏó
+	ObjReader mObjReader;									// æ¨¡å‹è¯»å–å¯¹è±¡
 };
 
 

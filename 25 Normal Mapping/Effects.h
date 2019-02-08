@@ -1,8 +1,8 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // Effects.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ¼òÒ×ÌØĞ§¹ÜÀí¿ò¼Ü
+// ç®€æ˜“ç‰¹æ•ˆç®¡ç†æ¡†æ¶
 // Simple effect management framework.
 //***************************************************************************************
 
@@ -17,23 +17,23 @@
 class IEffect
 {
 public:
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	IEffect() = default;
 
-	// ²»Ö§³Ö¸´ÖÆ¹¹Ôì
+	// ä¸æ”¯æŒå¤åˆ¶æ„é€ 
 	IEffect(const IEffect&) = delete;
 	IEffect& operator=(const IEffect&) = delete;
 
-	// ÔÊĞí×ªÒÆ
+	// å…è®¸è½¬ç§»
 	IEffect(IEffect&& moveFrom) = default;
 	IEffect& operator=(IEffect&& moveFrom) = default;
 
 	virtual ~IEffect() = default;
 
-	// ¸üĞÂ²¢°ó¶¨³£Á¿»º³åÇø
+	// æ›´æ–°å¹¶ç»‘å®šå¸¸é‡ç¼“å†²åŒº
 	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
 };
 
@@ -50,26 +50,26 @@ public:
 	BasicEffect(BasicEffect&& moveFrom);
 	BasicEffect& operator=(BasicEffect&& moveFrom);
 
-	// »ñÈ¡µ¥Àı
+	// è·å–å•ä¾‹
 	static BasicEffect& Get();
 
 	
 
-	// ³õÊ¼»¯Basic.hlsliËùĞè×ÊÔ´²¢³õÊ¼»¯äÖÈ¾×´Ì¬
+	// åˆå§‹åŒ–Basic.hlsliæ‰€éœ€èµ„æºå¹¶åˆå§‹åŒ–æ¸²æŸ“çŠ¶æ€
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 
 	// 
-	// äÖÈ¾Ä£Ê½µÄ±ä¸ü
+	// æ¸²æŸ“æ¨¡å¼çš„å˜æ›´
 	//
 
-	// Ä¬ÈÏ×´Ì¬À´»æÖÆ
+	// é»˜è®¤çŠ¶æ€æ¥ç»˜åˆ¶
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type);
-	// ´ø·¨ÏßÌùÍ¼µÄ»æÖÆ
+	// å¸¦æ³•çº¿è´´å›¾çš„ç»˜åˆ¶
 	void SetRenderWithNormalMap(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type);
 
 	//
-	// ¾ØÕóÉèÖÃ
+	// çŸ©é˜µè®¾ç½®
 	//
 
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W);
@@ -77,10 +77,10 @@ public:
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
 	
 	//
-	// ¹âÕÕ¡¢²ÄÖÊºÍÎÆÀíÏà¹ØÉèÖÃ
+	// å…‰ç…§ã€æè´¨å’Œçº¹ç†ç›¸å…³è®¾ç½®
 	//
 
-	// ¸÷ÖÖÀàĞÍµÆ¹âÔÊĞíµÄ×î´óÊıÄ¿
+	// å„ç§ç±»å‹ç¯å…‰å…è®¸çš„æœ€å¤§æ•°ç›®
 	static const int maxLights = 5;
 
 	void SetDirLight(size_t pos, const DirectionalLight& dirLight);
@@ -99,13 +99,13 @@ public:
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
 	
 	//
-	// ×´Ì¬¿ª¹ØÉèÖÃ£¬·´ÉäÓëÕÛÉä²»»á¹²´æ
+	// çŠ¶æ€å¼€å…³è®¾ç½®ï¼Œåå°„ä¸æŠ˜å°„ä¸ä¼šå…±å­˜
 	//
 
 	void SetReflectionEnabled(bool isEnable);
 	void SetRefractionEnabled(bool isEnable);
-	void SetRefractionEta(float eta);	// ¿ÕÆø/½éÖÊÕÛÉä±È
-	// Ó¦ÓÃ³£Á¿»º³åÇøºÍÎÆÀí×ÊÔ´µÄ±ä¸ü
+	void SetRefractionEta(float eta);	// ç©ºæ°”/ä»‹è´¨æŠ˜å°„æ¯”
+	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºå’Œçº¹ç†èµ„æºçš„å˜æ›´
 	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
 	
 private:
@@ -122,34 +122,34 @@ public:
 	SkyEffect(SkyEffect&& moveFrom);
 	SkyEffect& operator=(SkyEffect&& moveFrom);
 
-	// »ñÈ¡µ¥Àı
+	// è·å–å•ä¾‹
 	static SkyEffect& Get();
 
-	// ³õÊ¼»¯Sky.hlsliËùĞè×ÊÔ´²¢³õÊ¼»¯äÖÈ¾×´Ì¬
+	// åˆå§‹åŒ–Sky.hlsliæ‰€éœ€èµ„æºå¹¶åˆå§‹åŒ–æ¸²æŸ“çŠ¶æ€
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 	// 
-	// äÖÈ¾Ä£Ê½µÄ±ä¸ü
+	// æ¸²æŸ“æ¨¡å¼çš„å˜æ›´
 	//
 
-	// Ä¬ÈÏ×´Ì¬À´»æÖÆ
+	// é»˜è®¤çŠ¶æ€æ¥ç»˜åˆ¶
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
 
 	//
-	// ¾ØÕóÉèÖÃ
+	// çŸ©é˜µè®¾ç½®
 	//
 
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P);
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX WVP);
 
 	//
-	// ÎÆÀíÁ¢·½ÌåÓ³ÉäÉèÖÃ
+	// çº¹ç†ç«‹æ–¹ä½“æ˜ å°„è®¾ç½®
 	//
 
 	void SetTextureCube(ComPtr<ID3D11ShaderResourceView> textureCube);
 
 
-	// Ó¦ÓÃ³£Á¿»º³åÇøºÍÎÆÀí×ÊÔ´µÄ±ä¸ü
+	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºå’Œçº¹ç†èµ„æºçš„å˜æ›´
 	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
 
 private:

@@ -1,8 +1,8 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // Camera.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// Ìá¹©µÚÒ»ÈË³Æ(×ÔÓÉÊÓ½Ç)ºÍµÚÈıÈË³ÆÉãÏñ»ú
+// æä¾›ç¬¬ä¸€äººç§°(è‡ªç”±è§†è§’)å’Œç¬¬ä¸‰äººç§°æ‘„åƒæœº
 // Provide 1st person(free view) and 3rd person cameras.
 //***************************************************************************************
 
@@ -18,11 +18,11 @@ public:
 	Camera();
 	virtual ~Camera() = 0;
 
-	// »ñÈ¡ÉãÏñ»úÎ»ÖÃ
+	// è·å–æ‘„åƒæœºä½ç½®
 	DirectX::XMVECTOR GetPositionXM() const;
 	DirectX::XMFLOAT3 GetPosition() const;
 
-	// »ñÈ¡ÉãÏñ»úµÄ×ø±êÖáÏòÁ¿
+	// è·å–æ‘„åƒæœºçš„åæ ‡è½´å‘é‡
 	DirectX::XMVECTOR GetRightXM() const;
 	DirectX::XMFLOAT3 GetRight() const;
 	DirectX::XMVECTOR GetUpXM() const;
@@ -30,38 +30,38 @@ public:
 	DirectX::XMVECTOR GetLookXM() const;
 	DirectX::XMFLOAT3 GetLook() const;
 
-	// »ñÈ¡ÊÓ×¶ÌåĞÅÏ¢
+	// è·å–è§†é”¥ä½“ä¿¡æ¯
 	float GetNearWindowWidth() const;
 	float GetNearWindowHeight() const;
 	float GetFarWindowWidth() const;
 	float GetFarWindowHeight() const;
 
-	// »ñÈ¡¾ØÕó
+	// è·å–çŸ©é˜µ
 	DirectX::XMMATRIX GetViewXM() const;
 	DirectX::XMMATRIX GetProjXM() const;
 	DirectX::XMMATRIX GetViewProjXM() const;
 
-	// »ñÈ¡ÊÓ¿Ú
+	// è·å–è§†å£
 	D3D11_VIEWPORT GetViewPort() const;
 
 
-	// ÉèÖÃÊÓ×¶Ìå
+	// è®¾ç½®è§†é”¥ä½“
 	void SetFrustum(float fovY, float aspect, float nearZ, float farZ);
 
-	// ÉèÖÃÊÓ¿Ú
+	// è®¾ç½®è§†å£
 	void SetViewPort(const D3D11_VIEWPORT& viewPort);
 	void SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f);
 
-	// ¸üĞÂ¹Û²ì¾ØÕó
+	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
 	virtual void UpdateViewMatrix() = 0;
 protected:
-	// ÉãÏñ»úµÄ¹Û²ì¿Õ¼ä×ø±êÏµ¶ÔÓ¦ÔÚÊÀ½ç×ø±êÏµÖĞµÄ±íÊ¾
+	// æ‘„åƒæœºçš„è§‚å¯Ÿç©ºé—´åæ ‡ç³»å¯¹åº”åœ¨ä¸–ç•Œåæ ‡ç³»ä¸­çš„è¡¨ç¤º
 	DirectX::XMFLOAT3 mPosition;
 	DirectX::XMFLOAT3 mRight;
 	DirectX::XMFLOAT3 mUp;
 	DirectX::XMFLOAT3 mLook;
 	
-	// ÊÓ×¶ÌåÊôĞÔ
+	// è§†é”¥ä½“å±æ€§
 	float mNearZ;
 	float mFarZ;
 	float mAspect;
@@ -69,11 +69,11 @@ protected:
 	float mNearWindowHeight;
 	float mFarWindowHeight;
 
-	// ¹Û²ì¾ØÕóºÍÍ¸ÊÓÍ¶Ó°¾ØÕó
+	// è§‚å¯ŸçŸ©é˜µå’Œé€è§†æŠ•å½±çŸ©é˜µ
 	DirectX::XMFLOAT4X4 mView;
 	DirectX::XMFLOAT4X4 mProj;
 
-	// µ±Ç°ÊÓ¿Ú
+	// å½“å‰è§†å£
 	D3D11_VIEWPORT mViewPort;
 
 };
@@ -84,27 +84,27 @@ public:
 	FirstPersonCamera();
 	~FirstPersonCamera() override;
 
-	// ÉèÖÃÉãÏñ»úÎ»ÖÃ
+	// è®¾ç½®æ‘„åƒæœºä½ç½®
 	void SetPosition(float x, float y, float z);
 	void SetPosition(const DirectX::XMFLOAT3& v);
-	// ÉèÖÃÉãÏñ»úµÄ³¯Ïò
+	// è®¾ç½®æ‘„åƒæœºçš„æœå‘
 	void XM_CALLCONV LookAt(DirectX::FXMVECTOR pos, DirectX::FXMVECTOR target, DirectX::FXMVECTOR up);
 	void LookAt(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& target,const DirectX::XMFLOAT3& up);
 	void XM_CALLCONV LookTo(DirectX::FXMVECTOR pos, DirectX::FXMVECTOR to, DirectX::FXMVECTOR up);
 	void LookTo(const DirectX::XMFLOAT3& pos, const DirectX::XMFLOAT3& to, const DirectX::XMFLOAT3& up);
-	// Æ½ÒÆ
+	// å¹³ç§»
 	void Strafe(float d);
-	// Ö±ĞĞ(Æ½ÃæÒÆ¶¯)
+	// ç›´è¡Œ(å¹³é¢ç§»åŠ¨)
 	void Walk(float d);
-	// Ç°½ø(³¯Ç°ÏòÒÆ¶¯)
+	// å‰è¿›(æœå‰å‘ç§»åŠ¨)
 	void MoveForward(float d);
-	// ÉÏÏÂ¹Û²ì
+	// ä¸Šä¸‹è§‚å¯Ÿ
 	void Pitch(float rad);
-	// ×óÓÒ¹Û²ì
+	// å·¦å³è§‚å¯Ÿ
 	void RotateY(float rad);
 
 
-	// ¸üĞÂ¹Û²ì¾ØÕó
+	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
 	void UpdateViewMatrix() override;
 };
 
@@ -114,39 +114,39 @@ public:
 	ThirdPersonCamera();
 	~ThirdPersonCamera() override;
 
-	// »ñÈ¡µ±Ç°¸ú×ÙÎïÌåµÄÎ»ÖÃ
+	// è·å–å½“å‰è·Ÿè¸ªç‰©ä½“çš„ä½ç½®
 	DirectX::XMFLOAT3 GetTargetPosition() const;
-	// »ñÈ¡ÓëÎïÌåµÄ¾àÀë
+	// è·å–ä¸ç‰©ä½“çš„è·ç¦»
 	float GetDistance() const;
-	// »ñÈ¡ÈÆXÖáµÄĞı×ª·½Ïò
+	// è·å–ç»•Xè½´çš„æ—‹è½¬æ–¹å‘
 	float GetRotationX() const;
-	// »ñÈ¡ÈÆYÖáµÄĞı×ª·½Ïò
+	// è·å–ç»•Yè½´çš„æ—‹è½¬æ–¹å‘
 	float GetRotationY() const;
-	// ÈÆÎïÌå´¹Ö±Ğı×ª(×¢ÒâÉÏÏÂÊÓÒ°½Ç¶ÈPhiÏŞÖÆÔÚ[pi/6, pi/2])
+	// ç»•ç‰©ä½“å‚ç›´æ—‹è½¬(æ³¨æ„ä¸Šä¸‹è§†é‡è§’åº¦Phié™åˆ¶åœ¨[pi/6, pi/2])
 	void RotateX(float rad);
-	// ÈÆÎïÌåË®Æ½Ğı×ª
+	// ç»•ç‰©ä½“æ°´å¹³æ—‹è½¬
 	void RotateY(float rad);
-	// À­½üÎïÌå
+	// æ‹‰è¿‘ç‰©ä½“
 	void Approach(float dist);
-	// ÉèÖÃ³õÊ¼ÈÆXÖáµÄ»¡¶È(×¢ÒâÉÏÏÂÊÓÒ°½Ç¶ÈPhiÏŞÖÆÔÚ[pi/6, pi/2])
+	// è®¾ç½®åˆå§‹ç»•Xè½´çš„å¼§åº¦(æ³¨æ„ä¸Šä¸‹è§†é‡è§’åº¦Phié™åˆ¶åœ¨[pi/6, pi/2])
 	void SetRotationX(float phi);
-	// ÉèÖÃ³õÊ¼ÈÆYÖáµÄ»¡¶È
+	// è®¾ç½®åˆå§‹ç»•Yè½´çš„å¼§åº¦
 	void SetRotationY(float theta);
-	// ÉèÖÃ²¢°ó¶¨´ı¸ú×ÙÎïÌåµÄÎ»ÖÃ
+	// è®¾ç½®å¹¶ç»‘å®šå¾…è·Ÿè¸ªç‰©ä½“çš„ä½ç½®
 	void SetTarget(const DirectX::XMFLOAT3& target);
-	// ÉèÖÃ³õÊ¼¾àÀë
+	// è®¾ç½®åˆå§‹è·ç¦»
 	void SetDistance(float dist);
-	// ÉèÖÃ×îĞ¡×î´óÔÊĞí¾àÀë
+	// è®¾ç½®æœ€å°æœ€å¤§å…è®¸è·ç¦»
 	void SetDistanceMinMax(float minDist, float maxDist);
-	// ¸üĞÂ¹Û²ì¾ØÕó
+	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
 	void UpdateViewMatrix() override;
 
 private:
 	DirectX::XMFLOAT3 mTarget;
 	float mDistance;
-	// ×îĞ¡ÔÊĞí¾àÀë£¬×î´óÔÊĞí¾àÀë
+	// æœ€å°å…è®¸è·ç¦»ï¼Œæœ€å¤§å…è®¸è·ç¦»
 	float mMinDist, mMaxDist;
-	// ÒÔÊÀ½ç×ø±êÏµÎª»ù×¼£¬µ±Ç°µÄĞı×ª½Ç¶È
+	// ä»¥ä¸–ç•Œåæ ‡ç³»ä¸ºåŸºå‡†ï¼Œå½“å‰çš„æ—‹è½¬è§’åº¦
 	float mTheta;
 	float mPhi;
 };

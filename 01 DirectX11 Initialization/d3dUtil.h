@@ -1,16 +1,16 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // d3dUtil.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3DÊµÓÃ¹¤¾ß¼¯
+// D3Då®ç”¨å·¥å…·é›†
 // Direct3D utility tools.
 //***************************************************************************************
 
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// ÒÑ°üº¬Windows.h
-#include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
+#include <d3d11_1.h>			// å·²åŒ…å«Windows.h
+#include <DirectXCollision.h>	// å·²åŒ…å«DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -19,10 +19,10 @@
 #include <string>
 
 //
-// ºêÏà¹Ø
+// å®ç›¸å…³
 //
 
-// °²È«COM×é¼şÊÍ·Åºê
+// å®‰å…¨COMç»„ä»¶é‡Šæ”¾å®
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 

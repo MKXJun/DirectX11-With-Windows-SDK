@@ -1,8 +1,8 @@
-//***************************************************************************************
+ï»¿//***************************************************************************************
 // Model.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ´æ·ÅÄ£ĞÍÊı¾İ
+// å­˜æ”¾æ¨¡å‹æ•°æ®
 // model data storage.
 //***************************************************************************************
 
@@ -16,7 +16,7 @@
 
 struct ModelPart
 {
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
@@ -31,13 +31,13 @@ struct ModelPart
 
 struct Model
 {
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	
 	Model();
 	Model(ComPtr<ID3D11Device> device, const ObjReader& model);
-	// ÉèÖÃ»º³åÇø
+	// è®¾ç½®ç¼“å†²åŒº
 	template<class VertexType, class IndexType>
 	Model(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
 	
@@ -48,13 +48,13 @@ struct Model
 	Model(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize, UINT vertexCount,
 		const void * indices, UINT indexCount, DXGI_FORMAT indexFormat);
 	//
-	// ÉèÖÃÄ£ĞÍ
+	// è®¾ç½®æ¨¡å‹
 	//
 
 	void SetModel(ComPtr<ID3D11Device> device, const ObjReader& model);
 
 	//
-	// ÉèÖÃÍø¸ñ
+	// è®¾ç½®ç½‘æ ¼
 	//
 	template<class VertexType, class IndexType>
 	void SetMesh(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);

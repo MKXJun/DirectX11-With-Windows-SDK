@@ -1,6 +1,6 @@
 #include "ScreenFade.hlsli"
 
-// ¶¥µã×ÅÉ«Æ÷
+// é¡¶ç‚¹ç€è‰²å™¨
 VertexPosHTex VS(VertexPosTex vIn)
 {
     VertexPosHTex vOut;

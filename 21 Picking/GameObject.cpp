@@ -1,4 +1,4 @@
-#include "GameObject.h"
+ï»¿#include "GameObject.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -51,17 +51,17 @@ size_t GameObject::GetCapacity() const
 
 void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
 {
-	// ÉèÖÃÊµÀı»º³åÇøÃèÊö
+	// è®¾ç½®å®ä¾‹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_DYNAMIC;
 	vbd.ByteWidth = (UINT)count * sizeof(InstancedData);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	// ´´½¨ÊµÀı»º³åÇø
+	// åˆ›å»ºå®ä¾‹ç¼“å†²åŒº
 	HR(device->CreateBuffer(&vbd, nullptr, mInstancedBuffer.ReleaseAndGetAddressOf()));
 
-	// ÖØĞÂµ÷ÕûmCapacity
+	// é‡æ–°è°ƒæ•´mCapacity
 	mCapacity = count;
 }
 
@@ -97,11 +97,11 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 	for (auto& part : mModel.modelParts)
 	{
-		// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
+		// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
-		// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
+		// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
 		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
 		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
@@ -116,7 +116,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 {
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
-	// Èô´«ÈëµÄÊı¾İ±ÈÊµÀı»º³åÇø»¹´ó£¬ĞèÒªÖØĞÂ·ÖÅä
+	// è‹¥ä¼ å…¥çš„æ•°æ®æ¯”å®ä¾‹ç¼“å†²åŒºè¿˜å¤§ï¼Œéœ€è¦é‡æ–°åˆ†é…
 	if (numInsts > mCapacity)
 	{
 		ComPtr<ID3D11Device> device;
@@ -130,7 +130,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	for (auto& mat : data)
 	{
 		iter->world = XMMatrixTranspose(mat);
-		iter->worldInvTranspose = XMMatrixInverse(nullptr, mat);	// Á½´Î×ªÖÃµÖÏû
+		iter->worldInvTranspose = XMMatrixInverse(nullptr, mat);	// ä¸¤æ¬¡è½¬ç½®æŠµæ¶ˆ
 		iter++;
 	}
 
@@ -143,11 +143,11 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	{
 		buffers[0] = part.vertexBuffer.Get();
 
-		// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
+		// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
 		deviceContext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
-		// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
+		// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
 		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
 		effect.Apply(deviceContext);

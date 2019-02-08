@@ -1,9 +1,9 @@
 
 cbuffer ConstantBuffer : register(b0)
 {
-    matrix gWorld; // matrix¿ÉÒÔÓÃfloat4x4Ìæ´ú¡£²»¼Órow_majorµÄÇé¿öÏÂ£¬¾ØÕóÄ¬ÈÏÎªÁÐÖ÷¾ØÕó£¬
-    matrix gView;  // ¿ÉÒÔÔÚÇ°ÃæÌí¼Órow_major±íÊ¾ÐÐÖ÷¾ØÕó
-    matrix gProj;  // ¸Ã½Ì³ÌÍùºó½«Ê¹ÓÃÄ¬ÈÏµÄÁÐÖ÷¾ØÕó£¬µ«ÐèÒªÔÚC++´úÂë¶ËÔ¤ÏÈ½«¾ØÕó½øÐÐ×ªÖÃ¡£
+    matrix gWorld; // matrixå¯ä»¥ç”¨float4x4æ›¿ä»£ã€‚ä¸åŠ row_majorçš„æƒ…å†µä¸‹ï¼ŒçŸ©é˜µé»˜è®¤ä¸ºåˆ—ä¸»çŸ©é˜µï¼Œ
+    matrix gView;  // å¯ä»¥åœ¨å‰é¢æ·»åŠ row_majorè¡¨ç¤ºè¡Œä¸»çŸ©é˜µ
+    matrix gProj;  // è¯¥æ•™ç¨‹å¾€åŽå°†ä½¿ç”¨é»˜è®¤çš„åˆ—ä¸»çŸ©é˜µï¼Œä½†éœ€è¦åœ¨C++ä»£ç ç«¯é¢„å…ˆå°†çŸ©é˜µè¿›è¡Œè½¬ç½®ã€‚
 }
 
 

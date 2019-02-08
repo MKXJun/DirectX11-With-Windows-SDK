@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+﻿//--------------------------------------------------------------------------------------
 // File: WICTextureLoader.cpp
 //
 // Function for loading a WIC image and creating a Direct3D runtime texture for it

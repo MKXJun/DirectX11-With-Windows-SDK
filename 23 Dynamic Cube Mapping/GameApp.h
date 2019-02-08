@@ -1,4 +1,4 @@
-#ifndef GAMEAPP_H
+ï»¿#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -10,11 +10,11 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
-	// Ìì¿ÕºĞÄ£Ê½
+	// å¤©ç©ºç›’æ¨¡å¼
 	enum class SkyBoxMode { Daylight, Sunset, Desert };
-	// ÇòÌåµ±Ç°Ä£Ê½
+	// çƒä½“å½“å‰æ¨¡å¼
 	enum class SphereMode { None, Reflection, Refraction };
 
 public:
@@ -33,30 +33,30 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> mFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	GameObject mSphere;										// Çò
-	GameObject mGround;										// µØÃæ
-	GameObject mCylinder;									// Ô²Öù
+	GameObject mSphere;										// çƒ
+	GameObject mGround;										// åœ°é¢
+	GameObject mCylinder;									// åœ†æŸ±
 
-	BasicEffect mBasicEffect;								// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
-	SkyEffect mSkyEffect;									// Ìì¿ÕºĞÌØĞ§¹ÜÀí
+	BasicEffect mBasicEffect;								// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	SkyEffect mSkyEffect;									// å¤©ç©ºç›’ç‰¹æ•ˆç®¡ç†
 	
-	std::unique_ptr<DynamicSkyRender> mDaylight;			// Ìì¿ÕºĞ(°×Ìì)
-	std::unique_ptr<DynamicSkyRender> mSunset;				// Ìì¿ÕºĞ(ÈÕÂä)
-	std::unique_ptr<DynamicSkyRender> mDesert;				// Ìì¿ÕºĞ(É³Ä®)
-	SkyBoxMode mSkyBoxMode;									// Ìì¿ÕºĞÄ£Ê½
+	std::unique_ptr<DynamicSkyRender> mDaylight;			// å¤©ç©ºç›’(ç™½å¤©)
+	std::unique_ptr<DynamicSkyRender> mSunset;				// å¤©ç©ºç›’(æ—¥è½)
+	std::unique_ptr<DynamicSkyRender> mDesert;				// å¤©ç©ºç›’(æ²™æ¼ )
+	SkyBoxMode mSkyBoxMode;									// å¤©ç©ºç›’æ¨¡å¼
 
-	SphereMode mSphereMode;									// ÇòäÖÈ¾Ä£Ê½
-	float mEta;												// ¿ÕÆø/½éÖÊÕÛÉäÂÊ
+	SphereMode mSphereMode;									// çƒæ¸²æŸ“æ¨¡å¼
+	float mEta;												// ç©ºæ°”/ä»‹è´¨æŠ˜å°„ç‡
 
 
-	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
-	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
+	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
-	ObjReader mObjReader;									// Ä£ĞÍ¶ÁÈ¡¶ÔÏó
+	ObjReader mObjReader;									// æ¨¡å‹è¯»å–å¯¹è±¡
 };
 
 

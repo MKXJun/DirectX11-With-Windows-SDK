@@ -1,4 +1,4 @@
-#include "GameObject.h"
+ï»¿#include "GameObject.h"
 #include "d3dUtil.h"
 using namespace DirectX;
 
@@ -41,13 +41,13 @@ void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {
-	// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
+	// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
 	UINT strides = mVertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &strides, &offsets);
 	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-	// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
+	// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
 	effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
 	effect.SetTexture(mTexture);
 	effect.SetMaterial(mMaterial);

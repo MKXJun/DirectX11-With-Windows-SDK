@@ -4,6 +4,34 @@ using namespace DirectX;
 using namespace std::experimental;
 
 
+//
+// 静态全局函数
+//
+
+
+// ------------------------------
+// CreateBuffer函数
+// ------------------------------
+// 创建缓冲区
+// [In]d3dDevice			D3D设备
+// [In]data					初始化结构化数据
+// [In]byteWidth			缓冲区字节数
+// [Out]structuredBuffer	输出的结构化缓冲区
+// [In]usage				资源用途
+// [In]bindFlags			资源绑定标签
+// [In]cpuAccessFlags		资源CPU访问权限标签
+// [In]structuredByteStride 每个结构体的字节数
+// [In]miscFlags			资源杂项标签
+static HRESULT CreateBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** buffer,
+	D3D11_USAGE usage,
+	UINT bindFlags,
+	UINT cpuAccessFlags,
+	UINT structureByteStride,
+	UINT miscFlags);
 
 
 // ------------------------------
@@ -31,15 +59,15 @@ static HRESULT CreateTexture2DArray(
 	ID3D11ShaderResourceView** textureArrayView);
 
 //
-// 函数定义部分
+// 着色器编译相关函数
 //
 
 HRESULT CreateShaderFromFile(
-	const WCHAR * csoFileNameInOut,
-	const WCHAR * hlslFileName,
+	const WCHAR* csoFileNameInOut,
+	const WCHAR* hlslFileName,
 	LPCSTR entryPoint,
 	LPCSTR shaderModel,
-	ID3DBlob ** ppBlobOut)
+	ID3DBlob** ppBlobOut)
 {
 	HRESULT hr = S_OK;
 
@@ -80,6 +108,245 @@ HRESULT CreateShaderFromFile(
 	}
 
 	return hr;
+}
+
+//
+// 缓冲区相关函数
+//
+
+HRESULT CreateBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** buffer,
+	D3D11_USAGE usage,
+	UINT bindFlags,
+	UINT cpuAccessFlags,
+	UINT structureByteStride,
+	UINT miscFlags)
+{
+	D3D11_BUFFER_DESC bufferDesc;
+	bufferDesc.Usage = usage;
+	bufferDesc.ByteWidth = byteWidth;
+	bufferDesc.BindFlags = bindFlags;
+	bufferDesc.CPUAccessFlags = cpuAccessFlags;
+	bufferDesc.StructureByteStride = structureByteStride;
+	bufferDesc.MiscFlags = miscFlags;
+
+	if (data)
+	{
+		D3D11_SUBRESOURCE_DATA initData;
+		ZeroMemory(&initData, sizeof(initData));
+		initData.pSysMem = data;
+		return d3dDevice->CreateBuffer(&bufferDesc, &initData, buffer);
+	}
+	else
+	{
+		return d3dDevice->CreateBuffer(&bufferDesc, nullptr, buffer);
+	}
+
+
+}
+
+
+HRESULT CreateVertexBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** vertexBuffer,
+	bool dynamic,
+	bool streamOutput)
+{
+	UINT bindFlags = D3D11_BIND_VERTEX_BUFFER;
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (dynamic && streamOutput)
+	{
+		return E_INVALIDARG;
+	}
+	else if (!dynamic && !streamOutput)
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (dynamic)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		bindFlags |= D3D11_BIND_STREAM_OUTPUT;
+		usage = D3D11_USAGE_DEFAULT;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, vertexBuffer,
+		usage, bindFlags, cpuAccessFlags, 0, 0);
+}
+
+HRESULT CreateIndexBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** indexBuffer,
+	bool dynamic)
+{
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (dynamic)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, indexBuffer,
+		usage, D3D11_BIND_INDEX_BUFFER, cpuAccessFlags, 0, 0);
+}
+
+HRESULT CreateConstantBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** constantBuffer,
+	bool cpuUpdates,
+	bool gpuUpdates)
+{
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (cpuUpdates && gpuUpdates)
+	{
+		return E_INVALIDARG;
+	}
+	else if (!cpuUpdates && !gpuUpdates)
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (cpuUpdates)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		usage = D3D11_USAGE_DEFAULT;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, constantBuffer,
+		usage, D3D11_BIND_CONSTANT_BUFFER, cpuAccessFlags, 0, 0);
+}
+
+HRESULT CreateTypedBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** typedBuffer,
+	bool cpuUpdates,
+	bool gpuUpdates)
+{
+	UINT bindFlags = D3D11_BIND_SHADER_RESOURCE;
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (cpuUpdates && gpuUpdates)
+	{
+		bindFlags = 0;
+		usage = D3D11_USAGE_STAGING;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_READ;
+	}
+	else if (!cpuUpdates && !gpuUpdates)
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (cpuUpdates)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		usage = D3D11_USAGE_DEFAULT;
+		bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, typedBuffer,
+		usage, bindFlags, cpuAccessFlags, 0, 0);
+}
+
+HRESULT CreateStructuredBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	UINT structuredByteStride,
+	ID3D11Buffer ** structuredBuffer,
+	bool cpuUpdates,
+	bool gpuUpdates)
+{
+	UINT bindFlags = D3D11_BIND_SHADER_RESOURCE;
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (cpuUpdates && gpuUpdates)
+	{
+		bindFlags = 0;
+		usage = D3D11_USAGE_STAGING;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_READ;
+	}
+	else if (!cpuUpdates && !gpuUpdates)
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (cpuUpdates)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		usage = D3D11_USAGE_DEFAULT;
+		bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, structuredBuffer,
+		usage, bindFlags, cpuAccessFlags, structuredByteStride,
+		D3D11_RESOURCE_MISC_BUFFER_STRUCTURED);
+}
+
+HRESULT CreateRawBuffer(
+	ID3D11Device * d3dDevice,
+	void * data,
+	UINT byteWidth,
+	ID3D11Buffer ** rawBuffer,
+	bool cpuUpdates,
+	bool gpuUpdates)
+{
+	UINT bindFlags = D3D11_BIND_SHADER_RESOURCE;
+	D3D11_USAGE usage;
+	UINT cpuAccessFlags = 0;
+	if (cpuUpdates && gpuUpdates)
+	{
+		bindFlags = 0;
+		usage = D3D11_USAGE_STAGING;
+		cpuAccessFlags |= D3D11_CPU_ACCESS_READ;
+	}
+	else if (!cpuUpdates && !gpuUpdates)
+	{
+		usage = D3D11_USAGE_IMMUTABLE;
+	}
+	else if (cpuUpdates)
+	{
+		usage = D3D11_USAGE_DYNAMIC;
+		cpuAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	}
+	else
+	{
+		usage = D3D11_USAGE_DEFAULT;
+		bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
+	}
+
+	return CreateBuffer(d3dDevice, data, byteWidth, rawBuffer,
+		usage, bindFlags, cpuAccessFlags, 0,
+		D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS);
 }
 
 HRESULT CreateTexture2DArray(

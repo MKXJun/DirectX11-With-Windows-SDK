@@ -17,6 +17,7 @@ SkyRender::SkyRender(
 	{
 		HR(CreateDDSTextureFromFile(
 			device.Get(),
+			generateMips ? deviceContext.Get() : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
 			mTextureCubeSRV.GetAddressOf()

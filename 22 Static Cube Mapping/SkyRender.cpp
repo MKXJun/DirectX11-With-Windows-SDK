@@ -17,10 +17,10 @@ SkyRender::SkyRender(
 	{
 		HR(CreateDDSTextureFromFile(
 			device.Get(),
+			generateMips ? deviceContext.Get() : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
-			mTextureCubeSRV.GetAddressOf(),
-			generateMips
+			mTextureCubeSRV.GetAddressOf()
 		));
 	}
 	else
@@ -51,7 +51,8 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 		deviceContext.Get(),
 		cubemapFilenames,
 		nullptr,
-		mTextureCubeSRV.GetAddressOf()
+		mTextureCubeSRV.GetAddressOf(),
+		generateMips
 	));
 
 	InitResource(device, skySphereRadius);

@@ -227,7 +227,7 @@ Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&c
 		data.vertexVec.push_back({ corners[i], color });
 	for (int i = 0; i < 4; ++i)
 	{
-		data.indexVec.push_back(i);
+		data.indexVec.push_back(i + 4);
 		data.indexVec.push_back(i);
 
 		data.indexVec.push_back(i);

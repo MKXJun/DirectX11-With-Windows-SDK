@@ -6,9 +6,9 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 SkyRender::SkyRender(
-	ComPtr<ID3D11Device> device, 
-	ComPtr<ID3D11DeviceContext> deviceContext, 
-	const std::wstring & cubemapFilename, 
+	ComPtr<ID3D11Device> device,
+	ComPtr<ID3D11DeviceContext> deviceContext,
+	const std::wstring & cubemapFilename,
 	float skySphereRadius,
 	bool generateMips)
 {
@@ -17,10 +17,10 @@ SkyRender::SkyRender(
 	{
 		HR(CreateDDSTextureFromFile(
 			device.Get(),
+			generateMips ? deviceContext.Get() : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
-			mTextureCubeSRV.GetAddressOf(),
-			generateMips
+			mTextureCubeSRV.GetAddressOf()
 		));
 	}
 	else
@@ -38,9 +38,9 @@ SkyRender::SkyRender(
 	InitResource(device, skySphereRadius);
 }
 
-SkyRender::SkyRender(ComPtr<ID3D11Device> device, 
-	ComPtr<ID3D11DeviceContext> deviceContext, 
-	const std::vector<std::wstring>& cubemapFilenames, 
+SkyRender::SkyRender(ComPtr<ID3D11Device> device,
+	ComPtr<ID3D11DeviceContext> deviceContext,
+	const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius,
 	bool generateMips)
 {
@@ -51,7 +51,8 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 		deviceContext.Get(),
 		cubemapFilenames,
 		nullptr,
-		mTextureCubeSRV.GetAddressOf()
+		mTextureCubeSRV.GetAddressOf(),
+		generateMips
 	));
 
 	InitResource(device, skySphereRadius);

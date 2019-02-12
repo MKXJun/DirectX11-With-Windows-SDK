@@ -1,4 +1,4 @@
-ï»¿#include "Model.h"
+#include "Model.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -24,7 +24,7 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 
 	modelParts.resize(model.objParts.size());
 
-	// åˆ›å»ºåŒ…å›´ç›’
+	// ´´½¨°üÎ§ºĞ
 	BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&model.vMin), XMLoadFloat3(&model.vMax));
 
 	for (size_t i = 0; i < model.objParts.size(); ++i)
@@ -32,20 +32,20 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 		auto part = model.objParts[i];
 
 		modelParts[i].vertexCount = (UINT)part.vertices.size();
-		// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
+		// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
 		D3D11_BUFFER_DESC vbd;
 		ZeroMemory(&vbd, sizeof(vbd));
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
 		vbd.ByteWidth = modelParts[i].vertexCount * (UINT)sizeof(VertexPosNormalTex);
 		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vbd.CPUAccessFlags = 0;
-		// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
+		// ĞÂ½¨¶¥µã»º³åÇø
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = part.vertices.data();
 		HR(device->CreateBuffer(&vbd, &InitData, modelParts[i].vertexBuffer.ReleaseAndGetAddressOf()));
 
-		// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
+		// ÉèÖÃË÷Òı»º³åÇøÃèÊö
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -66,11 +66,11 @@ void Model::SetModel(ComPtr<ID3D11Device> device, const ObjReader & model)
 			ibd.ByteWidth = modelParts[i].indexCount * (UINT)sizeof(WORD);
 			InitData.pSysMem = part.indices16.data();
 		}
-		// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
+		// ĞÂ½¨Ë÷Òı»º³åÇø
 		HR(device->CreateBuffer(&ibd, &InitData, modelParts[i].indexBuffer.ReleaseAndGetAddressOf()));
 
 		
-		// åˆ›å»ºæ¼«å°„å…‰å¯¹åº”çº¹ç†
+		// ´´½¨ÂşÉä¹â¶ÔÓ¦ÎÆÀí
 		auto& strD = part.texStrDiffuse;
 		if (strD.size() > 4)
 		{
@@ -106,20 +106,20 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT ver
 	modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	modelParts[0].material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
+	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = vertexSize * vertexCount;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
+	// ĞÂ½¨¶¥µã»º³åÇø
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
 	HR(device->CreateBuffer(&vbd, &InitData, modelParts[0].vertexBuffer.ReleaseAndGetAddressOf()));
 
-	// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
+	// ÉèÖÃË÷Òı»º³åÇøÃèÊö
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -133,7 +133,7 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT ver
 	}
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
-	// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
+	// ĞÂ½¨Ë÷Òı»º³åÇø
 	InitData.pSysMem = indices;
 	HR(device->CreateBuffer(&ibd, &InitData, modelParts[0].indexBuffer.ReleaseAndGetAddressOf()));
 

@@ -1,16 +1,16 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
  
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 				   PSTR cmdLine, int showCmd)
 {
-	// è¿™äº›å‚æ•°ä¸ä½¿ç”¨
+	// ÕâĞ©²ÎÊı²»Ê¹ÓÃ
 	UNREFERENCED_PARAMETER(prevInstance);
 	UNREFERENCED_PARAMETER(cmdLine);
 	UNREFERENCED_PARAMETER(showCmd);
 
-	// å…è®¸åœ¨Debugç‰ˆæœ¬è¿›è¡Œè¿è¡Œæ—¶å†…å­˜åˆ†é…å’Œæ³„æ¼æ£€æµ‹
+	// ÔÊĞíÔÚDebug°æ±¾½øĞĞÔËĞĞÊ±ÄÚ´æ·ÖÅäºÍĞ¹Â©¼ì²â
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif

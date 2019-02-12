@@ -1,4 +1,4 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -18,7 +18,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
+	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
 	RenderStates::InitAll(md3dDevice);
 
 	if (!mBasicEffect.InitAll(md3dDevice))
@@ -27,7 +27,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
+	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
 	mMouse->SetWindow(mhMainWnd);
 	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
@@ -38,13 +38,13 @@ void GameApp::OnResize()
 {
 	assert(md2dFactory);
 	assert(mdwriteFactory);
-	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
+	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
 	mColorBrush.Reset();
 	md2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
+	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
 	ComPtr<IDXGISurface> surface;
 	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -55,29 +55,29 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugString(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
-			"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
-			"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+		OutputDebugString(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
+			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
+			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
 			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
+			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
+		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
 		HR(md2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(mdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			mTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
+		// ±¨¸æÒì³£ÎÊÌâ
 		assert(md2dRenderTarget);
 	}
 	
-	// æ‘„åƒæœºå˜æ›´æ˜¾ç¤º
+	// ÉãÏñ»ú±ä¸üÏÔÊ¾
 	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
@@ -89,7 +89,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
+	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
 	Mouse::State mouseState = mMouse->GetState();
 	Mouse::State lastMouseState = mMouseTracker.GetLastState();
 	mMouseTracker.Update(mouseState);
@@ -97,26 +97,26 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State keyState = mKeyboard->GetState();
 	mKeyboardTracker.Update(keyState);
 
-	// è·å–å­ç±»
+	// »ñÈ¡×ÓÀà
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(mCamera);
 	
 	// ******************
-	// ç¬¬ä¸‰äººç§°æ‘„åƒæœºçš„æ“ä½œ
+	// µÚÈıÈË³ÆÉãÏñ»úµÄ²Ù×÷
 	//
 
-	// ç»•ç‰©ä½“æ—‹è½¬
+	// ÈÆÎïÌåĞı×ª
 	cam3rd->RotateX(mouseState.y * dt * 1.25f);
 	cam3rd->RotateY(mouseState.x * dt * 1.25f);
 	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 	
-	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
+	// ¸üĞÂ¹Û²ì¾ØÕó
 	mCamera->UpdateViewMatrix();
 	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
 	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
-	// é‡ç½®æ»šè½®å€¼
+	// ÖØÖÃ¹öÂÖÖµ
 	mMouse->ResetScrollWheelValue();
 
-	// é€€å‡ºç¨‹åºï¼Œè¿™é‡Œåº”å‘çª—å£å‘é€é”€æ¯ä¿¡æ¯
+	// ÍË³ö³ÌĞò£¬ÕâÀïÓ¦Ïò´°¿Ú·¢ËÍÏú»ÙĞÅÏ¢
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
@@ -127,7 +127,7 @@ void GameApp::DrawScene()
 	assert(mSwapChain);
 
 	// ******************
-	// ç»˜åˆ¶Direct3Déƒ¨åˆ†
+	// »æÖÆDirect3D²¿·Ö
 	//
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -140,13 +140,13 @@ void GameApp::DrawScene()
 	
 
 	// ******************
-	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
+	// »æÖÆDirect2D²¿·Ö
 	//
 	if (md2dRenderTarget != nullptr)
 	{
 		md2dRenderTarget->BeginDraw();
-		std::wstring text = L"å½“å‰æ‘„åƒæœºæ¨¡å¼: ç¬¬ä¸‰äººç§°  Escé€€å‡º\n"
-			"é¼ æ ‡ç§»åŠ¨æ§åˆ¶è§†é‡ æ»šè½®æ§åˆ¶ç¬¬ä¸‰äººç§°è§‚å¯Ÿè·ç¦»\n";
+		std::wstring text = L"µ±Ç°ÉãÏñ»úÄ£Ê½: µÚÈıÈË³Æ  EscÍË³ö\n"
+			"Êó±êÒÆ¶¯¿ØÖÆÊÓÒ° ¹öÂÖ¿ØÖÆµÚÈıÈË³Æ¹Û²ì¾àÀë\n";
 		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 		HR(md2dRenderTarget->EndDraw());
@@ -160,25 +160,25 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	// ******************
-	// åˆå§‹åŒ–æ¸¸æˆå¯¹è±¡
+	// ³õÊ¼»¯ÓÎÏ·¶ÔÏó
 	//
 
-	// åˆå§‹åŒ–åœ°æ¿
+	// ³õÊ¼»¯µØ°å
 	mObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
 	mGround.SetModel(Model(md3dDevice, mObjReader));
 
-	// åˆå§‹åŒ–æˆ¿å±‹æ¨¡å‹
+	// ³õÊ¼»¯·¿ÎİÄ£ĞÍ
 	mObjReader.Read(L"Model\\house.mbo", L"Model\\house.obj");
 	mHouse.SetModel(Model(md3dDevice, mObjReader));
-	// è·å–æˆ¿å±‹åŒ…å›´ç›’
+	// »ñÈ¡·¿Îİ°üÎ§ºĞ
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 	BoundingBox houseBox = mHouse.GetLocalBoundingBox();
 	houseBox.Transform(houseBox, S);
-	// è®©æˆ¿å±‹åº•éƒ¨ç´§è´´åœ°é¢
+	// ÈÃ·¿Îİµ×²¿½ôÌùµØÃæ
 	mHouse.SetWorldMatrix(S * XMMatrixTranslation(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 1.0f), 0.0f));
 	
 	// ******************
-	// åˆå§‹åŒ–æ‘„åƒæœº
+	// ³õÊ¼»¯ÉãÏñ»ú
 	//
 
 	mCameraMode = CameraMode::ThirdPerson;
@@ -198,17 +198,17 @@ bool GameApp::InitResource()
 	mBasicEffect.SetEyePos(camera->GetPositionXM());
 	
 	// ******************
-	// åˆå§‹åŒ–ä¸ä¼šå˜åŒ–çš„å€¼
+	// ³õÊ¼»¯²»»á±ä»¯µÄÖµ
 	//
 
-	// ç¯å¢ƒå…‰
+	// »·¾³¹â
 	DirectionalLight dirLight;
 	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	mBasicEffect.SetDirLight(0, dirLight);
-	// ç¯å…‰
+	// µÆ¹â
 	PointLight pointLight;
 	pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
 	pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);

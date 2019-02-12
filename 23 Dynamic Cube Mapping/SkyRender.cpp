@@ -1,4 +1,4 @@
-ï»¿#include "SkyRender.h"
+#include "SkyRender.h"
 #include "Geometry.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
@@ -12,7 +12,7 @@ SkyRender::SkyRender(
 	float skySphereRadius,
 	bool generateMips)
 {
-	// å¤©ç©ºç›’çº¹ç†åŠ è½½
+	// Ìì¿ÕºĞÎÆÀí¼ÓÔØ
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
 	{
 		HR(CreateDDSTextureFromFile(
@@ -44,7 +44,7 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	float skySphereRadius,
 	bool generateMips)
 {
-	// å¤©ç©ºç›’çº¹ç†åŠ è½½
+	// Ìì¿ÕºĞÎÆÀí¼ÓÔØ
 
 	HR(CreateWICTexture2DCubeFromFile(
 		device.Get(),
@@ -81,7 +81,7 @@ void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 {
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 
-	// é¡¶ç‚¹ç¼“å†²åŒºåˆ›å»º
+	// ¶¥µã»º³åÇø´´½¨
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)sphere.vertexVec.size();
@@ -95,7 +95,7 @@ void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 
 	HR(device->CreateBuffer(&vbd, &InitData, &mVertexBuffer));
 
-	// ç´¢å¼•ç¼“å†²åŒºåˆ›å»º
+	// Ë÷Òı»º³åÇø´´½¨
 	mIndexCount = (UINT)sphere.indexVec.size();
 
 	D3D11_BUFFER_DESC ibd;
@@ -128,7 +128,7 @@ void DynamicSkyRender::Cache(ComPtr<ID3D11DeviceContext> deviceContext, BasicEff
 {
 	deviceContext->OMGetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.GetAddressOf());
 
-	// æ¸…æ‰ç»‘å®šåœ¨ç€è‰²å™¨çš„åŠ¨æ€å¤©ç©ºç›’ï¼Œéœ€è¦ç«‹å³ç”Ÿæ•ˆ
+	// Çåµô°ó¶¨ÔÚ×ÅÉ«Æ÷µÄ¶¯Ì¬Ìì¿ÕºĞ£¬ĞèÒªÁ¢¼´ÉúĞ§
 	effect.SetTextureCube(nullptr);
 	effect.Apply(deviceContext);
 }
@@ -154,22 +154,22 @@ void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, B
 		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// -Z
 	};
 	
-	// è®¾ç½®å¤©ç©ºç›’æ‘„åƒæœº
+	// ÉèÖÃÌì¿ÕºĞÉãÏñ»ú
 	mCamera.LookTo(XMLoadFloat3(&pos) , looks[face].v, ups[face].v);
 	mCamera.UpdateViewMatrix();
-	// è¿™é‡Œå°½å¯èƒ½æ•è·è¿‘è·ç¦»ç‰©ä½“
+	// ÕâÀï¾¡¿ÉÄÜ²¶»ñ½ü¾àÀëÎïÌå
 	mCamera.SetFrustum(XM_PIDIV2, 1.0f, nearZ, farZ);
 
-	// åº”ç”¨è§‚å¯ŸçŸ©é˜µã€æŠ•å½±çŸ©é˜µ
+	// Ó¦ÓÃ¹Û²ì¾ØÕó¡¢Í¶Ó°¾ØÕó
 	effect.SetViewMatrix(mCamera.GetViewXM());
 	effect.SetProjMatrix(mCamera.GetProjXM());
 
-	// æ¸…ç©ºç¼“å†²åŒº
+	// Çå¿Õ»º³åÇø
 	deviceContext->ClearRenderTargetView(mDynamicCubeMapRTVs[face].Get(), reinterpret_cast<const float*>(&Colors::Black));
 	deviceContext->ClearDepthStencilView(mDynamicCubeMapDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	// è®¾ç½®æ¸²æŸ“ç›®æ ‡å’Œæ·±åº¦æ¨¡æ¿è§†å›¾
+	// ÉèÖÃäÖÈ¾Ä¿±êºÍÉî¶ÈÄ£°åÊÓÍ¼
 	deviceContext->OMSetRenderTargets(1, mDynamicCubeMapRTVs[face].GetAddressOf(), mDynamicCubeMapDSV.Get());
-	// è®¾ç½®è§†å£
+	// ÉèÖÃÊÓ¿Ú
 	deviceContext->RSSetViewports(1, &mCamera.GetViewPort());
 }
 
@@ -177,19 +177,19 @@ void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, B
 
 void DynamicSkyRender::Restore(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const Camera & camera)
 {
-	// æ¢å¤é»˜è®¤è®¾å®š
+	// »Ö¸´Ä¬ÈÏÉè¶¨
 	deviceContext->RSSetViewports(1, &camera.GetViewPort());
 	deviceContext->OMSetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.Get());
 
-	// ç”ŸæˆåŠ¨æ€å¤©ç©ºç›’åå¿…é¡»è¦ç”Ÿæˆmipmapé“¾
+	// Éú³É¶¯Ì¬Ìì¿ÕºĞºó±ØĞëÒªÉú³ÉmipmapÁ´
 	deviceContext->GenerateMips(mDynamicCubeMapSRV.Get());
 
 	effect.SetViewMatrix(camera.GetViewXM());
 	effect.SetProjMatrix(camera.GetProjXM());
-	// æ¢å¤ç»‘å®šçš„åŠ¨æ€å¤©ç©ºç›’
+	// »Ö¸´°ó¶¨µÄ¶¯Ì¬Ìì¿ÕºĞ
 	effect.SetTextureCube(mDynamicCubeMapSRV);
 
-	// æ¸…ç©ºä¸´æ—¶ç¼“å­˜çš„æ¸²æŸ“ç›®æ ‡è§†å›¾å’Œæ·±åº¦æ¨¡æ¿è§†å›¾
+	// Çå¿ÕÁÙÊ±»º´æµÄäÖÈ¾Ä¿±êÊÓÍ¼ºÍÉî¶ÈÄ£°åÊÓÍ¼
 	mCacheDSV.Reset();
 	mCacheRTV.Reset();
 }
@@ -208,7 +208,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 {
 
 	// ******************
-	// 1. åˆ›å»ºçº¹ç†æ•°ç»„
+	// 1. ´´½¨ÎÆÀíÊı×é
 	//
 
 	ComPtr<ID3D11Texture2D> texCube;
@@ -226,21 +226,21 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
 	
-	// ç°åœ¨texCubeç”¨äºæ–°å»ºçº¹ç†
+	// ÏÖÔÚtexCubeÓÃÓÚĞÂ½¨ÎÆÀí
 	HR(device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf()));
 
 	// ******************
-	// 2. åˆ›å»ºæ¸²æŸ“ç›®æ ‡è§†å›¾
+	// 2. ´´½¨äÖÈ¾Ä¿±êÊÓÍ¼
 	//
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
 	rtvDesc.Format = texDesc.Format;
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 	rtvDesc.Texture2DArray.MipSlice = 0;
-	// ä¸€ä¸ªè§†å›¾åªå¯¹åº”ä¸€ä¸ªçº¹ç†æ•°ç»„å…ƒç´ 
+	// Ò»¸öÊÓÍ¼Ö»¶ÔÓ¦Ò»¸öÎÆÀíÊı×éÔªËØ
 	rtvDesc.Texture2DArray.ArraySize = 1;
 
-	// æ¯ä¸ªå…ƒç´ åˆ›å»ºä¸€ä¸ªæ¸²æŸ“ç›®æ ‡è§†å›¾
+	// Ã¿¸öÔªËØ´´½¨Ò»¸öäÖÈ¾Ä¿±êÊÓÍ¼
 	for (int i = 0; i < 6; ++i)
 	{
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
@@ -251,14 +251,14 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	}
 
 	// ******************
-	// 3. åˆ›å»ºç€è‰²å™¨ç›®æ ‡è§†å›¾
+	// 3. ´´½¨×ÅÉ«Æ÷Ä¿±êÊÓÍ¼
 	//
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	srvDesc.TextureCube.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = -1;	// ä½¿ç”¨æ‰€æœ‰çš„mipç­‰çº§
+	srvDesc.TextureCube.MipLevels = -1;	// Ê¹ÓÃËùÓĞµÄmipµÈ¼¶
 
 	HR(device->CreateShaderResourceView(
 		texCube.Get(),
@@ -266,7 +266,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 		mDynamicCubeMapSRV.GetAddressOf()));
 	
 	// ******************
-	// 4. åˆ›å»ºæ·±åº¦/æ¨¡æ¿ç¼“å†²åŒºä¸å¯¹åº”çš„è§†å›¾
+	// 4. ´´½¨Éî¶È/Ä£°å»º³åÇøÓë¶ÔÓ¦µÄÊÓÍ¼
 	//
 
 	texDesc.Width = dynamicCubeSize;
@@ -296,7 +296,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 		mDynamicCubeMapDSV.GetAddressOf()));
 
 	// ******************
-	// 5. åˆå§‹åŒ–è§†å£
+	// 5. ³õÊ¼»¯ÊÓ¿Ú
 	//
 
 	mCamera.SetViewPort(0.0f, 0.0f, static_cast<float>(dynamicCubeSize), static_cast<float>(dynamicCubeSize));

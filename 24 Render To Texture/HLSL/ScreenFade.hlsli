@@ -4,7 +4,7 @@ SamplerState gSam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
 {
-    float gFadeAmount;      // 棰滆壊绋嬪害鎺у埗(0.0f-1.0f)
+    float gFadeAmount;      // 颜色程度控制(0.0f-1.0f)
     float3 gPad;
 }
 

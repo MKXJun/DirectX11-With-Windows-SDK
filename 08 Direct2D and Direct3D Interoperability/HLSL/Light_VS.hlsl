@@ -1,6 +1,6 @@
 #include "Light.hlsli"
 
-// 椤剁偣鐫�鑹插櫒
+// 顶点着色器
 VertexOut VS(VertexIn vIn)
 {
     VertexOut vOut;
@@ -10,6 +10,6 @@ VertexOut VS(VertexIn vIn)
     vOut.PosH = mul(posW, viewProj);
     vOut.PosW = posW.xyz;
     vOut.NormalW = mul(vIn.NormalL, (float3x3) gWorldInvTranspose);
-    vOut.Color = vIn.Color; // 杩欓噷alpha閫氶亾鐨勫�奸粯璁や负1.0
+    vOut.Color = vIn.Color; // 这里alpha通道的值默认为1.0
     return vOut;
 }

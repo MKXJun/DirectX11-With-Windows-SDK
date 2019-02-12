@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -9,7 +9,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// æ‘„åƒæœºæ¨¡å¼
+	// ÉãÏñ»úÄ£Ê½
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -26,22 +26,22 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
-	ComPtr<IDWriteFont> mFont;								// å­—ä½“
-	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
+	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
+	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
 
-	GameObject mWoodCrate;									// æœ¨ç›’
-	GameObject mFloor;										// åœ°æ¿
-	std::vector<GameObject> mWalls;							// å¢™å£
-	GameObject mMirror;										// é•œé¢
+	GameObject mWoodCrate;									// Ä¾ºĞ
+	GameObject mFloor;										// µØ°å
+	std::vector<GameObject> mWalls;							// Ç½±Ú
+	GameObject mMirror;										// ¾µÃæ
 
-	Material mShadowMat;									// é˜´å½±æè´¨
-	Material mWoodCrateMat;									// æœ¨ç›’æè´¨
+	Material mShadowMat;									// ÒõÓ°²ÄÖÊ
+	Material mWoodCrateMat;									// Ä¾ºĞ²ÄÖÊ
 
-	BasicEffect mBasicEffect;								// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	BasicEffect mBasicEffect;								// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
 
-	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
-	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
+	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
+	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
 
 };
 

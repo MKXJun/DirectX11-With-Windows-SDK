@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -30,10 +30,10 @@ private:
 
 
 private:
-	ComPtr<ID3D11InputLayout> mVertexLayout;	// é¡¶ç‚¹è¾“å…¥å¸ƒå±€
-	ComPtr<ID3D11Buffer> mVertexBuffer;			// é¡¶ç‚¹ç¼“å†²åŒº
-	ComPtr<ID3D11VertexShader> mVertexShader;	// é¡¶ç‚¹ç€è‰²å™¨
-	ComPtr<ID3D11PixelShader> mPixelShader;		// åƒç´ ç€è‰²å™¨
+	ComPtr<ID3D11InputLayout> mVertexLayout;	// ¶¥µãÊäÈë²¼¾Ö
+	ComPtr<ID3D11Buffer> mVertexBuffer;			// ¶¥µã»º³åÇø
+	ComPtr<ID3D11VertexShader> mVertexShader;	// ¶¥µã×ÅÉ«Æ÷
+	ComPtr<ID3D11PixelShader> mPixelShader;		// ÏñËØ×ÅÉ«Æ÷
 };
 
 

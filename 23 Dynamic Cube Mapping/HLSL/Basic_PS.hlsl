@@ -1,25 +1,25 @@
 #include "Basic.hlsli"
 
-// åƒç´ ç€è‰²å™¨(3D)
+// ÏñËØ×ÅÉ«Æ÷(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
-    // è‹¥ä¸ä½¿ç”¨çº¹ç†ï¼Œåˆ™ä½¿ç”¨é»˜è®¤ç™½è‰²
+    // Èô²»Ê¹ÓÃÎÆÀí£¬ÔòÊ¹ÓÃÄ¬ÈÏ°×É«
     float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
     if (gTextureUsed)
     {
         texColor = gDiffuseMap.Sample(gSam, pIn.Tex);
-        // æå‰è¿›è¡Œè£å‰ªï¼Œå¯¹ä¸ç¬¦åˆè¦æ±‚çš„åƒç´ å¯ä»¥é¿å…åç»­è¿ç®—
+        // ÌáÇ°½øĞĞ²Ã¼ô£¬¶Ô²»·ûºÏÒªÇóµÄÏñËØ¿ÉÒÔ±ÜÃâºóĞøÔËËã
         clip(texColor.a - 0.1f);
     }
     
-    // æ ‡å‡†åŒ–æ³•å‘é‡
+    // ±ê×¼»¯·¨ÏòÁ¿
     pIn.NormalW = normalize(pIn.NormalW);
 
-    // é¡¶ç‚¹æŒ‡å‘çœ¼ç›çš„å‘é‡
+    // ¶¥µãÖ¸ÏòÑÛ¾¦µÄÏòÁ¿
     float3 toEyeW = normalize(gEyePosW - pIn.PosW);
 
-    // åˆå§‹åŒ–ä¸º0 
+    // ³õÊ¼»¯Îª0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -56,7 +56,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     }
   
     float4 litColor = texColor * (ambient + diffuse) + spec;
-    // åå°„
+    // ·´Éä
     if (gReflectionEnabled)
     {
         float3 incident = -toEyeW;
@@ -65,7 +65,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 
         litColor += gMaterial.Reflect * reflectionColor;
     }
-    // æŠ˜å°„
+    // ÕÛÉä
     if (gRefractionEnabled)
     {
         float3 incident = -toEyeW;

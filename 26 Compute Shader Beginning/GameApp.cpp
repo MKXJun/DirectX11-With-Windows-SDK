@@ -1,4 +1,4 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -79,7 +79,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\flarealpha.dds",
 		nullptr, mTextureInputB.GetAddressOf()));
 	
-	// åˆ›å»ºç”¨äºUAVçš„çº¹ç†ï¼Œå¿…é¡»æ˜¯éå‹ç¼©æ ¼å¼
+	// ´´½¨ÓÃÓÚUAVµÄÎÆÀí£¬±ØĞëÊÇ·ÇÑ¹Ëõ¸ñÊ½
 	D3D11_TEXTURE2D_DESC texDesc;
 	texDesc.Width = 512;
 	texDesc.Height = 512;
@@ -99,7 +99,7 @@ bool GameApp::InitResource()
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	HR(md3dDevice->CreateTexture2D(&texDesc, nullptr, mTextureOutputB.GetAddressOf()));
 
-	// åˆ›å»ºæ— åºè®¿é—®è§†å›¾
+	// ´´½¨ÎŞĞò·ÃÎÊÊÓÍ¼
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 	uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
@@ -111,7 +111,7 @@ bool GameApp::InitResource()
 	HR(md3dDevice->CreateUnorderedAccessView(mTextureOutputB.Get(), &uavDesc,
 		mTextureOutputB_UAV.GetAddressOf()));
 
-	// åˆ›å»ºè®¡ç®—ç€è‰²å™¨
+	// ´´½¨¼ÆËã×ÅÉ«Æ÷
 	ComPtr<ID3DBlob> blob;
 	HR(CreateShaderFromFile(L"HLSL\\TextureMul_R32G32B32A32_CS.cso",
 		L"HLSL\\TextureMul_R32G32B32A32_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf()));
@@ -134,11 +134,11 @@ bool GameApp::InitResource()
 	HR(md3dDevice->CreateBuffer(&inputDesc, nullptr, mBuffer.GetAddressOf()));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;		// å­—èŠ‚åœ°å€ç¼“å†²åŒºå¿…é¡»ä½¿ç”¨è¯¥ç±»å‹
+	srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;		// ×Ö½ÚµØÖ·»º³åÇø±ØĞëÊ¹ÓÃ¸ÃÀàĞÍ
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 	srvDesc.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
-	srvDesc.BufferEx.FirstElement = 0;		// èµ·å§‹å­—èŠ‚åç§»å€¼
-	srvDesc.BufferEx.NumElements = numElements;		// å­—èŠ‚æ•°
+	srvDesc.BufferEx.FirstElement = 0;		// ÆğÊ¼×Ö½ÚÆ«ÒÆÖµ
+	srvDesc.BufferEx.NumElements = numElements;		// ×Ö½ÚÊı
 
 	ComPtr<ID3D11ShaderResourceView> mBufferSRV;
 	HR(md3dDevice->CreateShaderResourceView(mBuffer.Get(), &srvDesc, mBufferSRV.GetAddressOf()));

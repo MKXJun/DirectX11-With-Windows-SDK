@@ -30,8 +30,8 @@ struct VertexIn
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
-    float3 PosW : POSITION;     // åœ¨ä¸–ç•Œä¸­çš„ä½ç½®
-    float3 NormalW : NORMAL; // æ³•å‘é‡åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
+    float3 PosW : POSITION;     // ÔÚÊÀ½çÖĞµÄÎ»ÖÃ
+    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖĞµÄ·½Ïò
     float4 Color : COLOR;
 };
 

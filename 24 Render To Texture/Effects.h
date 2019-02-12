@@ -1,8 +1,8 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // Effects.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ç®€æ˜“ç‰¹æ•ˆç®¡ç†æ¡†æ¶
+// ¼òÒ×ÌØĞ§¹ÜÀí¿ò¼Ü
 // Simple effect management framework.
 //***************************************************************************************
 
@@ -17,23 +17,23 @@
 class IEffect
 {
 public:
-	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
+	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	IEffect() = default;
 
-	// ä¸æ”¯æŒå¤åˆ¶æ„é€ 
+	// ²»Ö§³Ö¸´ÖÆ¹¹Ôì
 	IEffect(const IEffect&) = delete;
 	IEffect& operator=(const IEffect&) = delete;
 
-	// å…è®¸è½¬ç§»
+	// ÔÊĞí×ªÒÆ
 	IEffect(IEffect&& moveFrom) = default;
 	IEffect& operator=(IEffect&& moveFrom) = default;
 
 	virtual ~IEffect() = default;
 
-	// æ›´æ–°å¹¶ç»‘å®šå¸¸é‡ç¼“å†²åŒº
+	// ¸üĞÂ²¢°ó¶¨³£Á¿»º³åÇø
 	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
 };
 
@@ -50,24 +50,24 @@ public:
 	BasicEffect(BasicEffect&& moveFrom);
 	BasicEffect& operator=(BasicEffect&& moveFrom);
 
-	// è·å–å•ä¾‹
+	// »ñÈ¡µ¥Àı
 	static BasicEffect& Get();
 
 	
 
-	// åˆå§‹åŒ–Basic.hlsliæ‰€éœ€èµ„æºå¹¶åˆå§‹åŒ–æ¸²æŸ“çŠ¶æ€
+	// ³õÊ¼»¯Basic.hlsliËùĞè×ÊÔ´²¢³õÊ¼»¯äÖÈ¾×´Ì¬
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 
 	// 
-	// æ¸²æŸ“æ¨¡å¼çš„å˜æ›´
+	// äÖÈ¾Ä£Ê½µÄ±ä¸ü
 	//
 
-	// é»˜è®¤çŠ¶æ€æ¥ç»˜åˆ¶
+	// Ä¬ÈÏ×´Ì¬À´»æÖÆ
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type);
 
 	//
-	// çŸ©é˜µè®¾ç½®
+	// ¾ØÕóÉèÖÃ
 	//
 
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W);
@@ -75,10 +75,10 @@ public:
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
 
 	//
-	// å…‰ç…§ã€æè´¨å’Œçº¹ç†ç›¸å…³è®¾ç½®
+	// ¹âÕÕ¡¢²ÄÖÊºÍÎÆÀíÏà¹ØÉèÖÃ
 	//
 
-	// å„ç§ç±»å‹ç¯å…‰å…è®¸çš„æœ€å¤§æ•°ç›®
+	// ¸÷ÖÖÀàĞÍµÆ¹âÔÊĞíµÄ×î´óÊıÄ¿
 	static const int maxLights = 5;
 
 	void SetDirLight(size_t pos, const DirectionalLight& dirLight);
@@ -95,7 +95,7 @@ public:
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
 	
 	//
-	// é›¾æ•ˆè®¾ç½®
+	// ÎíĞ§ÉèÖÃ
 	//
 
 	void SetFogState(bool isOn);
@@ -103,7 +103,7 @@ public:
 	void SetFogColor(DirectX::XMVECTOR fogColor);
 	void SetFogRange(float fogRange);
 
-	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºå’Œçº¹ç†èµ„æºçš„å˜æ›´
+	// Ó¦ÓÃ³£Á¿»º³åÇøºÍÎÆÀí×ÊÔ´µÄ±ä¸ü
 	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
 	
 private:
@@ -120,39 +120,39 @@ public:
 	ScreenFadeEffect(ScreenFadeEffect&& moveFrom);
 	ScreenFadeEffect& operator=(ScreenFadeEffect&& moveFrom);
 
-	// è·å–å•ä¾‹
+	// »ñÈ¡µ¥Àı
 	static ScreenFadeEffect& Get();
 
-	// åˆå§‹åŒ–ScreenFade.hlsliæ‰€éœ€èµ„æºå¹¶åˆå§‹åŒ–æ¸²æŸ“çŠ¶æ€
+	// ³õÊ¼»¯ScreenFade.hlsliËùĞè×ÊÔ´²¢³õÊ¼»¯äÖÈ¾×´Ì¬
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 	// 
-	// æ¸²æŸ“æ¨¡å¼çš„å˜æ›´
+	// äÖÈ¾Ä£Ê½µÄ±ä¸ü
 	//
 
-	// é»˜è®¤çŠ¶æ€æ¥ç»˜åˆ¶
+	// Ä¬ÈÏ×´Ì¬À´»æÖÆ
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
 
 	//
-	// çŸ©é˜µè®¾ç½®
+	// ¾ØÕóÉèÖÃ
 	//
 
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P);
 	void XM_CALLCONV SetWorldViewProjMatrix(DirectX::FXMMATRIX WVP);
 
 	//
-	// æ·¡å…¥æ·¡å‡ºè®¾ç½®
+	// µ­Èëµ­³öÉèÖÃ
 	//
 
 	void SetFadeAmount(float fadeAmount);
 
 	//
-	// çº¹ç†è®¾ç½®
+	// ÎÆÀíÉèÖÃ
 	//
 
 	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
 
-	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºå’Œçº¹ç†èµ„æºçš„å˜æ›´
+	// Ó¦ÓÃ³£Á¿»º³åÇøºÍÎÆÀí×ÊÔ´µÄ±ä¸ü
 	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
 
 private:
@@ -169,21 +169,21 @@ public:
 	MinimapEffect(MinimapEffect&& moveFrom);
 	MinimapEffect& operator=(MinimapEffect&& moveFrom);
 
-	// è·å–å•ä¾‹
+	// »ñÈ¡µ¥Àı
 	static MinimapEffect& Get();
 
-	// åˆå§‹åŒ–Minimap.hlsliæ‰€éœ€èµ„æºå¹¶åˆå§‹åŒ–æ¸²æŸ“çŠ¶æ€
+	// ³õÊ¼»¯Minimap.hlsliËùĞè×ÊÔ´²¢³õÊ¼»¯äÖÈ¾×´Ì¬
 	bool InitAll(ComPtr<ID3D11Device> device);
 
 	// 
-	// æ¸²æŸ“æ¨¡å¼çš„å˜æ›´
+	// äÖÈ¾Ä£Ê½µÄ±ä¸ü
 	//
 
-	// é»˜è®¤çŠ¶æ€æ¥ç»˜åˆ¶
+	// Ä¬ÈÏ×´Ì¬À´»æÖÆ
 	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
 
 	//
-	// çŠ¶æ€è®¾ç½®
+	// ×´Ì¬ÉèÖÃ
 	//
 
 	void SetFogState(bool isOn);
@@ -193,13 +193,13 @@ public:
 	void XM_CALLCONV SetInvisibleColor(DirectX::FXMVECTOR color);
 	
 	//
-	// çº¹ç†è®¾ç½®
+	// ÎÆÀíÉèÖÃ
 	//
 
 	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
 
 
-	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºå’Œçº¹ç†èµ„æºçš„å˜æ›´
+	// Ó¦ÓÃ³£Á¿»º³åÇøºÍÎÆÀí×ÊÔ´µÄ±ä¸ü
 	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
 
 private:

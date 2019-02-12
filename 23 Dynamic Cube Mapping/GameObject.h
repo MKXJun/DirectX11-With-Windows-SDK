@@ -1,8 +1,8 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // GameObject.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ç®€æ˜“æ¸¸æˆå¯¹è±¡
+// ¼òÒ×ÓÎÏ·¶ÔÏó
 // Simple game object.
 //***************************************************************************************
 
@@ -23,11 +23,11 @@ public:
 
 	GameObject();
 
-	// è·å–ä½ç½®
+	// »ñÈ¡Î»ÖÃ
 	DirectX::XMFLOAT3 GetPosition() const;
 
 	//
-	// è·å–åŒ…å›´ç›’
+	// »ñÈ¡°üÎ§ºĞ
 	//
 
 	DirectX::BoundingBox GetLocalBoundingBox() const;
@@ -35,44 +35,44 @@ public:
 	DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
 
 	//
-	// è®¾ç½®å®ä¾‹ç¼“å†²åŒº
+	// ÉèÖÃÊµÀı»º³åÇø
 	//
 
-	// è·å–ç¼“å†²åŒºå¯å®¹çº³å®ä¾‹çš„æ•°ç›®
+	// »ñÈ¡»º³åÇø¿ÉÈİÄÉÊµÀıµÄÊıÄ¿
 	size_t GetCapacity() const;
-	// é‡æ–°è®¾ç½®å®ä¾‹ç¼“å†²åŒºå¯å®¹çº³å®ä¾‹çš„æ•°ç›®
+	// ÖØĞÂÉèÖÃÊµÀı»º³åÇø¿ÉÈİÄÉÊµÀıµÄÊıÄ¿
 	void ResizeBuffer(ComPtr<ID3D11Device> device, size_t count);
-	// è·å–å®ä¾‹ç¼“å†²åŒº
+	// »ñÈ¡ÊµÀı»º³åÇø
 
 	//
-	// è®¾ç½®æ¨¡å‹
+	// ÉèÖÃÄ£ĞÍ
 	//
 
 	void SetModel(Model&& model);
 	void SetModel(const Model& model);
 
 	//
-	// è®¾ç½®çŸ©é˜µ
+	// ÉèÖÃ¾ØÕó
 	//
 
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 
 	//
-	// ç»˜åˆ¶
+	// »æÖÆ
 	//
 	
-	// ç»˜åˆ¶å¯¹è±¡
+	// »æÖÆ¶ÔÏó
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
-	// ç»˜åˆ¶å®ä¾‹
+	// »æÖÆÊµÀı
 	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
 
 private:
-	Model mModel;												// æ¨¡å‹
-	DirectX::XMFLOAT4X4 mWorldMatrix;							// ä¸–ç•ŒçŸ©é˜µ
+	Model mModel;												// Ä£ĞÍ
+	DirectX::XMFLOAT4X4 mWorldMatrix;							// ÊÀ½ç¾ØÕó
 
-	ComPtr<ID3D11Buffer> mInstancedBuffer;						// å®ä¾‹ç¼“å†²åŒº
-	size_t mCapacity;											// ç¼“å†²åŒºå®¹é‡
+	ComPtr<ID3D11Buffer> mInstancedBuffer;						// ÊµÀı»º³åÇø
+	size_t mCapacity;											// »º³åÇøÈİÁ¿
 };
 
 

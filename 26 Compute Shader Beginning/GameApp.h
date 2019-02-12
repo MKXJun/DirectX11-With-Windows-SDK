@@ -1,8 +1,8 @@
-Ôªø#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
-// ÁºñÁ®ãÊçïËé∑Â∏ß
+// ±‡≥Ã≤∂ªÒ÷°
 //#if defined(DEBUG) | defined(_DEBUG)
 //#include <DXGItype.h>  
 //#include <dxgi1_2.h>  

@@ -1,4 +1,4 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -18,7 +18,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
+	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
 	RenderStates::InitAll(md3dDevice);
 
 	if (!mBasicEffect.InitAll(md3dDevice))
@@ -30,7 +30,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
+	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
 	mMouse->SetWindow(mhMainWnd);
 	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
@@ -41,13 +41,13 @@ void GameApp::OnResize()
 {
 	assert(md2dFactory);
 	assert(mdwriteFactory);
-	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
+	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
 	mColorBrush.Reset();
 	md2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
+	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
 	ComPtr<IDXGISurface> surface;
 	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -58,29 +58,29 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugString(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
-			"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
-			"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+		OutputDebugString(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
+			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
+			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
 			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
+			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
+		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
 		HR(md2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(mdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			mTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
+		// ±¨¸æÒì³£ÎÊÌâ
 		assert(md2dRenderTarget);
 	}
 
-	// æ‘„åƒæœºå˜æ›´æ˜¾ç¤º
+	// ÉãÏñ»ú±ä¸üÏÔÊ¾
 	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
@@ -92,7 +92,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
+	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
 	Mouse::State mouseState = mMouse->GetState();
 	Mouse::State lastMouseState = mMouseTracker.GetLastState();
 	mMouseTracker.Update(mouseState);
@@ -103,10 +103,10 @@ void GameApp::UpdateScene(float dt)
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
 
 	// ********************
-	// è‡ªç”±æ‘„åƒæœºçš„æ“ä½œ
+	// ×ÔÓÉÉãÏñ»úµÄ²Ù×÷
 	//
 
-	// æ–¹å‘ç§»åŠ¨
+	// ·½ÏòÒÆ¶¯
 	if (keyState.IsKeyDown(Keyboard::W))
 		cam1st->MoveForward(dt * 3.0f);
 	if (keyState.IsKeyDown(Keyboard::S))
@@ -116,19 +116,19 @@ void GameApp::UpdateScene(float dt)
 	if (keyState.IsKeyDown(Keyboard::D))
 		cam1st->Strafe(dt * 3.0f);
 
-	// è§†é‡æ—‹è½¬ï¼Œé˜²æ­¢å¼€å§‹çš„å·®å€¼è¿‡å¤§å¯¼è‡´çš„çªç„¶æ—‹è½¬
+	// ÊÓÒ°Ğı×ª£¬·ÀÖ¹¿ªÊ¼µÄ²îÖµ¹ı´óµ¼ÖÂµÄÍ»È»Ğı×ª
 	cam1st->Pitch(mouseState.y * dt * 1.25f);
 	cam1st->RotateY(mouseState.x * dt * 1.25f);
 
-	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
+	// ¸üĞÂ¹Û²ì¾ØÕó
 	mCamera->UpdateViewMatrix();
 	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
 	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 
-	// é‡ç½®æ»šè½®å€¼
+	// ÖØÖÃ¹öÂÖÖµ
 	mMouse->ResetScrollWheelValue();
 
-	// é€‰æ‹©å¤©ç©ºç›’
+	// Ñ¡ÔñÌì¿ÕºĞ
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
 		mSkyBoxMode = SkyBoxMode::Daylight;
@@ -145,7 +145,7 @@ void GameApp::UpdateScene(float dt)
 		mBasicEffect.SetTextureCube(mDesert->GetTextureCube());
 	}
 		
-	// é€€å‡ºç¨‹åºï¼Œè¿™é‡Œåº”å‘çª—å£å‘é€é”€æ¯ä¿¡æ¯
+	// ÍË³ö³ÌĞò£¬ÕâÀïÓ¦Ïò´°¿Ú·¢ËÍÏú»ÙĞÅÏ¢
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
@@ -156,12 +156,12 @@ void GameApp::DrawScene()
 	assert(mSwapChain);
 
 	// ******************
-	// ç»˜åˆ¶Direct3Déƒ¨åˆ†
+	// »æÖÆDirect3D²¿·Ö
 	//
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// ç»˜åˆ¶æ¨¡å‹
+	// »æÖÆÄ£ĞÍ
 	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
 	mBasicEffect.SetReflectionEnabled(true);
 	mBasicEffect.SetTextureUsed(true);
@@ -172,7 +172,7 @@ void GameApp::DrawScene()
 	mCylinder.Draw(md3dImmediateContext, mBasicEffect);
 
 
-	// ç»˜åˆ¶å¤©ç©ºç›’
+	// »æÖÆÌì¿ÕºĞ
 	mSkyEffect.SetRenderDefault(md3dImmediateContext);
 	switch (mSkyBoxMode)
 	{
@@ -184,21 +184,21 @@ void GameApp::DrawScene()
 
 
 	// ******************
-	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
+	// »æÖÆDirect2D²¿·Ö
 	//
 	if (md2dRenderTarget != nullptr)
 	{
 		md2dRenderTarget->BeginDraw();
-		std::wstring text = L"å½“å‰æ‘„åƒæœºæ¨¡å¼: è‡ªç”±è§†è§’  Escé€€å‡º\n"
-			"é¼ æ ‡ç§»åŠ¨æ§åˆ¶è§†é‡ W/S/A/Dç§»åŠ¨\n"
-			"åˆ‡æ¢å¤©ç©ºç›’: 1-ç™½å¤© 2-æ—¥è½ 3-æ²™æ¼ \n"
-			"å½“å‰å¤©ç©ºç›’: ";
+		std::wstring text = L"µ±Ç°ÉãÏñ»úÄ£Ê½: ×ÔÓÉÊÓ½Ç  EscÍË³ö\n"
+			"Êó±êÒÆ¶¯¿ØÖÆÊÓÒ° W/S/A/DÒÆ¶¯\n"
+			"ÇĞ»»Ìì¿ÕºĞ: 1-°×Ìì 2-ÈÕÂä 3-É³Ä®\n"
+			"µ±Ç°Ìì¿ÕºĞ: ";
 
 		switch (mSkyBoxMode)
 		{
-		case SkyBoxMode::Daylight: text += L"ç™½å¤©"; break;
-		case SkyBoxMode::Sunset: text += L"æ—¥è½"; break;
-		case SkyBoxMode::Desert: text += L"æ²™æ¼ "; break;
+		case SkyBoxMode::Daylight: text += L"°×Ìì"; break;
+		case SkyBoxMode::Sunset: text += L"ÈÕÂä"; break;
+		case SkyBoxMode::Desert: text += L"É³Ä®"; break;
 		}
 
 		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
@@ -214,7 +214,7 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	// ******************
-	// åˆå§‹åŒ–å¤©ç©ºç›’ç›¸å…³
+	// ³õÊ¼»¯Ìì¿ÕºĞÏà¹Ø
 
 
 	mDaylight = std::make_unique<SkyRender>(
@@ -238,11 +238,11 @@ bool GameApp::InitResource()
 	mSkyBoxMode = SkyBoxMode::Daylight;
 	mBasicEffect.SetTextureCube(mDaylight->GetTextureCube());
 	// ******************
-	// åˆå§‹åŒ–æ¸¸æˆå¯¹è±¡
+	// ³õÊ¼»¯ÓÎÏ·¶ÔÏó
 	//
 	
 	Model model;
-	// çƒä½“
+	// ÇòÌå
 	model.SetMesh(md3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -253,7 +253,7 @@ bool GameApp::InitResource()
 		nullptr, 
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	mSphere.SetModel(std::move(model));
-	// åœ°é¢
+	// µØÃæ
 	model.SetMesh(md3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -265,7 +265,7 @@ bool GameApp::InitResource()
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	mGround.SetModel(std::move(model));
-	// æŸ±ä½“
+	// ÖùÌå
 	model.SetMesh(md3dDevice,
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -280,7 +280,7 @@ bool GameApp::InitResource()
 	mCylinder.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.99f, 0.0f));
 
 	// ******************
-	// åˆå§‹åŒ–æ‘„åƒæœº
+	// ³õÊ¼»¯ÉãÏñ»ú
 	//
 	mCameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
@@ -291,17 +291,17 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
 		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	// åˆå§‹åŒ–å¹¶æ›´æ–°è§‚å¯ŸçŸ©é˜µã€æŠ•å½±çŸ©é˜µ(æ‘„åƒæœºå°†è¢«å›ºå®š)
+	// ³õÊ¼»¯²¢¸üĞÂ¹Û²ì¾ØÕó¡¢Í¶Ó°¾ØÕó(ÉãÏñ»ú½«±»¹Ì¶¨)
 	camera->UpdateViewMatrix();
 	mBasicEffect.SetViewMatrix(camera->GetViewXM());
 	mBasicEffect.SetProjMatrix(camera->GetProjXM());
 
 
 	// ******************
-	// åˆå§‹åŒ–ä¸ä¼šå˜åŒ–çš„å€¼
+	// ³õÊ¼»¯²»»á±ä»¯µÄÖµ
 	//
 
-	// æ–¹å‘å…‰
+	// ·½Ïò¹â
 	DirectionalLight dirLight[4];
 	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 	dirLight[0].Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);

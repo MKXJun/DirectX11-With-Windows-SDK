@@ -1,6 +1,6 @@
-ï»¿#include "Effects.h"
+#include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
+#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -8,7 +8,7 @@ using namespace std::experimental;
 
 
 //
-// MinimapEffect::Impl éœ€è¦å…ˆäºMinimapEffectçš„å®šä¹‰
+// MinimapEffect::Impl ĞèÒªÏÈÓÚMinimapEffectµÄ¶¨Òå
 //
 
 class MinimapEffect::Impl : public AlignedType<MinimapEffect::Impl>
@@ -16,7 +16,7 @@ class MinimapEffect::Impl : public AlignedType<MinimapEffect::Impl>
 public:
 
 	//
-	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
+	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
 	//
 
 	struct CBChangesEveryFrame
@@ -35,24 +35,24 @@ public:
 
 
 public:
-	// å¿…é¡»æ˜¾å¼æŒ‡å®š
+	// ±ØĞëÏÔÊ½Ö¸¶¨
 	Impl() = default;
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// æ¯å¸§ä¿®æ”¹çš„å¸¸é‡ç¼“å†²åŒº
-	CBufferObject<1, CBDrawingStates>	cbStates;		// æ¯æ¬¡ç»˜åˆ¶çŠ¶æ€æ”¹å˜çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// Ã¿Ö¡ĞŞ¸ÄµÄ³£Á¿»º³åÇø
+	CBufferObject<1, CBDrawingStates>	cbStates;		// Ã¿´Î»æÖÆ×´Ì¬¸Ä±äµÄ³£Á¿»º³åÇø
 
 
-	BOOL isDirty;										// æ˜¯å¦æœ‰å€¼å˜æ›´
-	std::vector<CBufferBase*> cBufferPtrs;				// ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
+	BOOL isDirty;										// ÊÇ·ñÓĞÖµ±ä¸ü
+	std::vector<CBufferBase*> cBufferPtrs;				// Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
 
 	ComPtr<ID3D11VertexShader> minimapVS;
 	ComPtr<ID3D11PixelShader> minimapPS;
 
 	ComPtr<ID3D11InputLayout> vertexPosTexLayout;
 
-	ComPtr<ID3D11ShaderResourceView> texture;			// ç”¨äºæ·¡å…¥æ·¡å‡ºçš„çº¹ç†
+	ComPtr<ID3D11ShaderResourceView> texture;			// ÓÃÓÚµ­Èëµ­³öµÄÎÆÀí
 };
 
 
@@ -63,7 +63,7 @@ public:
 
 namespace
 {
-	// MinimapEffectå•ä¾‹
+	// MinimapEffectµ¥Àı
 	static MinimapEffect * pInstance = nullptr;
 }
 
@@ -111,17 +111,17 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	ComPtr<ID3DBlob> blob;
 
 	// ******************
-	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
+	// ´´½¨¶¥µã×ÅÉ«Æ÷
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_VS.cso", L"HLSL\\Minimap_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->minimapVS.GetAddressOf()));
-	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
+	// ´´½¨¶¥µã²¼¾Ö
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosTexLayout.GetAddressOf()));
 
 	// ******************
-	// åˆ›å»ºåƒç´ ç€è‰²å™¨
+	// ´´½¨ÏñËØ×ÅÉ«Æ÷
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_PS.cso", L"HLSL\\Minimap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -133,7 +133,7 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 		&pImpl->cbStates
 		});
 
-	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
+	// ´´½¨³£Á¿»º³åÇø
 	for (auto& pBuffer : pImpl->cBufferPtrs)
 	{
 		HR(pBuffer->CreateBuffer(device));
@@ -154,7 +154,7 @@ void MinimapEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->RSSetState(nullptr);
 
 	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
-	deviceContext->OMSetDepthStencilState(RenderStates::DSSNoDepthTest.Get(), 0);	// å…³é—­æ·±åº¦æµ‹è¯•
+	deviceContext->OMSetDepthStencilState(RenderStates::DSSNoDepthTest.Get(), 0);	// ¹Ø±ÕÉî¶È²âÊÔ
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
@@ -201,10 +201,10 @@ void MinimapEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
 void MinimapEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
+	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindPS(deviceContext);
-	// è®¾ç½®SRV
+	// ÉèÖÃSRV
 	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
 
 	if (pImpl->isDirty)

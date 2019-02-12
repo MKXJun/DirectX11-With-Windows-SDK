@@ -1,8 +1,8 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // GameObject.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ç®€æ˜“æ¸¸æˆå¯¹è±¡
+// ¼òÒ×ÓÎÏ·¶ÔÏó
 // Simple game object.
 //***************************************************************************************
 
@@ -12,54 +12,54 @@
 #include "Effects.h"
 #include "Geometry.h"
 
-// ä¸€ä¸ªå°½å¯èƒ½å°çš„æ¸¸æˆå¯¹è±¡ç±»
+// Ò»¸ö¾¡¿ÉÄÜĞ¡µÄÓÎÏ·¶ÔÏóÀà
 class GameObject
 {
 public:
-	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
+	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	GameObject();
 
-	// è·å–ä½ç½®
+	// »ñÈ¡Î»ÖÃ
 	DirectX::XMFLOAT3 GetPosition() const;
 
-	// è®¾ç½®ç¼“å†²åŒº
+	// ÉèÖÃ»º³åÇø
 	template<class VertexType, class IndexType>
 	void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
-	// è®¾ç½®çº¹ç†
+	// ÉèÖÃÎÆÀí
 	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
-	// è®¾ç½®æè´¨
+	// ÉèÖÃ²ÄÖÊ
 	void SetMaterial(const Material& material);
-	// è®¾ç½®çŸ©é˜µ
+	// ÉèÖÃ¾ØÕó
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 
-	// ç»˜åˆ¶
+	// »æÖÆ
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 private:
-	DirectX::XMFLOAT4X4 mWorldMatrix;				// ä¸–ç•ŒçŸ©é˜µ
-	Material mMaterial;								// ç‰©ä½“æè´¨
-	ComPtr<ID3D11ShaderResourceView> mTexture;		// çº¹ç†
-	ComPtr<ID3D11Buffer> mVertexBuffer;				// é¡¶ç‚¹ç¼“å†²åŒº
-	ComPtr<ID3D11Buffer> mIndexBuffer;				// ç´¢å¼•ç¼“å†²åŒº
-	UINT mVertexStride;								// é¡¶ç‚¹å­—èŠ‚å¤§å°
-	UINT mIndexCount;								// ç´¢å¼•æ•°ç›®	
+	DirectX::XMFLOAT4X4 mWorldMatrix;				// ÊÀ½ç¾ØÕó
+	Material mMaterial;								// ÎïÌå²ÄÖÊ
+	ComPtr<ID3D11ShaderResourceView> mTexture;		// ÎÆÀí
+	ComPtr<ID3D11Buffer> mVertexBuffer;				// ¶¥µã»º³åÇø
+	ComPtr<ID3D11Buffer> mIndexBuffer;				// Ë÷Òı»º³åÇø
+	UINT mVertexStride;								// ¶¥µã×Ö½Ú´óĞ¡
+	UINT mIndexCount;								// Ë÷ÒıÊıÄ¿	
 };
 
 template<class VertexType, class IndexType>
 inline void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
-	// é‡Šæ”¾æ—§èµ„æº
+	// ÊÍ·Å¾É×ÊÔ´
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
-	// æ£€æŸ¥D3Dè®¾å¤‡
+	// ¼ì²éD3DÉè±¸
 	if (device == nullptr)
 		return;
 
-	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
+	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
 	mVertexStride = sizeof(VertexType);
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
@@ -67,13 +67,13 @@ inline void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::M
 	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * mVertexStride;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
+	// ĞÂ½¨¶¥µã»º³åÇø
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = meshData.vertexVec.data();
 	device->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf());
 
-	// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
+	// ÉèÖÃË÷Òı»º³åÇøÃèÊö
 	mIndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
@@ -81,7 +81,7 @@ inline void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::M
 	ibd.ByteWidth = mIndexCount * sizeof(IndexType);
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
-	// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
+	// ĞÂ½¨Ë÷Òı»º³åÇø
 	InitData.pSysMem = meshData.indexVec.data();
 	device->CreateBuffer(&ibd, &InitData, mIndexBuffer.GetAddressOf());
 

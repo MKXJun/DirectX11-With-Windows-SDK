@@ -1,6 +1,6 @@
 #include "Basic.hlsli"
 
-// é¡¶ç‚¹ç€è‰²å™¨(2D)
+// ¶¥µã×ÅÉ«Æ÷(2D)
 VertexPosHTex VS_2D(VertexPosTex pIn)
 {
     VertexPosHTex pOut;

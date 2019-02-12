@@ -1,6 +1,6 @@
-ï»¿#include "Effects.h"
+#include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
+#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -10,7 +10,7 @@ using namespace std::experimental;
 
 
 //
-// BasicEffect::Impl éœ€è¦å…ˆäºBasicEffectçš„å®šä¹‰
+// BasicEffect::Impl ĞèÒªÏÈÓÚBasicEffectµÄ¶¨Òå
 //
 
 class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
@@ -18,7 +18,7 @@ class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 public:
 
 	//
-	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
+	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
 	//
 
 	struct CBChangesEveryFrame
@@ -46,17 +46,17 @@ public:
 	};
 
 public:
-	// å¿…é¡»æ˜¾å¼æŒ‡å®š
+	// ±ØĞëÏÔÊ½Ö¸¶¨
 	Impl() = default;
 	~Impl() = default;
 
 public:
-	// éœ€è¦16å­—èŠ‚å¯¹é½çš„ä¼˜å…ˆæ”¾åœ¨å‰é¢
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// æ¯æ¬¡å¯¹è±¡ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
-	CBufferObject<1, CBChangesOnResize>   cbOnResize;	// æ¯æ¬¡çª—å£å¤§å°å˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
-	CBufferObject<2, CBChangesRarely>     cbRarely;		// å‡ ä¹ä¸ä¼šå˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
-	BOOL isDirty;										// æ˜¯å¦æœ‰å€¼å˜æ›´
-	std::vector<CBufferBase*> cBufferPtrs;				// ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
+	// ĞèÒª16×Ö½Ú¶ÔÆëµÄÓÅÏÈ·ÅÔÚÇ°Ãæ
+	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// Ã¿´Î¶ÔÏó»æÖÆµÄ³£Á¿»º³åÇø
+	CBufferObject<1, CBChangesOnResize>   cbOnResize;	// Ã¿´Î´°¿Ú´óĞ¡±ä¸üµÄ³£Á¿»º³åÇø
+	CBufferObject<2, CBChangesRarely>     cbRarely;		// ¼¸ºõ²»»á±ä¸üµÄ³£Á¿»º³åÇø
+	BOOL isDirty;										// ÊÇ·ñÓĞÖµ±ä¸ü
+	std::vector<CBufferBase*> cBufferPtrs;				// Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
 
 
 	ComPtr<ID3D11VertexShader> triangleSOVS;
@@ -81,10 +81,10 @@ public:
 	ComPtr<ID3D11GeometryShader> normalGS;
 	ComPtr<ID3D11PixelShader> normalPS;
 
-	ComPtr<ID3D11InputLayout> vertexPosColorLayout;			// VertexPosColorè¾“å…¥å¸ƒå±€
-	ComPtr<ID3D11InputLayout> vertexPosNormalColorLayout;	// VertexPosNormalColorè¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11InputLayout> vertexPosColorLayout;			// VertexPosColorÊäÈë²¼¾Ö
+	ComPtr<ID3D11InputLayout> vertexPosNormalColorLayout;	// VertexPosNormalColorÊäÈë²¼¾Ö
 
-	ComPtr<ID3D11ShaderResourceView> texture;				// ç”¨äºç»˜åˆ¶çš„çº¹ç†
+	ComPtr<ID3D11ShaderResourceView> texture;				// ÓÃÓÚ»æÖÆµÄÎÆÀí
 
 };
 
@@ -94,7 +94,7 @@ public:
 
 namespace
 {
-	// BasicEffectå•ä¾‹
+	// BasicEffectµ¥Àı
 	static BasicEffect * pInstance = nullptr;
 }
 
@@ -157,11 +157,11 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	ComPtr<ID3DBlob> blob;
 
 	// ******************
-	// æµè¾“å‡ºåˆ†è£‚ä¸‰è§’å½¢
+	// Á÷Êä³ö·ÖÁÑÈı½ÇĞÎ
 	//
 	HR(CreateShaderFromFile(L"HLSL\\TriangleSO_VS.cso", L"HLSL\\TriangleSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleSOVS.GetAddressOf()));
-	// åˆ›å»ºé¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	// ´´½¨¶¥µãÊäÈë²¼¾Ö
 	HR(device->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout), blob->GetBufferPointer(),
 		blob->GetBufferSize(), pImpl->vertexPosColorLayout.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\TriangleSO_GS.cso", L"HLSL\\TriangleSO_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -169,7 +169,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->triangleSOGS.GetAddressOf()));
 
 	// ******************
-	// ç»˜åˆ¶åˆ†å½¢ä¸‰è§’å½¢
+	// »æÖÆ·ÖĞÎÈı½ÇĞÎ
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_VS.cso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleVS.GetAddressOf()));
@@ -178,11 +178,11 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 
 
 	// ******************
-	// æµè¾“å‡ºåˆ†å½¢çƒä½“
+	// Á÷Êä³ö·ÖĞÎÇòÌå
 	//
 	HR(CreateShaderFromFile(L"HLSL\\SphereSO_VS.cso", L"HLSL\\SphereSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->sphereSOVS.GetAddressOf()));
-	// åˆ›å»ºé¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	// ´´½¨¶¥µãÊäÈë²¼¾Ö
 	HR(device->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout), blob->GetBufferPointer(),
 		blob->GetBufferSize(), pImpl->vertexPosNormalColorLayout.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\SphereSO_GS.cso", L"HLSL\\SphereSO_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
@@ -190,7 +190,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		&stridePosNormalColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->sphereSOGS.GetAddressOf()));
 
 	// ******************
-	// ç»˜åˆ¶çƒä½“
+	// »æÖÆÇòÌå
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Sphere_VS.cso", L"HLSL\\Sphere_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->sphereVS.GetAddressOf()));
@@ -199,7 +199,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 
 
 	// ******************
-	// æµè¾“å‡ºåˆ†å½¢é›ªèŠ±
+	// Á÷Êä³ö·ÖĞÎÑ©»¨
 	//
 	HR(CreateShaderFromFile(L"HLSL\\SnowSO_VS.cso", L"HLSL\\SnowSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowSOVS.GetAddressOf()));
@@ -208,7 +208,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->snowSOGS.GetAddressOf()));
 
 	// ******************
-	// ç»˜åˆ¶é›ªèŠ±
+	// »æÖÆÑ©»¨
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Snow_VS.cso", L"HLSL\\Snow_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowVS.GetAddressOf()));
@@ -217,7 +217,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 
 
 	// ******************
-	// ç»˜åˆ¶æ³•å‘é‡
+	// »æÖÆ·¨ÏòÁ¿
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Normal_VS.cso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalVS.GetAddressOf()));
@@ -233,7 +233,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		&pImpl->cbOnResize, 
 		&pImpl->cbRarely});
 
-	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
+	// ´´½¨³£Á¿»º³åÇø
 	for (auto& pBuffer : pImpl->cBufferPtrs)
 	{
 		HR(pBuffer->CreateBuffer(device));
@@ -247,7 +247,7 @@ void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceCon
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->triangleVS.Get(), nullptr, 0);
-	// å…³é—­æµè¾“å‡º
+	// ¹Ø±ÕÁ÷Êä³ö
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
@@ -261,7 +261,7 @@ void BasicEffect::SetRenderSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->snowVS.Get(), nullptr, 0);
-	// å…³é—­æµè¾“å‡º
+	// ¹Ø±ÕÁ÷Êä³ö
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
@@ -275,7 +275,7 @@ void BasicEffect::SetRenderSplitedSphere(ComPtr<ID3D11DeviceContext> deviceConte
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->sphereVS.Get(), nullptr, 0);
-	// å…³é—­æµè¾“å‡º
+	// ¹Ø±ÕÁ÷Êä³ö
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
@@ -287,7 +287,7 @@ void BasicEffect::SetRenderSplitedSphere(ComPtr<ID3D11DeviceContext> deviceConte
 
 void BasicEffect::SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
 {
-	// å…ˆæ¢å¤æµè¾“å‡ºé»˜è®¤è®¾ç½®ï¼Œé˜²æ­¢é¡¶ç‚¹ç¼“å†²åŒºåŒæ—¶ç»‘å®šåœ¨è¾“å…¥å’Œè¾“å‡ºé˜¶æ®µ
+	// ÏÈ»Ö¸´Á÷Êä³öÄ¬ÈÏÉèÖÃ£¬·ÀÖ¹¶¥µã»º³åÇøÍ¬Ê±°ó¶¨ÔÚÊäÈëºÍÊä³ö½×¶Î
 	UINT stride = sizeof(VertexPosColor);
 	UINT offset = 0;
 	ID3D11Buffer * nullBuffer = nullptr;
@@ -310,7 +310,7 @@ void BasicEffect::SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> dev
 
 void BasicEffect::SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
 {
-	// å…ˆæ¢å¤æµè¾“å‡ºé»˜è®¤è®¾ç½®ï¼Œé˜²æ­¢é¡¶ç‚¹ç¼“å†²åŒºåŒæ—¶ç»‘å®šåœ¨è¾“å…¥å’Œè¾“å‡ºé˜¶æ®µ
+	// ÏÈ»Ö¸´Á÷Êä³öÄ¬ÈÏÉèÖÃ£¬·ÀÖ¹¶¥µã»º³åÇøÍ¬Ê±°ó¶¨ÔÚÊäÈëºÍÊä³ö½×¶Î
 	UINT stride = sizeof(VertexPosColor);
 	UINT offset = 0;
 	ID3D11Buffer * nullBuffer = nullptr;
@@ -332,7 +332,7 @@ void BasicEffect::SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceC
 
 void BasicEffect::SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
 {
-	// å…ˆæ¢å¤æµè¾“å‡ºé»˜è®¤è®¾ç½®ï¼Œé˜²æ­¢é¡¶ç‚¹ç¼“å†²åŒºåŒæ—¶ç»‘å®šåœ¨è¾“å…¥å’Œè¾“å‡ºé˜¶æ®µ
+	// ÏÈ»Ö¸´Á÷Êä³öÄ¬ÈÏÉèÖÃ£¬·ÀÖ¹¶¥µã»º³åÇøÍ¬Ê±°ó¶¨ÔÚÊäÈëºÍÊä³ö½×¶Î
 	UINT stride = sizeof(VertexPosNormalColor);
 	UINT offset = 0;
 	ID3D11Buffer * nullBuffer = nullptr;
@@ -373,7 +373,7 @@ void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->cbFrame;
 	cBuffer.data.world = XMMatrixTranspose(W);
-	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// ä¸¤æ¬¡è½¬ç½®æŠµæ¶ˆ
+	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// Á½´Î×ªÖÃµÖÏû
 	pImpl->isDirty = cBuffer.isDirty = true;
 }
 
@@ -443,7 +443,7 @@ void BasicEffect::SetSphereRadius(float radius)
 void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	auto& pCBuffers = pImpl->cBufferPtrs;
-	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
+	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
 	pCBuffers[2]->BindVS(deviceContext);
@@ -454,7 +454,7 @@ void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	
 	pCBuffers[2]->BindPS(deviceContext);
 
-	// è®¾ç½®çº¹ç†
+	// ÉèÖÃÎÆÀí
 	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
 
 	if (pImpl->isDirty)

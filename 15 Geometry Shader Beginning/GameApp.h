@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -29,15 +29,15 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
-	ComPtr<IDWriteFont> mFont;								// å­—ä½“
-	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
+	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
+	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
 
-	ComPtr<ID3D11Buffer> mVertexBuffer;						// é¡¶ç‚¹é›†åˆ
-	int mVertexCount;										// é¡¶ç‚¹æ•°ç›®
-	Mode mShowMode;											// å½“å‰æ˜¾ç¤ºæ¨¡å¼
+	ComPtr<ID3D11Buffer> mVertexBuffer;						// ¶¥µã¼¯ºÏ
+	int mVertexCount;										// ¶¥µãÊıÄ¿
+	Mode mShowMode;											// µ±Ç°ÏÔÊ¾Ä£Ê½
 
-	BasicEffect mBasicEffect;							// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	BasicEffect mBasicEffect;							// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
 
 };
 

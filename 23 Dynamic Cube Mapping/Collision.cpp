@@ -1,4 +1,4 @@
-ï»¿#include "Collision.h"
+#include "Collision.h"
 
 using namespace DirectX;
 
@@ -10,7 +10,7 @@ Ray::Ray()
 Ray::Ray(const DirectX::XMFLOAT3 & origin, const DirectX::XMFLOAT3 & direction)
 	: origin(origin)
 {
-	// å°„çº¿çš„directioné•¿åº¦å¿…é¡»ä¸º1.0fï¼Œè¯¯å·®åœ¨1e-5få†…
+	// ÉäÏßµÄdirection³¤¶È±ØĞëÎª1.0f£¬Îó²îÔÚ1e-5fÄÚ
 	XMVECTOR dirLength = XMVector3Length(XMLoadFloat3(&direction));
 	XMVECTOR error = XMVectorAbs(dirLength - XMVectorSplatOne());
 	assert(XMVector3Less(error, XMVectorReplicate(1e-5f)));
@@ -21,10 +21,10 @@ Ray::Ray(const DirectX::XMFLOAT3 & origin, const DirectX::XMFLOAT3 & direction)
 Ray Ray::ScreenToRay(const Camera & camera, float screenX, float screenY)
 {
 	// ******************
-	// èŠ‚é€‰è‡ªDirectX::XMVector3Unprojectå‡½æ•°ï¼Œå¹¶çœç•¥äº†ä»ä¸–ç•Œåæ ‡ç³»åˆ°å±€éƒ¨åæ ‡ç³»çš„å˜æ¢
+	// ½ÚÑ¡×ÔDirectX::XMVector3Unprojectº¯Êı£¬²¢Ê¡ÂÔÁË´ÓÊÀ½ç×ø±êÏµµ½¾Ö²¿×ø±êÏµµÄ±ä»»
 	//
 	
-	// å°†å±å¹•åæ ‡ç‚¹ä»è§†å£å˜æ¢å›NDCåæ ‡ç³»
+	// ½«ÆÁÄ»×ø±êµã´ÓÊÓ¿Ú±ä»»»ØNDC×ø±êÏµ
 	static const XMVECTORF32 D = { { { -1.0f, 1.0f, 0.0f, 0.0f } } };
 	XMVECTOR V = XMVectorSet(screenX, screenY, 0.0f, 1.0f);
 	D3D11_VIEWPORT viewPort = camera.GetViewPort();
@@ -35,14 +35,14 @@ Ray Ray::ScreenToRay(const Camera & camera, float screenX, float screenY)
 	XMVECTOR Offset = XMVectorSet(-viewPort.TopLeftX, -viewPort.TopLeftY, -viewPort.MinDepth, 0.0f);
 	Offset = XMVectorMultiplyAdd(Scale, Offset, D.v);
 
-	// ä»NDCåæ ‡ç³»å˜æ¢å›ä¸–ç•Œåæ ‡ç³»
+	// ´ÓNDC×ø±êÏµ±ä»»»ØÊÀ½ç×ø±êÏµ
 	XMMATRIX Transform = XMMatrixMultiply(camera.GetViewXM(), camera.GetProjXM());
 	Transform = XMMatrixInverse(nullptr, Transform);
 
 	XMVECTOR Target = XMVectorMultiplyAdd(V, Scale, Offset);
 	Target = XMVector3TransformCoord(Target, Transform);
 
-	// æ±‚å‡ºå°„çº¿
+	// Çó³öÉäÏß
 	XMFLOAT3 direction;
 	XMStoreFloat3(&direction, XMVector3Normalize(Target - camera.GetPositionXM()));
 	return Ray(camera.GetPosition(), direction);
@@ -151,16 +151,16 @@ std::vector<XMMATRIX> XM_CALLCONV Collision::FrustumCulling(
 	BoundingFrustum frustum;
 	BoundingFrustum::CreateFromMatrix(frustum, Proj);
 	XMMATRIX InvView = XMMatrixInverse(nullptr, View);
-	// å°†è§†é”¥ä½“ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°ä¸–ç•Œåæ ‡ç³»ä¸­
+	// ½«ÊÓ×¶Ìå´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÀ½ç×ø±êÏµÖĞ
 	frustum.Transform(frustum, InvView);
 
 	BoundingOrientedBox localOrientedBox, orientedBox;
 	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
 	for (auto& mat : Matrices)
 	{
-		// å°†æœ‰å‘åŒ…å›´ç›’ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°ä¸–ç•Œåæ ‡ç³»ä¸­
+		// ½«ÓĞÏò°üÎ§ºĞ´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÀ½ç×ø±êÏµÖĞ
 		localOrientedBox.Transform(orientedBox, mat);
-		// ç›¸äº¤æ£€æµ‹
+		// Ïà½»¼ì²â
 		if (frustum.Intersects(orientedBox))
 			acceptedData.push_back(mat);
 	}
@@ -180,9 +180,9 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling2(
 	{
 		XMMATRIX InvWorld = XMMatrixInverse(nullptr, mat);
 
-		// å°†è§†é”¥ä½“ä»è§‚å¯Ÿåæ ‡ç³»(æˆ–å±€éƒ¨åæ ‡ç³»)å˜æ¢åˆ°ç‰©ä½“æ‰€åœ¨çš„å±€éƒ¨åæ ‡ç³»ä¸­
+		// ½«ÊÓ×¶Ìå´Ó¹Û²ì×ø±êÏµ(»ò¾Ö²¿×ø±êÏµ)±ä»»µ½ÎïÌåËùÔÚµÄ¾Ö²¿×ø±êÏµÖĞ
 		frustum.Transform(localFrustum, InvView * InvWorld);
-		// ç›¸äº¤æ£€æµ‹
+		// Ïà½»¼ì²â
 		if (localFrustum.Intersects(localBox))
 			acceptedData.push_back(mat);
 	}
@@ -202,9 +202,9 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
 	for (auto& mat : Matrices)
 	{
-		// å°†æœ‰å‘åŒ…å›´ç›’ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°è§†é”¥ä½“æ‰€åœ¨çš„å±€éƒ¨åæ ‡ç³»(è§‚å¯Ÿåæ ‡ç³»)ä¸­
+		// ½«ÓĞÏò°üÎ§ºĞ´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÓ×¶ÌåËùÔÚµÄ¾Ö²¿×ø±êÏµ(¹Û²ì×ø±êÏµ)ÖĞ
 		localOrientedBox.Transform(orientedBox, mat * View);
-		// ç›¸äº¤æ£€æµ‹
+		// Ïà½»¼ì²â
 		if (frustum.Intersects(orientedBox))
 			acceptedData.push_back(mat);
 	}
@@ -215,7 +215,7 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4 & color)
 {
 	WireFrameData data;
-	// AABB/OBBé¡¶ç‚¹ç´¢å¼•å¦‚ä¸‹    è§†é”¥ä½“é¡¶ç‚¹ç´¢å¼•å¦‚ä¸‹
+	// AABB/OBB¶¥µãË÷ÒıÈçÏÂ    ÊÓ×¶Ìå¶¥µãË÷ÒıÈçÏÂ
 	//     3_______2             4__________5
 	//    /|      /|             |\        /|
 	//  7/_|____6/ |             | \      / |

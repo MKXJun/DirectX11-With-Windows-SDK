@@ -1,8 +1,8 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // TextureRender.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// æ¸²æŸ“åˆ°çº¹ç†ç±»
+// äÖÈ¾µ½ÎÆÀíÀà
 // Render-To-Texture class.
 //***************************************************************************************
 
@@ -25,24 +25,24 @@ public:
 		bool generateMips = false);
 	~TextureRender();
 
-	// å¼€å§‹å¯¹å½“å‰çº¹ç†è¿›è¡Œæ¸²æŸ“
+	// ¿ªÊ¼¶Ôµ±Ç°ÎÆÀí½øĞĞäÖÈ¾
 	void Begin(ComPtr<ID3D11DeviceContext> deviceContext);
-	// ç»“æŸå¯¹å½“å‰çº¹ç†çš„æ¸²æŸ“ï¼Œè¿˜åŸçŠ¶æ€
+	// ½áÊø¶Ôµ±Ç°ÎÆÀíµÄäÖÈ¾£¬»¹Ô­×´Ì¬
 	void End(ComPtr<ID3D11DeviceContext> deviceContext);
-	// è·å–æ¸²æŸ“å¥½çš„çº¹ç†
+	// »ñÈ¡äÖÈ¾ºÃµÄÎÆÀí
 	ComPtr<ID3D11ShaderResourceView> GetOutputTexture();
 
 private:
-	ComPtr<ID3D11ShaderResourceView>	mOutputTextureSRV;	// è¾“å‡ºçš„çº¹ç†å¯¹åº”çš„ç€è‰²å™¨èµ„æºè§†å›¾
-	ComPtr<ID3D11RenderTargetView>		mOutputTextureRTV;	// è¾“å‡ºçš„çº¹ç†å¯¹åº”çš„æ¸²æŸ“ç›®æ ‡è§†å›¾
-	ComPtr<ID3D11DepthStencilView>		mOutputTextureDSV;	// è¾“å‡ºçº¹ç†æ‰€ç”¨çš„æ·±åº¦/æ¨¡æ¿è§†å›¾
-	D3D11_VIEWPORT						mOutputViewPort;	// è¾“å‡ºæ‰€ç”¨çš„è§†å£
+	ComPtr<ID3D11ShaderResourceView>	mOutputTextureSRV;	// Êä³öµÄÎÆÀí¶ÔÓ¦µÄ×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
+	ComPtr<ID3D11RenderTargetView>		mOutputTextureRTV;	// Êä³öµÄÎÆÀí¶ÔÓ¦µÄäÖÈ¾Ä¿±êÊÓÍ¼
+	ComPtr<ID3D11DepthStencilView>		mOutputTextureDSV;	// Êä³öÎÆÀíËùÓÃµÄÉî¶È/Ä£°åÊÓÍ¼
+	D3D11_VIEWPORT						mOutputViewPort;	// Êä³öËùÓÃµÄÊÓ¿Ú
 
-	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// ä¸´æ—¶ç¼“å­˜çš„åå¤‡ç¼“å†²åŒº
-	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// ä¸´æ—¶ç¼“å­˜çš„æ·±åº¦/æ¨¡æ¿ç¼“å†²åŒº
-	D3D11_VIEWPORT						mCacheViewPort;	// ä¸´æ—¶ç¼“å­˜çš„è§†å£
+	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// ÁÙÊ±»º´æµÄºó±¸»º³åÇø
+	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// ÁÙÊ±»º´æµÄÉî¶È/Ä£°å»º³åÇø
+	D3D11_VIEWPORT						mCacheViewPort;	// ÁÙÊ±»º´æµÄÊÓ¿Ú
 
-	bool								mGenerateMips;	// æ˜¯å¦ç”Ÿæˆmipmapé“¾
+	bool								mGenerateMips;	// ÊÇ·ñÉú³ÉmipmapÁ´
 };
 
 #endif

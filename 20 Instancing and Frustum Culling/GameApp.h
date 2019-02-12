@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -10,7 +10,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// æ‘„åƒæœºæ¨¡å¼
+	// ÉãÏñ»úÄ£Ê½
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -28,24 +28,24 @@ private:
 	
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
-	ComPtr<IDWriteFont> mFont;								// å­—ä½“
-	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
+	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
+	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
 
-	GameObject mTrees;										// æ ‘
-	GameObject mGround;										// åœ°é¢
-	std::vector<DirectX::XMMATRIX> mInstancedData;			// æ ‘çš„å®ä¾‹æ•°æ®
-	Collision::WireFrameData mTreeBoxData;					// æ ‘åŒ…å›´ç›’çº¿æ¡†æ•°æ®
+	GameObject mTrees;										// Ê÷
+	GameObject mGround;										// µØÃæ
+	std::vector<DirectX::XMMATRIX> mInstancedData;			// Ê÷µÄÊµÀıÊı¾İ
+	Collision::WireFrameData mTreeBoxData;					// Ê÷°üÎ§ºĞÏß¿òÊı¾İ
 
 
-	BasicEffect mBasicEffect;								// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
-	bool mEnableFrustumCulling;								// è§†é”¥ä½“è£å‰ªå¼€å¯
-	bool mEnableInstancing;									// ç¡¬ä»¶å®ä¾‹åŒ–å¼€å¯
+	BasicEffect mBasicEffect;								// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	bool mEnableFrustumCulling;								// ÊÓ×¶Ìå²Ã¼ô¿ªÆô
+	bool mEnableInstancing;									// Ó²¼şÊµÀı»¯¿ªÆô
 
-	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
-	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
+	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
+	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
 
-	ObjReader mObjReader;									// æ¨¡å‹è¯»å–å¯¹è±¡
+	ObjReader mObjReader;									// Ä£ĞÍ¶ÁÈ¡¶ÔÏó
 };
 
 

@@ -1,26 +1,26 @@
 #include "Basic.hlsli"
 
-// 鍍忕礌鐫�鑹插櫒(3D)
+// 像素着色器(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
-    // 鑻ヤ笉浣跨敤绾圭悊锛屽垯浣跨敤榛樿鐧借壊
+    // 若不使用纹理，则使用默认白色
     float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
     if (gTextureUsed)
     {
         texColor = gDiffuseMap.Sample(gSam, pIn.Tex);
-        // 鎻愬墠杩涜瑁佸壀锛屽涓嶇鍚堣姹傜殑鍍忕礌鍙互閬垮厤鍚庣画杩愮畻
+        // 提前进行裁剪，对不符合要求的像素可以避免后续运算
         clip(texColor.a - 0.1f);
     }
     
-    // 鏍囧噯鍖栨硶鍚戦噺
+    // 标准化法向量
     pIn.NormalW = normalize(pIn.NormalW);
 
-    // 姹傚嚭椤剁偣鎸囧悜鐪肩潧鐨勫悜閲忥紝浠ュ強椤剁偣涓庣溂鐫涚殑璺濈
+    // 求出顶点指向眼睛的向量，以及顶点与眼睛的距离
     float3 toEyeW = normalize(gEyePosW - pIn.PosW);
     float distToEye = distance(gEyePosW, pIn.PosW);
 
-    // 鍒濆鍖栦负0 
+    // 初始化为0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -57,7 +57,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
     }
   
     float4 litColor = texColor * (ambient + diffuse) + spec;
-    // 鍙嶅皠
+    // 反射
     if (gReflectionEnabled)
     {
         float3 incident = -toEyeW;
@@ -66,7 +66,7 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 
         litColor += gMaterial.Reflect * reflectionColor;
     }
-    // 鎶樺皠
+    // 折射
     if (gRefractionEnabled)
     {
         float3 incident = -toEyeW;

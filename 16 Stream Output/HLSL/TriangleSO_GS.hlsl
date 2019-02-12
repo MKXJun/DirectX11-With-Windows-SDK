@@ -4,7 +4,7 @@
 void GS(triangle VertexPosColor input[3], inout TriangleStream<VertexPosColor> output)
 {
 	//
-    // 灏嗕竴涓笁瑙掑舰鍒嗚鎴愪笁涓笁瑙掑舰锛屽嵆娌℃湁v3v4v5鐨勪笁瑙掑舰
+    // 将一个三角形分裂成三个三角形，即没有v3v4v5的三角形
     //       v1
     //       /\
     //      /  \

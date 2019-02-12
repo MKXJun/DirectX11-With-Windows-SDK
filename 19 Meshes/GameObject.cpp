@@ -1,4 +1,4 @@
-ï»¿#include "GameObject.h"
+#include "GameObject.h"
 #include "d3dUtil.h"
 using namespace DirectX;
 
@@ -71,11 +71,11 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 	for (auto& part : mModel.modelParts)
 	{
-		// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
+		// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
-		// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
+		// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
 		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
 		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);

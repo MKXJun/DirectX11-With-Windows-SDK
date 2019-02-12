@@ -1,4 +1,4 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -18,7 +18,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
+	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
 	RenderStates::InitAll(md3dDevice);
 
 	if (!mBasicEffect.InitAll(md3dDevice))
@@ -33,7 +33,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
+	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
 	mMouse->SetWindow(mhMainWnd);
 	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
@@ -44,13 +44,13 @@ void GameApp::OnResize()
 {
 	assert(md2dFactory);
 	assert(mdwriteFactory);
-	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
+	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
 	mColorBrush.Reset();
 	md2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
+	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
 	ComPtr<IDXGISurface> surface;
 	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -61,38 +61,38 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugString(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
-			"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
-			"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+		OutputDebugString(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
+			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
+			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
 			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
+			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
+		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
 		HR(md2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(mdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			mTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
+		// ±¨¸æÒì³£ÎÊÌâ
 		assert(md2dRenderTarget);
 	}
 
-	// æ‘„åƒæœºå˜æ›´æ˜¾ç¤º
+	// ÉãÏñ»ú±ä¸üÏÔÊ¾
 	if (mCamera != nullptr)
 	{
 		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
 		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
-		// å°åœ°å›¾ç½‘æ ¼æ¨¡å‹é‡è®¾
+		// Ğ¡µØÍ¼Íø¸ñÄ£ĞÍÖØÉè
 		mMinimap.SetMesh(md3dDevice, Geometry::Create2DShow(1.0f - 100.0f / mClientWidth * 2,  -1.0f + 100.0f / mClientHeight * 2, 
 			100.0f / mClientWidth * 2, 100.0f / mClientHeight * 2));
-		// å±å¹•æ·¡å…¥æ·¡å‡ºçº¹ç†å¤§å°é‡è®¾
+		// ÆÁÄ»µ­Èëµ­³öÎÆÀí´óĞ¡ÖØÉè
 		mScreenFadeRender = std::make_unique<TextureRender>(md3dDevice, mClientWidth, mClientHeight, false);
 	}
 }
@@ -100,7 +100,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
+	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
 	Mouse::State mouseState = mMouse->GetState();
 	Mouse::State lastMouseState = mMouseTracker.GetLastState();
 	mMouseTracker.Update(mouseState);
@@ -110,29 +110,29 @@ void GameApp::UpdateScene(float dt)
 
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
 
-	// æ›´æ–°æ·¡å…¥æ·¡å‡ºå€¼ï¼Œå¹¶é™åˆ¶æ‘„åƒæœºè¡ŒåŠ¨
+	// ¸üĞÂµ­Èëµ­³öÖµ£¬²¢ÏŞÖÆÉãÏñ»úĞĞ¶¯
 	if (mFadeUsed)
 	{
-		mFadeAmount += mFadeSign * dt / 2.0f;	// 2sæ—¶é—´æ·¡å…¥/æ·¡å‡º
+		mFadeAmount += mFadeSign * dt / 2.0f;	// 2sÊ±¼äµ­Èë/µ­³ö
 		if (mFadeSign > 0.0f && mFadeAmount > 1.0f)
 		{
 			mFadeAmount = 1.0f;
-			mFadeUsed = false;	// ç»“æŸæ·¡å…¥
+			mFadeUsed = false;	// ½áÊøµ­Èë
 		}
 		else if (mFadeSign < 0.0f && mFadeAmount < 0.0f)
 		{
 			mFadeAmount = 0.0f;
-			SendMessage(MainWnd(), WM_DESTROY, 0, 0);	// å…³é—­ç¨‹åº
-			// è¿™é‡Œä¸ç»“æŸæ·¡å‡ºæ˜¯å› ä¸ºå‘é€å…³é—­çª—å£çš„æ¶ˆæ¯è¿˜è¦è¿‡ä¸€ä¼šæ‰çœŸæ­£å…³é—­
+			SendMessage(MainWnd(), WM_DESTROY, 0, 0);	// ¹Ø±Õ³ÌĞò
+			// ÕâÀï²»½áÊøµ­³öÊÇÒòÎª·¢ËÍ¹Ø±Õ´°¿ÚµÄÏûÏ¢»¹Òª¹ıÒ»»á²ÅÕæÕı¹Ø±Õ
 		}
 	}
 	else
 	{
 		// ********************
-		// è‡ªç”±æ‘„åƒæœºçš„æ“ä½œ
+		// ×ÔÓÉÉãÏñ»úµÄ²Ù×÷
 		//
 
-		// æ–¹å‘ç§»åŠ¨
+		// ·½ÏòÒÆ¶¯
 		if (keyState.IsKeyDown(Keyboard::W))
 			cam1st->Walk(dt * 3.0f);
 		if (keyState.IsKeyDown(Keyboard::S))
@@ -142,30 +142,30 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// è§†é‡æ—‹è½¬ï¼Œé˜²æ­¢å¼€å§‹çš„å·®å€¼è¿‡å¤§å¯¼è‡´çš„çªç„¶æ—‹è½¬
+		// ÊÓÒ°Ğı×ª£¬·ÀÖ¹¿ªÊ¼µÄ²îÖµ¹ı´óµ¼ÖÂµÄÍ»È»Ğı×ª
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 
-		// é™åˆ¶ç§»åŠ¨èŒƒå›´
+		// ÏŞÖÆÒÆ¶¯·¶Î§
 		XMFLOAT3 adjustedPos;
 		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorReplicate(-90.0f), XMVectorReplicate(90.0f)));
 		cam1st->SetPosition(adjustedPos);
 	}
 
-	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
+	// ¸üĞÂ¹Û²ì¾ØÕó
 	mCamera->UpdateViewMatrix();
 	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
 	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
 	mMinimapEffect.SetEyePos(mCamera->GetPositionXM());
 	
-	// æˆªå±
+	// ½ØÆÁ
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
 		mPrintScreenStarted = true;
 		
-	// é‡ç½®æ»šè½®å€¼
+	// ÖØÖÃ¹öÂÖÖµ
 	mMouse->ResetScrollWheelValue();
 
-	// é€€å‡ºç¨‹åºï¼Œå¼€å§‹æ·¡å‡º
+	// ÍË³ö³ÌĞò£¬¿ªÊ¼µ­³ö
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
 	{
 		mFadeSign = -1.0f;
@@ -180,78 +180,78 @@ void GameApp::DrawScene()
 
 	
 	// ******************
-	// ç»˜åˆ¶Direct3Déƒ¨åˆ†
+	// »æÖÆDirect3D²¿·Ö
 	//
 
-	// é¢„å…ˆæ¸…ç©ºåå¤‡ç¼“å†²åŒº
+	// Ô¤ÏÈÇå¿Õºó±¸»º³åÇø
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	if (mFadeUsed)
 	{
-		// å¼€å§‹æ·¡å…¥/æ·¡å‡º
+		// ¿ªÊ¼µ­Èë/µ­³ö
 		mScreenFadeRender->Begin(md3dImmediateContext);
 	}
 
 
-	// ç»˜åˆ¶ä¸»åœºæ™¯
+	// »æÖÆÖ÷³¡¾°
 	DrawScene(false);
 
-	// æ­¤å¤„ç”¨äºå°åœ°å›¾å’Œå±å¹•ç»˜åˆ¶
+	// ´Ë´¦ÓÃÓÚĞ¡µØÍ¼ºÍÆÁÄ»»æÖÆ
 	UINT strides[1] = { sizeof(VertexPosTex) };
 	UINT offsets[1] = { 0 };
 	
-	// å°åœ°å›¾ç‰¹æ•ˆåº”ç”¨
+	// Ğ¡µØÍ¼ÌØĞ§Ó¦ÓÃ
 	mMinimapEffect.SetRenderDefault(md3dImmediateContext);
 	mMinimapEffect.Apply(md3dImmediateContext);
-	// æœ€åç»˜åˆ¶å°åœ°å›¾
+	// ×îºó»æÖÆĞ¡µØÍ¼
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mMinimap.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
 	md3dImmediateContext->IASetIndexBuffer(mMinimap.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 	md3dImmediateContext->DrawIndexed(6, 0, 0);
 
 	if (mFadeUsed)
 	{
-		// ç»“æŸæ·¡å…¥/æ·¡å‡ºï¼Œæ­¤æ—¶ç»˜åˆ¶çš„åœºæ™¯åœ¨å±å¹•æ·¡å…¥æ·¡å‡ºæ¸²æŸ“çš„çº¹ç†
+		// ½áÊøµ­Èë/µ­³ö£¬´ËÊ±»æÖÆµÄ³¡¾°ÔÚÆÁÄ»µ­Èëµ­³öäÖÈ¾µÄÎÆÀí
 		mScreenFadeRender->End(md3dImmediateContext);
 
-		// å±å¹•æ·¡å…¥æ·¡å‡ºç‰¹æ•ˆåº”ç”¨
+		// ÆÁÄ»µ­Èëµ­³öÌØĞ§Ó¦ÓÃ
 		mScreenFadeEffect.SetRenderDefault(md3dImmediateContext);
 		mScreenFadeEffect.SetFadeAmount(mFadeAmount);
 		mScreenFadeEffect.SetTexture(mScreenFadeRender->GetOutputTexture());
 		mScreenFadeEffect.SetWorldViewProjMatrix(XMMatrixIdentity());
 		mScreenFadeEffect.Apply(md3dImmediateContext);
-		// å°†ä¿å­˜çš„çº¹ç†è¾“å‡ºåˆ°å±å¹•
+		// ½«±£´æµÄÎÆÀíÊä³öµ½ÆÁÄ»
 		md3dImmediateContext->IASetVertexBuffers(0, 1, mFullScreenShow.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
 		md3dImmediateContext->IASetIndexBuffer(mFullScreenShow.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 		md3dImmediateContext->DrawIndexed(6, 0, 0);
-		// åŠ¡å¿…è§£é™¤ç»‘å®šåœ¨ç€è‰²å™¨ä¸Šçš„èµ„æºï¼Œå› ä¸ºä¸‹ä¸€å¸§å¼€å§‹å®ƒä¼šä½œä¸ºæ¸²æŸ“ç›®æ ‡
+		// Îñ±Ø½â³ı°ó¶¨ÔÚ×ÅÉ«Æ÷ÉÏµÄ×ÊÔ´£¬ÒòÎªÏÂÒ»Ö¡¿ªÊ¼Ëü»á×÷ÎªäÖÈ¾Ä¿±ê
 		mScreenFadeEffect.SetTexture(nullptr);
 		mScreenFadeEffect.Apply(md3dImmediateContext);
 	}
 	
-	// è‹¥æˆªå±é”®QæŒ‰ä¸‹ï¼Œåˆ™åˆ†åˆ«ä¿å­˜åˆ°output.ddså’Œoutput.pngä¸­
+	// Èô½ØÆÁ¼üQ°´ÏÂ£¬Ôò·Ö±ğ±£´æµ½output.ddsºÍoutput.pngÖĞ
 	if (mPrintScreenStarted)
 	{
 		ComPtr<ID3D11Texture2D> backBuffer;
-		// è¾“å‡ºæˆªå±
+		// Êä³ö½ØÆÁ
 		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
 		HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), backBuffer.Get(), L"Screenshot\\output.dds"));
 		HR(SaveWICTextureToFile(md3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatPng, L"Screenshot\\output.png"));
-		// ç»“æŸæˆªå±
+		// ½áÊø½ØÆÁ
 		mPrintScreenStarted = false;
 	}
 
 
 
 	// ******************
-	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
+	// »æÖÆDirect2D²¿·Ö
 	//
 	if (md2dRenderTarget != nullptr)
 	{
 		md2dRenderTarget->BeginDraw();
-		std::wstring text = L"å½“å‰æ‘„åƒæœºæ¨¡å¼: ç¬¬ä¸€äººç§°  Escé€€å‡º\n"
-			"é¼ æ ‡ç§»åŠ¨æ§åˆ¶è§†é‡ W/S/A/Dç§»åŠ¨\n"
-			"Q-æˆªå±(è¾“å‡ºoutput.ddså’Œoutput.pngåˆ°ScreenShotæ–‡ä»¶å¤¹)";
+		std::wstring text = L"µ±Ç°ÉãÏñ»úÄ£Ê½: µÚÒ»ÈË³Æ  EscÍË³ö\n"
+			"Êó±êÒÆ¶¯¿ØÖÆÊÓÒ° W/S/A/DÒÆ¶¯\n"
+			"Q-½ØÆÁ(Êä³öoutput.ddsºÍoutput.pngµ½ScreenShotÎÄ¼ş¼Ğ)";
 
 
 
@@ -268,39 +268,39 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	mPrintScreenStarted = false;
-	mFadeUsed = true;	// å¼€å§‹æ·¡å…¥
+	mFadeUsed = true;	// ¿ªÊ¼µ­Èë
 	mFadeAmount = 0.0f;
 	mFadeSign = 1.0f;
 
 
 	// ******************
-	// åˆå§‹åŒ–ç”¨äºRender-To-Textureçš„å¯¹è±¡
+	// ³õÊ¼»¯ÓÃÓÚRender-To-TextureµÄ¶ÔÏó
 	//
 	mMinimapRender = std::make_unique<TextureRender>(md3dDevice, 400, 400, true);
 	mScreenFadeRender = std::make_unique<TextureRender>(md3dDevice, mClientWidth, mClientHeight, false);
 
 	// ******************
-	// åˆå§‹åŒ–æ¸¸æˆå¯¹è±¡
+	// ³õÊ¼»¯ÓÎÏ·¶ÔÏó
 	//
 
-	// åˆ›å»ºéšæœºçš„æ ‘
+	// ´´½¨Ëæ»úµÄÊ÷
 	CreateRandomTrees();
 
-	// åˆå§‹åŒ–åœ°é¢
+	// ³õÊ¼»¯µØÃæ
 	mObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
 	mGround.SetModel(Model(md3dDevice, mObjReader));
 
-	// åˆå§‹åŒ–ç½‘æ ¼ï¼Œæ”¾ç½®åœ¨å³ä¸‹è§’200x200
+	// ³õÊ¼»¯Íø¸ñ£¬·ÅÖÃÔÚÓÒÏÂ½Ç200x200
 	mMinimap.SetMesh(md3dDevice, Geometry::Create2DShow(0.75f, -0.66666666f, 0.25f, 0.33333333f));
 	
-	// è¦†ç›–æ•´ä¸ªå±å¹•é¢çš„ç½‘æ ¼æ¨¡å‹
+	// ¸²¸ÇÕû¸öÆÁÄ»ÃæµÄÍø¸ñÄ£ĞÍ
 	mFullScreenShow.SetMesh(md3dDevice, Geometry::Create2DShow());
 
 	// ******************
-	// åˆå§‹åŒ–æ‘„åƒæœº
+	// ³õÊ¼»¯ÉãÏñ»ú
 	//
 
-	// é»˜è®¤æ‘„åƒæœº
+	// Ä¬ÈÏÉãÏñ»ú
 	mCameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	mCamera = camera;
@@ -313,9 +313,9 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 	
 
-	// å°åœ°å›¾æ‘„åƒæœº
+	// Ğ¡µØÍ¼ÉãÏñ»ú
 	mMinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mMinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200å°åœ°å›¾
+	mMinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200Ğ¡µØÍ¼
 	mMinimapCamera->LookTo(
 		XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f),
 		XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f),
@@ -323,21 +323,21 @@ bool GameApp::InitResource()
 	mMinimapCamera->UpdateViewMatrix();
 
 	// ******************
-	// åˆå§‹åŒ–å‡ ä¹ä¸ä¼šå˜åŒ–çš„å€¼
+	// ³õÊ¼»¯¼¸ºõ²»»á±ä»¯µÄÖµ
 	//
 
-	// é»‘å¤œç‰¹æ•ˆ
+	// ºÚÒ¹ÌØĞ§
 	mBasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 	mBasicEffect.SetFogStart(5.0f);
 	mBasicEffect.SetFogRange(20.0f);
 
-	// å°åœ°å›¾èŒƒå›´å¯è§†
+	// Ğ¡µØÍ¼·¶Î§¿ÉÊÓ
 	mMinimapEffect.SetFogState(true);
 	mMinimapEffect.SetInvisibleColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 	mMinimapEffect.SetMinimapRect(XMVectorSet(-95.0f, 95.0f, 95.0f, -95.0f));
 	mMinimapEffect.SetVisibleRange(25.0f);
 
-	// æ–¹å‘å…‰(é»˜è®¤)
+	// ·½Ïò¹â(Ä¬ÈÏ)
 	DirectionalLight dirLight[4];
 	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 	dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
@@ -353,12 +353,12 @@ bool GameApp::InitResource()
 		mBasicEffect.SetDirLight(i, dirLight[i]);
 
 	// ******************
-	// æ¸²æŸ“å°åœ°å›¾çº¹ç†
+	// äÖÈ¾Ğ¡µØÍ¼ÎÆÀí
 	// 
 
 	mBasicEffect.SetViewMatrix(mMinimapCamera->GetViewXM());
-	mBasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// ä½¿ç”¨æ­£äº¤æŠ•å½±çŸ©é˜µ(ä¸­å¿ƒåœ¨æ‘„åƒæœºä½ç½®)
-	// å…³é—­é›¾æ•ˆ
+	mBasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// Ê¹ÓÃÕı½»Í¶Ó°¾ØÕó(ÖĞĞÄÔÚÉãÏñ»úÎ»ÖÃ)
+	// ¹Ø±ÕÎíĞ§
 	mBasicEffect.SetFogState(false);
 	mMinimapRender->Begin(md3dImmediateContext);
 	DrawScene(true);
@@ -367,7 +367,7 @@ bool GameApp::InitResource()
 	mMinimapEffect.SetTexture(mMinimapRender->GetOutputTexture());
 
 
-	// å¼€å¯é›¾æ•ˆï¼Œæ¢å¤æŠ•å½±çŸ©é˜µå¹¶è®¾ç½®åæš—çš„å…‰ç…§
+	// ¿ªÆôÎíĞ§£¬»Ö¸´Í¶Ó°¾ØÕó²¢ÉèÖÃÆ«°µµÄ¹âÕÕ
 	mBasicEffect.SetFogState(true);
 	mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
 	dirLight[0].Ambient = XMFLOAT4(0.08f, 0.08f, 0.08f, 1.0f);
@@ -388,22 +388,22 @@ void GameApp::DrawScene(bool drawMinimap)
 	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
 	if (drawMinimap)
 	{
-		// å°åœ°å›¾ä¸‹ç»˜åˆ¶æ‰€æœ‰æ ‘
+		// Ğ¡µØÍ¼ÏÂ»æÖÆËùÓĞÊ÷
 		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, mInstancedData);
 	}
 	else
 	{
-		// ç»Ÿè®¡å®é™…ç»˜åˆ¶çš„ç‰©ä½“æ•°ç›®
+		// Í³¼ÆÊµ¼Ê»æÖÆµÄÎïÌåÊıÄ¿
 		std::vector<XMMATRIX> acceptedData;
-		// é»˜è®¤è§†é”¥ä½“è£å‰ª
+		// Ä¬ÈÏÊÓ×¶Ìå²Ã¼ô
 		acceptedData = Collision::FrustumCulling(mInstancedData, mTrees.GetLocalBoundingBox(),
 			mCamera->GetViewXM(), mCamera->GetProjXM());
-		// é»˜è®¤ç¡¬ä»¶å®ä¾‹åŒ–ç»˜åˆ¶
+		// Ä¬ÈÏÓ²¼şÊµÀı»¯»æÖÆ
 		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
 		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, acceptedData);
 	}
 	
-	// ç»˜åˆ¶åœ°é¢
+	// »æÖÆµØÃæ
 	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
 	mGround.Draw(md3dImmediateContext, mBasicEffect);	
 }
@@ -411,25 +411,25 @@ void GameApp::DrawScene(bool drawMinimap)
 void GameApp::CreateRandomTrees()
 {
 	srand((unsigned)time(nullptr));
-	// åˆå§‹åŒ–æ ‘
+	// ³õÊ¼»¯Ê÷
 	mObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
 	mTrees.SetModel(Model(md3dDevice, mObjReader));
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 
 	BoundingBox treeBox = mTrees.GetLocalBoundingBox();
-	// è·å–æ ‘åŒ…å›´ç›’é¡¶ç‚¹
+	// »ñÈ¡Ê÷°üÎ§ºĞ¶¥µã
 	mTreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	// è®©æ ‘æœ¨åº•éƒ¨ç´§è´´åœ°é¢ä½äºy = -2çš„å¹³é¢
+	// ÈÃÊ÷Ä¾µ×²¿½ôÌùµØÃæÎ»ÓÚy = -2µÄÆ½Ãæ
 	treeBox.Transform(treeBox, S);
 	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
-	// éšæœºç”Ÿæˆ144é¢—éšæœºæœå‘çš„æ ‘
+	// Ëæ»úÉú³É144¿ÅËæ»ú³¯ÏòµÄÊ÷
 	float theta = 0.0f;
 	for (int i = 0; i < 16; ++i)
 	{
-		// å–5-95çš„åŠå¾„æ”¾ç½®éšæœºçš„æ ‘
+		// È¡5-95µÄ°ë¾¶·ÅÖÃËæ»úµÄÊ÷
 		for (int j = 0; j < 3; ++j)
 		{
-			// è·ç¦»è¶Šè¿œï¼Œæ ‘æœ¨è¶Šå¤š
+			// ¾àÀëÔ½Ô¶£¬Ê÷Ä¾Ô½¶à
 			for (int k = 0; k < 2 * j + 1; ++k)
 			{
 				float radius = (float)(rand() % 30 + 30 * j + 5);

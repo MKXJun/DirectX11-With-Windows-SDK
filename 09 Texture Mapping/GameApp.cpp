@@ -1,4 +1,4 @@
-ï»¿#include "GameApp.h"
+#include "GameApp.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
@@ -26,7 +26,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
+	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
 	mMouse->SetWindow(mhMainWnd);
 	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
@@ -37,13 +37,13 @@ void GameApp::OnResize()
 {
 	assert(md2dFactory);
 	assert(mdwriteFactory);
-	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
+	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
 	mColorBrush.Reset();
 	md2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
+	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
 	ComPtr<IDXGISurface> surface;
 	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -54,25 +54,25 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugString(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
-			"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
-			"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+		OutputDebugString(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
+			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
+			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
 			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
+			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
+		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
 		HR(md2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(mdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 20, L"zh-cn",
 			mTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
+		// ±¨¸æÒì³£ÎÊÌâ
 		assert(md2dRenderTarget);
 	}
 	
@@ -84,10 +84,10 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State state = mKeyboard->GetState();
 	mKeyboardTracker.Update(state);	
 
-	// é”®ç›˜åˆ‡æ¢æ¨¡å¼
+	// ¼üÅÌÇĞ»»Ä£Ê½
 	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
-		// æ’­æ”¾æœ¨ç®±åŠ¨ç”»
+		// ²¥·ÅÄ¾Ïä¶¯»­
 		mCurrMode = ShowMode::WoodCrate;
 		md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
 		auto meshData = Geometry::CreateBox();
@@ -114,9 +114,9 @@ void GameApp::UpdateScene(float dt)
 		phi += 0.00003f, theta += 0.00005f;
 		XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 		mVSConstantBuffer.world = XMMatrixTranspose(W);
-		mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// ä¸¤æ¬¡è½¬ç½®æŠµæ¶ˆ
+		mVSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// Á½´Î×ªÖÃµÖÏû
 
-		// æ›´æ–°å¸¸é‡ç¼“å†²åŒºï¼Œè®©ç«‹æ–¹ä½“è½¬èµ·æ¥
+		// ¸üĞÂ³£Á¿»º³åÇø£¬ÈÃÁ¢·½Ìå×ªÆğÀ´
 		D3D11_MAPPED_SUBRESOURCE mappedData;
 		HR(md3dImmediateContext->Map(mConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 		memcpy_s(mappedData.pData, sizeof(VSConstantBuffer), &mVSConstantBuffer, sizeof(VSConstantBuffer));
@@ -124,7 +124,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	else if (mCurrMode == ShowMode::FireAnim)
 	{
-		// ç”¨äºé™åˆ¶åœ¨1ç§’60å¸§
+		// ÓÃÓÚÏŞÖÆÔÚ1Ãë60Ö¡
 		static float totDeltaTime = 0;
 
 		totDeltaTime += dt;
@@ -145,16 +145,16 @@ void GameApp::DrawScene()
 	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	
-	// ç»˜åˆ¶å‡ ä½•æ¨¡å‹
+	// »æÖÆ¼¸ºÎÄ£ĞÍ
 	md3dImmediateContext->DrawIndexed(mIndexCount, 0, 0);
 
 	//
-	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
+	// »æÖÆDirect2D²¿·Ö
 	//
 	if (md2dRenderTarget != nullptr)
 	{
 		md2dRenderTarget->BeginDraw();
-		static const WCHAR* textStr = L"åˆ‡æ¢æ˜¾ç¤º: 1-æœ¨ç®±(3D) 2-ç«ç„°(2D)\n";
+		static const WCHAR* textStr = L"ÇĞ»»ÏÔÊ¾: 1-Ä¾Ïä(3D) 2-»ğÑæ(2D)\n";
 		md2dRenderTarget->DrawTextW(textStr, (UINT32)wcslen(textStr), mTextFormat.Get(),
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
 		HR(md2dRenderTarget->EndDraw());
@@ -168,25 +168,25 @@ bool GameApp::InitEffect()
 {
 	ComPtr<ID3DBlob> blob;
 
-	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨(2D)
+	// ´´½¨¶¥µã×ÅÉ«Æ÷(2D)
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_2D.cso", L"HLSL\\Basic_VS_2D.hlsl", "VS_2D", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader2D.GetAddressOf()));
-	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€(2D)
+	// ´´½¨¶¥µã²¼¾Ö(2D)
 	HR(md3dDevice->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout2D.GetAddressOf()));
 
-	// åˆ›å»ºåƒç´ ç€è‰²å™¨(2D)
+	// ´´½¨ÏñËØ×ÅÉ«Æ÷(2D)
 	HR(CreateShaderFromFile(L"HLSL\\Basic_PS_2D.cso", L"HLSL\\Basic_PS_2D.hlsl", "PS_2D", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader2D.GetAddressOf()));
 
-	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨(3D)
+	// ´´½¨¶¥µã×ÅÉ«Æ÷(3D)
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_3D.cso", L"HLSL\\Basic_VS_3D.hlsl", "VS_3D", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mVertexShader3D.GetAddressOf()));
-	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€(3D)
+	// ´´½¨¶¥µã²¼¾Ö(3D)
 	HR(md3dDevice->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), mVertexLayout3D.GetAddressOf()));
 
-	// åˆ›å»ºåƒç´ ç€è‰²å™¨(3D)
+	// ´´½¨ÏñËØ×ÅÉ«Æ÷(3D)
 	HR(CreateShaderFromFile(L"HLSL\\Basic_PS_3D.cso", L"HLSL\\Basic_PS_3D.hlsl", "PS_3D", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(md3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mPixelShader3D.GetAddressOf()));
 
@@ -195,29 +195,29 @@ bool GameApp::InitEffect()
 
 bool GameApp::InitResource()
 {
-	// åˆå§‹åŒ–ç½‘æ ¼æ¨¡å‹å¹¶è®¾ç½®åˆ°è¾“å…¥è£…é…é˜¶æ®µ
+	// ³õÊ¼»¯Íø¸ñÄ£ĞÍ²¢ÉèÖÃµ½ÊäÈë×°Åä½×¶Î
 	auto meshData = Geometry::CreateBox();
 	ResetMesh(meshData);
 
 	// ******************
-	// è®¾ç½®å¸¸é‡ç¼“å†²åŒºæè¿°
+	// ÉèÖÃ³£Á¿»º³åÇøÃèÊö
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbd.ByteWidth = sizeof(VSConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	// æ–°å»ºç”¨äºVSå’ŒPSçš„å¸¸é‡ç¼“å†²åŒº
+	// ĞÂ½¨ÓÃÓÚVSºÍPSµÄ³£Á¿»º³åÇø
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[0].GetAddressOf()));
 	cbd.ByteWidth = sizeof(PSConstantBuffer);
 	HR(md3dDevice->CreateBuffer(&cbd, nullptr, mConstantBuffers[1].GetAddressOf()));
 
 	// ******************
-	// åˆå§‹åŒ–çº¹ç†å’Œé‡‡æ ·å™¨çŠ¶æ€
+	// ³õÊ¼»¯ÎÆÀíºÍ²ÉÑùÆ÷×´Ì¬
 
-	// åˆå§‹åŒ–æœ¨ç®±çº¹ç†
+	// ³õÊ¼»¯Ä¾ÏäÎÆÀí
 	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, mWoodCrate.GetAddressOf()));
-	// åˆå§‹åŒ–ç«ç„°çº¹ç†
+	// ³õÊ¼»¯»ğÑæÎÆÀí
 	WCHAR strFile[40];
 	mFireAnim.resize(120);
 	for (int i = 1; i <= 120; ++i)
@@ -226,7 +226,7 @@ bool GameApp::InitResource()
 		HR(CreateWICTextureFromFile(md3dDevice.Get(), strFile, nullptr, mFireAnim[i - 1].GetAddressOf()));
 	}
 		
-	// åˆå§‹åŒ–é‡‡æ ·å™¨çŠ¶æ€
+	// ³õÊ¼»¯²ÉÑùÆ÷×´Ì¬
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -240,9 +240,9 @@ bool GameApp::InitResource()
 
 	
 	// ******************
-	// åˆå§‹åŒ–å¸¸é‡ç¼“å†²åŒºçš„å€¼
+	// ³õÊ¼»¯³£Á¿»º³åÇøµÄÖµ
 
-	// åˆå§‹åŒ–ç”¨äºVSçš„å¸¸é‡ç¼“å†²åŒºçš„å€¼
+	// ³õÊ¼»¯ÓÃÓÚVSµÄ³£Á¿»º³åÇøµÄÖµ
 	mVSConstantBuffer.world = XMMatrixIdentity();			
 	mVSConstantBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
@@ -252,8 +252,8 @@ bool GameApp::InitResource()
 	mVSConstantBuffer.proj = XMMatrixTranspose(XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 1.0f, 1000.0f));
 	mVSConstantBuffer.worldInvTranspose = XMMatrixIdentity();
 	
-	// åˆå§‹åŒ–ç”¨äºPSçš„å¸¸é‡ç¼“å†²åŒºçš„å€¼
-	// è¿™é‡Œåªä½¿ç”¨ä¸€ç›ç‚¹å…‰æ¥æ¼”ç¤º
+	// ³õÊ¼»¯ÓÃÓÚPSµÄ³£Á¿»º³åÇøµÄÖµ
+	// ÕâÀïÖ»Ê¹ÓÃÒ»Õµµã¹âÀ´ÑİÊ¾
 	mPSConstantBuffer.pointLight[0].Position = XMFLOAT3(0.0f, 0.0f, -10.0f);
 	mPSConstantBuffer.pointLight[0].Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
 	mPSConstantBuffer.pointLight[0].Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
@@ -263,38 +263,38 @@ bool GameApp::InitResource()
 	mPSConstantBuffer.numDirLight = 0;
 	mPSConstantBuffer.numPointLight = 1;
 	mPSConstantBuffer.numSpotLight = 0;
-	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);	// è¿™é‡Œå®¹æ˜“é—æ¼ï¼Œå·²è¡¥ä¸Š
-	// åˆå§‹åŒ–æè´¨
+	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);	// ÕâÀïÈİÒ×ÒÅÂ©£¬ÒÑ²¹ÉÏ
+	// ³õÊ¼»¯²ÄÖÊ
 	mPSConstantBuffer.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mPSConstantBuffer.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mPSConstantBuffer.material.Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 5.0f);
-	// æ³¨æ„ä¸è¦å¿˜è®°è®¾ç½®æ­¤å¤„çš„è§‚å¯Ÿä½ç½®ï¼Œå¦åˆ™é«˜äº®éƒ¨åˆ†ä¼šæœ‰é—®é¢˜
+	// ×¢Òâ²»ÒªÍü¼ÇÉèÖÃ´Ë´¦µÄ¹Û²ìÎ»ÖÃ£¬·ñÔò¸ßÁÁ²¿·Ö»áÓĞÎÊÌâ
 	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
-	// æ›´æ–°PSå¸¸é‡ç¼“å†²åŒºèµ„æº
+	// ¸üĞÂPS³£Á¿»º³åÇø×ÊÔ´
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &mPSConstantBuffer, sizeof(PSConstantBuffer));
 	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
 
 	// ******************
-	// ç»™æ¸²æŸ“ç®¡çº¿å„ä¸ªé˜¶æ®µç»‘å®šå¥½æ‰€éœ€èµ„æº
-	// è®¾ç½®å›¾å…ƒç±»å‹ï¼Œè®¾å®šè¾“å…¥å¸ƒå±€
+	// ¸øäÖÈ¾¹ÜÏß¸÷¸ö½×¶Î°ó¶¨ºÃËùĞè×ÊÔ´
+	// ÉèÖÃÍ¼ÔªÀàĞÍ£¬Éè¶¨ÊäÈë²¼¾Ö
 	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dImmediateContext->IASetInputLayout(mVertexLayout3D.Get());
-	// é»˜è®¤ç»‘å®š3Dç€è‰²å™¨
+	// Ä¬ÈÏ°ó¶¨3D×ÅÉ«Æ÷
 	md3dImmediateContext->VSSetShader(mVertexShader3D.Get(), nullptr, 0);
-	// VSå¸¸é‡ç¼“å†²åŒºå¯¹åº”HLSLå¯„å­˜äºb0çš„å¸¸é‡ç¼“å†²åŒº
+	// VS³£Á¿»º³åÇø¶ÔÓ¦HLSL¼Ä´æÓÚb0µÄ³£Á¿»º³åÇø
 	md3dImmediateContext->VSSetConstantBuffers(0, 1, mConstantBuffers[0].GetAddressOf());
-	// PSå¸¸é‡ç¼“å†²åŒºå¯¹åº”HLSLå¯„å­˜äºb1çš„å¸¸é‡ç¼“å†²åŒº
+	// PS³£Á¿»º³åÇø¶ÔÓ¦HLSL¼Ä´æÓÚb1µÄ³£Á¿»º³åÇø
 	md3dImmediateContext->PSSetConstantBuffers(1, 1, mConstantBuffers[1].GetAddressOf());
-	// åƒç´ ç€è‰²é˜¶æ®µè®¾ç½®å¥½é‡‡æ ·å™¨
+	// ÏñËØ×ÅÉ«½×¶ÎÉèÖÃºÃ²ÉÑùÆ÷
 	md3dImmediateContext->PSSetSamplers(0, 1, mSamplerState.GetAddressOf());
 	md3dImmediateContext->PSSetShaderResources(0, 1, mWoodCrate.GetAddressOf());
 	md3dImmediateContext->PSSetShader(mPixelShader3D.Get(), nullptr, 0);
 	
 	
-	// åƒç´ ç€è‰²é˜¶æ®µé»˜è®¤è®¾ç½®æœ¨ç®±çº¹ç†
+	// ÏñËØ×ÅÉ«½×¶ÎÄ¬ÈÏÉèÖÃÄ¾ÏäÎÆÀí
 	mCurrMode = ShowMode::WoodCrate;
 
 	return true;
@@ -302,34 +302,34 @@ bool GameApp::InitResource()
 template<class VertexType>
 bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 {
-	// é‡Šæ”¾æ—§èµ„æº
+	// ÊÍ·Å¾É×ÊÔ´
 	mVertexBuffer.Reset();
 	mIndexBuffer.Reset();
 
 
 
-	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
+	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * sizeof(VertexType);
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
+	// ĞÂ½¨¶¥µã»º³åÇø
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = meshData.vertexVec.data();
 	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf()));
 
-	// è¾“å…¥è£…é…é˜¶æ®µçš„é¡¶ç‚¹ç¼“å†²åŒºè®¾ç½®
-	UINT stride = sizeof(VertexType);			// è·¨è¶Šå­—èŠ‚æ•°
-	UINT offset = 0;							// èµ·å§‹åç§»é‡
+	// ÊäÈë×°Åä½×¶ÎµÄ¶¥µã»º³åÇøÉèÖÃ
+	UINT stride = sizeof(VertexType);			// ¿çÔ½×Ö½ÚÊı
+	UINT offset = 0;							// ÆğÊ¼Æ«ÒÆÁ¿
 
 	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
 
 
 
-	// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
+	// ÉèÖÃË÷Òı»º³åÇøÃèÊö
 	mIndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
@@ -337,10 +337,10 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
-	// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
+	// ĞÂ½¨Ë÷Òı»º³åÇø
 	InitData.pSysMem = meshData.indexVec.data();
 	HR(md3dDevice->CreateBuffer(&ibd, &InitData, mIndexBuffer.GetAddressOf()));
-	// è¾“å…¥è£…é…é˜¶æ®µçš„ç´¢å¼•ç¼“å†²åŒºè®¾ç½®
+	// ÊäÈë×°Åä½×¶ÎµÄË÷Òı»º³åÇøÉèÖÃ
 	md3dImmediateContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 	return true;

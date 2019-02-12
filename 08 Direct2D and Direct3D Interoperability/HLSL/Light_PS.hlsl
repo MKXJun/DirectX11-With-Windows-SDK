@@ -1,15 +1,15 @@
 #include "Light.hlsli"
 
-// åƒç´ ç€è‰²å™¨
+// ÏñËØ×ÅÉ«Æ÷
 float4 PS(VertexOut pIn) : SV_Target
 {
-    // æ ‡å‡†åŒ–æ³•å‘é‡
+    // ±ê×¼»¯·¨ÏòÁ¿
     pIn.NormalW = normalize(pIn.NormalW);
 
-    // é¡¶ç‚¹æŒ‡å‘çœ¼ç›çš„å‘é‡
+    // ¶¥µãÖ¸ÏòÑÛ¾¦µÄÏòÁ¿
     float3 toEyeW = normalize(gEyePosW - pIn.PosW);
 
-    // åˆå§‹åŒ–ä¸º0 
+    // ³õÊ¼»¯Îª0 
     float4 ambient, diffuse, spec;
     float4 A, D, S;
     ambient = diffuse = spec = A = D = S = float4(0.0f, 0.0f, 0.0f, 0.0f);

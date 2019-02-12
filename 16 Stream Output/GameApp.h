@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -29,18 +29,18 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
-	ComPtr<IDWriteFont> mFont;								// å­—ä½“
-	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
+	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
+	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
 
-	ComPtr<ID3D11Buffer> mVertexBuffers[7];					// é¡¶ç‚¹ç¼“å†²åŒºæ•°ç»„
-	int mVertexCounts[7];									// é¡¶ç‚¹æ•°ç›®
-	int mCurrIndex;											// å½“å‰ç´¢å¼•
-	Mode mShowMode;											// å½“å‰æ˜¾ç¤ºæ¨¡å¼
-	bool mIsWireFrame;										// æ˜¯å¦ä¸ºçº¿æ¡†æ¨¡å¼
-	bool mShowNormal;										// æ˜¯å¦æ˜¾ç¤ºæ³•å‘é‡
+	ComPtr<ID3D11Buffer> mVertexBuffers[7];					// ¶¥µã»º³åÇøÊı×é
+	int mVertexCounts[7];									// ¶¥µãÊıÄ¿
+	int mCurrIndex;											// µ±Ç°Ë÷Òı
+	Mode mShowMode;											// µ±Ç°ÏÔÊ¾Ä£Ê½
+	bool mIsWireFrame;										// ÊÇ·ñÎªÏß¿òÄ£Ê½
+	bool mShowNormal;										// ÊÇ·ñÏÔÊ¾·¨ÏòÁ¿
 
-	BasicEffect mBasicEffect;							// å¯¹è±¡ç»˜åˆ¶ç‰¹æ•ˆç®¡ç†ç±»
+	BasicEffect mBasicEffect;							// ¶ÔÏó»æÖÆÌØĞ§¹ÜÀíÀà
 
 };
 

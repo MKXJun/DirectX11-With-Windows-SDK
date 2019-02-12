@@ -1,4 +1,4 @@
-ï»¿#include "TextureRender.h"
+#include "TextureRender.h"
 #include "DXTrace.h"
 using namespace Microsoft::WRL;
 
@@ -6,7 +6,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	: mGenerateMips(generateMips)
 {
 	// ******************
-	// 1. åˆ›å»ºçº¹ç†
+	// 1. ´´½¨ÎÆÀí
 	//
 
 	ComPtr<ID3D11Texture2D> texture;
@@ -14,7 +14,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	
 	texDesc.Width = texWidth;
 	texDesc.Height = texHeight;
-	texDesc.MipLevels = (mGenerateMips ? 0 : 1);	// 0ä¸ºå®Œæ•´mipmapé“¾
+	texDesc.MipLevels = (mGenerateMips ? 0 : 1);	// 0ÎªÍêÕûmipmapÁ´
 	texDesc.ArraySize = 1;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
@@ -24,11 +24,11 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	// ç°åœ¨textureç”¨äºæ–°å»ºçº¹ç†
+	// ÏÖÔÚtextureÓÃÓÚĞÂ½¨ÎÆÀí
 	HR(device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf()));
 
 	// ******************
-	// 2. åˆ›å»ºçº¹ç†å¯¹åº”çš„æ¸²æŸ“ç›®æ ‡è§†å›¾
+	// 2. ´´½¨ÎÆÀí¶ÔÓ¦µÄäÖÈ¾Ä¿±êÊÓÍ¼
 	//
 
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
@@ -42,14 +42,14 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 		mOutputTextureRTV.GetAddressOf()));
 	
 	// ******************
-	// 3. åˆ›å»ºçº¹ç†å¯¹åº”çš„ç€è‰²å™¨èµ„æºè§†å›¾
+	// 3. ´´½¨ÎÆÀí¶ÔÓ¦µÄ×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
 	//
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = -1;	// ä½¿ç”¨æ‰€æœ‰çš„mipç­‰çº§
+	srvDesc.TextureCube.MipLevels = -1;	// Ê¹ÓÃËùÓĞµÄmipµÈ¼¶
 
 	HR(device->CreateShaderResourceView(
 		texture.Get(),
@@ -57,7 +57,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 		mOutputTextureSRV.GetAddressOf()));
 
 	// ******************
-	// 4. åˆ›å»ºä¸çº¹ç†ç­‰å®½é«˜çš„æ·±åº¦/æ¨¡æ¿ç¼“å†²åŒºå’Œå¯¹åº”çš„è§†å›¾
+	// 4. ´´½¨ÓëÎÆÀíµÈ¿í¸ßµÄÉî¶È/Ä£°å»º³åÇøºÍ¶ÔÓ¦µÄÊÓÍ¼
 	//
 
 	texDesc.Width = texWidth;
@@ -87,7 +87,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 		mOutputTextureDSV.GetAddressOf()));
 
 	// ******************
-	// 5. åˆå§‹åŒ–è§†å£
+	// 5. ³õÊ¼»¯ÊÓ¿Ú
 	//
 	mOutputViewPort.TopLeftX = 0.0f;
 	mOutputViewPort.TopLeftY = 0.0f;
@@ -103,36 +103,36 @@ TextureRender::~TextureRender()
 
 void TextureRender::Begin(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	// ç¼“å­˜æ¸²æŸ“ç›®æ ‡å’Œæ·±åº¦æ¨¡æ¿è§†å›¾
+	// »º´æäÖÈ¾Ä¿±êºÍÉî¶ÈÄ£°åÊÓÍ¼
 	deviceContext->OMGetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.GetAddressOf());
-	// ç¼“å­˜è§†å£
+	// »º´æÊÓ¿Ú
 	UINT numViewports = 1;
 	deviceContext->RSGetViewports(&numViewports, &mCacheViewPort);
 
 
-	// æ¸…ç©ºç¼“å†²åŒº
+	// Çå¿Õ»º³åÇø
 	float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	deviceContext->ClearRenderTargetView(mOutputTextureRTV.Get(), black);
 	deviceContext->ClearDepthStencilView(mOutputTextureDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	// è®¾ç½®æ¸²æŸ“ç›®æ ‡å’Œæ·±åº¦æ¨¡æ¿è§†å›¾
+	// ÉèÖÃäÖÈ¾Ä¿±êºÍÉî¶ÈÄ£°åÊÓÍ¼
 	deviceContext->OMSetRenderTargets(1, mOutputTextureRTV.GetAddressOf(), mOutputTextureDSV.Get());
-	// è®¾ç½®è§†å£
+	// ÉèÖÃÊÓ¿Ú
 	deviceContext->RSSetViewports(1, &mOutputViewPort);
 }
 
 void TextureRender::End(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	// æ¢å¤é»˜è®¤è®¾å®š
+	// »Ö¸´Ä¬ÈÏÉè¶¨
 	deviceContext->RSSetViewports(1, &mCacheViewPort);
 	deviceContext->OMSetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.Get());
 
-	// è‹¥ä¹‹å‰æœ‰æŒ‡å®šéœ€è¦mipmapé“¾ï¼Œåˆ™ç”Ÿæˆ
+	// ÈôÖ®Ç°ÓĞÖ¸¶¨ĞèÒªmipmapÁ´£¬ÔòÉú³É
 	if (mGenerateMips)
 	{
 		deviceContext->GenerateMips(mOutputTextureSRV.Get());
 	}
 	
-	// æ¸…ç©ºä¸´æ—¶ç¼“å­˜çš„æ¸²æŸ“ç›®æ ‡è§†å›¾å’Œæ·±åº¦æ¨¡æ¿è§†å›¾
+	// Çå¿ÕÁÙÊ±»º´æµÄäÖÈ¾Ä¿±êÊÓÍ¼ºÍÉî¶ÈÄ£°åÊÓÍ¼
 	mCacheDSV.Reset();
 	mCacheRTV.Reset();
 }

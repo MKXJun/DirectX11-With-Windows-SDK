@@ -1,4 +1,4 @@
-ï»¿#include "RenderStates.h"
+#include "RenderStates.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace Microsoft::WRL;
@@ -25,36 +25,36 @@ ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWriteWithStencil	= nullp
 
 bool RenderStates::IsInit()
 {
-	// ä¸€èˆ¬æ¥è¯´åˆå§‹åŒ–æ“ä½œä¼šæŠŠæ‰€æœ‰çš„çŠ¶æ€éƒ½åˆ›å»ºå‡ºæ¥
+	// Ò»°ãÀ´Ëµ³õÊ¼»¯²Ù×÷»á°ÑËùÓĞµÄ×´Ì¬¶¼´´½¨³öÀ´
 	return RSWireframe != nullptr;
 }
 
 void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 {
-	// å…ˆå‰åˆå§‹åŒ–è¿‡çš„è¯å°±æ²¡å¿…è¦é‡æ¥äº†
+	// ÏÈÇ°³õÊ¼»¯¹ıµÄ»°¾ÍÃ»±ØÒªÖØÀ´ÁË
 	if (IsInit())
 		return;
 	// ******************
-	// åˆå§‹åŒ–å…‰æ …åŒ–å™¨çŠ¶æ€
+	// ³õÊ¼»¯¹âÕ¤»¯Æ÷×´Ì¬
 	//
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
 
-	// çº¿æ¡†æ¨¡å¼
+	// Ïß¿òÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSWireframe.GetAddressOf()));
 	 
-	// æ— èƒŒé¢å‰”é™¤æ¨¡å¼
+	// ÎŞ±³ÃæÌŞ³ıÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSNoCull.GetAddressOf()));
 
-	// é¡ºæ—¶é’ˆå‰”é™¤æ¨¡å¼
+	// Ë³Ê±ÕëÌŞ³ıÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.FrontCounterClockwise = true;
@@ -62,12 +62,12 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSCullClockWise.GetAddressOf()));
 
 	// ******************
-	// åˆå§‹åŒ–é‡‡æ ·å™¨çŠ¶æ€
+	// ³õÊ¼»¯²ÉÑùÆ÷×´Ì¬
 	//
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 
-	// çº¿æ€§è¿‡æ»¤æ¨¡å¼
+	// ÏßĞÔ¹ıÂËÄ£Ê½
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -77,7 +77,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.GetAddressOf()));
 
-	// å„å‘å¼‚æ€§è¿‡æ»¤æ¨¡å¼
+	// ¸÷ÏòÒìĞÔ¹ıÂËÄ£Ê½
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -89,19 +89,19 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
 	
 	// ******************
-	// åˆå§‹åŒ–æ··åˆçŠ¶æ€
+	// ³õÊ¼»¯»ìºÏ×´Ì¬
 	//
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
 	auto& rtDesc = blendDesc.RenderTarget[0];
-	// Alpha-To-Coverageæ¨¡å¼
+	// Alpha-To-CoverageÄ£Ê½
 	blendDesc.AlphaToCoverageEnable = true;
 	blendDesc.IndependentBlendEnable = false;
 	rtDesc.BlendEnable = false;
 	rtDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	HR(device->CreateBlendState(&blendDesc, BSAlphaToCoverage.GetAddressOf()));
 
-	// é€æ˜æ··åˆæ¨¡å¼
+	// Í¸Ã÷»ìºÏÄ£Ê½
 	// Color = SrcAlpha * SrcColor + (1 - SrcAlpha) * DestColor 
 	// Alpha = SrcAlpha
 	blendDesc.AlphaToCoverageEnable = false;
@@ -116,7 +116,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateBlendState(&blendDesc, BSTransparent.GetAddressOf()));
 	
-	// åŠ æ³•æ··åˆæ¨¡å¼
+	// ¼Ó·¨»ìºÏÄ£Ê½
 	// Color = SrcColor + DestColor
 	// Alpha = SrcAlpha
 	rtDesc.SrcBlend = D3D11_BLEND_ONE;
@@ -128,7 +128,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateBlendState(&blendDesc, BSAdditive.GetAddressOf()));
 
-	// æ— é¢œè‰²å†™å…¥æ··åˆæ¨¡å¼
+	// ÎŞÑÕÉ«Ğ´Èë»ìºÏÄ£Ê½
 	// Color = DestColor
 	// Alpha = DestAlpha
 	rtDesc.BlendEnable = false;
@@ -142,13 +142,13 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateBlendState(&blendDesc, BSNoColorWrite.GetAddressOf()));
 	
 	// ******************
-	// åˆå§‹åŒ–æ·±åº¦/æ¨¡æ¿çŠ¶æ€
+	// ³õÊ¼»¯Éî¶È/Ä£°å×´Ì¬
 	//
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
 
-	// å†™å…¥æ¨¡æ¿å€¼çš„æ·±åº¦/æ¨¡æ¿çŠ¶æ€
-	// è¿™é‡Œä¸å†™å…¥æ·±åº¦ä¿¡æ¯
-	// æ— è®ºæ˜¯æ­£é¢è¿˜æ˜¯èƒŒé¢ï¼ŒåŸæ¥æŒ‡å®šçš„åŒºåŸŸçš„æ¨¡æ¿å€¼éƒ½ä¼šè¢«å†™å…¥StencilRef
+	// Ğ´ÈëÄ£°åÖµµÄÉî¶È/Ä£°å×´Ì¬
+	// ÕâÀï²»Ğ´ÈëÉî¶ÈĞÅÏ¢
+	// ÎŞÂÛÊÇÕıÃæ»¹ÊÇ±³Ãæ£¬Ô­À´Ö¸¶¨µÄÇøÓòµÄÄ£°åÖµ¶¼»á±»Ğ´ÈëStencilRef
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -161,7 +161,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	// å¯¹äºèƒŒé¢çš„å‡ ä½•ä½“æˆ‘ä»¬æ˜¯ä¸è¿›è¡Œæ¸²æŸ“çš„ï¼Œæ‰€ä»¥è¿™é‡Œçš„è®¾ç½®æ— å…³ç´§è¦
+	// ¶ÔÓÚ±³ÃæµÄ¼¸ºÎÌåÎÒÃÇÊÇ²»½øĞĞäÖÈ¾µÄ£¬ËùÒÔÕâÀïµÄÉèÖÃÎŞ¹Ø½ôÒª
 	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
@@ -169,8 +169,8 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSWriteStencil.GetAddressOf()));
 
-	// å¯¹æŒ‡å®šæ¨¡æ¿å€¼è¿›è¡Œç»˜åˆ¶çš„æ·±åº¦/æ¨¡æ¿çŠ¶æ€
-	// å¯¹æ»¡è¶³æ¨¡æ¿å€¼æ¡ä»¶çš„åŒºåŸŸæ‰è¿›è¡Œç»˜åˆ¶ï¼Œå¹¶æ›´æ–°æ·±åº¦
+	// ¶ÔÖ¸¶¨Ä£°åÖµ½øĞĞ»æÖÆµÄÉî¶È/Ä£°å×´Ì¬
+	// ¶ÔÂú×ãÄ£°åÖµÌõ¼şµÄÇøÓò²Å½øĞĞ»æÖÆ£¬²¢¸üĞÂÉî¶È
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -183,7 +183,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-	// å¯¹äºèƒŒé¢çš„å‡ ä½•ä½“æˆ‘ä»¬æ˜¯ä¸è¿›è¡Œæ¸²æŸ“çš„ï¼Œæ‰€ä»¥è¿™é‡Œçš„è®¾ç½®æ— å…³ç´§è¦
+	// ¶ÔÓÚ±³ÃæµÄ¼¸ºÎÌåÎÒÃÇÊÇ²»½øĞĞäÖÈ¾µÄ£¬ËùÒÔÕâÀïµÄÉèÖÃÎŞ¹Ø½ôÒª
 	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
@@ -191,9 +191,9 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawWithStencil.GetAddressOf()));
 
-	// æ— äºŒæ¬¡æ··åˆæ·±åº¦/æ¨¡æ¿çŠ¶æ€
-	// å…è®¸é»˜è®¤æ·±åº¦æµ‹è¯•
-	// é€šè¿‡è‡ªé€’å¢ä½¿å¾—åŸæ¥StencilRefçš„å€¼åªèƒ½ä½¿ç”¨ä¸€æ¬¡ï¼Œå®ç°ä»…ä¸€æ¬¡æ··åˆ
+	// ÎŞ¶ş´Î»ìºÏÉî¶È/Ä£°å×´Ì¬
+	// ÔÊĞíÄ¬ÈÏÉî¶È²âÊÔ
+	// Í¨¹ı×ÔµİÔöÊ¹µÃÔ­À´StencilRefµÄÖµÖ»ÄÜÊ¹ÓÃÒ»´Î£¬ÊµÏÖ½öÒ»´Î»ìºÏ
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -206,7 +206,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
 	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-	// å¯¹äºèƒŒé¢çš„å‡ ä½•ä½“æˆ‘ä»¬æ˜¯ä¸è¿›è¡Œæ¸²æŸ“çš„ï¼Œæ‰€ä»¥è¿™é‡Œçš„è®¾ç½®æ— å…³ç´§è¦
+	// ¶ÔÓÚ±³ÃæµÄ¼¸ºÎÌåÎÒÃÇÊÇ²»½øĞĞäÖÈ¾µÄ£¬ËùÒÔÕâÀïµÄÉèÖÃÎŞ¹Ø½ôÒª
 	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
@@ -214,20 +214,20 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDoubleBlend.GetAddressOf()));
 
-	// å…³é—­æ·±åº¦æµ‹è¯•çš„æ·±åº¦/æ¨¡æ¿çŠ¶æ€
-	// è‹¥ç»˜åˆ¶éé€æ˜ç‰©ä½“ï¼ŒåŠ¡å¿…ä¸¥æ ¼æŒ‰ç…§ç»˜åˆ¶é¡ºåº
-	// ç»˜åˆ¶é€æ˜ç‰©ä½“åˆ™ä¸éœ€è¦æ‹…å¿ƒç»˜åˆ¶é¡ºåº
-	// è€Œé»˜è®¤æƒ…å†µä¸‹æ¨¡æ¿æµ‹è¯•å°±æ˜¯å…³é—­çš„
+	// ¹Ø±ÕÉî¶È²âÊÔµÄÉî¶È/Ä£°å×´Ì¬
+	// Èô»æÖÆ·ÇÍ¸Ã÷ÎïÌå£¬Îñ±ØÑÏ¸ñ°´ÕÕ»æÖÆË³Ğò
+	// »æÖÆÍ¸Ã÷ÎïÌåÔò²»ĞèÒªµ£ĞÄ»æÖÆË³Ğò
+	// ¶øÄ¬ÈÏÇé¿öÏÂÄ£°å²âÊÔ¾ÍÊÇ¹Ø±ÕµÄ
 	dsDesc.DepthEnable = false;
 	dsDesc.StencilEnable = false;
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthTest.GetAddressOf()));
 
 
-	// å…³é—­æ·±åº¦æµ‹è¯•
-	// è‹¥ç»˜åˆ¶éé€æ˜ç‰©ä½“ï¼ŒåŠ¡å¿…ä¸¥æ ¼æŒ‰ç…§ç»˜åˆ¶é¡ºåº
-	// ç»˜åˆ¶é€æ˜ç‰©ä½“åˆ™ä¸éœ€è¦æ‹…å¿ƒç»˜åˆ¶é¡ºåº
-	// å¯¹æ»¡è¶³æ¨¡æ¿å€¼æ¡ä»¶çš„åŒºåŸŸæ‰è¿›è¡Œç»˜åˆ¶
+	// ¹Ø±ÕÉî¶È²âÊÔ
+	// Èô»æÖÆ·ÇÍ¸Ã÷ÎïÌå£¬Îñ±ØÑÏ¸ñ°´ÕÕ»æÖÆË³Ğò
+	// »æÖÆÍ¸Ã÷ÎïÌåÔò²»ĞèÒªµ£ĞÄ»æÖÆË³Ğò
+	// ¶ÔÂú×ãÄ£°åÖµÌõ¼şµÄÇøÓò²Å½øĞĞ»æÖÆ
 	dsDesc.StencilEnable = true;
 	dsDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
 	dsDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
@@ -236,7 +236,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-	// å¯¹äºèƒŒé¢çš„å‡ ä½•ä½“æˆ‘ä»¬æ˜¯ä¸è¿›è¡Œæ¸²æŸ“çš„ï¼Œæ‰€ä»¥è¿™é‡Œçš„è®¾ç½®æ— å…³ç´§è¦
+	// ¶ÔÓÚ±³ÃæµÄ¼¸ºÎÌåÎÒÃÇÊÇ²»½øĞĞäÖÈ¾µÄ£¬ËùÒÔÕâÀïµÄÉèÖÃÎŞ¹Ø½ôÒª
 	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
@@ -244,10 +244,10 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthTestWithStencil.GetAddressOf()));
 
-	// è¿›è¡Œæ·±åº¦æµ‹è¯•ï¼Œä½†ä¸å†™å…¥æ·±åº¦å€¼çš„çŠ¶æ€
-	// è‹¥ç»˜åˆ¶éé€æ˜ç‰©ä½“æ—¶ï¼Œåº”ä½¿ç”¨é»˜è®¤çŠ¶æ€
-	// ç»˜åˆ¶é€æ˜ç‰©ä½“æ—¶ï¼Œä½¿ç”¨è¯¥çŠ¶æ€å¯ä»¥æœ‰æ•ˆç¡®ä¿æ··åˆçŠ¶æ€çš„è¿›è¡Œ
-	// å¹¶ä¸”ç¡®ä¿è¾ƒå‰çš„éé€æ˜ç‰©ä½“å¯ä»¥é˜»æŒ¡è¾ƒåçš„ä¸€åˆ‡ç‰©ä½“
+	// ½øĞĞÉî¶È²âÊÔ£¬µ«²»Ğ´ÈëÉî¶ÈÖµµÄ×´Ì¬
+	// Èô»æÖÆ·ÇÍ¸Ã÷ÎïÌåÊ±£¬Ó¦Ê¹ÓÃÄ¬ÈÏ×´Ì¬
+	// »æÖÆÍ¸Ã÷ÎïÌåÊ±£¬Ê¹ÓÃ¸Ã×´Ì¬¿ÉÒÔÓĞĞ§È·±£»ìºÏ×´Ì¬µÄ½øĞĞ
+	// ²¢ÇÒÈ·±£½ÏÇ°µÄ·ÇÍ¸Ã÷ÎïÌå¿ÉÒÔ×èµ²½ÏºóµÄÒ»ÇĞÎïÌå
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -256,11 +256,11 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.GetAddressOf()));
 
 
-	// è¿›è¡Œæ·±åº¦æµ‹è¯•ï¼Œä½†ä¸å†™å…¥æ·±åº¦å€¼çš„çŠ¶æ€
-	// è‹¥ç»˜åˆ¶éé€æ˜ç‰©ä½“æ—¶ï¼Œåº”ä½¿ç”¨é»˜è®¤çŠ¶æ€
-	// ç»˜åˆ¶é€æ˜ç‰©ä½“æ—¶ï¼Œä½¿ç”¨è¯¥çŠ¶æ€å¯ä»¥æœ‰æ•ˆç¡®ä¿æ··åˆçŠ¶æ€çš„è¿›è¡Œ
-	// å¹¶ä¸”ç¡®ä¿è¾ƒå‰çš„éé€æ˜ç‰©ä½“å¯ä»¥é˜»æŒ¡è¾ƒåçš„ä¸€åˆ‡ç‰©ä½“
-	// å¯¹æ»¡è¶³æ¨¡æ¿å€¼æ¡ä»¶çš„åŒºåŸŸæ‰è¿›è¡Œç»˜åˆ¶
+	// ½øĞĞÉî¶È²âÊÔ£¬µ«²»Ğ´ÈëÉî¶ÈÖµµÄ×´Ì¬
+	// Èô»æÖÆ·ÇÍ¸Ã÷ÎïÌåÊ±£¬Ó¦Ê¹ÓÃÄ¬ÈÏ×´Ì¬
+	// »æÖÆÍ¸Ã÷ÎïÌåÊ±£¬Ê¹ÓÃ¸Ã×´Ì¬¿ÉÒÔÓĞĞ§È·±£»ìºÏ×´Ì¬µÄ½øĞĞ
+	// ²¢ÇÒÈ·±£½ÏÇ°µÄ·ÇÍ¸Ã÷ÎïÌå¿ÉÒÔ×èµ²½ÏºóµÄÒ»ÇĞÎïÌå
+	// ¶ÔÂú×ãÄ£°åÖµÌõ¼şµÄÇøÓò²Å½øĞĞ»æÖÆ
 	dsDesc.StencilEnable = true;
 	dsDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
 	dsDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
@@ -269,7 +269,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-	// å¯¹äºèƒŒé¢çš„å‡ ä½•ä½“æˆ‘ä»¬æ˜¯ä¸è¿›è¡Œæ¸²æŸ“çš„ï¼Œæ‰€ä»¥è¿™é‡Œçš„è®¾ç½®æ— å…³ç´§è¦
+	// ¶ÔÓÚ±³ÃæµÄ¼¸ºÎÌåÎÒÃÇÊÇ²»½øĞĞäÖÈ¾µÄ£¬ËùÒÔÕâÀïµÄÉèÖÃÎŞ¹Ø½ôÒª
 	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;

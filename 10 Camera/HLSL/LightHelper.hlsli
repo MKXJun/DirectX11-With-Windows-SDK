@@ -1,5 +1,5 @@
 
-// æ–¹å‘å…‰
+// ·½Ïò¹â
 struct DirectionalLight
 {
     float4 Ambient;
@@ -9,7 +9,7 @@ struct DirectionalLight
     float Pad;
 };
 
-// ç‚¹å…‰
+// µã¹â
 struct PointLight
 {
     float4 Ambient;
@@ -23,7 +23,7 @@ struct PointLight
     float Pad;
 };
 
-// èšå…‰ç¯
+// ¾Û¹âµÆ
 struct SpotLight
 {
     float4 Ambient;
@@ -40,7 +40,7 @@ struct SpotLight
     float Pad;
 };
 
-// ç‰©ä½“è¡¨é¢æè´¨
+// ÎïÌå±íÃæ²ÄÖÊ
 struct Material
 {
     float4 Ambient;
@@ -57,21 +57,21 @@ void ComputeDirectionalLight(Material mat, DirectionalLight L,
 	out float4 diffuse,
 	out float4 spec)
 {
-	// åˆå§‹åŒ–è¾“å‡º
+	// ³õÊ¼»¯Êä³ö
     ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// å…‰å‘é‡ä¸ç…§å°„æ–¹å‘ç›¸å
+	// ¹âÏòÁ¿ÓëÕÕÉä·½ÏòÏà·´
     float3 lightVec = -L.Direction;
 
-	// æ·»åŠ ç¯å¢ƒå…‰
+	// Ìí¼Ó»·¾³¹â
     ambient = mat.Ambient * L.Ambient;
 
-	// æ·»åŠ æ¼«åå°„å…‰å’Œé•œé¢å…‰
+	// Ìí¼ÓÂş·´Éä¹âºÍ¾µÃæ¹â
     float diffuseFactor = dot(lightVec, normal);
 
-	// å±•å¼€ï¼Œé¿å…åŠ¨æ€åˆ†æ”¯
+	// Õ¹¿ª£¬±ÜÃâ¶¯Ì¬·ÖÖ§
 	[flatten]
     if (diffuseFactor > 0.0f)
     {
@@ -87,31 +87,31 @@ void ComputeDirectionalLight(Material mat, DirectionalLight L,
 void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, float3 toEye,
 	out float4 ambient, out float4 diffuse, out float4 spec)
 {
-	// åˆå§‹åŒ–è¾“å‡º
+	// ³õÊ¼»¯Êä³ö
     ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// ä»è¡¨é¢åˆ°å…‰æºçš„å‘é‡
+	// ´Ó±íÃæµ½¹âÔ´µÄÏòÁ¿
     float3 lightVec = L.Position - pos;
 
-	// è¡¨é¢åˆ°å…‰çº¿çš„è·ç¦»
+	// ±íÃæµ½¹âÏßµÄ¾àÀë
     float d = length(lightVec);
 
-	// ç¯å…‰èŒƒå›´æµ‹è¯•
+	// µÆ¹â·¶Î§²âÊÔ
     if (d > L.Range)
         return;
 
-	// æ ‡å‡†åŒ–å…‰å‘é‡
+	// ±ê×¼»¯¹âÏòÁ¿
     lightVec /= d;
 
-	// ç¯å¢ƒå…‰è®¡ç®—
+	// »·¾³¹â¼ÆËã
     ambient = mat.Ambient * L.Ambient;
 
-	// æ¼«åå°„å’Œé•œé¢è®¡ç®—
+	// Âş·´ÉäºÍ¾µÃæ¼ÆËã
     float diffuseFactor = dot(lightVec, normal);
 
-	// å±•å¼€ä»¥é¿å…åŠ¨æ€åˆ†æ”¯
+	// Õ¹¿ªÒÔ±ÜÃâ¶¯Ì¬·ÖÖ§
 	[flatten]
     if (diffuseFactor > 0.0f)
     {
@@ -122,7 +122,7 @@ void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, fl
         spec = specFactor * mat.Specular * L.Specular;
     }
 
-	// å…‰çš„è¡°å¼±
+	// ¹âµÄË¥Èõ
     float att = 1.0f / dot(L.Att, float3(1.0f, d, d * d));
 
     diffuse *= att;
@@ -133,32 +133,32 @@ void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, fl
 void ComputeSpotLight(Material mat, SpotLight L, float3 pos, float3 normal, float3 toEye,
 	out float4 ambient, out float4 diffuse, out float4 spec)
 {
-	// åˆå§‹åŒ–è¾“å‡º
+	// ³õÊ¼»¯Êä³ö
     ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// // ä»è¡¨é¢åˆ°å…‰æºçš„å‘é‡
+	// // ´Ó±íÃæµ½¹âÔ´µÄÏòÁ¿
     float3 lightVec = L.Position - pos;
 
-    // è¡¨é¢åˆ°å…‰æºçš„è·ç¦»
+    // ±íÃæµ½¹âÔ´µÄ¾àÀë
     float d = length(lightVec);
 
-	// èŒƒå›´æµ‹è¯•
+	// ·¶Î§²âÊÔ
     if (d > L.Range)
         return;
 
-	// æ ‡å‡†åŒ–å…‰å‘é‡
+	// ±ê×¼»¯¹âÏòÁ¿
     lightVec /= d;
 
-	// è®¡ç®—ç¯å¢ƒå…‰éƒ¨åˆ†
+	// ¼ÆËã»·¾³¹â²¿·Ö
     ambient = mat.Ambient * L.Ambient;
 
 
-    // è®¡ç®—æ¼«åå°„å…‰å’Œé•œé¢åå°„å…‰éƒ¨åˆ†
+    // ¼ÆËãÂş·´Éä¹âºÍ¾µÃæ·´Éä¹â²¿·Ö
     float diffuseFactor = dot(lightVec, normal);
 
-	// å±•å¼€ä»¥é¿å…åŠ¨æ€åˆ†æ”¯
+	// Õ¹¿ªÒÔ±ÜÃâ¶¯Ì¬·ÖÖ§
 	[flatten]
     if (diffuseFactor > 0.0f)
     {
@@ -169,7 +169,7 @@ void ComputeSpotLight(Material mat, SpotLight L, float3 pos, float3 normal, floa
         spec = specFactor * mat.Specular * L.Specular;
     }
 
-	// è®¡ç®—æ±‡èšå› å­å’Œè¡°å¼±ç³»æ•°
+	// ¼ÆËã»ã¾ÛÒò×ÓºÍË¥ÈõÏµÊı
     float spot = pow(max(dot(-lightVec, L.Direction), 0.0f), L.Spot);
     float att = spot / dot(L.Att, float3(1.0f, d, d * d));
 

@@ -1,4 +1,4 @@
-ï»¿#ifndef GAMEAPP_H
+#ifndef GAMEAPP_H
 #define GAMEAPP_H
 
 #include "d3dApp.h"
@@ -9,7 +9,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// æ‘„åƒæœºæ¨¡å¼
+	// ÉãÏñ»úÄ£Ê½
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -25,19 +25,19 @@ private:
 	bool InitResource();
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// å•è‰²ç¬”åˆ·
-	ComPtr<IDWriteFont> mFont;								// å­—ä½“
-	ComPtr<IDWriteTextFormat> mTextFormat;					// æ–‡æœ¬æ ¼å¼
+	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// µ¥É«±ÊË¢
+	ComPtr<IDWriteFont> mFont;								// ×ÖÌå
+	ComPtr<IDWriteTextFormat> mTextFormat;					// ÎÄ±¾¸ñÊ½
 
-	GameObject mHouse;										// æˆ¿å±‹
-	GameObject mGround;										// åœ°é¢
+	GameObject mHouse;										// ·¿Îİ
+	GameObject mGround;										// µØÃæ
 
-	BasicEffect mBasicEffect;							// å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	BasicEffect mBasicEffect;							// ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
 
-	std::shared_ptr<Camera> mCamera;						// æ‘„åƒæœº
-	CameraMode mCameraMode;									// æ‘„åƒæœºæ¨¡å¼
+	std::shared_ptr<Camera> mCamera;						// ÉãÏñ»ú
+	CameraMode mCameraMode;									// ÉãÏñ»úÄ£Ê½
 
-	ObjReader mObjReader;									// æ¨¡å‹è¯»å–å¯¹è±¡
+	ObjReader mObjReader;									// Ä£ĞÍ¶ÁÈ¡¶ÔÏó
 };
 
 

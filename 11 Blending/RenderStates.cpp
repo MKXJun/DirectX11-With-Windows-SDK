@@ -1,4 +1,4 @@
-ï»¿#include "RenderStates.h"
+#include "RenderStates.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace Microsoft::WRL;
@@ -15,29 +15,29 @@ ComPtr<ID3D11BlendState> RenderStates::BSTransparent		= nullptr;
 
 bool RenderStates::IsInit()
 {
-	// ä¸€èˆ¬æ¥è¯´åˆå§‹åŒ–æ“ä½œä¼šæŠŠæ‰€æœ‰çš„çŠ¶æ€éƒ½åˆ›å»ºå‡ºæ¥
+	// Ò»°ãÀ´Ëµ³õÊ¼»¯²Ù×÷»á°ÑËùÓĞµÄ×´Ì¬¶¼´´½¨³öÀ´
 	return RSWireframe != nullptr;
 }
 
 void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 {
-	// å…ˆå‰åˆå§‹åŒ–è¿‡çš„è¯å°±æ²¡å¿…è¦é‡æ¥äº†
+	// ÏÈÇ°³õÊ¼»¯¹ıµÄ»°¾ÍÃ»±ØÒªÖØÀ´ÁË
 	if (IsInit())
 		return;
 	// ********************
-	// åˆå§‹åŒ–å…‰æ …åŒ–å™¨çŠ¶æ€
+	// ³õÊ¼»¯¹âÕ¤»¯Æ÷×´Ì¬
 	//
 	D3D11_RASTERIZER_DESC rasterizerDesc;
 	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
 
-	// çº¿æ¡†æ¨¡å¼
+	// Ïß¿òÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
 	rasterizerDesc.DepthClipEnable = true;
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSWireframe.GetAddressOf()));
 
-	// æ— èƒŒé¢å‰”é™¤æ¨¡å¼
+	// ÎŞ±³ÃæÌŞ³ıÄ£Ê½
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.FrontCounterClockwise = false;
@@ -45,12 +45,12 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateRasterizerState(&rasterizerDesc, RSNoCull.GetAddressOf()));
 
 	// ********************
-	// åˆå§‹åŒ–é‡‡æ ·å™¨çŠ¶æ€
+	// ³õÊ¼»¯²ÉÑùÆ÷×´Ì¬
 	//
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
 
-	// çº¿æ€§è¿‡æ»¤æ¨¡å¼
+	// ÏßĞÔ¹ıÂËÄ£Ê½
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -60,7 +60,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.GetAddressOf()));
 
-	// å„å‘å¼‚æ€§è¿‡æ»¤æ¨¡å¼
+	// ¸÷ÏòÒìĞÔ¹ıÂËÄ£Ê½
 	sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -72,19 +72,19 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
 	
 	// ********************
-	// åˆå§‹åŒ–æ··åˆçŠ¶æ€
+	// ³õÊ¼»¯»ìºÏ×´Ì¬
 	//
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory(&blendDesc, sizeof(blendDesc));
 	auto& rtDesc = blendDesc.RenderTarget[0];
-	// Alpha-To-Coverageæ¨¡å¼
+	// Alpha-To-CoverageÄ£Ê½
 	blendDesc.AlphaToCoverageEnable = true;
 	blendDesc.IndependentBlendEnable = false;
 	rtDesc.BlendEnable = false;
 	rtDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	HR(device->CreateBlendState(&blendDesc, BSAlphaToCoverage.GetAddressOf()));
 
-	// é€æ˜æ··åˆæ¨¡å¼
+	// Í¸Ã÷»ìºÏÄ£Ê½
 	// Color = SrcAlpha * SrcColor + (1 - SrcAlpha) * DestColor 
 	// Alpha = SrcAlpha
 	blendDesc.AlphaToCoverageEnable = false;
@@ -99,7 +99,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateBlendState(&blendDesc, BSTransparent.GetAddressOf()));
 	
-	// æ— é¢œè‰²å†™å…¥æ··åˆæ¨¡å¼
+	// ÎŞÑÕÉ«Ğ´Èë»ìºÏÄ£Ê½
 	// Color = DestColor
 	// Alpha = DestAlpha
 	rtDesc.SrcBlend = D3D11_BLEND_ZERO;

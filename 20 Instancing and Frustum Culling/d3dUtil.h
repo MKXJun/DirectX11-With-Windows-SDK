@@ -1,16 +1,16 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // d3dUtil.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3Då®ç”¨å·¥å…·é›†
+// D3DÊµÓÃ¹¤¾ß¼¯
 // Direct3D utility tools.
 //***************************************************************************************
 
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// å·²åŒ…å«Windows.h
-#include <DirectXCollision.h>	// å·²åŒ…å«DirectXMath.h
+#include <d3d11_1.h>			// ÒÑ°üº¬Windows.h
+#include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -21,24 +21,24 @@
 #include "WICTextureLoader.h"
 
 //
-// å®ç›¸å…³
+// ºêÏà¹Ø
 //
 
-// å®‰å…¨COMç»„ä»¶é‡Šæ”¾å®
+// °²È«COM×é¼şÊÍ·Åºê
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 //
-// ç€è‰²å™¨ç¼–è¯‘ç›¸å…³å‡½æ•°
+// ×ÅÉ«Æ÷±àÒëÏà¹Øº¯Êı
 //
 
 // ------------------------------
-// CreateShaderFromFileå‡½æ•°
+// CreateShaderFromFileº¯Êı
 // ------------------------------
-// [In]csoFileNameInOut ç¼–è¯‘å¥½çš„ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶(.cso)ï¼Œè‹¥æœ‰æŒ‡å®šåˆ™ä¼˜å…ˆå¯»æ‰¾è¯¥æ–‡ä»¶å¹¶è¯»å–
-// [In]hlslFileName     ç€è‰²å™¨ä»£ç ï¼Œè‹¥æœªæ‰¾åˆ°ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶åˆ™ç¼–è¯‘ç€è‰²å™¨ä»£ç 
-// [In]entryPoint       å…¥å£ç‚¹(æŒ‡å®šå¼€å§‹çš„å‡½æ•°)
-// [In]shaderModel      ç€è‰²å™¨æ¨¡å‹ï¼Œæ ¼å¼ä¸º"*s_5_0"ï¼Œ*å¯ä»¥ä¸ºc,d,g,h,p,vä¹‹ä¸€
-// [Out]ppBlobOut       è¾“å‡ºç€è‰²å™¨äºŒè¿›åˆ¶ä¿¡æ¯
+// [In]csoFileNameInOut ±àÒëºÃµÄ×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼ş(.cso)£¬ÈôÓĞÖ¸¶¨ÔòÓÅÏÈÑ°ÕÒ¸ÃÎÄ¼ş²¢¶ÁÈ¡
+// [In]hlslFileName     ×ÅÉ«Æ÷´úÂë£¬ÈôÎ´ÕÒµ½×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼şÔò±àÒë×ÅÉ«Æ÷´úÂë
+// [In]entryPoint       Èë¿Úµã(Ö¸¶¨¿ªÊ¼µÄº¯Êı)
+// [In]shaderModel      ×ÅÉ«Æ÷Ä£ĞÍ£¬¸ñÊ½Îª"*s_5_0"£¬*¿ÉÒÔÎªc,d,g,h,p,vÖ®Ò»
+// [Out]ppBlobOut       Êä³ö×ÅÉ«Æ÷¶ş½øÖÆĞÅÏ¢
 HRESULT CreateShaderFromFile(
 	const WCHAR* csoFileNameInOut,
 	const WCHAR* hlslFileName,
@@ -47,19 +47,19 @@ HRESULT CreateShaderFromFile(
 	ID3DBlob** ppBlobOut);
 
 //
-// çº¹ç†æ•°ç»„ç›¸å…³å‡½æ•°
+// ÎÆÀíÊı×éÏà¹Øº¯Êı
 //
 
 // ------------------------------
-// CreateDDSTexture2DArrayFromFileå‡½æ•°
+// CreateDDSTexture2DArrayFromFileº¯Êı
 // ------------------------------
-// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
-// [In]d3dDevice			D3Dè®¾å¤‡
-// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
-// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
-// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
-// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
-// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
+// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
+// [In]d3dDevice			D3DÉè±¸
+// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
+// [In]fileNames			ddsÎÄ¼şÃûÊı×é
+// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
+// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
+// [In]generateMips			ÊÇ·ñÉú³Émipmaps
 HRESULT CreateDDSTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -69,15 +69,15 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	bool generateMips = false);
 
 // ------------------------------
-// CreateWICTexture2DArrayFromFileå‡½æ•°
+// CreateWICTexture2DArrayFromFileº¯Êı
 // ------------------------------
-// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
-// [In]d3dDevice			D3Dè®¾å¤‡
-// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
-// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
-// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
-// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
-// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
+// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
+// [In]d3dDevice			D3DÉè±¸
+// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
+// [In]fileNames			ddsÎÄ¼şÃûÊı×é
+// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
+// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
+// [In]generateMips			ÊÇ·ñÉú³Émipmaps
 HRESULT CreateWICTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,

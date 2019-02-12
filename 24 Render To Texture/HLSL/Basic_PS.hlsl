@@ -1,26 +1,26 @@
 #include "Basic.hlsli"
 
-// åƒç´ ç€è‰²å™¨(3D)
+// ÏñËØ×ÅÉ«Æ÷(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
-    // è‹¥ä¸ä½¿ç”¨çº¹ç†ï¼Œåˆ™ä½¿ç”¨é»˜è®¤ç™½è‰²
+    // Èô²»Ê¹ÓÃÎÆÀí£¬ÔòÊ¹ÓÃÄ¬ÈÏ°×É«
     float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
     if (gTextureUsed)
     {
         texColor = gDiffuseMap.Sample(gSam, pIn.Tex);
-        // æå‰è¿›è¡Œè£å‰ªï¼Œå¯¹ä¸ç¬¦åˆè¦æ±‚çš„åƒç´ å¯ä»¥é¿å…åç»­è¿ç®—
+        // ÌáÇ°½øĞĞ²Ã¼ô£¬¶Ô²»·ûºÏÒªÇóµÄÏñËØ¿ÉÒÔ±ÜÃâºóĞøÔËËã
         clip(texColor.a - 0.1f);
     }
     
-    // æ ‡å‡†åŒ–æ³•å‘é‡
+    // ±ê×¼»¯·¨ÏòÁ¿
     pIn.NormalW = normalize(pIn.NormalW);
 
-    // æ±‚å‡ºé¡¶ç‚¹æŒ‡å‘çœ¼ç›çš„å‘é‡ï¼Œä»¥åŠé¡¶ç‚¹ä¸çœ¼ç›çš„è·ç¦»
+    // Çó³ö¶¥µãÖ¸ÏòÑÛ¾¦µÄÏòÁ¿£¬ÒÔ¼°¶¥µãÓëÑÛ¾¦µÄ¾àÀë
     float3 toEyeW = normalize(gEyePosW - pIn.PosW);
     float distToEye = distance(gEyePosW, pIn.PosW);
 
-    // åˆå§‹åŒ–ä¸º0 
+    // ³õÊ¼»¯Îª0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -58,13 +58,13 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
   
     float4 litColor = texColor * (ambient + diffuse) + spec;
     
-    // é›¾æ•ˆéƒ¨åˆ†
+    // ÎíĞ§²¿·Ö
     [flatten]
     if (gFogEnabled)
     {
-        // é™å®šåœ¨0.0fåˆ°1.0fèŒƒå›´
+        // ÏŞ¶¨ÔÚ0.0fµ½1.0f·¶Î§
         float fogLerp = saturate((distToEye - gFogStart) / gFogRange);
-        // æ ¹æ®é›¾è‰²å’Œå…‰ç…§é¢œè‰²è¿›è¡Œçº¿æ€§æ’å€¼
+        // ¸ù¾İÎíÉ«ºÍ¹âÕÕÑÕÉ«½øĞĞÏßĞÔ²åÖµ
         litColor = lerp(litColor, gFogColor, fogLerp);
     }
 

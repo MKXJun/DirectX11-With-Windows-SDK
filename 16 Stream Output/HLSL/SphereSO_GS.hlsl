@@ -4,7 +4,7 @@
 void GS(triangle VertexPosNormalColor input[3], inout TriangleStream<VertexPosNormalColor> output)
 {
     //
-    // å°†ä¸€ä¸ªä¸‰è§’å½¢åˆ†è£‚æˆå››ä¸ªä¸‰è§’å½¢ï¼Œä½†åŒæ—¶é¡¶ç‚¹v3, v4, v5ä¹Ÿéœ€è¦åœ¨çƒé¢ä¸Š
+    // ½«Ò»¸öÈı½ÇĞÎ·ÖÁÑ³ÉËÄ¸öÈı½ÇĞÎ£¬µ«Í¬Ê±¶¥µãv3, v4, v5Ò²ĞèÒªÔÚÇòÃæÉÏ
     //       v1
     //       /\
     //      /  \

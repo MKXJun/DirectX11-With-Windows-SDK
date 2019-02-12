@@ -1,8 +1,8 @@
-ï»¿//***************************************************************************************
+//***************************************************************************************
 // SkyRender.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// å¤©ç©ºç›’åŠ è½½ä¸æ¸²æŸ“ç±»
+// Ìì¿ÕºĞ¼ÓÔØÓëäÖÈ¾Àà
 // Skybox loader and render classes.
 //***************************************************************************************
 
@@ -21,20 +21,20 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 
-	// éœ€è¦æä¾›å®Œæ•´çš„å¤©ç©ºç›’è´´å›¾ æˆ–è€… å·²ç»åˆ›å»ºå¥½çš„å¤©ç©ºç›’çº¹ç†.ddsæ–‡ä»¶
+	// ĞèÒªÌá¹©ÍêÕûµÄÌì¿ÕºĞÌùÍ¼ »òÕß ÒÑ¾­´´½¨ºÃµÄÌì¿ÕºĞÎÆÀí.ddsÎÄ¼ş
 	SkyRender(ComPtr<ID3D11Device> device, 
 		ComPtr<ID3D11DeviceContext> deviceContext, 
 		const std::wstring& cubemapFilename, 
-		float skySphereRadius,		// å¤©ç©ºçƒåŠå¾„
-		bool generateMips = false);	// é»˜è®¤ä¸ä¸ºé™æ€å¤©ç©ºç›’ç”Ÿæˆmipmaps
+		float skySphereRadius,		// Ìì¿ÕÇò°ë¾¶
+		bool generateMips = false);	// Ä¬ÈÏ²»Îª¾²Ì¬Ìì¿ÕºĞÉú³Émipmaps
 
 
-	// éœ€è¦æä¾›å¤©ç©ºç›’çš„å…­å¼ æ­£æ–¹å½¢è´´å›¾
+	// ĞèÒªÌá¹©Ìì¿ÕºĞµÄÁùÕÅÕı·½ĞÎÌùÍ¼
 	SkyRender(ComPtr<ID3D11Device> device, 
 		ComPtr<ID3D11DeviceContext> deviceContext, 
 		const std::vector<std::wstring>& cubemapFilenames, 
-		float skySphereRadius,		// å¤©ç©ºçƒåŠå¾„
-		bool generateMips = false);	// é»˜è®¤ä¸ä¸ºé™æ€å¤©ç©ºç›’ç”Ÿæˆmipmaps
+		float skySphereRadius,		// Ìì¿ÕÇò°ë¾¶
+		bool generateMips = false);	// Ä¬ÈÏ²»Îª¾²Ì¬Ìì¿ÕºĞÉú³Émipmaps
 
 
 	ComPtr<ID3D11ShaderResourceView> GetTextureCube();
@@ -59,48 +59,48 @@ public:
 	DynamicSkyRender(ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> deviceContext,
 		const std::wstring& cubemapFilename,
-		float skySphereRadius,		// å¤©ç©ºçƒåŠå¾„
-		int dynamicCubeSize,		// ç«‹æ–¹ä½“æ£±é•¿
-		bool generateMips = false);	// é»˜è®¤ä¸ä¸ºé™æ€å¤©ç©ºç›’ç”Ÿæˆmipmaps
-									// åŠ¨æ€å¤©ç©ºç›’å¿…ç„¶ç”Ÿæˆmipmaps
+		float skySphereRadius,		// Ìì¿ÕÇò°ë¾¶
+		int dynamicCubeSize,		// Á¢·½ÌåÀâ³¤
+		bool generateMips = false);	// Ä¬ÈÏ²»Îª¾²Ì¬Ìì¿ÕºĞÉú³Émipmaps
+									// ¶¯Ì¬Ìì¿ÕºĞ±ØÈ»Éú³Émipmaps
 
 	DynamicSkyRender(ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> deviceContext,
 		const std::vector<std::wstring>& cubemapFilenames,
-		float skySphereRadius,		// å¤©ç©ºçƒåŠå¾„
-		int dynamicCubeSize,		// ç«‹æ–¹ä½“æ£±é•¿
-		bool generateMips = false);	// é»˜è®¤ä¸ä¸ºé™æ€å¤©ç©ºç›’ç”Ÿæˆmipmaps
-									// åŠ¨æ€å¤©ç©ºç›’å¿…ç„¶ç”Ÿæˆmipmaps
+		float skySphereRadius,		// Ìì¿ÕÇò°ë¾¶
+		int dynamicCubeSize,		// Á¢·½ÌåÀâ³¤
+		bool generateMips = false);	// Ä¬ÈÏ²»Îª¾²Ì¬Ìì¿ÕºĞÉú³Émipmaps
+									// ¶¯Ì¬Ìì¿ÕºĞ±ØÈ»Éú³Émipmaps
 
 
-	// ç¼“å­˜å½“å‰æ¸²æŸ“ç›®æ ‡è§†å›¾
+	// »º´æµ±Ç°äÖÈ¾Ä¿±êÊÓÍ¼
 	void Cache(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 
-	// æŒ‡å®šå¤©ç©ºç›’æŸä¸€é¢å¼€å§‹ç»˜åˆ¶ï¼Œéœ€è¦å…ˆè°ƒç”¨Cacheæ–¹æ³•
+	// Ö¸¶¨Ìì¿ÕºĞÄ³Ò»Ãæ¿ªÊ¼»æÖÆ£¬ĞèÒªÏÈµ÷ÓÃCache·½·¨
 	void BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const DirectX::XMFLOAT3& pos,
 		D3D11_TEXTURECUBE_FACE face, float nearZ = 1e-3f, float farZ = 1e3f);
 
-	// æ¢å¤æ¸²æŸ“ç›®æ ‡è§†å›¾åŠæ‘„åƒæœºï¼Œå¹¶ç»‘å®šå½“å‰åŠ¨æ€å¤©ç©ºç›’
+	// »Ö¸´äÖÈ¾Ä¿±êÊÓÍ¼¼°ÉãÏñ»ú£¬²¢°ó¶¨µ±Ç°¶¯Ì¬Ìì¿ÕºĞ
 	void Restore(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const Camera& camera);
 
-	// è·å–åŠ¨æ€å¤©ç©ºç›’
-	// æ³¨æ„ï¼šè¯¥æ–¹æ³•åªèƒ½åœ¨Restoreåå†è°ƒç”¨
+	// »ñÈ¡¶¯Ì¬Ìì¿ÕºĞ
+	// ×¢Òâ£º¸Ã·½·¨Ö»ÄÜÔÚRestoreºóÔÙµ÷ÓÃ
 	ComPtr<ID3D11ShaderResourceView> GetDynamicTextureCube();
 
-	// è·å–å½“å‰ç”¨äºæ•è·çš„å¤©ç©ºç›’
+	// »ñÈ¡µ±Ç°ÓÃÓÚ²¶»ñµÄÌì¿ÕºĞ
 	const Camera& GetCamera() const;
 
 private:
 	void InitResource(ComPtr<ID3D11Device> device, int dynamicCubeSize);
 
 private:
-	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// ä¸´æ—¶ç¼“å­˜çš„åå¤‡ç¼“å†²åŒº
-	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// ä¸´æ—¶ç¼“å­˜çš„æ·±åº¦/æ¨¡æ¿ç¼“å†²åŒº
+	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// ÁÙÊ±»º´æµÄºó±¸»º³åÇø
+	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// ÁÙÊ±»º´æµÄÉî¶È/Ä£°å»º³åÇø
 	
-	FirstPersonCamera					mCamera;				// æ•è·å½“å‰å¤©ç©ºç›’å…¶ä¸­ä¸€é¢çš„æ‘„åƒæœº
-	ComPtr<ID3D11DepthStencilView>		mDynamicCubeMapDSV;		// åŠ¨æ€å¤©ç©ºç›’æ¸²æŸ“å¯¹åº”çš„æ·±åº¦/æ¨¡æ¿è§†å›¾
-	ComPtr<ID3D11ShaderResourceView>	mDynamicCubeMapSRV;		// åŠ¨æ€å¤©ç©ºç›’å¯¹åº”çš„ç€è‰²å™¨èµ„æºè§†å›¾
-	ComPtr<ID3D11RenderTargetView>		mDynamicCubeMapRTVs[6];	// åŠ¨æ€å¤©ç©ºç›’æ¯ä¸ªé¢å¯¹åº”çš„æ¸²æŸ“ç›®æ ‡è§†å›¾
+	FirstPersonCamera					mCamera;				// ²¶»ñµ±Ç°Ìì¿ÕºĞÆäÖĞÒ»ÃæµÄÉãÏñ»ú
+	ComPtr<ID3D11DepthStencilView>		mDynamicCubeMapDSV;		// ¶¯Ì¬Ìì¿ÕºĞäÖÈ¾¶ÔÓ¦µÄÉî¶È/Ä£°åÊÓÍ¼
+	ComPtr<ID3D11ShaderResourceView>	mDynamicCubeMapSRV;		// ¶¯Ì¬Ìì¿ÕºĞ¶ÔÓ¦µÄ×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
+	ComPtr<ID3D11RenderTargetView>		mDynamicCubeMapRTVs[6];	// ¶¯Ì¬Ìì¿ÕºĞÃ¿¸öÃæ¶ÔÓ¦µÄäÖÈ¾Ä¿±êÊÓÍ¼
 	
 };
 

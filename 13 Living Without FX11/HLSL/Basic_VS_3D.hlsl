@@ -1,17 +1,19 @@
 #include "Basic.hlsli"
 
 // 顶点着色器(3D)
-VertexPosHWNormalTex VS_3D(VertexPosNormalTex pIn)
+VertexPosHWNormalTex VS_3D(VertexPosNormalTex vIn)
 {
-    VertexPosHWNormalTex pOut;
+    VertexPosHWNormalTex vOut;
     
     matrix viewProj = mul(gView, gProj);
-    float4 posW = mul(float4(pIn.PosL, 1.0f), gWorld);
+    float4 posW = mul(float4(vIn.PosL, 1.0f), gWorld);
+    float3 normalW = mul(vIn.NormalL, (float3x3) gWorldInvTranspose);
     // 若当前在绘制反射物体，先进行反射操作
     [flatten]
     if (gIsReflection)
     {
         posW = mul(posW, gReflection);
+        normalW = mul(normalW, (float3x3) gReflection);
     }
     // 若当前在绘制阴影，先进行投影操作
     [flatten]
@@ -20,9 +22,9 @@ VertexPosHWNormalTex VS_3D(VertexPosNormalTex pIn)
         posW = (gIsReflection ? mul(posW, gRefShadow) : mul(posW, gShadow));
     }
 
-    pOut.PosH = mul(posW, viewProj);
-    pOut.PosW = posW.xyz;
-    pOut.NormalW = mul(pIn.NormalL, (float3x3) gWorldInvTranspose);
-    pOut.Tex = pIn.Tex;
-    return pOut;
+    vOut.PosH = mul(posW, viewProj);
+    vOut.PosW = posW.xyz;
+    vOut.NormalW = normalW;
+    vOut.Tex = vIn.Tex;
+    return vOut;
 }

@@ -16,9 +16,6 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{dc482e47-668c-4760-bb90-2a757578c907}</UniqueIdentifier>
     </Filter>
-    <Filter Include="特效文件">
-      <UniqueIdentifier>{456cfbcb-e3fb-4d26-8e29-e5fb29eadf1f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="通用文件">
       <UniqueIdentifier>{cab5bcfe-99cc-4055-8394-cfe258b42ad5}</UniqueIdentifier>
     </Filter>

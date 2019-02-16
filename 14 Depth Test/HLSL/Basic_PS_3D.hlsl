@@ -26,6 +26,12 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
+        DirectionalLight dirLight = gDirLight[i];
+        [flatten]
+        if (gIsReflection)
+        {
+            dirLight.Direction = mul(dirLight.Direction, (float3x3) (gReflection));
+        }
         ComputeDirectionalLight(gMaterial, gDirLight[i], pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
@@ -44,7 +50,7 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
         [flatten]
         if (gIsReflection)
         {
-            pointLight.Position = (float3) mul(float4(pointLight.Position, 1.0f), gReflection);
+            pointLight.Position = mul(float4(pointLight.Position, 1.0f), gReflection).xyz;
         }
         ComputePointLight(gMaterial, pointLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;
@@ -64,6 +70,7 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
         if (gIsReflection)
         {
             spotLight.Position = (float3) mul(float4(spotLight.Position, 1.0f), gReflection);
+            spotLight.Direction = mul(spotLight.Direction, (float3x3) gReflection);
         }
         ComputeSpotLight(gMaterial, spotLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
         ambient += A;

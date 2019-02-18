@@ -49,6 +49,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25 Normal Mapping", "25 Nor
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning", "26 Compute Shader Beginning\26 Compute Shader Beginning.vcxproj", "{885CC79F-776D-47C8-B761-0CA45E460A90}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort", "27 Bitonic Sort\27 Bitonic Sort.vcxproj", "{F8858B93-185B-4A0E-BB98-17F01AA13B2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -241,6 +243,14 @@ Global
 		{885CC79F-776D-47C8-B761-0CA45E460A90}.Release|x64.Build.0 = Release|x64
 		{885CC79F-776D-47C8-B761-0CA45E460A90}.Release|x86.ActiveCfg = Release|Win32
 		{885CC79F-776D-47C8-B761-0CA45E460A90}.Release|x86.Build.0 = Release|Win32
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Debug|x64.ActiveCfg = Debug|x64
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Debug|x64.Build.0 = Debug|x64
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Debug|x86.ActiveCfg = Debug|Win32
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Debug|x86.Build.0 = Debug|Win32
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Release|x64.ActiveCfg = Release|x64
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Release|x64.Build.0 = Release|x64
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Release|x86.ActiveCfg = Release|Win32
+		{F8858B93-185B-4A0E-BB98-17F01AA13B2C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

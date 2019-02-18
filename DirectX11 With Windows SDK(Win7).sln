@@ -49,6 +49,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25 Normal Mapping(Win7)", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning(Win7)", "26 Compute Shader Beginning\26 Compute Shader Beginning(Win7).vcxproj", "{8E432F8C-E8E8-4BA0-B512-131DE7018070}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(Win7)", "27 Bitonic Sort\27 Bitonic Sort(Win7).vcxproj", "{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -241,6 +243,14 @@ Global
 		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x64.Build.0 = Release|x64
 		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x86.ActiveCfg = Release|Win32
 		{8E432F8C-E8E8-4BA0-B512-131DE7018070}.Release|x86.Build.0 = Release|Win32
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Debug|x64.ActiveCfg = Debug|x64
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Debug|x64.Build.0 = Debug|x64
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Debug|x86.ActiveCfg = Debug|Win32
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Debug|x86.Build.0 = Debug|Win32
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x64.ActiveCfg = Release|x64
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x64.Build.0 = Release|x64
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.ActiveCfg = Release|Win32
+		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

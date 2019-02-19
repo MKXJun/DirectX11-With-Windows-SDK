@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <windows.h>
 #include <memory>
 
 namespace DirectX

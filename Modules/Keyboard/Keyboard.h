@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <windows.h>
 #include <memory>
 #include <stdint.h>
 

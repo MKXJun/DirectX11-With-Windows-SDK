@@ -18,9 +18,7 @@ public:
 	~GameApp();
 
 	bool Init();
-	void OnResize();
-	void UpdateScene(float dt);
-	void DrawScene();
+	void Compute();
 
 private:
 	bool InitResource();

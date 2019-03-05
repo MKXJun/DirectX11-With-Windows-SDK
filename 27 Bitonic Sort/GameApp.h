@@ -31,15 +31,12 @@ public:
 	~GameApp();
 
 	bool Init();
-	void OnResize();
-	void UpdateScene(float dt);
-	void DrawScene();
+	void Compute();
 
 private:
 	bool InitResource();
 	void SetConstants(UINT level, UINT descendMask, UINT matrixWidth, UINT matrixHeight);
 	void GPUSort();
-	void CPUSort();
 private:
 	ComPtr<ID3D11Buffer> mConstantBuffer;			// 常量缓冲区
 	ComPtr<ID3D11Buffer> mTypedBuffer1;				// 有类型缓冲区1
@@ -54,8 +51,6 @@ private:
 	UINT mRandomNumsCount;
 	ComPtr<ID3D11ComputeShader> mBitonicSort_CS;
 	ComPtr<ID3D11ComputeShader> mMatrixTranspose_CS;
-
-	GameTimer mGameTimer;							// 排序计时
 };
 
 

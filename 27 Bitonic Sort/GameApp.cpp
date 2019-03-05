@@ -25,20 +25,9 @@ bool GameApp::Init()
 	return true;
 }
 
-void GameApp::OnResize()
-{
-	D3DApp::OnResize();
-}
-
-void GameApp::UpdateScene(float dt)
-{
-
-}
-
-void GameApp::DrawScene()
+void GameApp::Compute()
 {
 	assert(md3dImmediateContext);
-	assert(mSwapChain);
 
 //#if defined(DEBUG) | defined(_DEBUG)
 //	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
@@ -47,12 +36,12 @@ void GameApp::DrawScene()
 //#endif
 
 	// GPU排序
-	mGameTimer.Reset();
-	mGameTimer.Start();
+	mTimer.Reset();
+	mTimer.Start();
 	GPUSort();
-	mGameTimer.Tick();
-	mGameTimer.Stop();
-	float gpuTotalTime = mGameTimer.TotalTime();
+	mTimer.Tick();
+	mTimer.Stop();
+	float gpuTotalTime = mTimer.TotalTime();
 
 	// 结果拷贝出来
 	md3dImmediateContext->CopyResource(mTypedBufferCopy.Get(), mTypedBuffer1.Get());
@@ -64,12 +53,12 @@ void GameApp::DrawScene()
 //#endif
 
 	// CPU排序
-	mGameTimer.Reset();
-	mGameTimer.Start();
+	mTimer.Reset();
+	mTimer.Start();
 	std::sort(mRandomNums.begin(), mRandomNums.begin() + mRandomNumsCount);
-	mGameTimer.Tick();
-	mGameTimer.Stop();
-	float cpuTotalTime = mGameTimer.TotalTime();
+	mTimer.Tick();
+	mTimer.Stop();
+	float cpuTotalTime = mTimer.TotalTime();
 
 	bool isSame = !memcmp(mappedData.pData, mRandomNums.data(),
 		sizeof(UINT) * mRandomNums.size());
@@ -81,11 +70,8 @@ void GameApp::DrawScene()
 	wstr += L"\nGPU用时：" + std::to_wstring(gpuTotalTime) + L"秒";
 	wstr += L"\nCPU用时：" + std::to_wstring(cpuTotalTime) + L"秒";
 	wstr += isSame ? L"\n排序结果一致" : L"\n排序结果不一致";
-	MessageBox(MainWnd(), wstr.c_str(), L"排序结束", MB_OK);
+	MessageBox(nullptr, wstr.c_str(), L"排序结束", MB_OK);
 
-
-
-	SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
 
@@ -113,7 +99,7 @@ bool GameApp::InitResource()
 	HR(CreateTypedBuffer(md3dDevice.Get(), nullptr, (UINT)mRandomNums.size() * sizeof(UINT),
 		mTypedBufferCopy.GetAddressOf(), true, true));
 
-	HR(CreateConstantBuffer(md3dDevice.Get(), nullptr, (sizeof(CB) + 15) & 0xFFFFFFF0,
+	HR(CreateConstantBuffer(md3dDevice.Get(), nullptr, sizeof(CB),
 		mConstantBuffer.GetAddressOf(), false, true));
 
 	// 创建着色器资源视图

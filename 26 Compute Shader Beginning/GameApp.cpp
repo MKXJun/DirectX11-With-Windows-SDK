@@ -24,26 +24,15 @@ bool GameApp::Init()
 	return true;
 }
 
-void GameApp::OnResize()
-{
-	D3DApp::OnResize();
-}
-
-void GameApp::UpdateScene(float dt)
-{
-
-}
-
-void GameApp::DrawScene()
+void GameApp::Compute()
 {
 	assert(md3dImmediateContext);
-	assert(mSwapChain);
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-//	graphicsAnalysis->BeginCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+	//	graphicsAnalysis->BeginCapture();
+	//#endif
 	md3dImmediateContext->CSSetShaderResources(0, 1, mTextureInputA.GetAddressOf());
 	md3dImmediateContext->CSSetShaderResources(1, 1, mTextureInputB.GetAddressOf());
 
@@ -60,16 +49,15 @@ void GameApp::DrawScene()
 	md3dImmediateContext->Dispatch(32, 32, 1);
 
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	graphicsAnalysis->EndCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	graphicsAnalysis->EndCapture();
+	//#endif
 
 	HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), mTextureOutputA.Get(), L"Texture\\flareoutputA.dds"));
 	HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), mTextureOutputB.Get(), L"Texture\\flareoutputB.dds"));
-	SendMessage(MainWnd(), WM_DESTROY, 0, 0);
+	
+	MessageBox(nullptr, L"请打开Texture文件夹观察输出文件flareoutputA.dds和flareoutputB.dds", L"运行结束", MB_OK);
 }
-
-
 
 bool GameApp::InitResource()
 {

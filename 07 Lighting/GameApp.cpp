@@ -52,21 +52,18 @@ void GameApp::UpdateScene(float dt)
 		mPSConstantBuffer.dirLight = mDirLight;
 		mPSConstantBuffer.pointLight = PointLight();
 		mPSConstantBuffer.spotLight = SpotLight();
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
 		mPSConstantBuffer.dirLight = DirectionalLight();
 		mPSConstantBuffer.pointLight = mPointLight;
 		mPSConstantBuffer.spotLight = SpotLight();
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
 	}
 	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3))
 	{
 		mPSConstantBuffer.dirLight = DirectionalLight();
 		mPSConstantBuffer.pointLight = PointLight();
 		mPSConstantBuffer.spotLight = mSpotLight;
-		md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
 	}
 
 	// 键盘切换模型类型

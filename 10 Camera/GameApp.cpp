@@ -165,7 +165,7 @@ void GameApp::UpdateScene(float dt)
 		if (!cam1st)
 		{
 			cam1st.reset(new FirstPersonCamera);
-			cam1st->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			mCamera = cam1st;
 		}
 
@@ -180,7 +180,7 @@ void GameApp::UpdateScene(float dt)
 		if (!cam3rd)
 		{
 			cam3rd.reset(new ThirdPersonCamera);
-			cam3rd->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			mCamera = cam3rd;
 		}
 		XMFLOAT3 target = mWoodCrate.GetPosition();
@@ -195,7 +195,7 @@ void GameApp::UpdateScene(float dt)
 		if (!cam1st)
 		{
 			cam1st.reset(new FirstPersonCamera);
-			cam1st->SetFrustum(XM_PIDIV2, AspectRatio(), 0.5f, 1000.0f);
+			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			mCamera = cam1st;
 		}
 		// 从箱子上方开始

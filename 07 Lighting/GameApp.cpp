@@ -188,9 +188,11 @@ bool GameApp::InitResource()
 	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题
 	mPSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);
 
-
 	// 更新PS常量缓冲区资源
-	md3dImmediateContext->UpdateSubresource(mConstantBuffers[1].Get(), 0, nullptr, &mPSConstantBuffer, 0, 0);
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	HR(md3dImmediateContext->Map(mConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &mVSConstantBuffer, sizeof(PSConstantBuffer));
+	md3dImmediateContext->Unmap(mConstantBuffers[1].Get(), 0);
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源

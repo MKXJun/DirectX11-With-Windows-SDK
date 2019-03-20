@@ -19,38 +19,38 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -64,21 +64,21 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 
 	// 更新投影矩阵
-	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
+	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
 }
 
@@ -86,49 +86,49 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
-	UINT stride = (mShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
+	UINT stride = (m_ShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
 	UINT offset = 0;
 
 
 	// ******************
 	// 切换分形
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
 	{
-		mShowMode = Mode::SplitedTriangle;
+		m_ShowMode = Mode::SplitedTriangle;
 		ResetSplitedTriangle();
-		mIsWireFrame = false;
-		mShowNormal = false;
-		mCurrIndex = 0;
+		m_IsWireFrame = false;
+		m_ShowNormal = false;
+		m_CurrIndex = 0;
 		stride = sizeof(VertexPosColor);
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
-	else if (mKeyboardTracker.IsKeyPressed(Keyboard::W))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::W))
 	{
-		mShowMode = Mode::SplitedSnow;
+		m_ShowMode = Mode::SplitedSnow;
 		ResetSplitedSnow();
-		mIsWireFrame = true;
-		mShowNormal = false;
-		mCurrIndex = 0;
+		m_IsWireFrame = true;
+		m_ShowNormal = false;
+		m_CurrIndex = 0;
 		stride = sizeof(VertexPosColor);
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
-	else if (mKeyboardTracker.IsKeyPressed(Keyboard::E))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::E))
 	{
-		mShowMode = Mode::SplitedSphere;
+		m_ShowMode = Mode::SplitedSphere;
 		ResetSplitedSphere();
-		mIsWireFrame = false;
-		mShowNormal = false;
-		mCurrIndex = 0;
+		m_IsWireFrame = false;
+		m_ShowNormal = false;
+		m_CurrIndex = 0;
 		stride = sizeof(VertexPosNormalColor);
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
 
 	// ******************
@@ -136,124 +136,124 @@ void GameApp::UpdateScene(float dt)
 	//
 	for (int i = 0; i < 7; ++i)
 	{
-		if (mKeyboardTracker.IsKeyPressed((Keyboard::Keys)((int)Keyboard::D1 + i)))
+		if (m_KeyboardTracker.IsKeyPressed((Keyboard::Keys)((int)Keyboard::D1 + i)))
 		{
-			md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[i].GetAddressOf(), &stride, &offset);
-			mCurrIndex = i;
+			m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[i].GetAddressOf(), &stride, &offset);
+			m_CurrIndex = i;
 		}
 	}
 
 	// ******************
 	// 切换线框/面
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::M))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::M))
 	{
-		if (mShowMode != Mode::SplitedSnow)
+		if (m_ShowMode != Mode::SplitedSnow)
 		{
-			mIsWireFrame = !mIsWireFrame;
+			m_IsWireFrame = !m_IsWireFrame;
 		}
 	}
 
 	// ******************
 	// 是否添加法向量
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::N))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::N))
 	{
-		if (mShowMode == Mode::SplitedSphere)
+		if (m_ShowMode == Mode::SplitedSphere)
 		{
-			mShowNormal = !mShowNormal;
+			m_ShowNormal = !m_ShowNormal;
 		}
 	}
 
 	// ******************
 	// 更新每帧变化的值
 	//
-	if (mShowMode == Mode::SplitedSphere)
+	if (m_ShowMode == Mode::SplitedSphere)
 	{
 		// 让球体转起来
 		static float theta = 0.0f;
 		theta += 0.3f * dt;
-		mBasicEffect.SetWorldMatrix(XMMatrixRotationY(theta));
+		m_BasicEffect.SetWorldMatrix(XMMatrixRotationY(theta));
 	}
 	else
 	{
-		mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
+		m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	}
 
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
 
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 
 	// 根据当前绘制模式设置需要用于渲染的各项资源
-	if (mShowMode == Mode::SplitedTriangle)
+	if (m_ShowMode == Mode::SplitedTriangle)
 	{
-		mBasicEffect.SetRenderSplitedTriangle(md3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
 	}
-	else if (mShowMode == Mode::SplitedSnow)
+	else if (m_ShowMode == Mode::SplitedSnow)
 	{
-		mBasicEffect.SetRenderSplitedSnow(md3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedSnow(m_pd3dImmediateContext);
 	}
-	else if (mShowMode == Mode::SplitedSphere)
+	else if (m_ShowMode == Mode::SplitedSphere)
 	{
-		mBasicEffect.SetRenderSplitedSphere(md3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedSphere(m_pd3dImmediateContext);
 	}
 
 	// 设置线框/面模式
-	if (mIsWireFrame)
+	if (m_IsWireFrame)
 	{
-		md3dImmediateContext->RSSetState(RenderStates::RSWireframe.Get());
+		m_pd3dImmediateContext->RSSetState(RenderStates::RSWireframe.Get());
 	}
 	else
 	{
-		md3dImmediateContext->RSSetState(nullptr);
+		m_pd3dImmediateContext->RSSetState(nullptr);
 	}
 
 	// 进行绘制，记得应用常量缓冲区的变更
-	mBasicEffect.Apply(md3dImmediateContext);
-	md3dImmediateContext->Draw(mVertexCounts[mCurrIndex], 0);
+	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
 	// 绘制法向量
-	if (mShowNormal)
+	if (m_ShowNormal)
 	{
-		mBasicEffect.SetRenderNormal(md3dImmediateContext);
-		mBasicEffect.Apply(md3dImmediateContext);
-		md3dImmediateContext->Draw(mVertexCounts[mCurrIndex], 0);
+		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext);
+		m_BasicEffect.Apply(m_pd3dImmediateContext);
+		m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
 	}
 
 
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"切换分形：Q-三角形(面/线框) W-雪花(线框) E-球(面/线框)\n"
 			L"主键盘数字1 - 7：分形阶数，越高越精细\n"
 			L"M-面/线框切换\n\n"
-			L"当前阶数: " + std::to_wstring(mCurrIndex + 1) + L"\n"
+			L"当前阶数: " + std::to_wstring(m_CurrIndex + 1) + L"\n"
 			"当前分形: ";
-		if (mShowMode == Mode::SplitedTriangle)
+		if (m_ShowMode == Mode::SplitedTriangle)
 			text += L"三角形";
-		else if (mShowMode == Mode::SplitedSnow)
+		else if (m_ShowMode == Mode::SplitedSnow)
 			text += L"雪花";
 		else
 			text += L"球";
 
-		if (mIsWireFrame)
+		if (m_IsWireFrame)
 			text += L"(线框)";
 		else
 			text += L"(面)";
 
-		if (mShowMode == Mode::SplitedSphere)
+		if (m_ShowMode == Mode::SplitedSphere)
 		{
-			if (mShowNormal)
+			if (m_ShowNormal)
 				text += L"(N-关闭法向量)";
 			else
 				text += L"(N-开启法向量)";
@@ -261,12 +261,12 @@ void GameApp::DrawScene()
 
 
 
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 
 }
 
@@ -279,14 +279,14 @@ bool GameApp::InitResource()
 	//
 
 	// 默认绘制三角形
-	mShowMode = Mode::SplitedTriangle;
-	mIsWireFrame = false;
-	mShowNormal = false;
+	m_ShowMode = Mode::SplitedTriangle;
+	m_IsWireFrame = false;
+	m_ShowNormal = false;
 	ResetSplitedTriangle();
 	// 预先绑定顶点缓冲区
 	UINT stride = sizeof(VertexPosColor);
 	UINT offset = 0;
-	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffers[0].GetAddressOf(), &stride, &offset);
+	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 
 	// ******************
 	// 初始化不会变化的值
@@ -298,25 +298,25 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
-	mBasicEffect.SetDirLight(0, dirLight);
+	m_BasicEffect.SetDirLight(0, dirLight);
 	// 材质
 	Material material;
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
-	mBasicEffect.SetMaterial(material);
+	m_BasicEffect.SetMaterial(material);
 	// 摄像机位置
-	mBasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
+	m_BasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
 	// 矩阵
-	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
-	mBasicEffect.SetViewMatrix(XMMatrixLookAtLH(
+	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	m_BasicEffect.SetViewMatrix(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
 		XMVectorZero(),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)));
-	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
+	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
-	mBasicEffect.SetSphereCenter(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	mBasicEffect.SetSphereRadius(2.0f);
+	m_BasicEffect.SetSphereCenter(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	m_BasicEffect.SetSphereRadius(2.0f);
 
 	return true;
 }
@@ -346,19 +346,19 @@ void GameApp::ResetSplitedTriangle()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffers[0].ReleaseAndGetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
 
 	// 三角形顶点数
-	mVertexCounts[0] = 3;
+	m_VertexCounts[0] = 3;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 3;
-		mVertexCounts[i] = mVertexCounts[i - 1] * 3;
-		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicEffect.SetStreamOutputSplitedTriangle(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
-		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
+		m_VertexCounts[i] = m_VertexCounts[i - 1] * 3;
+		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
+		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 }
 
@@ -373,11 +373,11 @@ void GameApp::ResetSplitedSnow()
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
-	{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
+		{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(0.0f, sqrt3 / 2, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
 	};
 	// 将三角形宽度和高度都放大3倍
 	for (VertexPosColor& v : vertices)
@@ -397,18 +397,18 @@ void GameApp::ResetSplitedSnow()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffers[0].ReleaseAndGetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
 	// 顶点数
-	mVertexCounts[0] = 6;
+	m_VertexCounts[0] = 6;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
-		mVertexCounts[i] = mVertexCounts[i - 1] * 4;
-		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicEffect.SetStreamOutputSplitedSnow(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
-		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
+		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
+		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
+		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 }
 
@@ -446,18 +446,18 @@ void GameApp::ResetSplitedSphere()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices.data();
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffers[0].ReleaseAndGetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
 	// 顶点数
-	mVertexCounts[0] = 24;
+	m_VertexCounts[0] = 24;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
-		mVertexCounts[i] = mVertexCounts[i - 1] * 4;
-		HR(md3dDevice->CreateBuffer(&vbd, nullptr, mVertexBuffers[i].ReleaseAndGetAddressOf()));
-		mBasicEffect.SetStreamOutputSplitedSphere(md3dImmediateContext, mVertexBuffers[i - 1], mVertexBuffers[i]);
-		md3dImmediateContext->Draw(mVertexCounts[i - 1], 0);
+		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
+		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
+		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 }
 

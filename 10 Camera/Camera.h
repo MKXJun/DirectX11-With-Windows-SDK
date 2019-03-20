@@ -56,25 +56,25 @@ public:
 	virtual void UpdateViewMatrix() = 0;
 protected:
 	// 摄像机的观察空间坐标系对应在世界坐标系中的表示
-	DirectX::XMFLOAT3 mPosition;
-	DirectX::XMFLOAT3 mRight;
-	DirectX::XMFLOAT3 mUp;
-	DirectX::XMFLOAT3 mLook;
+	DirectX::XMFLOAT3 m_Position;
+	DirectX::XMFLOAT3 m_Right;
+	DirectX::XMFLOAT3 m_Up;
+	DirectX::XMFLOAT3 m_Look;
 	
 	// 视锥体属性
-	float mNearZ;
-	float mFarZ;
-	float mAspect;
-	float mFovY;
-	float mNearWindowHeight;
-	float mFarWindowHeight;
+	float m_NearZ;
+	float m_FarZ;
+	float m_Aspect;
+	float m_FovY;
+	float m_NearWindowHeight;
+	float m_FarWindowHeight;
 
 	// 观察矩阵和透视投影矩阵
-	DirectX::XMFLOAT4X4 mView;
-	DirectX::XMFLOAT4X4 mProj;
+	DirectX::XMFLOAT4X4 m_View;
+	DirectX::XMFLOAT4X4 m_Proj;
 
 	// 当前视口
-	D3D11_VIEWPORT mViewPort;
+	D3D11_VIEWPORT m_ViewPort;
 
 };
 
@@ -142,13 +142,13 @@ public:
 	void UpdateViewMatrix() override;
 
 private:
-	DirectX::XMFLOAT3 mTarget;
-	float mDistance;
+	DirectX::XMFLOAT3 m_Target;
+	float m_Distance;
 	// 最小允许距离，最大允许距离
-	float mMinDist, mMaxDist;
+	float m_MinDist, m_MaxDist;
 	// 以世界坐标系为基准，当前的旋转角度
-	float mTheta;
-	float mPhi;
+	float m_Theta;
+	float m_Phi;
 };
 
 

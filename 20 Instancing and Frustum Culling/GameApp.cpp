@@ -19,38 +19,38 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -64,25 +64,25 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 
 	// 摄像机变更显示
-	if (mCamera != nullptr)
+	if (m_pCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
+		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
+		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	}
 }
 
@@ -90,15 +90,15 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
 	// 获取子类
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
 	// ******************
 	// 自由摄像机的操作
@@ -130,94 +130,94 @@ void GameApp::UpdateScene(float dt)
 	cam1st->SetPosition(adjustedPos);
 
 	// 更新观察矩阵
-	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
-	mCamera->UpdateViewMatrix();
-	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_pCamera->UpdateViewMatrix();
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
 	// ******************
 	// 视锥体裁剪开关
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
-		mEnableInstancing = !mEnableInstancing;
+		m_EnableInstancing = !m_EnableInstancing;
 	}
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
-		mEnableFrustumCulling = !mEnableFrustumCulling;
+		m_EnableFrustumCulling = !m_EnableFrustumCulling;
 	}
 
 
 	// 重置滚轮值
-	mMouse->ResetScrollWheelValue();
+	m_pMouse->ResetScrollWheelValue();
 
 	// 退出程序，这里应向窗口发送销毁信息
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
 	// ******************
 	// 绘制Direct3D部分
 	//
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Silver));
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Silver));
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 统计实际绘制的物体数目
 	std::vector<XMMATRIX> acceptedData;
 	// 是否开启视锥体裁剪
-	if (mEnableFrustumCulling)
+	if (m_EnableFrustumCulling)
 	{
-		acceptedData = Collision::FrustumCulling(mInstancedData, mTrees.GetLocalBoundingBox(),
-			mCamera->GetViewXM(), mCamera->GetProjXM());
+		acceptedData = Collision::FrustumCulling(m_InstancedData, m_Trees.GetLocalBoundingBox(),
+			m_pCamera->GetViewXM(), m_pCamera->GetProjXM());
 	}
 	// 确定使用的数据集
-	const std::vector<XMMATRIX>& refData = mEnableFrustumCulling ? acceptedData : mInstancedData;
+	const std::vector<XMMATRIX>& refData = m_EnableFrustumCulling ? acceptedData : m_InstancedData;
 	// 是否开启硬件实例化
-	if (mEnableInstancing)
+	if (m_EnableInstancing)
 	{
 		// 硬件实例化绘制
-		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
-		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, refData);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
+		m_Trees.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, refData);
 	}
 	else
 	{
 		// 遍历的形式逐个绘制
-		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
 		for (FXMMATRIX mat : refData)
 		{
-			mTrees.SetWorldMatrix(mat);
-			mTrees.Draw(md3dImmediateContext, mBasicEffect);
+			m_Trees.SetWorldMatrix(mat);
+			m_Trees.Draw(m_pd3dImmediateContext, m_BasicEffect);
 		}
 	}
 
 	// 绘制地面
-	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
-	mGround.Draw(md3dImmediateContext, mBasicEffect);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
 
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"当前摄像机模式: 自由视角  Esc退出\n"
 			"鼠标移动控制视野 WSAD移动\n"
 			"数字键1:硬件实例化开关 2:视锥体裁剪开关\n"
 			"硬件实例化: ";
-		text += (mEnableInstancing ? L"开" : L"关");
+		text += (m_EnableInstancing ? L"开" : L"关");
 		text += L" 视锥体裁剪: ";
-		text += (mEnableFrustumCulling ? L"开" : L"关");
+		text += (m_EnableFrustumCulling ? L"开" : L"关");
 		text += L"\n绘制树木数: " + std::to_wstring(refData.size());
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 }
 
 
@@ -225,8 +225,8 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	// 默认开启视锥体裁剪和硬件实例化
-	mEnableInstancing = true;
-	mEnableFrustumCulling = true;
+	m_EnableInstancing = true;
+	m_EnableFrustumCulling = true;
 
 	// ******************
 	// 初始化游戏对象
@@ -236,24 +236,24 @@ bool GameApp::InitResource()
 	CreateRandomTrees();
 
 	// 初始化地面
-	mObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
-	mGround.SetModel(Model(md3dDevice, mObjReader));
+	m_ObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
+	m_Ground.SetModel(Model(m_pd3dDevice, m_ObjReader));
 
 	// ******************
 	// 初始化摄像机
 	//
-	mCameraMode = CameraMode::Free;
+	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mCamera = camera;
-	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
+	m_pCamera = camera;
+	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
 		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
 		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
-	mBasicEffect.SetViewMatrix(camera->GetViewXM());
-	mBasicEffect.SetProjMatrix(camera->GetProjXM());
+	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
+	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 
 	// ******************
 	// 初始化不会变化的值
@@ -272,7 +272,7 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicEffect.SetDirLight(i, dirLight[i]);
+		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
 	return true;
 }
@@ -281,13 +281,13 @@ void GameApp::CreateRandomTrees()
 {
 	srand((unsigned)time(nullptr));
 	// 初始化树
-	mObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
-	mTrees.SetModel(Model(md3dDevice, mObjReader));
+	m_ObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
+	m_Trees.SetModel(Model(m_pd3dDevice, m_ObjReader));
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 	
-	BoundingBox treeBox = mTrees.GetLocalBoundingBox();
+	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();
 	// 获取树包围盒顶点
-	mTreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_TreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	// 让树木底部紧贴地面位于y = -2的平面
 	treeBox.Transform(treeBox, S);
 	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
@@ -306,7 +306,7 @@ void GameApp::CreateRandomTrees()
 				XMMATRIX T1 = XMMatrixTranslation(radius * cosf(theta + randomRad), 0.0f, radius * sinf(theta + randomRad));
 				XMMATRIX R = XMMatrixRotationY(rand() % 256 / 256.0f * XM_2PI);
 				XMMATRIX World = S * R * T0 * T1;
-				mInstancedData.push_back(World);
+				m_InstancedData.push_back(World);
 			}
 		}
 		theta += XM_2PI / 16;

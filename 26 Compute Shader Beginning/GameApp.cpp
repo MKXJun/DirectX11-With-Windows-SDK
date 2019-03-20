@@ -26,35 +26,35 @@ bool GameApp::Init()
 
 void GameApp::Compute()
 {
-	assert(md3dImmediateContext);
+	assert(m_pd3dImmediateContext);
 
 	//#if defined(DEBUG) | defined(_DEBUG)
 	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
 	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
 	//	graphicsAnalysis->BeginCapture();
 	//#endif
-	md3dImmediateContext->CSSetShaderResources(0, 1, mTextureInputA.GetAddressOf());
-	md3dImmediateContext->CSSetShaderResources(1, 1, mTextureInputB.GetAddressOf());
+	m_pd3dImmediateContext->CSSetShaderResources(0, 1, m_pTextureInputA.GetAddressOf());
+	m_pd3dImmediateContext->CSSetShaderResources(1, 1, m_pTextureInputB.GetAddressOf());
 
 	// DXGI Format: DXGI_FORMAT_R32G32B32A32_FLOAT
 	// Pixel Format: A32B32G32R32
-	md3dImmediateContext->CSSetShader(mTextureMul_R32G32B32A32_CS.Get(), nullptr, 0);
-	md3dImmediateContext->CSSetUnorderedAccessViews(0, 1, mTextureOutputA_UAV.GetAddressOf(), nullptr);
-	md3dImmediateContext->Dispatch(32, 32, 1);
+	m_pd3dImmediateContext->CSSetShader(m_pTextureMul_R32G32B32A32_CS.Get(), nullptr, 0);
+	m_pd3dImmediateContext->CSSetUnorderedAccessViews(0, 1, m_pTextureOutputA_UAV.GetAddressOf(), nullptr);
+	m_pd3dImmediateContext->Dispatch(32, 32, 1);
 
 	// DXGI Format: DXGI_FORMAT_R8G8B8A8_SNORM
 	// Pixel Format: A8B8G8R8
-	md3dImmediateContext->CSSetShader(mTextureMul_R8G8B8A8_CS.Get(), nullptr, 0);
-	md3dImmediateContext->CSSetUnorderedAccessViews(0, 1, mTextureOutputB_UAV.GetAddressOf(), nullptr);
-	md3dImmediateContext->Dispatch(32, 32, 1);
+	m_pd3dImmediateContext->CSSetShader(m_pTextureMul_R8G8B8A8_CS.Get(), nullptr, 0);
+	m_pd3dImmediateContext->CSSetUnorderedAccessViews(0, 1, m_pTextureOutputB_UAV.GetAddressOf(), nullptr);
+	m_pd3dImmediateContext->Dispatch(32, 32, 1);
 
 
 	//#if defined(DEBUG) | defined(_DEBUG)
 	//	graphicsAnalysis->EndCapture();
 	//#endif
 
-	HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), mTextureOutputA.Get(), L"Texture\\flareoutputA.dds"));
-	HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), mTextureOutputB.Get(), L"Texture\\flareoutputB.dds"));
+	HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), m_pTextureOutputA.Get(), L"Texture\\flareoutputA.dds"));
+	HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), m_pTextureOutputB.Get(), L"Texture\\flareoutputB.dds"));
 	
 	MessageBox(nullptr, L"请打开Texture文件夹观察输出文件flareoutputA.dds和flareoutputB.dds", L"运行结束", MB_OK);
 }
@@ -62,10 +62,10 @@ void GameApp::Compute()
 bool GameApp::InitResource()
 {
 
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\flare.dds",
-		nullptr, mTextureInputA.GetAddressOf()));
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\flarealpha.dds",
-		nullptr, mTextureInputB.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\flare.dds",
+		nullptr, m_pTextureInputA.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\flarealpha.dds",
+		nullptr, m_pTextureInputB.GetAddressOf()));
 	
 	// 创建用于UAV的纹理，必须是非压缩格式
 	D3D11_TEXTURE2D_DESC texDesc;
@@ -82,32 +82,32 @@ bool GameApp::InitResource()
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
-	HR(md3dDevice->CreateTexture2D(&texDesc, nullptr, mTextureOutputA.GetAddressOf()));
+	HR(m_pd3dDevice->CreateTexture2D(&texDesc, nullptr, m_pTextureOutputA.GetAddressOf()));
 	
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	HR(md3dDevice->CreateTexture2D(&texDesc, nullptr, mTextureOutputB.GetAddressOf()));
+	HR(m_pd3dDevice->CreateTexture2D(&texDesc, nullptr, m_pTextureOutputB.GetAddressOf()));
 
 	// 创建无序访问视图
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 	uavDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Texture2D.MipSlice = 0;
-	HR(md3dDevice->CreateUnorderedAccessView(mTextureOutputA.Get(), &uavDesc,
-		mTextureOutputA_UAV.GetAddressOf()));
+	HR(m_pd3dDevice->CreateUnorderedAccessView(m_pTextureOutputA.Get(), &uavDesc,
+		m_pTextureOutputA_UAV.GetAddressOf()));
 
 	uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	HR(md3dDevice->CreateUnorderedAccessView(mTextureOutputB.Get(), &uavDesc,
-		mTextureOutputB_UAV.GetAddressOf()));
+	HR(m_pd3dDevice->CreateUnorderedAccessView(m_pTextureOutputB.Get(), &uavDesc,
+		m_pTextureOutputB_UAV.GetAddressOf()));
 
 	// 创建计算着色器
 	ComPtr<ID3DBlob> blob;
 	HR(CreateShaderFromFile(L"HLSL\\TextureMul_R32G32B32A32_CS.cso",
 		L"HLSL\\TextureMul_R32G32B32A32_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf()));
-	HR(md3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mTextureMul_R32G32B32A32_CS.GetAddressOf()));
+	HR(m_pd3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pTextureMul_R32G32B32A32_CS.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\TextureMul_R8G8B8A8_CS.cso",
 		L"HLSL\\TextureMul_R8G8B8A8_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf()));
-	HR(md3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, mTextureMul_R8G8B8A8_CS.GetAddressOf()));
+	HR(m_pd3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pTextureMul_R8G8B8A8_CS.GetAddressOf()));
 
 	UINT numElements = 60;
 	D3D11_BUFFER_DESC inputDesc;
@@ -119,7 +119,7 @@ bool GameApp::InitResource()
 	inputDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
 
 	ComPtr<ID3D11Buffer> mBuffer;
-	HR(md3dDevice->CreateBuffer(&inputDesc, nullptr, mBuffer.GetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&inputDesc, nullptr, mBuffer.GetAddressOf()));
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = DXGI_FORMAT_R32_TYPELESS;		// 字节地址缓冲区必须使用该类型
@@ -129,7 +129,7 @@ bool GameApp::InitResource()
 	srvDesc.BufferEx.NumElements = numElements;		// 字节数
 
 	ComPtr<ID3D11ShaderResourceView> mBufferSRV;
-	HR(md3dDevice->CreateShaderResourceView(mBuffer.Get(), &srvDesc, mBufferSRV.GetAddressOf()));
+	HR(m_pd3dDevice->CreateShaderResourceView(mBuffer.Get(), &srvDesc, mBufferSRV.GetAddressOf()));
 
 	return true;
 }

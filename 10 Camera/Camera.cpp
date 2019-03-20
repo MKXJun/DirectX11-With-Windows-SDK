@@ -11,110 +11,110 @@ Camera::~Camera()
 
 DirectX::XMVECTOR Camera::GetPositionXM() const
 {
-	return XMLoadFloat3(&mPosition);
+	return XMLoadFloat3(&m_Position);
 }
 
 DirectX::XMFLOAT3 Camera::GetPosition() const
 {
-	return mPosition;
+	return m_Position;
 }
 
 DirectX::XMVECTOR Camera::GetRightXM() const
 {
-	return XMLoadFloat3(&mRight);
+	return XMLoadFloat3(&m_Right);
 }
 
 DirectX::XMFLOAT3 Camera::GetRight() const
 {
-	return mRight;
+	return m_Right;
 }
 
 DirectX::XMVECTOR Camera::GetUpXM() const
 {
-	return XMLoadFloat3(&mUp);
+	return XMLoadFloat3(&m_Up);
 }
 
 DirectX::XMFLOAT3 Camera::GetUp() const
 {
-	return mUp;
+	return m_Up;
 }
 
 DirectX::XMVECTOR Camera::GetLookXM() const
 {
-	return XMLoadFloat3(&mLook);
+	return XMLoadFloat3(&m_Look);
 }
 
 DirectX::XMFLOAT3 Camera::GetLook() const
 {
-	return mLook;
+	return m_Look;
 }
 
 float Camera::GetNearWindowWidth() const
 {
-	return mAspect * mNearWindowHeight;
+	return m_Aspect * m_NearWindowHeight;
 }
 
 float Camera::GetNearWindowHeight() const
 {
-	return mNearWindowHeight;
+	return m_NearWindowHeight;
 }
 
 float Camera::GetFarWindowWidth() const
 {
-	return mAspect * mFarWindowHeight;
+	return m_Aspect * m_FarWindowHeight;
 }
 
 float Camera::GetFarWindowHeight() const
 {
-	return mFarWindowHeight;
+	return m_FarWindowHeight;
 }
 
 DirectX::XMMATRIX Camera::GetViewXM() const
 {
-	return XMLoadFloat4x4(&mView);
+	return XMLoadFloat4x4(&m_View);
 }
 
 DirectX::XMMATRIX Camera::GetProjXM() const
 {
-	return XMLoadFloat4x4(&mProj);
+	return XMLoadFloat4x4(&m_Proj);
 }
 
 DirectX::XMMATRIX Camera::GetViewProjXM() const
 {
-	return XMLoadFloat4x4(&mView) * XMLoadFloat4x4(&mProj);
+	return XMLoadFloat4x4(&m_View) * XMLoadFloat4x4(&m_Proj);
 }
 
 D3D11_VIEWPORT Camera::GetViewPort() const
 {
-	return mViewPort;
+	return m_ViewPort;
 }
 
 void Camera::SetFrustum(float fovY, float aspect, float nearZ, float farZ)
 {
-	mFovY = fovY;
-	mAspect = aspect;
-	mNearZ = nearZ;
-	mFarZ = farZ;
+	m_FovY = fovY;
+	m_Aspect = aspect;
+	m_NearZ = nearZ;
+	m_FarZ = farZ;
 
-	mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f * mFovY);
-	mFarWindowHeight = 2.0f * mFarZ * tanf(0.5f * mFovY);
+	m_NearWindowHeight = 2.0f * m_NearZ * tanf(0.5f * m_FovY);
+	m_FarWindowHeight = 2.0f * m_FarZ * tanf(0.5f * m_FovY);
 
-	XMStoreFloat4x4(&mProj, XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ));
+	XMStoreFloat4x4(&m_Proj, XMMatrixPerspectiveFovLH(m_FovY, m_Aspect, m_NearZ, m_FarZ));
 }
 
 void Camera::SetViewPort(const D3D11_VIEWPORT & viewPort)
 {
-	mViewPort = viewPort;
+	m_ViewPort = viewPort;
 }
 
 void Camera::SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
 {
-	mViewPort.TopLeftX = topLeftX;
-	mViewPort.TopLeftY = topLeftY;
-	mViewPort.Width = width;
-	mViewPort.Height = height;
-	mViewPort.MinDepth = minDepth;
-	mViewPort.MaxDepth = maxDepth;
+	m_ViewPort.TopLeftX = topLeftX;
+	m_ViewPort.TopLeftY = topLeftY;
+	m_ViewPort.Width = width;
+	m_ViewPort.Height = height;
+	m_ViewPort.MinDepth = minDepth;
+	m_ViewPort.MaxDepth = maxDepth;
 }
 
 
@@ -138,7 +138,7 @@ void FirstPersonCamera::SetPosition(float x, float y, float z)
 
 void FirstPersonCamera::SetPosition(const DirectX::XMFLOAT3 & v)
 {
-	mPosition = v;
+	m_Position = v;
 }
 
 void XM_CALLCONV FirstPersonCamera::LookAt(DirectX::FXMVECTOR pos, DirectX::FXMVECTOR target, DirectX::FXMVECTOR up)
@@ -157,10 +157,10 @@ void XM_CALLCONV FirstPersonCamera::LookTo(DirectX::FXMVECTOR pos, DirectX::FXMV
 	XMVECTOR R = XMVector3Normalize(XMVector3Cross(up, L));
 	XMVECTOR U = XMVector3Cross(L, R);
 
-	XMStoreFloat3(&mPosition, pos);
-	XMStoreFloat3(&mLook, L);
-	XMStoreFloat3(&mRight, R);
-	XMStoreFloat3(&mUp, U);
+	XMStoreFloat3(&m_Position, pos);
+	XMStoreFloat3(&m_Look, L);
+	XMStoreFloat3(&m_Right, R);
+	XMStoreFloat3(&m_Up, U);
 }
 
 void FirstPersonCamera::LookTo(const DirectX::XMFLOAT3 & pos, const DirectX::XMFLOAT3 & to, const DirectX::XMFLOAT3 & up)
@@ -170,63 +170,63 @@ void FirstPersonCamera::LookTo(const DirectX::XMFLOAT3 & pos, const DirectX::XMF
 
 void FirstPersonCamera::Strafe(float d)
 {
-	XMVECTOR Pos = XMLoadFloat3(&mPosition);
-	XMVECTOR Right = XMLoadFloat3(&mRight);
+	XMVECTOR Pos = XMLoadFloat3(&m_Position);
+	XMVECTOR Right = XMLoadFloat3(&m_Right);
 	XMVECTOR Dist = XMVectorReplicate(d);
 	// DestPos = Dist * Right + SrcPos
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(Dist, Right, Pos));
+	XMStoreFloat3(&m_Position, XMVectorMultiplyAdd(Dist, Right, Pos));
 }
 
 void FirstPersonCamera::Walk(float d)
 {
-	XMVECTOR Pos = XMLoadFloat3(&mPosition);
-	XMVECTOR Right = XMLoadFloat3(&mRight);
+	XMVECTOR Pos = XMLoadFloat3(&m_Position);
+	XMVECTOR Right = XMLoadFloat3(&m_Right);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR Front = XMVector3Normalize(XMVector3Cross(Right, Up));
 	XMVECTOR Dist = XMVectorReplicate(d);
 	// DestPos = Dist * Front + SrcPos
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(Dist, Front, Pos));
+	XMStoreFloat3(&m_Position, XMVectorMultiplyAdd(Dist, Front, Pos));
 }
 
 void FirstPersonCamera::MoveForward(float d)
 {
-	XMVECTOR Pos = XMLoadFloat3(&mPosition);
-	XMVECTOR Look = XMLoadFloat3(&mLook);
+	XMVECTOR Pos = XMLoadFloat3(&m_Position);
+	XMVECTOR Look = XMLoadFloat3(&m_Look);
 	XMVECTOR Dist = XMVectorReplicate(d);
 	// DestPos = Dist * Look + SrcPos
-	XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(Dist, Look, Pos));
+	XMStoreFloat3(&m_Position, XMVectorMultiplyAdd(Dist, Look, Pos));
 }
 
 void FirstPersonCamera::Pitch(float rad)
 {
-	XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&mRight), rad);
-	XMVECTOR Up = XMVector3TransformNormal(XMLoadFloat3(&mUp), R);
-	XMVECTOR Look = XMVector3TransformNormal(XMLoadFloat3(&mLook), R);
+	XMMATRIX R = XMMatrixRotationAxis(XMLoadFloat3(&m_Right), rad);
+	XMVECTOR Up = XMVector3TransformNormal(XMLoadFloat3(&m_Up), R);
+	XMVECTOR Look = XMVector3TransformNormal(XMLoadFloat3(&m_Look), R);
 	float cosPhi = XMVectorGetY(Look);
 	// 将上下视野角度Phi限制在[2pi/9, 7pi/9]，
 	// 即余弦值[-cos(2pi/9), cos(2pi/9)]之间
 	if (fabs(cosPhi) > cosf(XM_2PI / 9))
 		return;
 	
-	XMStoreFloat3(&mUp, Up);
-	XMStoreFloat3(&mLook, Look);
+	XMStoreFloat3(&m_Up, Up);
+	XMStoreFloat3(&m_Look, Look);
 }
 
 void FirstPersonCamera::RotateY(float rad)
 {
 	XMMATRIX R = XMMatrixRotationY(rad);
 
-	XMStoreFloat3(&mRight, XMVector3TransformNormal(XMLoadFloat3(&mRight), R));
-	XMStoreFloat3(&mUp, XMVector3TransformNormal(XMLoadFloat3(&mUp), R));
-	XMStoreFloat3(&mLook, XMVector3TransformNormal(XMLoadFloat3(&mLook), R));
+	XMStoreFloat3(&m_Right, XMVector3TransformNormal(XMLoadFloat3(&m_Right), R));
+	XMStoreFloat3(&m_Up, XMVector3TransformNormal(XMLoadFloat3(&m_Up), R));
+	XMStoreFloat3(&m_Look, XMVector3TransformNormal(XMLoadFloat3(&m_Look), R));
 }
 
 void FirstPersonCamera::UpdateViewMatrix()
 {
-	XMVECTOR R = XMLoadFloat3(&mRight);
-	XMVECTOR U = XMLoadFloat3(&mUp);
-	XMVECTOR L = XMLoadFloat3(&mLook);
-	XMVECTOR P = XMLoadFloat3(&mPosition);
+	XMVECTOR R = XMLoadFloat3(&m_Right);
+	XMVECTOR U = XMLoadFloat3(&m_Up);
+	XMVECTOR L = XMLoadFloat3(&m_Look);
+	XMVECTOR P = XMLoadFloat3(&m_Position);
 
 	// 保持摄像机的轴互为正交，且长度都为1
 	L = XMVector3Normalize(L);
@@ -240,14 +240,14 @@ void FirstPersonCamera::UpdateViewMatrix()
 	float y = -XMVectorGetX(XMVector3Dot(P, U));
 	float z = -XMVectorGetX(XMVector3Dot(P, L));
 
-	XMStoreFloat3(&mRight, R);
-	XMStoreFloat3(&mUp, U);
-	XMStoreFloat3(&mLook, L);
+	XMStoreFloat3(&m_Right, R);
+	XMStoreFloat3(&m_Up, U);
+	XMStoreFloat3(&m_Look, L);
 
-	mView = {
-		mRight.x, mUp.x, mLook.x, 0.0f,
-		mRight.y, mUp.y, mLook.y, 0.0f,
-		mRight.z, mUp.z, mLook.z, 0.0f,
+	m_View = {
+		m_Right.x, m_Up.x, m_Look.x, 0.0f,
+		m_Right.y, m_Up.y, m_Look.y, 0.0f,
+		m_Right.z, m_Up.z, m_Look.z, 0.0f,
 		x, y, z, 1.0f
 	};
 }
@@ -257,7 +257,7 @@ void FirstPersonCamera::UpdateViewMatrix()
 //
 
 ThirdPersonCamera::ThirdPersonCamera()
-	: Camera(), mTheta(), mPhi(), mDistance(), mTarget()
+	: Camera(), m_Theta(), m_Phi(), m_Distance(), m_Target()
 {
 }
 
@@ -267,103 +267,103 @@ ThirdPersonCamera::~ThirdPersonCamera()
 
 DirectX::XMFLOAT3 ThirdPersonCamera::GetTargetPosition() const
 {
-	return mTarget;
+	return m_Target;
 }
 
 float ThirdPersonCamera::GetDistance() const
 {
-	return mDistance;
+	return m_Distance;
 }
 
 float ThirdPersonCamera::GetRotationX() const
 {
-	return mPhi;
+	return m_Phi;
 }
 
 float ThirdPersonCamera::GetRotationY() const
 {
-	return mTheta;
+	return m_Theta;
 }
 
 void ThirdPersonCamera::RotateX(float rad)
 {
-	mPhi -= rad;
+	m_Phi -= rad;
 	// 将上下视野角度Phi限制在[pi/6, pi/2]，
 	// 即余弦值[0, cos(pi/6)]之间
-	if (mPhi < XM_PI / 6)
-		mPhi = XM_PI / 6;
-	else if (mPhi > XM_PIDIV2)
-		mPhi = XM_PIDIV2;
+	if (m_Phi < XM_PI / 6)
+		m_Phi = XM_PI / 6;
+	else if (m_Phi > XM_PIDIV2)
+		m_Phi = XM_PIDIV2;
 }
 
 void ThirdPersonCamera::RotateY(float rad)
 {
-	mTheta = XMScalarModAngle(mTheta - rad);
+	m_Theta = XMScalarModAngle(m_Theta - rad);
 }
 
 void ThirdPersonCamera::Approach(float dist)
 {
-	mDistance += dist;
-	// 限制距离在[mMinDist, mMaxDist]之间
-	if (mDistance < mMinDist)
-		mDistance = mMinDist;
-	else if (mDistance > mMaxDist)
-		mDistance = mMaxDist;
+	m_Distance += dist;
+	// 限制距离在[m_MinDist, m_MaxDist]之间
+	if (m_Distance < m_MinDist)
+		m_Distance = m_MinDist;
+	else if (m_Distance > m_MaxDist)
+		m_Distance = m_MaxDist;
 }
 
 void ThirdPersonCamera::SetRotationX(float phi)
 {
-	mPhi = XMScalarModAngle(phi);
+	m_Phi = XMScalarModAngle(phi);
 	// 将上下视野角度Phi限制在[pi/6, pi/2]，
 	// 即余弦值[0, cos(pi/6)]之间
-	if (mPhi < XM_PI / 6)
-		mPhi = XM_PI / 6;
-	else if (mPhi > XM_PIDIV2)
-		mPhi = XM_PIDIV2;
+	if (m_Phi < XM_PI / 6)
+		m_Phi = XM_PI / 6;
+	else if (m_Phi > XM_PIDIV2)
+		m_Phi = XM_PIDIV2;
 }
 
 void ThirdPersonCamera::SetRotationY(float theta)
 {
-	mTheta = XMScalarModAngle(theta);
+	m_Theta = XMScalarModAngle(theta);
 }
 
 void ThirdPersonCamera::SetTarget(const DirectX::XMFLOAT3 & target)
 {
-	mTarget = target;
+	m_Target = target;
 }
 
 void ThirdPersonCamera::SetDistance(float dist)
 {
-	mDistance = dist;
+	m_Distance = dist;
 }
 
 void ThirdPersonCamera::SetDistanceMinMax(float minDist, float maxDist)
 {
-	mMinDist = minDist;
-	mMaxDist = maxDist;
+	m_MinDist = minDist;
+	m_MaxDist = maxDist;
 }
 
 void ThirdPersonCamera::UpdateViewMatrix()
 {
 	// 球面坐标系
-	float x = mTarget.x + mDistance * sinf(mPhi) * cosf(mTheta);
-	float z = mTarget.z + mDistance * sinf(mPhi) * sinf(mTheta);
-	float y = mTarget.y + mDistance * cosf(mPhi);
-	mPosition = { x, y, z };
-	XMVECTOR P = XMLoadFloat3(&mPosition);
-	XMVECTOR L = XMVector3Normalize(XMLoadFloat3(&mTarget) - P);
+	float x = m_Target.x + m_Distance * sinf(m_Phi) * cosf(m_Theta);
+	float z = m_Target.z + m_Distance * sinf(m_Phi) * sinf(m_Theta);
+	float y = m_Target.y + m_Distance * cosf(m_Phi);
+	m_Position = { x, y, z };
+	XMVECTOR P = XMLoadFloat3(&m_Position);
+	XMVECTOR L = XMVector3Normalize(XMLoadFloat3(&m_Target) - P);
 	XMVECTOR R = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), L));
 	XMVECTOR U = XMVector3Cross(L, R);
 	
 	// 更新向量
-	XMStoreFloat3(&mRight, R);
-	XMStoreFloat3(&mUp, U);
-	XMStoreFloat3(&mLook, L);
+	XMStoreFloat3(&m_Right, R);
+	XMStoreFloat3(&m_Up, U);
+	XMStoreFloat3(&m_Look, L);
 
-	mView = {
-		mRight.x, mUp.x, mLook.x, 0.0f,
-		mRight.y, mUp.y, mLook.y, 0.0f,
-		mRight.z, mUp.z, mLook.z, 0.0f,
+	m_View = {
+		m_Right.x, m_Up.x, m_Look.x, 0.0f,
+		m_Right.y, m_Up.y, m_Look.y, 0.0f,
+		m_Right.z, m_Up.z, m_Look.z, 0.0f,
 		-XMVectorGetX(XMVector3Dot(P, R)), -XMVectorGetX(XMVector3Dot(P, U)), -XMVectorGetX(XMVector3Dot(P, L)), 1.0f
 	};
 }

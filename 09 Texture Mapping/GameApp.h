@@ -51,30 +51,30 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// 单色笔刷
-	ComPtr<IDWriteFont> mFont;								// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;								// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	ComPtr<ID3D11InputLayout> mVertexLayout2D;				// 用于2D的顶点输入布局
-	ComPtr<ID3D11InputLayout> mVertexLayout3D;				// 用于3D的顶点输入布局
-	ComPtr<ID3D11Buffer> mVertexBuffer;						// 顶点缓冲区
-	ComPtr<ID3D11Buffer> mIndexBuffer;						// 索引缓冲区
-	ComPtr<ID3D11Buffer> mConstantBuffers[2];				// 常量缓冲区
-	UINT mIndexCount;										// 绘制物体的索引数组大小
-	int mCurrFrame;											// 当前火焰动画播放到第几帧
-	ShowMode mCurrMode;										// 当前显示的模式
+	ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// 用于2D的顶点输入布局
+	ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// 用于3D的顶点输入布局
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// 顶点缓冲区
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;						// 索引缓冲区
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];				    // 常量缓冲区
+	UINT m_IndexCount;										    // 绘制物体的索引数组大小
+	int m_CurrFrame;											// 当前火焰动画播放到第几帧
+	ShowMode m_CurrMode;										// 当前显示的模式
 
-	ComPtr<ID3D11ShaderResourceView> mWoodCrate;			// 木盒纹理
-	std::vector<ComPtr<ID3D11ShaderResourceView>> mFireAnim;// 火焰纹理集
-	ComPtr<ID3D11SamplerState> mSamplerState;				// 采样器状态
+	ComPtr<ID3D11ShaderResourceView> m_pWoodCrate;			    // 木盒纹理
+	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pFireAnims; // 火焰纹理集
+	ComPtr<ID3D11SamplerState> m_pSamplerState;				    // 采样器状态
 
-	ComPtr<ID3D11VertexShader> mVertexShader3D;				// 用于3D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader3D;				// 用于3D的像素着色器
-	ComPtr<ID3D11VertexShader> mVertexShader2D;				// 用于2D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader2D;				// 用于2D的像素着色器
+	ComPtr<ID3D11VertexShader> m_pVertexShader3D;				// 用于3D的顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader3D;				    // 用于3D的像素着色器
+	ComPtr<ID3D11VertexShader> m_pVertexShader2D;				// 用于2D的顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader2D;				    // 用于2D的像素着色器
 
-	VSConstantBuffer mVSConstantBuffer;						// 用于修改用于VS的GPU常量缓冲区的变量
-	PSConstantBuffer mPSConstantBuffer;						// 用于修改用于PS的GPU常量缓冲区的变量
+	VSConstantBuffer m_VSConstantBuffer;						// 用于修改用于VS的GPU常量缓冲区的变量
+	PSConstantBuffer m_PSConstantBuffer;						// 用于修改用于PS的GPU常量缓冲区的变量
 };
 
 

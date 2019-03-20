@@ -1,32 +1,32 @@
 #include "LightHelper.hlsli"
 
-Texture2D gDiffuseMap : register(t0);
-SamplerState gSam : register(s0);
+Texture2D g_DiffuseMap : register(t0);
+SamplerState g_Sam : register(s0);
 
 
 cbuffer CBChangesEveryDrawing : register(b0)
 {
-    matrix gWorld;
-    matrix gWorldInvTranspose;
-    Material gMaterial;
+    matrix g_World;
+    matrix g_WorldInvTranspose;
+    Material g_Material;
 }
 
 cbuffer CBChangesEveryFrame : register(b1)
 {
-    matrix gView;
-    float3 gEyePosW;
+    matrix g_View;
+    float3 g_EyePosW;
 }
 
 cbuffer CBChangesOnResize : register(b2)
 {
-    matrix gProj;
+    matrix g_Proj;
 }
 
 cbuffer CBChangesRarely : register(b3)
 {
-    DirectionalLight gDirLight[5];
-    PointLight gPointLight[5];
-    SpotLight gSpotLight[5];
+    DirectionalLight g_DirLight[5];
+    PointLight g_PointLight[5];
+    SpotLight g_SpotLight[5];
 }
 
 

@@ -29,22 +29,22 @@ public:
 	virtual void Compute() = 0;     // 子类需要实现该方法，完成每一帧的绘制
 	// 窗口的消息回调函数
 protected:
-	bool InitDirect3D();        // Direct3D初始化
+	bool InitDirect3D();			// Direct3D初始化
 
 protected:
 
-	HINSTANCE mhAppInst;        // 应用实例句柄
-	GameTimer mTimer;           // 计时器
+	HINSTANCE m_hAppInst;			// 应用实例句柄
+	GameTimer m_Timer;				// 计时器
 
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// Direct3D 11
-	ComPtr<ID3D11Device> md3dDevice;							// D3D11设备
-	ComPtr<ID3D11DeviceContext> md3dImmediateContext;			// D3D11设备上下文
+	ComPtr<ID3D11Device> m_pd3dDevice;								// D3D11设备
+	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;				// D3D11设备上下文
 	// Direct3D 11.1
-	ComPtr<ID3D11Device1> md3dDevice1;							// D3D11.1设备
-	ComPtr<ID3D11DeviceContext1> md3dImmediateContext1;			// D3D11.1设备上下文
+	ComPtr<ID3D11Device1> m_pd3dDevice1;							// D3D11.1设备
+	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;			// D3D11.1设备上下文
 };
 
 #endif // D3DAPP_H

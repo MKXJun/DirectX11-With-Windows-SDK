@@ -51,8 +51,8 @@ public:
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 
 private:
-	Model mModel;												// 模型
-	DirectX::XMFLOAT4X4 mWorldMatrix;							// 世界矩阵
+	Model m_Model;												// 模型
+	DirectX::XMFLOAT4X4 m_WorldMatrix;							// 世界矩阵
 
 };
 

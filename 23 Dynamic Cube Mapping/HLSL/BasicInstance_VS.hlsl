@@ -5,7 +5,7 @@ VertexPosHWNormalTex VS(InstancePosNormalTex vIn)
 {
     VertexPosHWNormalTex vOut;
     
-    matrix viewProj = mul(gView, gProj);
+    matrix viewProj = mul(g_View, g_Proj);
     vector posW = mul(float4(vIn.PosL, 1.0f), vIn.World);
 
     vOut.PosW = posW.xyz;

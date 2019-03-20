@@ -1,46 +1,46 @@
 #include "LightHelper.hlsli"
 
-Texture2D gDiffuseMap : register(t0);
-TextureCube gTexCube : register(t1);
-SamplerState gSam : register(s0);
+Texture2D g_DiffuseMap : register(t0);
+TextureCube g_TexCube : register(t1);
+SamplerState g_Sam : register(s0);
 
 
 cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {
-    matrix gWorld;
-    matrix gWorldInvTranspose;
+    matrix g_World;
+    matrix g_WorldInvTranspose;
 }
 
 cbuffer CBChangesEveryObjectDrawing : register(b1)
 {
-    Material gMaterial;
+    Material g_Material;
 }
 
 cbuffer CBDrawingStates : register(b2)
 {
-    int gTextureUsed;
-    int gReflectionEnabled;
-    int gRefractionEnabled;
-    float gEta; // 空气/介质折射比
+    int g_TextureUsed;
+    int g_ReflectionEnabled;
+    int g_RefractionEnabled;
+    float g_Eta; // 空气/介质折射比
 }
 
 cbuffer CBChangesEveryFrame : register(b3)
 {
-    matrix gView;
-    float3 gEyePosW;
-    float gPad2;
+    matrix g_View;
+    float3 g_EyePosW;
+    float g_Pad2;
 }
 
 cbuffer CBChangesOnResize : register(b4)
 {
-    matrix gProj;
+    matrix g_Proj;
 }
 
 cbuffer CBChangesRarely : register(b5)
 {
-    DirectionalLight gDirLight[5];
-    PointLight gPointLight[5];
-    SpotLight gSpotLight[5];
+    DirectionalLight g_DirLight[5];
+    PointLight g_PointLight[5];
+    SpotLight g_SpotLight[5];
 }
 
 struct VertexPosNormalTex

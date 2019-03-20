@@ -61,13 +61,13 @@ public:
 		// 绘制
 		void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
 	private:
-		DirectX::XMFLOAT4X4 mWorldMatrix;				// 世界矩阵
-		Material mMaterial;								// 物体材质
-		ComPtr<ID3D11ShaderResourceView> mTexture;		// 纹理
-		ComPtr<ID3D11Buffer> mVertexBuffer;				// 顶点缓冲区
-		ComPtr<ID3D11Buffer> mIndexBuffer;				// 索引缓冲区
-		UINT mVertexStride;								// 顶点字节大小
-		UINT mIndexCount;								// 索引数目	
+		DirectX::XMFLOAT4X4 m_WorldMatrix;				    // 世界矩阵
+		Material m_Material;								// 物体材质
+		ComPtr<ID3D11ShaderResourceView> m_pTexture;		// 纹理
+		ComPtr<ID3D11Buffer> m_pVertexBuffer;				// 顶点缓冲区
+		ComPtr<ID3D11Buffer> m_pIndexBuffer;				// 索引缓冲区
+		UINT m_VertexStride;								// 顶点字节大小
+		UINT m_IndexCount;								    // 索引数目	
 	};
 
 
@@ -89,32 +89,32 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// 单色笔刷
-	ComPtr<IDWriteFont> mFont;								// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;								// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	ComPtr<ID3D11InputLayout> mVertexLayout2D;				// 用于2D的顶点输入布局
-	ComPtr<ID3D11InputLayout> mVertexLayout3D;				// 用于3D的顶点输入布局
-	ComPtr<ID3D11Buffer> mConstantBuffers[5];				// 常量缓冲区
+	ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// 用于2D的顶点输入布局
+	ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// 用于3D的顶点输入布局
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[5];				    // 常量缓冲区
 
-	GameObject mWireFence;									// 篱笆盒
-	GameObject mFloor;										// 地板
-	std::vector<GameObject> mWalls;							// 墙壁
-	GameObject mWater;										// 水
+	GameObject m_WireFence;									    // 篱笆盒
+	GameObject m_Floor;										    // 地板
+	std::vector<GameObject> m_Walls;							// 墙壁
+	GameObject m_Water;										    // 水
 
-	ComPtr<ID3D11VertexShader> mVertexShader3D;				// 用于3D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader3D;				// 用于3D的像素着色器
-	ComPtr<ID3D11VertexShader> mVertexShader2D;				// 用于2D的顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader2D;				// 用于2D的像素着色器
+	ComPtr<ID3D11VertexShader> m_pVertexShader3D;				// 用于3D的顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader3D;				    // 用于3D的像素着色器
+	ComPtr<ID3D11VertexShader> m_pVertexShader2D;				// 用于2D的顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader2D;				    // 用于2D的像素着色器
 
-	CBChangesEveryFrame mCBFrame;							// 该缓冲区存放仅在每一帧进行更新的变量
-	CBChangesOnResize mCBOnResize;							// 该缓冲区存放仅在窗口大小变化时更新的变量
-	CBChangesRarely mCBRarely;								// 该缓冲区存放不会再进行修改的变量
+	CBChangesEveryFrame m_CBFrame;							    // 该缓冲区存放仅在每一帧进行更新的变量
+	CBChangesOnResize m_CBOnResize;							    // 该缓冲区存放仅在窗口大小变化时更新的变量
+	CBChangesRarely m_CBRarely;								    // 该缓冲区存放不会再进行修改的变量
 
-	ComPtr<ID3D11SamplerState> mSamplerState;				// 采样器状态
+	ComPtr<ID3D11SamplerState> m_pSamplerState;				    // 采样器状态
 
-	std::shared_ptr<Camera> mCamera;						// 摄像机
-	CameraMode mCameraMode;									// 摄像机模式
+	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
+	CameraMode m_CameraMode;									// 摄像机模式
 
 };
 

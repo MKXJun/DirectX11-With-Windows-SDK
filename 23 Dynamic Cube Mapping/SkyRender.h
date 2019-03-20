@@ -45,12 +45,12 @@ protected:
 	void InitResource(ComPtr<ID3D11Device> device, float skySphereRadius);
 
 protected:
-	ComPtr<ID3D11Buffer> mVertexBuffer;
-	ComPtr<ID3D11Buffer> mIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
 
-	UINT mIndexCount;
+	UINT m_IndexCount;
 
-	ComPtr<ID3D11ShaderResourceView> mTextureCubeSRV;
+	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;
 };
 
 class DynamicSkyRender : public SkyRender
@@ -94,13 +94,13 @@ private:
 	void InitResource(ComPtr<ID3D11Device> device, int dynamicCubeSize);
 
 private:
-	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// 临时缓存的后备缓冲区
-	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// 临时缓存的深度/模板缓冲区
+	ComPtr<ID3D11RenderTargetView>		m_pCacheRTV;		        // 临时缓存的后备缓冲区
+	ComPtr<ID3D11DepthStencilView>		m_pCacheDSV;		        // 临时缓存的深度/模板缓冲区
 	
-	FirstPersonCamera					mCamera;				// 捕获当前天空盒其中一面的摄像机
-	ComPtr<ID3D11DepthStencilView>		mDynamicCubeMapDSV;		// 动态天空盒渲染对应的深度/模板视图
-	ComPtr<ID3D11ShaderResourceView>	mDynamicCubeMapSRV;		// 动态天空盒对应的着色器资源视图
-	ComPtr<ID3D11RenderTargetView>		mDynamicCubeMapRTVs[6];	// 动态天空盒每个面对应的渲染目标视图
+	FirstPersonCamera					m_pCamera;				    // 捕获当前天空盒其中一面的摄像机
+	ComPtr<ID3D11DepthStencilView>		m_pDynamicCubeMapDSV;		// 动态天空盒渲染对应的深度/模板视图
+	ComPtr<ID3D11ShaderResourceView>	m_pDynamicCubeMapSRV;		// 动态天空盒对应的着色器资源视图
+	ComPtr<ID3D11RenderTargetView>		m_pDynamicCubeMapRTVs[6];	// 动态天空盒每个面对应的渲染目标视图
 	
 };
 

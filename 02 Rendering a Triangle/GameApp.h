@@ -30,10 +30,10 @@ private:
 
 
 private:
-	ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
-	ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
-	ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器
+	ComPtr<ID3D11InputLayout> m_pVertexLayout;	// 顶点输入布局
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;		// 顶点缓冲区
+	ComPtr<ID3D11VertexShader> m_pVertexShader;	// 顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader;	// 像素着色器
 };
 
 

@@ -20,7 +20,7 @@ SkyRender::SkyRender(
 			generateMips ? deviceContext.Get() : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
-			mTextureCubeSRV.GetAddressOf()
+			m_pTextureCubeSRV.GetAddressOf()
 		));
 	}
 	else
@@ -30,7 +30,7 @@ SkyRender::SkyRender(
 			deviceContext.Get(),
 			cubemapFilename,
 			nullptr,
-			mTextureCubeSRV.GetAddressOf(),
+			m_pTextureCubeSRV.GetAddressOf(),
 			generateMips
 		));
 	}
@@ -51,7 +51,7 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 		deviceContext.Get(),
 		cubemapFilenames,
 		nullptr,
-		mTextureCubeSRV.GetAddressOf(),
+		m_pTextureCubeSRV.GetAddressOf(),
 		generateMips
 	));
 
@@ -60,21 +60,21 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 
 ComPtr<ID3D11ShaderResourceView> SkyRender::GetTextureCube()
 {
-	return mTextureCubeSRV;
+	return m_pTextureCubeSRV;
 }
 
 void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyEffect, const Camera & camera)
 {
 	UINT strides[1] = { sizeof(XMFLOAT3) };
 	UINT offsets[1] = { 0 };
-	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), strides, offsets);
-	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), strides, offsets);
+	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 	XMFLOAT3 pos = camera.GetPosition();
 	skyEffect.SetWorldViewProjMatrix(XMMatrixTranslation(pos.x, pos.y, pos.z) * camera.GetViewProjXM());
-	skyEffect.SetTextureCube(mTextureCubeSRV);
+	skyEffect.SetTextureCube(m_pTextureCubeSRV);
 	skyEffect.Apply(deviceContext);
-	deviceContext->DrawIndexed(mIndexCount, 0, 0);
+	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
 
 void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
@@ -93,14 +93,14 @@ void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem = sphere.vertexVec.data();
 
-	HR(device->CreateBuffer(&vbd, &InitData, &mVertexBuffer));
+	HR(device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer));
 
 	// 索引缓冲区创建
-	mIndexCount = (UINT)sphere.indexVec.size();
+	m_IndexCount = (UINT)sphere.indexVec.size();
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * mIndexCount;
+	ibd.ByteWidth = sizeof(WORD) * m_IndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	ibd.StructureByteStride = 0;
@@ -108,6 +108,6 @@ void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 
 	InitData.pSysMem = sphere.indexVec.data();
 
-	HR(device->CreateBuffer(&ibd, &InitData, &mIndexBuffer));
+	HR(device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer));
 
 }

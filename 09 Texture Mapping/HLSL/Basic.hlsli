@@ -1,30 +1,30 @@
 #include "LightHelper.hlsli"
 
-Texture2D gTex : register(t0);
-SamplerState gSamLinear : register(s0);
+Texture2D g_Tex : register(t0);
+SamplerState g_SamLinear : register(s0);
 
 
 cbuffer VSConstantBuffer : register(b0)
 {
-    matrix gWorld; 
-    matrix gView;  
-    matrix gProj;  
-    matrix gWorldInvTranspose;
+    matrix g_World; 
+    matrix g_View;  
+    matrix g_Proj;  
+    matrix g_WorldInvTranspose;
 }
 
 cbuffer PSConstantBuffer : register(b1)
 {
-    DirectionalLight gDirLight[10];
-    PointLight gPointLight[10];
-    SpotLight gSpotLight[10];
-    Material gMaterial;
-	int gNumDirLight;
-	int gNumPointLight;
-	int gNumSpotLight;
-    float gPad1;
+    DirectionalLight g_DirLight[10];
+    PointLight g_PointLight[10];
+    SpotLight g_SpotLight[10];
+    Material g_Material;
+	int g_NumDirLight;
+	int g_NumPointLight;
+	int g_NumSpotLight;
+    float g_Pad1;
 
-    float3 gEyePosW;
-    float gPad2;
+    float3 g_EyePosW;
+    float g_Pad2;
 }
 
 

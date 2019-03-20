@@ -29,17 +29,17 @@ public:
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame>	cbFrame;	// 每帧绘制的常量缓冲区
+	CBufferObject<0, CBChangesEveryFrame>	m_CBFrame;	        // 每帧绘制的常量缓冲区
 
-	BOOL isDirty;										// 是否有值变更
-	std::vector<CBufferBase*> cBufferPtrs;				// 统一管理上面所有的常量缓冲区
+	BOOL m_IsDirty;										        // 是否有值变更
+	std::vector<CBufferBase*> m_pCBuffers;				        // 统一管理上面所有的常量缓冲区
 
-	ComPtr<ID3D11VertexShader> skyVS;
-	ComPtr<ID3D11PixelShader> skyPS;
+	ComPtr<ID3D11VertexShader> m_pSkyVS;
+	ComPtr<ID3D11PixelShader> m_pSkyPS;
 
-	ComPtr<ID3D11InputLayout> vertexPosLayout;
+	ComPtr<ID3D11InputLayout> m_pVertexPosLayout;
 
-	ComPtr<ID3D11ShaderResourceView> textureCube;			// 天空盒纹理
+	ComPtr<ID3D11ShaderResourceView> m_pTextureCube;			// 天空盒纹理
 };
 
 //
@@ -49,14 +49,14 @@ public:
 namespace
 {
 	// SkyEffect单例
-	static SkyEffect * pInstance = nullptr;
+	static SkyEffect * g_pInstance = nullptr;
 }
 
 SkyEffect::SkyEffect()
 {
-	if (pInstance)
+	if (g_pInstance)
 		throw std::exception("SkyEffect is a singleton!");
-	pInstance = this;
+	g_pInstance = this;
 	pImpl = std::make_unique<SkyEffect::Impl>();
 }
 
@@ -77,9 +77,9 @@ SkyEffect & SkyEffect::operator=(SkyEffect && moveFrom)
 
 SkyEffect & SkyEffect::Get()
 {
-	if (!pInstance)
+	if (!g_pInstance)
 		throw std::exception("SkyEffect needs an instance!");
-	return *pInstance;
+	return *g_pInstance;
 }
 
 bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
@@ -87,7 +87,7 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!device)
 		return false;
 
-	if (!pImpl->cBufferPtrs.empty())
+	if (!pImpl->m_pCBuffers.empty())
 		return true;
 
 	if (!RenderStates::IsInit())
@@ -100,25 +100,25 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Sky_VS.cso", L"HLSL\\Sky_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->skyVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSkyVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPos::inputLayout, ARRAYSIZE(VertexPos::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosLayout.GetAddressOf()));
+		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosLayout.GetAddressOf()));
 
 	// ******************
 	// 创建像素着色器
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Sky_PS.cso", L"HLSL\\Sky_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->skyPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSkyPS.GetAddressOf()));
 
 
-	pImpl->cBufferPtrs.assign({
-		&pImpl->cbFrame,
+	pImpl->m_pCBuffers.assign({
+		&pImpl->m_CBFrame,
 	});
 
 	// 创建常量缓冲区
-	for (auto& pBuffer : pImpl->cBufferPtrs)
+	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
@@ -128,9 +128,9 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 
 void SkyEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	deviceContext->IASetInputLayout(pImpl->vertexPosLayout.Get());
-	deviceContext->VSSetShader(pImpl->skyVS.Get(), nullptr, 0);
-	deviceContext->PSSetShader(pImpl->skyPS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pSkyVS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pSkyPS.Get(), nullptr, 0);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -144,35 +144,35 @@ void SkyEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 
 void XM_CALLCONV SkyEffect::SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.worldViewProj = XMMatrixTranspose(W * V * P);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV SkyEffect::SetWorldViewProjMatrix(DirectX::FXMMATRIX WVP)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.worldViewProj = XMMatrixTranspose(WVP);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void SkyEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> textureCube)
+void SkyEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> m_pTextureCube)
 {
-	pImpl->textureCube = textureCube;
+	pImpl->m_pTextureCube = m_pTextureCube;
 }
 
 void SkyEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	auto& pCBuffers = pImpl->cBufferPtrs;
+	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindVS(deviceContext);
 	
 	// 设置SRV
-	deviceContext->PSSetShaderResources(0, 1, pImpl->textureCube.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTextureCube.GetAddressOf());
 
-	if (pImpl->isDirty)
+	if (pImpl->m_IsDirty)
 	{
-		pImpl->isDirty = false;
+		pImpl->m_IsDirty = false;
 		for (auto& pCBuffer : pCBuffers)
 		{
 			pCBuffer->UpdateBuffer(deviceContext);

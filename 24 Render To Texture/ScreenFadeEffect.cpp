@@ -37,19 +37,19 @@ public:
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// 每帧修改的常量缓冲区
-	CBufferObject<1, CBChangesRarely>	cbRarely;		// 很少修改的常量缓冲区
+	CBufferObject<0, CBChangesEveryFrame> m_CBFrame;		// 每帧修改的常量缓冲区
+	CBufferObject<1, CBChangesRarely>	m_CBRarely;		    // 很少修改的常量缓冲区
 	
 
-	BOOL isDirty;										// 是否有值变更
-	std::vector<CBufferBase*> cBufferPtrs;				// 统一管理上面所有的常量缓冲区
+	BOOL m_IsDirty;										    // 是否有值变更
+	std::vector<CBufferBase*> m_pCBuffers;				    // 统一管理上面所有的常量缓冲区
 
-	ComPtr<ID3D11VertexShader> screenFadeVS;
-	ComPtr<ID3D11PixelShader> screenFadePS;
+	ComPtr<ID3D11VertexShader> m_pScreenFadeVS;
+	ComPtr<ID3D11PixelShader> m_pScreenFadePS;
 
-	ComPtr<ID3D11InputLayout> vertexPosTexLayout;
+	ComPtr<ID3D11InputLayout> m_pVertexPosTexLayout;
 
-	ComPtr<ID3D11ShaderResourceView> texture;			// 用于淡入淡出的纹理
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;			// 用于淡入淡出的纹理
 };
 
 
@@ -61,14 +61,14 @@ public:
 namespace
 {
 	// ScreenFadeEffect单例
-	static ScreenFadeEffect * pInstance = nullptr;
+	static ScreenFadeEffect * g_pInstance = nullptr;
 }
 
 ScreenFadeEffect::ScreenFadeEffect()
 {
-	if (pInstance)
+	if (g_pInstance)
 		throw std::exception("ScreenFadeEffect is a singleton!");
-	pInstance = this;
+	g_pInstance = this;
 	pImpl = std::make_unique<ScreenFadeEffect::Impl>();
 }
 
@@ -89,9 +89,9 @@ ScreenFadeEffect & ScreenFadeEffect::operator=(ScreenFadeEffect && moveFrom)
 
 ScreenFadeEffect & ScreenFadeEffect::Get()
 {
-	if (!pInstance)
+	if (!g_pInstance)
 		throw std::exception("ScreenFadeEffect needs an instance!");
-	return *pInstance;
+	return *g_pInstance;
 }
 
 bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
@@ -99,7 +99,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!device)
 		return false;
 
-	if (!pImpl->cBufferPtrs.empty())
+	if (!pImpl->m_pCBuffers.empty())
 		return true;
 
 	if (!RenderStates::IsInit())
@@ -112,27 +112,27 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_VS.cso", L"HLSL\\ScreenFade_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadeVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pScreenFadeVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosTexLayout.GetAddressOf()));
+		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosTexLayout.GetAddressOf()));
 
 	// ******************
 	// 创建像素着色器
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\ScreenFade_PS.cso", L"HLSL\\ScreenFade_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->screenFadePS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pScreenFadePS.GetAddressOf()));
 
 
 
-	pImpl->cBufferPtrs.assign({
-		&pImpl->cbFrame,
-		&pImpl->cbRarely
+	pImpl->m_pCBuffers.assign({
+		&pImpl->m_CBFrame,
+		&pImpl->m_CBRarely
 		});
 
 	// 创建常量缓冲区
-	for (auto& pBuffer : pImpl->cBufferPtrs)
+	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
@@ -142,9 +142,9 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 
 void ScreenFadeEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	deviceContext->IASetInputLayout(pImpl->vertexPosTexLayout.Get());
-	deviceContext->VSSetShader(pImpl->screenFadeVS.Get(), nullptr, 0);
-	deviceContext->PSSetShader(pImpl->screenFadePS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosTexLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pScreenFadeVS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pScreenFadePS.Get(), nullptr, 0);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -158,43 +158,43 @@ void ScreenFadeEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContex
 
 void XM_CALLCONV ScreenFadeEffect::SetWorldViewProjMatrix(DirectX::FXMMATRIX W, DirectX::CXMMATRIX V, DirectX::CXMMATRIX P)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.worldViewProj = XMMatrixTranspose(W * V * P);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV ScreenFadeEffect::SetWorldViewProjMatrix(DirectX::FXMMATRIX WVP)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.worldViewProj = XMMatrixTranspose(WVP);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void ScreenFadeEffect::SetFadeAmount(float fadeAmount)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.fadeAmount = fadeAmount;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 
-void ScreenFadeEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+void ScreenFadeEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
 {
-	pImpl->texture = texture;
+	pImpl->m_pTexture = m_pTexture;
 }
 
 void ScreenFadeEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	auto& pCBuffers = pImpl->cBufferPtrs;
+	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
 	// 设置SRV
-	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTexture.GetAddressOf());
 
-	if (pImpl->isDirty)
+	if (pImpl->m_IsDirty)
 	{
-		pImpl->isDirty = false;
+		pImpl->m_IsDirty = false;
 		for (auto& pCBuffer : pCBuffers)
 		{
 			pCBuffer->UpdateBuffer(deviceContext);

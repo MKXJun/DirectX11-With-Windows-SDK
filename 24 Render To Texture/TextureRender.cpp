@@ -3,7 +3,7 @@
 using namespace Microsoft::WRL;
 
 TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texHeight, bool generateMips)
-	: mGenerateMips(generateMips)
+	: m_GenerateMips(generateMips)
 {
 	// ******************
 	// 1. 创建纹理
@@ -14,7 +14,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	
 	texDesc.Width = texWidth;
 	texDesc.Height = texHeight;
-	texDesc.MipLevels = (mGenerateMips ? 0 : 1);	// 0为完整mipmap链
+	texDesc.MipLevels = (m_GenerateMips ? 0 : 1);	// 0为完整mipmap链
 	texDesc.ArraySize = 1;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;
@@ -39,7 +39,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	HR(device->CreateRenderTargetView(
 		texture.Get(),
 		&rtvDesc,
-		mOutputTextureRTV.GetAddressOf()));
+		m_pOutputTextureRTV.GetAddressOf()));
 	
 	// ******************
 	// 3. 创建纹理对应的着色器资源视图
@@ -54,7 +54,7 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	HR(device->CreateShaderResourceView(
 		texture.Get(),
 		&srvDesc,
-		mOutputTextureSRV.GetAddressOf()));
+		m_pOutputTextureSRV.GetAddressOf()));
 
 	// ******************
 	// 4. 创建与纹理等宽高的深度/模板缓冲区和对应的视图
@@ -84,17 +84,17 @@ TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texH
 	HR(device->CreateDepthStencilView(
 		depthTex.Get(),
 		&dsvDesc,
-		mOutputTextureDSV.GetAddressOf()));
+		m_pOutputTextureDSV.GetAddressOf()));
 
 	// ******************
 	// 5. 初始化视口
 	//
-	mOutputViewPort.TopLeftX = 0.0f;
-	mOutputViewPort.TopLeftY = 0.0f;
-	mOutputViewPort.Width = static_cast<float>(texWidth);
-	mOutputViewPort.Height = static_cast<float>(texHeight);
-	mOutputViewPort.MinDepth = 0.0f;
-	mOutputViewPort.MaxDepth = 1.0f;
+	m_OutputViewPort.TopLeftX = 0.0f;
+	m_OutputViewPort.TopLeftY = 0.0f;
+	m_OutputViewPort.Width = static_cast<float>(texWidth);
+	m_OutputViewPort.Height = static_cast<float>(texHeight);
+	m_OutputViewPort.MinDepth = 0.0f;
+	m_OutputViewPort.MaxDepth = 1.0f;
 }
 
 TextureRender::~TextureRender()
@@ -104,40 +104,40 @@ TextureRender::~TextureRender()
 void TextureRender::Begin(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 缓存渲染目标和深度模板视图
-	deviceContext->OMGetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.GetAddressOf());
+	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
 	// 缓存视口
-	UINT numViewports = 1;
-	deviceContext->RSGetViewports(&numViewports, &mCacheViewPort);
+	UINT num_Viewports = 1;
+	deviceContext->RSGetViewports(&num_Viewports, &m_CacheViewPort);
 
 
 	// 清空缓冲区
 	float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	deviceContext->ClearRenderTargetView(mOutputTextureRTV.Get(), black);
-	deviceContext->ClearDepthStencilView(mOutputTextureDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	deviceContext->ClearRenderTargetView(m_pOutputTextureRTV.Get(), black);
+	deviceContext->ClearDepthStencilView(m_pOutputTextureDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	// 设置渲染目标和深度模板视图
-	deviceContext->OMSetRenderTargets(1, mOutputTextureRTV.GetAddressOf(), mOutputTextureDSV.Get());
+	deviceContext->OMSetRenderTargets(1, m_pOutputTextureRTV.GetAddressOf(), m_pOutputTextureDSV.Get());
 	// 设置视口
-	deviceContext->RSSetViewports(1, &mOutputViewPort);
+	deviceContext->RSSetViewports(1, &m_OutputViewPort);
 }
 
 void TextureRender::End(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	// 恢复默认设定
-	deviceContext->RSSetViewports(1, &mCacheViewPort);
-	deviceContext->OMSetRenderTargets(1, mCacheRTV.GetAddressOf(), mCacheDSV.Get());
+	deviceContext->RSSetViewports(1, &m_CacheViewPort);
+	deviceContext->OMSetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.Get());
 
 	// 若之前有指定需要mipmap链，则生成
-	if (mGenerateMips)
+	if (m_GenerateMips)
 	{
-		deviceContext->GenerateMips(mOutputTextureSRV.Get());
+		deviceContext->GenerateMips(m_pOutputTextureSRV.Get());
 	}
 	
 	// 清空临时缓存的渲染目标视图和深度模板视图
-	mCacheDSV.Reset();
-	mCacheRTV.Reset();
+	m_pCacheDSV.Reset();
+	m_pCacheRTV.Reset();
 }
 
 ComPtr<ID3D11ShaderResourceView> TextureRender::GetOutputTexture()
 {
-	return mOutputTextureSRV;
+	return m_pOutputTextureSRV;
 }

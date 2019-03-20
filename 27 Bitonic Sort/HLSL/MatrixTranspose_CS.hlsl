@@ -10,10 +10,10 @@ void CS(uint3 Gid : SV_GroupID,
     uint3 GTid : SV_GroupThreadID,
     uint GI : SV_GroupIndex)
 {
-    uint index = DTid.y * gMatrixWidth + DTid.x;
-    shared_data[GI] = gInput[index];
+    uint index = DTid.y * g_MatrixWidth + DTid.x;
+    shared_data[GI] = g_Input[index];
     GroupMemoryBarrierWithGroupSync();
 
-    uint2 outPos = DTid.yx % gMatrixHeight + DTid.xy / gMatrixHeight * gMatrixHeight;
-    gData[outPos.y * gMatrixWidth + outPos.x] = shared_data[GI];
+    uint2 outPos = DTid.yx % g_MatrixHeight + DTid.xy / g_MatrixHeight * g_MatrixHeight;
+    g_Data[outPos.y * g_MatrixWidth + outPos.x] = shared_data[GI];
 }

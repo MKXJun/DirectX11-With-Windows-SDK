@@ -3,7 +3,7 @@
 using namespace DirectX;
 
 GameObject::GameObject()
-	: mWorldMatrix(
+	: m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -13,7 +13,7 @@ GameObject::GameObject()
 
 DirectX::XMFLOAT3 GameObject::GetPosition() const
 {
-	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
+	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
 }
 
 
@@ -21,37 +21,37 @@ DirectX::XMFLOAT3 GameObject::GetPosition() const
 
 void GameObject::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
 {
-	mTexture = texture;
+	m_pTexture = texture;
 }
 
 void GameObject::SetMaterial(const Material & material)
 {
-	mMaterial = material;
+	m_Material = material;
 }
 
 void GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
 {
-	mWorldMatrix = world;
+	m_WorldMatrix = world;
 }
 
 void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 {
-	XMStoreFloat4x4(&mWorldMatrix, world);
+	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
 {
 	// 设置顶点/索引缓冲区
-	UINT strides = mVertexStride;
+	UINT strides = m_VertexStride;
 	UINT offsets = 0;
-	deviceContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &strides, &offsets);
-	deviceContext->IASetIndexBuffer(mIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
+	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 	// 更新数据并应用
-	effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
-	effect.SetTexture(mTexture);
-	effect.SetMaterial(mMaterial);
+	effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	effect.SetTexture(m_pTexture);
+	effect.SetMaterial(m_Material);
 	effect.Apply(deviceContext);
 
-	deviceContext->DrawIndexed(mIndexCount, 0, 0);
+	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }

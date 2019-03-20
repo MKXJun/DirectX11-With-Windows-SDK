@@ -1,10 +1,10 @@
 
-TextureCube gTexCube : register(t0);
-SamplerState gSam : register(s0);
+TextureCube g_TexCube : register(t0);
+SamplerState g_Sam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
 {
-    matrix gWorldViewProj;
+    matrix g_WorldViewProj;
 }
 
 struct VertexPos

@@ -47,24 +47,24 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;	// 单色笔刷
-	ComPtr<IDWriteFont> mFont;					// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;		// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;	    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;					// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;		// 文本格式
 	
-	ComPtr<ID3D11InputLayout> mVertexLayout;	// 顶点输入布局
-	ComPtr<ID3D11Buffer> mVertexBuffer;			// 顶点缓冲区
-	ComPtr<ID3D11Buffer> mIndexBuffer;			// 索引缓冲区
-	ComPtr<ID3D11Buffer> mConstantBuffers[2];	// 常量缓冲区
-	UINT mIndexCount;							// 绘制物体的索引数组大小
+	ComPtr<ID3D11InputLayout> m_pVertexLayout;	    // 顶点输入布局
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;			// 顶点缓冲区
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;			// 索引缓冲区
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];	    // 常量缓冲区
+	UINT m_IndexCount;							    // 绘制物体的索引数组大小
 
-	ComPtr<ID3D11VertexShader> mVertexShader;	// 顶点着色器
-	ComPtr<ID3D11PixelShader> mPixelShader;		// 像素着色器
-	VSConstantBuffer mVSConstantBuffer;			// 用于修改用于VS的GPU常量缓冲区的变量
-	PSConstantBuffer mPSConstantBuffer;			// 用于修改用于PS的GPU常量缓冲区的变量
+	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // 顶点着色器
+	ComPtr<ID3D11PixelShader> m_pPixelShader;		// 像素着色器
+	VSConstantBuffer m_VSConstantBuffer;			// 用于修改用于VS的GPU常量缓冲区的变量
+	PSConstantBuffer m_PSConstantBuffer;			// 用于修改用于PS的GPU常量缓冲区的变量
 
-	DirectionalLight mDirLight;					// 默认环境光
-	PointLight mPointLight;						// 默认点光
-	SpotLight mSpotLight;						// 默认汇聚光
+	DirectionalLight m_DirLight;					// 默认环境光
+	PointLight m_PointLight;						// 默认点光
+	SpotLight m_SpotLight;						    // 默认汇聚光
 	
 };
 

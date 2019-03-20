@@ -19,38 +19,38 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -64,21 +64,21 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 	
 	// 更新投影矩阵
-	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
+	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	
 }
 
@@ -86,100 +86,100 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
 	// 更新每帧变化的值
-	if (mShowMode == Mode::SplitedTriangle)
+	if (m_ShowMode == Mode::SplitedTriangle)
 	{
-		mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
+		m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	}
 	else
 	{
 		static float phi = 0.0f, theta = 0.0f;
 		phi += 0.2f * dt, theta += 0.3f * dt;
-		mBasicEffect.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
+		m_BasicEffect.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
 	}
 
 	// 切换显示模式
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
-		mShowMode = Mode::SplitedTriangle;
+		m_ShowMode = Mode::SplitedTriangle;
 		ResetTriangle();
 		// 输入装配阶段的顶点缓冲区设置
 		UINT stride = sizeof(VertexPosColor);		// 跨越字节数
 		UINT offset = 0;							// 起始偏移量
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		mBasicEffect.SetRenderSplitedTriangle(md3dImmediateContext);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
 	}
-	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
-		mShowMode = Mode::CylinderNoCap;
+		m_ShowMode = Mode::CylinderNoCap;
 		ResetRoundWire();
 		// 输入装配阶段的顶点缓冲区设置
 		UINT stride = sizeof(VertexPosNormalColor);		// 跨越字节数
 		UINT offset = 0;								// 起始偏移量
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
-		mBasicEffect.SetRenderCylinderNoCap(md3dImmediateContext);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext);
 	}
 
 	// 显示法向量
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
 	{
-		if (mShowMode == Mode::CylinderNoCap)
-			mShowMode = Mode::CylinderNoCapWithNormal;
-		else if (mShowMode == Mode::CylinderNoCapWithNormal)
-			mShowMode = Mode::CylinderNoCap;
+		if (m_ShowMode == Mode::CylinderNoCap)
+			m_ShowMode = Mode::CylinderNoCapWithNormal;
+		else if (m_ShowMode == Mode::CylinderNoCapWithNormal)
+			m_ShowMode = Mode::CylinderNoCap;
 	}
 
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 应用常量缓冲区的变化
-	mBasicEffect.Apply(md3dImmediateContext);
-	md3dImmediateContext->Draw(mVertexCount, 0);
+	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_pd3dImmediateContext->Draw(m_VertexCount, 0);
 	// 绘制法向量，绘制完后记得归位
-	if (mShowMode == Mode::CylinderNoCapWithNormal)
+	if (m_ShowMode == Mode::CylinderNoCapWithNormal)
 	{
-		mBasicEffect.SetRenderNormal(md3dImmediateContext);
+		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext);
 		// 应用常量缓冲区的变化
-		mBasicEffect.Apply(md3dImmediateContext);
-		md3dImmediateContext->Draw(mVertexCount, 0);
-		mBasicEffect.SetRenderCylinderNoCap(md3dImmediateContext);
+		m_BasicEffect.Apply(m_pd3dImmediateContext);
+		m_pd3dImmediateContext->Draw(m_VertexCount, 0);
+		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext);
 	}
 
 
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"切换类型：1-分裂的三角形 2-圆线构造柱面\n"
 			"当前模式: ";
-		if (mShowMode == Mode::SplitedTriangle)
+		if (m_ShowMode == Mode::SplitedTriangle)
 			text += L"分裂的三角形";
-		else if (mShowMode == Mode::CylinderNoCap)
+		else if (m_ShowMode == Mode::CylinderNoCap)
 			text += L"圆线构造柱面(Q-显示圆线的法向量)";
 		else
 			text += L"圆线构造柱面(Q-隐藏圆线的法向量)";
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 }
 
 
@@ -191,7 +191,7 @@ bool GameApp::InitResource()
 	//
 
 	// 默认绘制三角形
-	mShowMode = Mode::SplitedTriangle;
+	m_ShowMode = Mode::SplitedTriangle;
 	ResetTriangle();
 	
 	// ******************
@@ -204,24 +204,24 @@ bool GameApp::InitResource()
 	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
-	mBasicEffect.SetDirLight(0, dirLight);
+	m_BasicEffect.SetDirLight(0, dirLight);
 	// 材质
 	Material material;
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
-	mBasicEffect.SetMaterial(material);
+	m_BasicEffect.SetMaterial(material);
 	// 摄像机位置
-	mBasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
+	m_BasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
 	// 矩阵
-	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
-	mBasicEffect.SetViewMatrix(XMMatrixLookAtLH(
+	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	m_BasicEffect.SetViewMatrix(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
 		XMVectorZero(),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)));
-	mBasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
+	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	// 圆柱高度
-	mBasicEffect.SetCylinderHeight(2.0f);
+	m_BasicEffect.SetCylinderHeight(2.0f);
 
 
 
@@ -229,9 +229,9 @@ bool GameApp::InitResource()
 	// 输入装配阶段的顶点缓冲区设置
 	UINT stride = sizeof(VertexPosColor);		// 跨越字节数
 	UINT offset = 0;							// 起始偏移量
-	md3dImmediateContext->IASetVertexBuffers(0, 1, mVertexBuffer.GetAddressOf(), &stride, &offset);
+	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 	// 设置默认渲染状态
-	mBasicEffect.SetRenderSplitedTriangle(md3dImmediateContext);
+	m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
 
 
 	return true;
@@ -262,9 +262,9 @@ void GameApp::ResetTriangle()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.ReleaseAndGetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.ReleaseAndGetAddressOf()));
 	// 三角形顶点数
-	mVertexCount = 3;
+	m_VertexCount = 3;
 }
 
 void GameApp::ResetRoundWire()
@@ -299,9 +299,9 @@ void GameApp::ResetRoundWire()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mVertexBuffer.ReleaseAndGetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.ReleaseAndGetAddressOf()));
 	// 线框顶点数
-	mVertexCount = 41;
+	m_VertexCount = 41;
 }
 
 

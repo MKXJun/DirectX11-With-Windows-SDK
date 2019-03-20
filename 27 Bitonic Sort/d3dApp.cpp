@@ -4,22 +4,22 @@
 #include <sstream>
 
 D3DApp::D3DApp(HINSTANCE hInstance)
-	: mhAppInst(hInstance),
-	md3dDevice(nullptr),
-	md3dImmediateContext(nullptr)
+	: m_hAppInst(hInstance),
+	m_pd3dDevice(nullptr),
+	m_pd3dImmediateContext(nullptr)
 {
 }
 
 D3DApp::~D3DApp()
 {
 	// 恢复所有默认设定
-	if (md3dImmediateContext)
-		md3dImmediateContext->ClearState();
+	if (m_pd3dImmediateContext)
+		m_pd3dImmediateContext->ClearState();
 }
 
 HINSTANCE D3DApp::AppInst()const
 {
-	return mhAppInst;
+	return m_hAppInst;
 }
 
 int D3DApp::Run()
@@ -69,13 +69,13 @@ bool D3DApp::InitDirect3D()
 	{
 		d3dDriverType = driverTypes[driverTypeIndex];
 		hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
-			D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
+			D3D11_SDK_VERSION, m_pd3dDevice.GetAddressOf(), &featureLevel, m_pd3dImmediateContext.GetAddressOf());
 		
 		if (hr == E_INVALIDARG)
 		{
 			// Direct3D 11.0 的API不承认D3D_FEATURE_LEVEL_11_1，所以我们需要尝试特性等级11.0以及以下的版本
 			hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
-				D3D11_SDK_VERSION, md3dDevice.GetAddressOf(), &featureLevel, md3dImmediateContext.GetAddressOf());
+				D3D11_SDK_VERSION, m_pd3dDevice.GetAddressOf(), &featureLevel, m_pd3dImmediateContext.GetAddressOf());
 		}
 
 		if (SUCCEEDED(hr))
@@ -96,8 +96,8 @@ bool D3DApp::InitDirect3D()
 	}
 
 	// 查看是否支持Direct3D 11.1
-	md3dDevice.As(&md3dDevice1);
-	md3dImmediateContext.As(&md3dImmediateContext1);
+	m_pd3dDevice.As(&m_pd3dDevice1);
+	m_pd3dImmediateContext.As(&m_pd3dImmediateContext1);
 
 	return true;
 }

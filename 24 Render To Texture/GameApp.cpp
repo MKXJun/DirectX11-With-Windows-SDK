@@ -19,44 +19,44 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
-	if (!mScreenFadeEffect.InitAll(md3dDevice))
+	if (!m_ScreenFadeEffect.InitAll(m_pd3dDevice))
 		return false;
 
-	if (!mMinimapEffect.InitAll(md3dDevice))
+	if (!m_MinimapEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -70,30 +70,30 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 
 	// 摄像机变更显示
-	if (mCamera != nullptr)
+	if (m_pCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
+		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
+		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 		// 小地图网格模型重设
-		mMinimap.SetMesh(md3dDevice, Geometry::Create2DShow(1.0f - 100.0f / mClientWidth * 2,  -1.0f + 100.0f / mClientHeight * 2, 
-			100.0f / mClientWidth * 2, 100.0f / mClientHeight * 2));
+		m_Minimap.SetMesh(m_pd3dDevice, Geometry::Create2DShow(1.0f - 100.0f / m_ClientWidth * 2,  -1.0f + 100.0f / m_ClientHeight * 2, 
+			100.0f / m_ClientWidth * 2, 100.0f / m_ClientHeight * 2));
 		// 屏幕淡入淡出纹理大小重设
-		mScreenFadeRender = std::make_unique<TextureRender>(md3dDevice, mClientWidth, mClientHeight, false);
+		m_pScreenFadeRender = std::make_unique<TextureRender>(m_pd3dDevice, m_ClientWidth, m_ClientHeight, false);
 	}
 }
 
@@ -101,27 +101,27 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
 	// 更新淡入淡出值，并限制摄像机行动
-	if (mFadeUsed)
+	if (m_FadeUsed)
 	{
-		mFadeAmount += mFadeSign * dt / 2.0f;	// 2s时间淡入/淡出
-		if (mFadeSign > 0.0f && mFadeAmount > 1.0f)
+		m_FadeAmount += m_FadeSign * dt / 2.0f;	// 2s时间淡入/淡出
+		if (m_FadeSign > 0.0f && m_FadeAmount > 1.0f)
 		{
-			mFadeAmount = 1.0f;
-			mFadeUsed = false;	// 结束淡入
+			m_FadeAmount = 1.0f;
+			m_FadeUsed = false;	// 结束淡入
 		}
-		else if (mFadeSign < 0.0f && mFadeAmount < 0.0f)
+		else if (m_FadeSign < 0.0f && m_FadeAmount < 0.0f)
 		{
-			mFadeAmount = 0.0f;
+			m_FadeAmount = 0.0f;
 			SendMessage(MainWnd(), WM_DESTROY, 0, 0);	// 关闭程序
 			// 这里不结束淡出是因为发送关闭窗口的消息还要过一会才真正关闭
 		}
@@ -153,30 +153,30 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// 更新观察矩阵
-	mCamera->UpdateViewMatrix();
-	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
-	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
-	mMinimapEffect.SetEyePos(mCamera->GetPositionXM());
+	m_pCamera->UpdateViewMatrix();
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_MinimapEffect.SetEyePos(m_pCamera->GetPositionXM());
 	
 	// 截屏
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Q))
-		mPrintScreenStarted = true;
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
+		m_PrintScreenStarted = true;
 		
 	// 重置滚轮值
-	mMouse->ResetScrollWheelValue();
+	m_pMouse->ResetScrollWheelValue();
 
 	// 退出程序，开始淡出
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 	{
-		mFadeSign = -1.0f;
-		mFadeUsed = true;
+		m_FadeSign = -1.0f;
+		m_FadeUsed = true;
 	}
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
 	
 	// ******************
@@ -184,13 +184,13 @@ void GameApp::DrawScene()
 	//
 
 	// 预先清空后备缓冲区
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	if (mFadeUsed)
+	if (m_FadeUsed)
 	{
 		// 开始淡入/淡出
-		mScreenFadeRender->Begin(md3dImmediateContext);
+		m_pScreenFadeRender->Begin(m_pd3dImmediateContext);
 	}
 
 
@@ -202,43 +202,43 @@ void GameApp::DrawScene()
 	UINT offsets[1] = { 0 };
 	
 	// 小地图特效应用
-	mMinimapEffect.SetRenderDefault(md3dImmediateContext);
-	mMinimapEffect.Apply(md3dImmediateContext);
+	m_MinimapEffect.SetRenderDefault(m_pd3dImmediateContext);
+	m_MinimapEffect.Apply(m_pd3dImmediateContext);
 	// 最后绘制小地图
-	md3dImmediateContext->IASetVertexBuffers(0, 1, mMinimap.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
-	md3dImmediateContext->IASetIndexBuffer(mMinimap.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-	md3dImmediateContext->DrawIndexed(6, 0, 0);
+	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_Minimap.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
+	m_pd3dImmediateContext->IASetIndexBuffer(m_Minimap.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	m_pd3dImmediateContext->DrawIndexed(6, 0, 0);
 
-	if (mFadeUsed)
+	if (m_FadeUsed)
 	{
 		// 结束淡入/淡出，此时绘制的场景在屏幕淡入淡出渲染的纹理
-		mScreenFadeRender->End(md3dImmediateContext);
+		m_pScreenFadeRender->End(m_pd3dImmediateContext);
 
 		// 屏幕淡入淡出特效应用
-		mScreenFadeEffect.SetRenderDefault(md3dImmediateContext);
-		mScreenFadeEffect.SetFadeAmount(mFadeAmount);
-		mScreenFadeEffect.SetTexture(mScreenFadeRender->GetOutputTexture());
-		mScreenFadeEffect.SetWorldViewProjMatrix(XMMatrixIdentity());
-		mScreenFadeEffect.Apply(md3dImmediateContext);
+		m_ScreenFadeEffect.SetRenderDefault(m_pd3dImmediateContext);
+		m_ScreenFadeEffect.SetFadeAmount(m_FadeAmount);
+		m_ScreenFadeEffect.SetTexture(m_pScreenFadeRender->GetOutputTexture());
+		m_ScreenFadeEffect.SetWorldViewProjMatrix(XMMatrixIdentity());
+		m_ScreenFadeEffect.Apply(m_pd3dImmediateContext);
 		// 将保存的纹理输出到屏幕
-		md3dImmediateContext->IASetVertexBuffers(0, 1, mFullScreenShow.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
-		md3dImmediateContext->IASetIndexBuffer(mFullScreenShow.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-		md3dImmediateContext->DrawIndexed(6, 0, 0);
+		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_FullScreenShow.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
+		m_pd3dImmediateContext->IASetIndexBuffer(m_FullScreenShow.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+		m_pd3dImmediateContext->DrawIndexed(6, 0, 0);
 		// 务必解除绑定在着色器上的资源，因为下一帧开始它会作为渲染目标
-		mScreenFadeEffect.SetTexture(nullptr);
-		mScreenFadeEffect.Apply(md3dImmediateContext);
+		m_ScreenFadeEffect.SetTexture(nullptr);
+		m_ScreenFadeEffect.Apply(m_pd3dImmediateContext);
 	}
 	
 	// 若截屏键Q按下，则分别保存到output.dds和output.png中
-	if (mPrintScreenStarted)
+	if (m_PrintScreenStarted)
 	{
 		ComPtr<ID3D11Texture2D> backBuffer;
 		// 输出截屏
-		mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
-		HR(SaveDDSTextureToFile(md3dImmediateContext.Get(), backBuffer.Get(), L"Screenshot\\output.dds"));
-		HR(SaveWICTextureToFile(md3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatPng, L"Screenshot\\output.png"));
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
+		HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), L"Screenshot\\output.dds"));
+		HR(SaveWICTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatPng, L"Screenshot\\output.png"));
 		// 结束截屏
-		mPrintScreenStarted = false;
+		m_PrintScreenStarted = false;
 	}
 
 
@@ -246,38 +246,38 @@ void GameApp::DrawScene()
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"当前摄像机模式: 第一人称  Esc退出\n"
 			"鼠标移动控制视野 W/S/A/D移动\n"
 			"Q-截屏(输出output.dds和output.png到ScreenShot文件夹)";
 
 
 
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 }
 
 
 
 bool GameApp::InitResource()
 {
-	mPrintScreenStarted = false;
-	mFadeUsed = true;	// 开始淡入
-	mFadeAmount = 0.0f;
-	mFadeSign = 1.0f;
+	m_PrintScreenStarted = false;
+	m_FadeUsed = true;	// 开始淡入
+	m_FadeAmount = 0.0f;
+	m_FadeSign = 1.0f;
 
 
 	// ******************
 	// 初始化用于Render-To-Texture的对象
 	//
-	mMinimapRender = std::make_unique<TextureRender>(md3dDevice, 400, 400, true);
-	mScreenFadeRender = std::make_unique<TextureRender>(md3dDevice, mClientWidth, mClientHeight, false);
+	m_pMinimapRender = std::make_unique<TextureRender>(m_pd3dDevice, 400, 400, true);
+	m_pScreenFadeRender = std::make_unique<TextureRender>(m_pd3dDevice, m_ClientWidth, m_ClientHeight, false);
 
 	// ******************
 	// 初始化游戏对象
@@ -287,24 +287,24 @@ bool GameApp::InitResource()
 	CreateRandomTrees();
 
 	// 初始化地面
-	mObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
-	mGround.SetModel(Model(md3dDevice, mObjReader));
+	m_ObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
+	m_Ground.SetModel(Model(m_pd3dDevice, m_ObjReader));
 
 	// 初始化网格，放置在右下角200x200
-	mMinimap.SetMesh(md3dDevice, Geometry::Create2DShow(0.75f, -0.66666666f, 0.25f, 0.33333333f));
+	m_Minimap.SetMesh(m_pd3dDevice, Geometry::Create2DShow(0.75f, -0.66666666f, 0.25f, 0.33333333f));
 	
 	// 覆盖整个屏幕面的网格模型
-	mFullScreenShow.SetMesh(md3dDevice, Geometry::Create2DShow());
+	m_FullScreenShow.SetMesh(m_pd3dDevice, Geometry::Create2DShow());
 
 	// ******************
 	// 初始化摄像机
 	//
 
 	// 默认摄像机
-	mCameraMode = CameraMode::FirstPerson;
+	m_CameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mCamera = camera;
-	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
+	m_pCamera = camera;
+	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
 		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
@@ -314,28 +314,28 @@ bool GameApp::InitResource()
 	
 
 	// 小地图摄像机
-	mMinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mMinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200小地图
-	mMinimapCamera->LookTo(
+	m_MinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	m_MinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200小地图
+	m_MinimapCamera->LookTo(
 		XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f),
 		XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f),
 		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-	mMinimapCamera->UpdateViewMatrix();
+	m_MinimapCamera->UpdateViewMatrix();
 
 	// ******************
 	// 初始化几乎不会变化的值
 	//
 
 	// 黑夜特效
-	mBasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
-	mBasicEffect.SetFogStart(5.0f);
-	mBasicEffect.SetFogRange(20.0f);
+	m_BasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+	m_BasicEffect.SetFogStart(5.0f);
+	m_BasicEffect.SetFogRange(20.0f);
 
 	// 小地图范围可视
-	mMinimapEffect.SetFogState(true);
-	mMinimapEffect.SetInvisibleColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
-	mMinimapEffect.SetMinimapRect(XMVectorSet(-95.0f, 95.0f, 95.0f, -95.0f));
-	mMinimapEffect.SetVisibleRange(25.0f);
+	m_MinimapEffect.SetFogState(true);
+	m_MinimapEffect.SetInvisibleColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+	m_MinimapEffect.SetMinimapRect(XMVectorSet(-95.0f, 95.0f, 95.0f, -95.0f));
+	m_MinimapEffect.SetVisibleRange(25.0f);
 
 	// 方向光(默认)
 	DirectionalLight dirLight[4];
@@ -350,30 +350,30 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicEffect.SetDirLight(i, dirLight[i]);
+		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
 	// ******************
 	// 渲染小地图纹理
 	// 
 
-	mBasicEffect.SetViewMatrix(mMinimapCamera->GetViewXM());
-	mBasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// 使用正交投影矩阵(中心在摄像机位置)
+	m_BasicEffect.SetViewMatrix(m_MinimapCamera->GetViewXM());
+	m_BasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// 使用正交投影矩阵(中心在摄像机位置)
 	// 关闭雾效
-	mBasicEffect.SetFogState(false);
-	mMinimapRender->Begin(md3dImmediateContext);
+	m_BasicEffect.SetFogState(false);
+	m_pMinimapRender->Begin(m_pd3dImmediateContext);
 	DrawScene(true);
-	mMinimapRender->End(md3dImmediateContext);
+	m_pMinimapRender->End(m_pd3dImmediateContext);
 
-	mMinimapEffect.SetTexture(mMinimapRender->GetOutputTexture());
+	m_MinimapEffect.SetTexture(m_pMinimapRender->GetOutputTexture());
 
 
 	// 开启雾效，恢复投影矩阵并设置偏暗的光照
-	mBasicEffect.SetFogState(true);
-	mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
+	m_BasicEffect.SetFogState(true);
+	m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	dirLight[0].Ambient = XMFLOAT4(0.08f, 0.08f, 0.08f, 1.0f);
 	dirLight[0].Diffuse = XMFLOAT4(0.16f, 0.16f, 0.16f, 1.0f);
 	for (int i = 0; i < 4; ++i)
-		mBasicEffect.SetDirLight(i, dirLight[i]);
+		m_BasicEffect.SetDirLight(i, dirLight[i]);
 	
 
 	return true;
@@ -382,43 +382,43 @@ bool GameApp::InitResource()
 void GameApp::DrawScene(bool drawMinimap)
 {
 
-	mBasicEffect.SetTextureUsed(true);
+	m_BasicEffect.SetTextureUsed(true);
 
 
-	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
 	if (drawMinimap)
 	{
 		// 小地图下绘制所有树
-		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, mInstancedData);
+		m_Trees.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, m_InstancedData);
 	}
 	else
 	{
 		// 统计实际绘制的物体数目
 		std::vector<XMMATRIX> acceptedData;
 		// 默认视锥体裁剪
-		acceptedData = Collision::FrustumCulling(mInstancedData, mTrees.GetLocalBoundingBox(),
-			mCamera->GetViewXM(), mCamera->GetProjXM());
+		acceptedData = Collision::FrustumCulling(m_InstancedData, m_Trees.GetLocalBoundingBox(),
+			m_pCamera->GetViewXM(), m_pCamera->GetProjXM());
 		// 默认硬件实例化绘制
-		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
-		mTrees.DrawInstanced(md3dImmediateContext, mBasicEffect, acceptedData);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
+		m_Trees.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, acceptedData);
 	}
 	
 	// 绘制地面
-	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
-	mGround.Draw(md3dImmediateContext, mBasicEffect);	
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);	
 }
 
 void GameApp::CreateRandomTrees()
 {
 	srand((unsigned)time(nullptr));
 	// 初始化树
-	mObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
-	mTrees.SetModel(Model(md3dDevice, mObjReader));
+	m_ObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
+	m_Trees.SetModel(Model(m_pd3dDevice, m_ObjReader));
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 
-	BoundingBox treeBox = mTrees.GetLocalBoundingBox();
+	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();
 	// 获取树包围盒顶点
-	mTreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_TreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	// 让树木底部紧贴地面位于y = -2的平面
 	treeBox.Transform(treeBox, S);
 	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
@@ -437,7 +437,7 @@ void GameApp::CreateRandomTrees()
 				XMMATRIX T1 = XMMatrixTranslation(radius * cosf(theta + randomRad), 0.0f, radius * sinf(theta + randomRad));
 				XMMATRIX R = XMMatrixRotationY(rand() % 256 / 256.0f * XM_2PI);
 				XMMATRIX World = S * R * T0 * T1;
-				mInstancedData.push_back(World);
+				m_InstancedData.push_back(World);
 			}
 		}
 		theta += XM_2PI / 16;

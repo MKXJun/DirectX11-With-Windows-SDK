@@ -45,12 +45,12 @@ private:
 	void InitResource(ComPtr<ID3D11Device> device, float skySphereRadius);
 
 private:
-	ComPtr<ID3D11Buffer> mVertexBuffer;
-	ComPtr<ID3D11Buffer> mIndexBuffer;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;
 
-	UINT mIndexCount;
+	UINT m_IndexCount;
 
-	ComPtr<ID3D11ShaderResourceView> mTextureCubeSRV;
+	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;
 };
 
 #endif

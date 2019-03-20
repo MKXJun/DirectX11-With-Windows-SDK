@@ -25,16 +25,16 @@ private:
 
 private:
 
-	ComPtr<ID3D11ComputeShader> mTextureMul_R32G32B32A32_CS;
-	ComPtr<ID3D11ComputeShader> mTextureMul_R8G8B8A8_CS;
+	ComPtr<ID3D11ComputeShader> m_pTextureMul_R32G32B32A32_CS;
+	ComPtr<ID3D11ComputeShader> m_pTextureMul_R8G8B8A8_CS;
 
-	ComPtr<ID3D11ShaderResourceView> mTextureInputA;
-	ComPtr<ID3D11ShaderResourceView> mTextureInputB;
+	ComPtr<ID3D11ShaderResourceView> m_pTextureInputA;
+	ComPtr<ID3D11ShaderResourceView> m_pTextureInputB;
 	
-	ComPtr<ID3D11Texture2D> mTextureOutputA;
-	ComPtr<ID3D11Texture2D> mTextureOutputB;
-	ComPtr<ID3D11UnorderedAccessView> mTextureOutputA_UAV;	
-	ComPtr<ID3D11UnorderedAccessView> mTextureOutputB_UAV;
+	ComPtr<ID3D11Texture2D> m_pTextureOutputA;
+	ComPtr<ID3D11Texture2D> m_pTextureOutputB;
+	ComPtr<ID3D11UnorderedAccessView> m_pTextureOutputA_UAV;	
+	ComPtr<ID3D11UnorderedAccessView> m_pTextureOutputB_UAV;
 };
 
 

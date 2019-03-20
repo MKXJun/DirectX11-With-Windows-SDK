@@ -33,16 +33,16 @@ public:
 	ComPtr<ID3D11ShaderResourceView> GetOutputTexture();
 
 private:
-	ComPtr<ID3D11ShaderResourceView>	mOutputTextureSRV;	// 输出的纹理对应的着色器资源视图
-	ComPtr<ID3D11RenderTargetView>		mOutputTextureRTV;	// 输出的纹理对应的渲染目标视图
-	ComPtr<ID3D11DepthStencilView>		mOutputTextureDSV;	// 输出纹理所用的深度/模板视图
-	D3D11_VIEWPORT						mOutputViewPort;	// 输出所用的视口
+	ComPtr<ID3D11ShaderResourceView>	m_pOutputTextureSRV;	// 输出的纹理对应的着色器资源视图
+	ComPtr<ID3D11RenderTargetView>		m_pOutputTextureRTV;	// 输出的纹理对应的渲染目标视图
+	ComPtr<ID3D11DepthStencilView>		m_pOutputTextureDSV;	// 输出纹理所用的深度/模板视图
+	D3D11_VIEWPORT						m_OutputViewPort;	    // 输出所用的视口
 
-	ComPtr<ID3D11RenderTargetView>		mCacheRTV;		// 临时缓存的后备缓冲区
-	ComPtr<ID3D11DepthStencilView>		mCacheDSV;		// 临时缓存的深度/模板缓冲区
-	D3D11_VIEWPORT						mCacheViewPort;	// 临时缓存的视口
+	ComPtr<ID3D11RenderTargetView>		m_pCacheRTV;		    // 临时缓存的后备缓冲区
+	ComPtr<ID3D11DepthStencilView>		m_pCacheDSV;		    // 临时缓存的深度/模板缓冲区
+	D3D11_VIEWPORT						m_CacheViewPort;	    // 临时缓存的视口
 
-	bool								mGenerateMips;	// 是否生成mipmap链
+	bool								m_GenerateMips;	        // 是否生成mipmap链
 };
 
 #endif

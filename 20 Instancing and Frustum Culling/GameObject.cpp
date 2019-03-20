@@ -10,7 +10,7 @@ struct InstancedData
 };
 
 GameObject::GameObject()
-	: mWorldMatrix(
+	: m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -20,33 +20,33 @@ GameObject::GameObject()
 
 XMFLOAT3 GameObject::GetPosition() const
 {
-	return XMFLOAT3(mWorldMatrix(3, 0), mWorldMatrix(3, 1), mWorldMatrix(3, 2));
+	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
 }
 
 BoundingBox GameObject::GetBoundingBox() const
 {
 	BoundingBox box;
-	mModel.boundingBox.Transform(box, XMLoadFloat4x4(&mWorldMatrix));
+	m_Model.boundingBox.Transform(box, XMLoadFloat4x4(&m_WorldMatrix));
 	return box;
 }
 
 BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
 {
 	BoundingOrientedBox box;
-	BoundingOrientedBox::CreateFromBoundingBox(box, mModel.boundingBox);
-	box.Transform(box, XMLoadFloat4x4(&mWorldMatrix));
+	BoundingOrientedBox::CreateFromBoundingBox(box, m_Model.boundingBox);
+	box.Transform(box, XMLoadFloat4x4(&m_WorldMatrix));
 	return box;
 }
 
 
 BoundingBox GameObject::GetLocalBoundingBox() const
 {
-	return mModel.boundingBox;
+	return m_Model.boundingBox;
 }
 
 size_t GameObject::GetCapacity() const
 {
-	return mCapacity;
+	return m_Capacity;
 }
 
 void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
@@ -59,10 +59,10 @@ void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	// 创建实例缓冲区
-	HR(device->CreateBuffer(&vbd, nullptr, mInstancedBuffer.ReleaseAndGetAddressOf()));
+	HR(device->CreateBuffer(&vbd, nullptr, m_pInstancedBuffer.ReleaseAndGetAddressOf()));
 
-	// 重新调整mCapacity
-	mCapacity = count;
+	// 重新调整m_Capacity
+	m_Capacity = count;
 }
 
 
@@ -70,39 +70,39 @@ void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
 
 void GameObject::SetModel(Model && model)
 {
-	std::swap(mModel, model);
+	std::swap(m_Model, model);
 	model.modelParts.clear();
 	model.boundingBox = BoundingBox();
 }
 
 void GameObject::SetModel(const Model & model)
 {
-	mModel = model;
+	m_Model = model;
 }
 
 void GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
 {
-	mWorldMatrix = world;
+	m_WorldMatrix = world;
 }
 
 void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 {
-	XMStoreFloat4x4(&mWorldMatrix, world);
+	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
 void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
 {
-	UINT strides = mModel.vertexStride;
+	UINT strides = m_Model.vertexStride;
 	UINT offsets = 0;
 
-	for (auto& part : mModel.modelParts)
+	for (auto& part : m_Model.modelParts)
 	{
 		// 设置顶点/索引缓冲区
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
-		effect.SetWorldMatrix(XMLoadFloat4x4(&mWorldMatrix));
+		effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
 		effect.SetTextureDiffuse(part.texDiffuse);
 		effect.SetMaterial(part.material);
 		
@@ -117,14 +117,14 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
 	// 若传入的数据比实例缓冲区还大，需要重新分配
-	if (numInsts > mCapacity)
+	if (numInsts > m_Capacity)
 	{
 		ComPtr<ID3D11Device> device;
 		deviceContext->GetDevice(device.GetAddressOf());
 		ResizeBuffer(device, numInsts);
 	}
 
-	HR(deviceContext->Map(mInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
+	HR(deviceContext->Map(m_pInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 
 	InstancedData * iter = reinterpret_cast<InstancedData *>(mappedData.pData);
 	for (auto& mat : data)
@@ -134,12 +134,12 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		iter++;
 	}
 
-	deviceContext->Unmap(mInstancedBuffer.Get(), 0);
+	deviceContext->Unmap(m_pInstancedBuffer.Get(), 0);
 
-	UINT strides[2] = { mModel.vertexStride, sizeof(InstancedData) };
+	UINT strides[2] = { m_Model.vertexStride, sizeof(InstancedData) };
 	UINT offsets[2] = { 0, 0 };
-	ID3D11Buffer * buffers[2] = { nullptr, mInstancedBuffer.Get() };
-	for (auto& part : mModel.modelParts)
+	ID3D11Buffer * buffers[2] = { nullptr, m_pInstancedBuffer.Get() };
+	for (auto& part : m_Model.modelParts)
 	{
 		buffers[0] = part.vertexBuffer.Get();
 

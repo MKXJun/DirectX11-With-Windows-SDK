@@ -19,38 +19,38 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -64,24 +64,24 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 
-	if (mCamera != nullptr)
+	if (m_pCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
+		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
+		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	}
 
 }
@@ -90,17 +90,17 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
 	// 获取子类
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
-	if (mCameraMode == CameraMode::Free)
+	if (m_CameraMode == CameraMode::Free)
 	{
 		// ******************
 		// 自由摄像机的操作
@@ -137,41 +137,41 @@ void GameApp::UpdateScene(float dt)
 	cam1st->SetPosition(adjustedPos);
 
 	// 更新观察矩阵
-	mCamera->UpdateViewMatrix();
-	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
-	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
+	m_pCamera->UpdateViewMatrix();
+	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
 	// ******************
 	// 开关雾效
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
 	{
-		mFogEnabled = !mFogEnabled;
-		mBasicEffect.SetFogState(mFogEnabled);
+		m_FogEnabled = !m_FogEnabled;
+		m_BasicEffect.SetFogState(m_FogEnabled);
 	}
 
 	// ******************
 	// 白天/黑夜变换
 	//
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D2))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
-		mIsNight = !mIsNight;
-		if (mIsNight)
+		m_IsNight = !m_IsNight;
+		if (m_IsNight)
 		{
 			// 黑夜模式下变为逐渐黑暗
-			mBasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
-			mBasicEffect.SetFogStart(5.0f);
+			m_BasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+			m_BasicEffect.SetFogStart(5.0f);
 		}
 		else
 		{
 			// 白天模式则对应雾效
-			mBasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
-			mBasicEffect.SetFogStart(15.0f);
+			m_BasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+			m_BasicEffect.SetFogStart(15.0f);
 		}
 	}
-	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D3))
 	{
-		mEnableAlphaToCoverage = !mEnableAlphaToCoverage;
+		m_EnableAlphaToCoverage = !m_EnableAlphaToCoverage;
 	}
 
 	// ******************
@@ -180,84 +180,84 @@ void GameApp::UpdateScene(float dt)
 	if (mouseState.scrollWheelValue != 0)
 	{
 		// 一次滚轮滚动的最小单位为120
-		mFogRange += mouseState.scrollWheelValue / 120;
-		if (mFogRange < 15.0f)
-			mFogRange = 15.0f;
-		else if (mFogRange > 175.0f)
-			mFogRange = 175.0f;
-		mBasicEffect.SetFogRange(mFogRange);
+		m_FogRange += mouseState.scrollWheelValue / 120;
+		if (m_FogRange < 15.0f)
+			m_FogRange = 15.0f;
+		else if (m_FogRange > 175.0f)
+			m_FogRange = 175.0f;
+		m_BasicEffect.SetFogRange(m_FogRange);
 	}
 	
 
 	// 重置滚轮值
-	mMouse->ResetScrollWheelValue();
+	m_pMouse->ResetScrollWheelValue();
 
 	
 
 	// 退出程序，这里应向窗口发送销毁信息
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
 	// ******************
 	// 绘制Direct3D部分
 	//
 	
 	// 设置背景色
-	if (mIsNight)
+	if (m_IsNight)
 	{
-		md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+		m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	}
 	else
 	{
-		md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Silver));
+		m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Silver));
 	}
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制地面
-	mBasicEffect.SetRenderDefault(md3dImmediateContext);
-	mGround.Draw(md3dImmediateContext, mBasicEffect);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext);
+	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
 
 	// 绘制树
-	mBasicEffect.SetRenderBillboard(md3dImmediateContext, mEnableAlphaToCoverage);
-	mBasicEffect.SetMaterial(mTreeMat);
+	m_BasicEffect.SetRenderBillboard(m_pd3dImmediateContext, m_EnableAlphaToCoverage);
+	m_BasicEffect.SetMaterial(m_TreeMat);
 	UINT stride = sizeof(VertexPosSize);
 	UINT offset = 0;
-	md3dImmediateContext->IASetVertexBuffers(0, 1, mPointSpritesBuffer.GetAddressOf(), &stride, &offset);
-	mBasicEffect.Apply(md3dImmediateContext);
-	md3dImmediateContext->Draw(16, 0);
+	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, mPointSpritesBuffer.GetAddressOf(), &stride, &offset);
+	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_pd3dImmediateContext->Draw(16, 0);
 
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"1-雾效开关 2-白天/黑夜雾效切换 3-AlphaToCoverage开关 Esc-退出\n"
 			"滚轮-调整雾效范围\n"
 			"仅支持自由视角摄像机\n";
-		text += std::wstring(L"AlphaToCoverage状态: ") + (mEnableAlphaToCoverage ? L"开启\n" : L"关闭\n");
-		text += std::wstring(L"雾效状态: ") + (mFogEnabled ? L"开启\n" : L"关闭\n");
-		if (mFogEnabled)
+		text += std::wstring(L"AlphaToCoverage状态: ") + (m_EnableAlphaToCoverage ? L"开启\n" : L"关闭\n");
+		text += std::wstring(L"雾效状态: ") + (m_FogEnabled ? L"开启\n" : L"关闭\n");
+		if (m_FogEnabled)
 		{
-			text += std::wstring(L"天气情况: ") + (mIsNight ? L"黑夜\n" : L"白天\n");
-			text += L"雾效范围: " + std::to_wstring(mIsNight ? 5 : 15) + L"-" +
-				std::to_wstring((mIsNight ? 5 : 15) + (int)mFogRange);
+			text += std::wstring(L"天气情况: ") + (m_IsNight ? L"黑夜\n" : L"白天\n");
+			text += L"雾效范围: " + std::to_wstring(m_IsNight ? 5 : 15) + L"-" +
+				std::to_wstring((m_IsNight ? 5 : 15) + (int)m_FogRange);
 		}
 
 
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 
 }
 
@@ -272,8 +272,8 @@ bool GameApp::InitResource()
 	// 初始化树纹理资源
 	ComPtr<ID3D11Texture2D> test;
 	HR(CreateDDSTexture2DArrayFromFile(
-		md3dDevice.Get(),
-		md3dImmediateContext.Get(),
+		m_pd3dDevice.Get(),
+		m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 			L"Texture\\tree0.dds",
 			L"Texture\\tree1.dds",
@@ -281,26 +281,26 @@ bool GameApp::InitResource()
 			L"Texture\\tree3.dds"},
 		test.GetAddressOf(),
 		mTreeTexArray.GetAddressOf()));
-	mBasicEffect.SetTextureArray(mTreeTexArray);
+	m_BasicEffect.SetTextureArray(mTreeTexArray);
 
 	// 初始化点精灵缓冲区
 	InitPointSpritesBuffer();
 
 	// 初始化树的材质
-	mTreeMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mTreeMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mTreeMat.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_TreeMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_TreeMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_TreeMat.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化地板
-	mGround.SetBuffer(md3dDevice, Geometry::CreatePlane(XMFLOAT3(0.0f, -5.0f, 0.0f), XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
-	mGround.SetTexture(texture);
+	m_Ground.SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(0.0f, -5.0f, 0.0f), XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
+	m_Ground.SetTexture(texture);
 	Material material;
 	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	mGround.SetMaterial(material);
+	m_Ground.SetMaterial(material);
 
 	// ******************
 	// 初始化不会变化的值
@@ -319,15 +319,15 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicEffect.SetDirLight(i, dirLight[i]);
+		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
 	// ******************
 	// 初始化摄像机
 	//
-	mCameraMode = CameraMode::Free;
+	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mCamera = camera;
-	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
+	m_pCamera = camera;
+	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
@@ -336,27 +336,27 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	camera->UpdateViewMatrix();
 
-	mBasicEffect.SetWorldMatrix(XMMatrixIdentity());
-	mBasicEffect.SetViewMatrix(camera->GetViewXM());
-	mBasicEffect.SetProjMatrix(camera->GetProjXM());
-	mBasicEffect.SetEyePos(camera->GetPositionXM());
+	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
+	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
+	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
+	m_BasicEffect.SetEyePos(camera->GetPositionXM());
 
 	// ******************
 	// 初始化雾效和天气等
 	//
 
 	// 默认白天，开启AlphaToCoverage
-	mIsNight = false;
-	mEnableAlphaToCoverage = true;
+	m_IsNight = false;
+	m_EnableAlphaToCoverage = true;
 
 	// 雾状态默认开启
-	mFogEnabled = 1;
-	mFogRange = 75.0f;
+	m_FogEnabled = 1;
+	m_FogRange = 75.0f;
 
-	mBasicEffect.SetFogState(mFogEnabled);
-	mBasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
-	mBasicEffect.SetFogStart(15.0f);
-	mBasicEffect.SetFogRange(75.0f);
+	m_BasicEffect.SetFogState(m_FogEnabled);
+	m_BasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+	m_BasicEffect.SetFogStart(15.0f);
+	m_BasicEffect.SetFogRange(75.0f);
 
 	
 	
@@ -389,5 +389,5 @@ void GameApp::InitPointSpritesBuffer()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertexes;
-	HR(md3dDevice->CreateBuffer(&vbd, &InitData, mPointSpritesBuffer.GetAddressOf()));
+	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, mPointSpritesBuffer.GetAddressOf()));
 }

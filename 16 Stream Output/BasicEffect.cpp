@@ -52,39 +52,39 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// 每次对象绘制的常量缓冲区
-	CBufferObject<1, CBChangesOnResize>   cbOnResize;	// 每次窗口大小变更的常量缓冲区
-	CBufferObject<2, CBChangesRarely>     cbRarely;		// 几乎不会变更的常量缓冲区
-	BOOL isDirty;										// 是否有值变更
-	std::vector<CBufferBase*> cBufferPtrs;				// 统一管理上面所有的常量缓冲区
+	CBufferObject<0, CBChangesEveryFrame> m_CBFrame;		    // 每次对象绘制的常量缓冲区
+	CBufferObject<1, CBChangesOnResize>   m_CBOnResize;	        // 每次窗口大小变更的常量缓冲区
+	CBufferObject<2, CBChangesRarely>     m_CBRarely;		    // 几乎不会变更的常量缓冲区
+	BOOL m_IsDirty;										        // 是否有值变更
+	std::vector<CBufferBase*> m_pCBuffers;				        // 统一管理上面所有的常量缓冲区
 
 
-	ComPtr<ID3D11VertexShader> triangleSOVS;
-	ComPtr<ID3D11GeometryShader> triangleSOGS;
+	ComPtr<ID3D11VertexShader> m_pTriangleSOVS;
+	ComPtr<ID3D11GeometryShader> m_pTriangleSOGS;
 
-	ComPtr<ID3D11VertexShader> triangleVS;
-	ComPtr<ID3D11PixelShader> trianglePS;
+	ComPtr<ID3D11VertexShader> m_pTriangleVS;
+	ComPtr<ID3D11PixelShader> m_pTrianglePS;
 
-	ComPtr<ID3D11VertexShader> sphereSOVS;
-	ComPtr<ID3D11GeometryShader> sphereSOGS;
+	ComPtr<ID3D11VertexShader> m_pSphereSOVS;
+	ComPtr<ID3D11GeometryShader> m_pSphereSOGS;
 
-	ComPtr<ID3D11VertexShader> sphereVS;
-	ComPtr<ID3D11PixelShader> spherePS;
+	ComPtr<ID3D11VertexShader> m_pSphereVS;
+	ComPtr<ID3D11PixelShader> m_pSpherePS;
 
-	ComPtr<ID3D11VertexShader> snowSOVS;
-	ComPtr<ID3D11GeometryShader> snowSOGS;
+	ComPtr<ID3D11VertexShader> m_pSnowSOVS;
+	ComPtr<ID3D11GeometryShader> m_pSnowSOGS;
 
-	ComPtr<ID3D11VertexShader> snowVS;
-	ComPtr<ID3D11PixelShader> snowPS;
+	ComPtr<ID3D11VertexShader> m_pSnowVS;
+	ComPtr<ID3D11PixelShader> m_pSnowPS;
 
-	ComPtr<ID3D11VertexShader> normalVS;
-	ComPtr<ID3D11GeometryShader> normalGS;
-	ComPtr<ID3D11PixelShader> normalPS;
+	ComPtr<ID3D11VertexShader> m_pNormalVS;
+	ComPtr<ID3D11GeometryShader> m_pNormalGS;
+	ComPtr<ID3D11PixelShader> m_pNormalPS;
 
-	ComPtr<ID3D11InputLayout> vertexPosColorLayout;			// VertexPosColor输入布局
-	ComPtr<ID3D11InputLayout> vertexPosNormalColorLayout;	// VertexPosNormalColor输入布局
+	ComPtr<ID3D11InputLayout> m_pVertexPosColorLayout;			// VertexPosColor输入布局
+	ComPtr<ID3D11InputLayout> m_pVertexPosNormalColorLayout;	// VertexPosNormalColor输入布局
 
-	ComPtr<ID3D11ShaderResourceView> texture;				// 用于绘制的纹理
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;				// 用于绘制的纹理
 
 };
 
@@ -95,14 +95,14 @@ public:
 namespace
 {
 	// BasicEffect单例
-	static BasicEffect * pInstance = nullptr;
+	static BasicEffect * g_pInstance = nullptr;
 }
 
 BasicEffect::BasicEffect()
 {
-	if (pInstance)
+	if (g_pInstance)
 		throw std::exception("BasicEffect is a singleton!");
-	pInstance = this;
+	g_pInstance = this;
 	pImpl = std::make_unique<BasicEffect::Impl>();
 }
 
@@ -123,9 +123,9 @@ BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom)
 
 BasicEffect & BasicEffect::Get()
 {
-	if (!pInstance)
+	if (!g_pInstance)
 		throw std::exception("BasicEffect needs an instance!");
-	return *pInstance;
+	return *g_pInstance;
 }
 
 
@@ -134,7 +134,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!device)
 		return false;
 
-	if (!pImpl->cBufferPtrs.empty())
+	if (!pImpl->m_pCBuffers.empty())
 		return true;
 
 	if (!RenderStates::IsInit())
@@ -160,81 +160,81 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	// 流输出分裂三角形
 	//
 	HR(CreateShaderFromFile(L"HLSL\\TriangleSO_VS.cso", L"HLSL\\TriangleSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleSOVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTriangleSOVS.GetAddressOf()));
 	// 创建顶点输入布局
 	HR(device->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout), blob->GetBufferPointer(),
-		blob->GetBufferSize(), pImpl->vertexPosColorLayout.GetAddressOf()));
+		blob->GetBufferSize(), pImpl->m_pVertexPosColorLayout.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\TriangleSO_GS.cso", L"HLSL\\TriangleSO_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posColorLayout, ARRAYSIZE(posColorLayout),
-		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->triangleSOGS.GetAddressOf()));
+		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->m_pTriangleSOGS.GetAddressOf()));
 
 	// ******************
 	// 绘制分形三角形
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_VS.cso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->triangleVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTriangleVS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_PS.cso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->trianglePS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTrianglePS.GetAddressOf()));
 
 
 	// ******************
 	// 流输出分形球体
 	//
 	HR(CreateShaderFromFile(L"HLSL\\SphereSO_VS.cso", L"HLSL\\SphereSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->sphereSOVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSphereSOVS.GetAddressOf()));
 	// 创建顶点输入布局
 	HR(device->CreateInputLayout(VertexPosNormalColor::inputLayout, ARRAYSIZE(VertexPosNormalColor::inputLayout), blob->GetBufferPointer(),
-		blob->GetBufferSize(), pImpl->vertexPosNormalColorLayout.GetAddressOf()));
+		blob->GetBufferSize(), pImpl->m_pVertexPosNormalColorLayout.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\SphereSO_GS.cso", L"HLSL\\SphereSO_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posNormalColorLayout, ARRAYSIZE(posNormalColorLayout),
-		&stridePosNormalColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->sphereSOGS.GetAddressOf()));
+		&stridePosNormalColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->m_pSphereSOGS.GetAddressOf()));
 
 	// ******************
 	// 绘制球体
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Sphere_VS.cso", L"HLSL\\Sphere_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->sphereVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSphereVS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\Sphere_PS.cso", L"HLSL\\Sphere_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->spherePS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSpherePS.GetAddressOf()));
 
 
 	// ******************
 	// 流输出分形雪花
 	//
 	HR(CreateShaderFromFile(L"HLSL\\SnowSO_VS.cso", L"HLSL\\SnowSO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowSOVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSnowSOVS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\SnowSO_GS.cso", L"HLSL\\SnowSO_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShaderWithStreamOutput(blob->GetBufferPointer(), blob->GetBufferSize(), posColorLayout, ARRAYSIZE(posColorLayout),
-		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->snowSOGS.GetAddressOf()));
+		&stridePosColor, 1, D3D11_SO_NO_RASTERIZED_STREAM, nullptr, pImpl->m_pSnowSOGS.GetAddressOf()));
 
 	// ******************
 	// 绘制雪花
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Snow_VS.cso", L"HLSL\\Snow_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSnowVS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\Snow_PS.cso", L"HLSL\\Snow_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->snowPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pSnowPS.GetAddressOf()));
 
 
 	// ******************
 	// 绘制法向量
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Normal_VS.cso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalVS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\Normal_GS.cso", L"HLSL\\Normal_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalGS.GetAddressOf()));
+	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalGS.GetAddressOf()));
 	HR(CreateShaderFromFile(L"HLSL\\Normal_PS.cso", L"HLSL\\Normal_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->normalPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalPS.GetAddressOf()));
 
 
 
-	pImpl->cBufferPtrs.assign({
-		&pImpl->cbFrame, 
-		&pImpl->cbOnResize, 
-		&pImpl->cbRarely});
+	pImpl->m_pCBuffers.assign({
+		&pImpl->m_CBFrame, 
+		&pImpl->m_CBOnResize, 
+		&pImpl->m_CBRarely});
 
 	// 创建常量缓冲区
-	for (auto& pBuffer : pImpl->cBufferPtrs)
+	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
@@ -245,43 +245,43 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->triangleVS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pTriangleVS.Get(), nullptr, 0);
 	// 关闭流输出
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
 	deviceContext->SOSetTargets(1, bufferArray, &offset);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->trianglePS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pTrianglePS.Get(), nullptr, 0);
 }
 
 void BasicEffect::SetRenderSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->snowVS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pSnowVS.Get(), nullptr, 0);
 	// 关闭流输出
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
 	deviceContext->SOSetTargets(1, bufferArray, &offset);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->snowPS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pSnowPS.Get(), nullptr, 0);
 }
 
 void BasicEffect::SetRenderSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->sphereVS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pSphereVS.Get(), nullptr, 0);
 	// 关闭流输出
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
 	deviceContext->SOSetTargets(1, bufferArray, &offset);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->spherePS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pSpherePS.Get(), nullptr, 0);
 
 }
 
@@ -293,16 +293,19 @@ void BasicEffect::SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> dev
 	ID3D11Buffer * nullBuffer = nullptr;
 	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
 
+	deviceContext->IASetInputLayout(nullptr);
+	deviceContext->SOSetTargets(0, nullptr, &offset);
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
 
 	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
 
-	deviceContext->VSSetShader(pImpl->triangleSOVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->triangleSOGS.Get(), nullptr, 0);
+	deviceContext->VSSetShader(pImpl->m_pTriangleSOVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(pImpl->m_pTriangleSOGS.Get(), nullptr, 0);
 
 	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
-	;
+
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(nullptr, nullptr, 0);
 
@@ -317,11 +320,11 @@ void BasicEffect::SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceC
 	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosColorLayout.Get());
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
 	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
 
-	deviceContext->VSSetShader(pImpl->snowSOVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->snowSOGS.Get(), nullptr, 0);
+	deviceContext->VSSetShader(pImpl->m_pSnowSOVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(pImpl->m_pSnowSOGS.Get(), nullptr, 0);
 
 	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
 
@@ -339,11 +342,12 @@ void BasicEffect::SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> devic
 	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
+
 	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
 
-	deviceContext->VSSetShader(pImpl->sphereSOVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->sphereSOGS.Get(), nullptr, 0);
+	deviceContext->VSSetShader(pImpl->m_pSphereSOVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(pImpl->m_pSphereSOGS.Get(), nullptr, 0);
 
 	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
 
@@ -355,14 +359,14 @@ void BasicEffect::SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> devic
 void BasicEffect::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	deviceContext->IASetInputLayout(pImpl->vertexPosNormalColorLayout.Get());
-	deviceContext->VSSetShader(pImpl->normalVS.Get(), nullptr, 0);
-	deviceContext->GSSetShader(pImpl->normalGS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pNormalVS.Get(), nullptr, 0);
+	deviceContext->GSSetShader(pImpl->m_pNormalGS.Get(), nullptr, 0);
 	ID3D11Buffer* bufferArray[1] = { nullptr };
 	UINT offset = 0;
 	deviceContext->SOSetTargets(1, bufferArray, &offset);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->normalPS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pNormalPS.Get(), nullptr, 0);
 
 }
 
@@ -371,78 +375,78 @@ void BasicEffect::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
 
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.world = XMMatrixTranspose(W);
 	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicEffect::SetViewMatrix(FXMMATRIX V)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.view = XMMatrixTranspose(V);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 {
-	auto& cBuffer = pImpl->cbOnResize;
+	auto& cBuffer = pImpl->m_CBOnResize;
 	cBuffer.data.proj = XMMatrixTranspose(P);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetDirLight(size_t pos, const DirectionalLight & dirLight)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.dirLight[pos] = dirLight;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetPointLight(size_t pos, const PointLight & pointLight)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.pointLight[pos] = pointLight;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetSpotLight(size_t pos, const SpotLight & spotLight)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.spotLight[pos] = spotLight;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetMaterial(const Material & material)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.material = material;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	XMStoreFloat3(&cBuffer.data.eyePos, eyePos);
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetSphereCenter(const DirectX::XMFLOAT3 & center)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.sphereCenter = center;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::SetSphereRadius(float radius)
 {
-	auto& cBuffer = pImpl->cbRarely;
+	auto& cBuffer = pImpl->m_CBRarely;
 	cBuffer.data.sphereRadius = radius;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	auto& pCBuffers = pImpl->cBufferPtrs;
+	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
@@ -455,11 +459,11 @@ void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 	pCBuffers[2]->BindPS(deviceContext);
 
 	// 设置纹理
-	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTexture.GetAddressOf());
 
-	if (pImpl->isDirty)
+	if (pImpl->m_IsDirty)
 	{
-		pImpl->isDirty = false;
+		pImpl->m_IsDirty = false;
 		for (auto& pCBuffer : pCBuffers)
 		{
 			pCBuffer->UpdateBuffer(deviceContext);

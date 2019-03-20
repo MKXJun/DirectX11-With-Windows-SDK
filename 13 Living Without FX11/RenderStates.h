@@ -24,16 +24,16 @@ public:
 	// 使用ComPtr无需手工释放
 
 public:
-	static ComPtr<ID3D11RasterizerState> RSWireframe;		// 光栅化器状态：线框模式
-	static ComPtr<ID3D11RasterizerState> RSNoCull;			// 光栅化器状态：无背面裁剪模式
-	static ComPtr<ID3D11RasterizerState> RSCullClockWise;	// 光栅化器状态：顺时针裁剪模式
+	static ComPtr<ID3D11RasterizerState> RSWireframe;		    // 光栅化器状态：线框模式
+	static ComPtr<ID3D11RasterizerState> RSNoCull;			    // 光栅化器状态：无背面裁剪模式
+	static ComPtr<ID3D11RasterizerState> RSCullClockWise;	    // 光栅化器状态：顺时针裁剪模式
 
-	static ComPtr<ID3D11SamplerState> SSLinearWrap;			// 采样器状态：线性过滤
-	static ComPtr<ID3D11SamplerState> SSAnistropicWrap;		// 采样器状态：各项异性过滤
+	static ComPtr<ID3D11SamplerState> SSLinearWrap;			    // 采样器状态：线性过滤
+	static ComPtr<ID3D11SamplerState> SSAnistropicWrap;		    // 采样器状态：各项异性过滤
 
-	static ComPtr<ID3D11BlendState> BSNoColorWrite;		// 混合状态：不写入颜色
-	static ComPtr<ID3D11BlendState> BSTransparent;		// 混合状态：透明混合
-	static ComPtr<ID3D11BlendState> BSAlphaToCoverage;	// 混合状态：Alpha-To-Coverage
+	static ComPtr<ID3D11BlendState> BSNoColorWrite;		        // 混合状态：不写入颜色
+	static ComPtr<ID3D11BlendState> BSTransparent;		        // 混合状态：透明混合
+	static ComPtr<ID3D11BlendState> BSAlphaToCoverage;	        // 混合状态：Alpha-To-Coverage
 
 	static ComPtr<ID3D11DepthStencilState> DSSWriteStencil;		// 深度/模板状态：写入模板值
 	static ComPtr<ID3D11DepthStencilState> DSSDrawWithStencil;	// 深度/模板状态：对指定模板值的区域进行绘制

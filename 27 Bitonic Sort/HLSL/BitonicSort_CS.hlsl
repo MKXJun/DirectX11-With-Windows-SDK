@@ -11,11 +11,11 @@ void CS(uint3 Gid : SV_GroupID,
     uint GI : SV_GroupIndex)
 {
     // 写入共享数据
-    shared_data[GI] = gData[DTid.x];
+    shared_data[GI] = g_Data[DTid.x];
     GroupMemoryBarrierWithGroupSync();
     
     // 进行排序
-    for (uint j = gLevel >> 1; j > 0; j >>= 1)
+    for (uint j = g_Level >> 1; j > 0; j >>= 1)
     {
         // 所处序列  当前索引  比较结果  取值结果
         //   递减      小索引    <=      (较大值)较大索引的值
@@ -30,7 +30,7 @@ void CS(uint3 Gid : SV_GroupID,
         uint smallerIndex = GI & ~j;
         uint largerIndex = GI | j;
         bool isSmallerIndex = (GI == smallerIndex);
-        bool isDescending = (bool) (gDescendMask & DTid.x);
+        bool isDescending = (bool) (g_DescendMask & DTid.x);
         uint result = ((shared_data[smallerIndex] <= shared_data[largerIndex]) == (isDescending == isSmallerIndex)) ?
             shared_data[largerIndex] : shared_data[smallerIndex];
         GroupMemoryBarrierWithGroupSync();
@@ -40,5 +40,5 @@ void CS(uint3 Gid : SV_GroupID,
     }
     
     // 保存结果
-    gData[DTid.x] = shared_data[GI];
+    g_Data[DTid.x] = shared_data[GI];
 }

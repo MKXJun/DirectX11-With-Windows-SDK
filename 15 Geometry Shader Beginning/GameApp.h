@@ -29,15 +29,15 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// 单色笔刷
-	ComPtr<IDWriteFont> mFont;								// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;								// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	ComPtr<ID3D11Buffer> mVertexBuffer;						// 顶点集合
-	int mVertexCount;										// 顶点数目
-	Mode mShowMode;											// 当前显示模式
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// 顶点集合
+	int m_VertexCount;										    // 顶点数目
+	Mode m_ShowMode;											// 当前显示模式
 
-	BasicEffect mBasicEffect;							// 对象渲染特效管理
+	BasicEffect m_BasicEffect;							        // 对象渲染特效管理
 
 };
 

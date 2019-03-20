@@ -3,7 +3,7 @@
 [maxvertexcount(2)]
 void GS(point VertexPosHWNormalColor input[1], inout LineStream<VertexPosHWNormalColor> output)
 {
-    matrix viewProj = mul(gView, gProj);
+    matrix viewProj = mul(g_View, g_Proj);
     
 
     VertexPosHWNormalColor v;

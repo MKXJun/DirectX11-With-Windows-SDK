@@ -68,11 +68,11 @@ public:
 	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
 
 private:
-	Model mModel;												// 模型
-	DirectX::XMFLOAT4X4 mWorldMatrix;							// 世界矩阵
+	Model m_Model;												    // 模型
+	DirectX::XMFLOAT4X4 m_WorldMatrix;							    // 世界矩阵
 
-	ComPtr<ID3D11Buffer> mInstancedBuffer;						// 实例缓冲区
-	size_t mCapacity;											// 缓冲区容量
+	ComPtr<ID3D11Buffer> m_pInstancedBuffer;						// 实例缓冲区
+	size_t m_Capacity;											    // 缓冲区容量
 };
 
 

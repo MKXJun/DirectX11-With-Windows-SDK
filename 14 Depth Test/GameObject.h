@@ -39,51 +39,51 @@ public:
 	// 绘制
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 private:
-	DirectX::XMFLOAT4X4 mWorldMatrix;				// 世界矩阵
-	Material mMaterial;								// 物体材质
-	ComPtr<ID3D11ShaderResourceView> mTexture;		// 纹理
-	ComPtr<ID3D11Buffer> mVertexBuffer;				// 顶点缓冲区
-	ComPtr<ID3D11Buffer> mIndexBuffer;				// 索引缓冲区
-	UINT mVertexStride;								// 顶点字节大小
-	UINT mIndexCount;								// 索引数目	
+	DirectX::XMFLOAT4X4 m_WorldMatrix;				    // 世界矩阵
+	Material m_Material;								// 物体材质
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;		// 纹理
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;				// 顶点缓冲区
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;				// 索引缓冲区
+	UINT m_VertexStride;								// 顶点字节大小
+	UINT m_IndexCount;								    // 索引数目	
 };
 
 template<class VertexType, class IndexType>
 inline void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
-	mVertexBuffer.Reset();
-	mIndexBuffer.Reset();
+	m_pVertexBuffer.Reset();
+	m_pIndexBuffer.Reset();
 
 	// 检查D3D设备
 	if (device == nullptr)
 		return;
 
 	// 设置顶点缓冲区描述
-	mVertexStride = sizeof(VertexType);
+	m_VertexStride = sizeof(VertexType);
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * mVertexStride;
+	vbd.ByteWidth = (UINT)meshData.vertexVec.size() * m_VertexStride;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	// 新建顶点缓冲区
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = meshData.vertexVec.data();
-	device->CreateBuffer(&vbd, &InitData, mVertexBuffer.GetAddressOf());
+	device->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.GetAddressOf());
 
 	// 设置索引缓冲区描述
-	mIndexCount = (UINT)meshData.indexVec.size();
+	m_IndexCount = (UINT)meshData.indexVec.size();
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = mIndexCount * sizeof(IndexType);
+	ibd.ByteWidth = m_IndexCount * sizeof(IndexType);
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	// 新建索引缓冲区
 	InitData.pSysMem = meshData.indexVec.data();
-	device->CreateBuffer(&ibd, &InitData, mIndexBuffer.GetAddressOf());
+	device->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf());
 
 	
 }

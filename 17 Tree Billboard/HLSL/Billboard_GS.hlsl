@@ -1,8 +1,8 @@
 #include "Basic.hlsli"
 
 // 节省内存资源，先用float4向量声明。
-static const float4 gVec[2] = { float4(0.0f, 1.0f, 0.0f, 0.0f), float4(1.0f, 1.0f, 1.0f, 0.0f) };
-static const float2 gTexCoord[4] = (float2[4])gVec;
+static const float4 g_Vec[2] = { float4(0.0f, 1.0f, 0.0f, 0.0f), float4(1.0f, 1.0f, 1.0f, 0.0f) };
+static const float2 g_TexCoord[4] = (float2[4])g_Vec;
 
 [maxvertexcount(4)]
 void GS(point PointSprite input[1], uint primID : SV_PrimitiveID, 
@@ -12,7 +12,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     // 被投影在了局部坐标系的xy平面，z=0
 
     float3 up = float3(0.0f, 1.0f, 0.0f);
-    float3 look = gEyePosW - input[0].PosW;
+    float3 look = g_EyePosW - input[0].PosW;
     look.y = 0.0f;  // look向量只取投影到xz平面的向量
     look = normalize(look);
     float3 right = cross(up, look);
@@ -37,14 +37,14 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
 
     // 对顶点位置进行矩阵变换，并以TriangleStrip形式输出
     BillboardVertex gOut;
-    matrix viewProj = mul(gView, gProj);
+    matrix viewProj = mul(g_View, g_Proj);
     [unroll]
     for (int i = 0; i < 4; ++i)
     {
         gOut.PosW = v[i].xyz;
         gOut.PosH = mul(v[i], viewProj);
         gOut.NormalW = look;
-        gOut.Tex = gTexCoord[i];
+        gOut.Tex = g_TexCoord[i];
         gOut.PrimID = primID;
         output.Append(gOut);
     }

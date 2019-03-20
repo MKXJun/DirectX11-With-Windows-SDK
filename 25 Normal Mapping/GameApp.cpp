@@ -19,41 +19,41 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(md3dDevice);
+	RenderStates::InitAll(m_pd3dDevice);
 
-	if (!mBasicEffect.InitAll(md3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice))
 		return false;
 
-	if (!mSkyEffect.InitAll(md3dDevice))
+	if (!m_SkyEffect.InitAll(m_pd3dDevice))
 		return false;
 
 	if (!InitResource())
 		return false;
 
 	// 初始化鼠标，键盘不需要
-	mMouse->SetWindow(mhMainWnd);
-	mMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+	m_pMouse->SetWindow(m_hMainWnd);
+	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(md2dFactory);
-	assert(mdwriteFactory);
+	assert(m_pd2dFactory);
+	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
-	mColorBrush.Reset();
-	md2dRenderTarget.Reset();
+	m_pColorBrush.Reset();
+	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
-	HR(mSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
+	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	HRESULT hr = md2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, md2dRenderTarget.GetAddressOf());
+	HRESULT hr = m_pd2dFactory->CreateDxgiSurfaceRenderTarget(surface.Get(), &props, m_pd2dRenderTarget.GetAddressOf());
 	surface.Reset();
 
 	if (hr == E_NOINTERFACE)
@@ -67,25 +67,25 @@ void GameApp::OnResize()
 	else if (hr == S_OK)
 	{
 		// 创建固定颜色刷和文本格式
-		HR(md2dRenderTarget->CreateSolidColorBrush(
+		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
-			mColorBrush.GetAddressOf()));
-		HR(mdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+			m_pColorBrush.GetAddressOf()));
+		HR(m_pdwriteFactory->CreateTextFormat(L"宋体", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
-			mTextFormat.GetAddressOf()));
+			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
 		// 报告异常问题
-		assert(md2dRenderTarget);
+		assert(m_pd2dRenderTarget);
 	}
 
 	// 摄像机变更显示
-	if (mCamera != nullptr)
+	if (m_pCamera != nullptr)
 	{
-		mCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-		mCamera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
-		mBasicEffect.SetProjMatrix(mCamera->GetProjXM());
+		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
+		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	}
 }
 
@@ -93,14 +93,14 @@ void GameApp::UpdateScene(float dt)
 {
 
 	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = mMouse->GetState();
-	Mouse::State lastMouseState = mMouseTracker.GetLastState();
-	mMouseTracker.Update(mouseState);
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
 
-	Keyboard::State keyState = mKeyboard->GetState();
-	mKeyboardTracker.Update(keyState);
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(mCamera);
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
 	// ********************
 	// 自由摄像机的操作
@@ -121,72 +121,72 @@ void GameApp::UpdateScene(float dt)
 	cam1st->RotateY(mouseState.x * dt * 1.25f);
 
 	// 更新观察矩阵
-	mCamera->UpdateViewMatrix();
-	mBasicEffect.SetViewMatrix(mCamera->GetViewXM());
-	mBasicEffect.SetEyePos(mCamera->GetPositionXM());
+	m_pCamera->UpdateViewMatrix();
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 
 	// 法线贴图开关
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D1))
-		mEnableNormalMap = !mEnableNormalMap;
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
+		m_EnableNormalMap = !m_EnableNormalMap;
 		
 	// 切换地面纹理
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::D2) && mGroundMode != GroundMode::Floor)
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2) && m_GroundMode != GroundMode::Floor)
 	{
-		mGroundMode = GroundMode::Floor;
-		mGroundModel.modelParts[0].texDiffuse = mFloorDiffuse;
-		mGroundTModel.modelParts[0].texDiffuse = mFloorDiffuse;
-		mGround.SetModel(mGroundModel);
-		mGroundT.SetModel(mGroundTModel);
+		m_GroundMode = GroundMode::Floor;
+		m_GroundModel.modelParts[0].texDiffuse = m_FloorDiffuse;
+		m_GroundTModel.modelParts[0].texDiffuse = m_FloorDiffuse;
+		m_Ground.SetModel(m_GroundModel);
+		m_GroundT.SetModel(m_GroundTModel);
 	}
-	else if (mKeyboardTracker.IsKeyPressed(Keyboard::D3) && mGroundMode != GroundMode::Stones)
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D3) && m_GroundMode != GroundMode::Stones)
 	{
-		mGroundMode = GroundMode::Stones;
-		mGroundModel.modelParts[0].texDiffuse = mStonesDiffuse;
-		mGroundTModel.modelParts[0].texDiffuse = mStonesDiffuse;
-		mGround.SetModel(mGroundModel);
-		mGroundT.SetModel(mGroundTModel);
+		m_GroundMode = GroundMode::Stones;
+		m_GroundModel.modelParts[0].texDiffuse = m_StonesDiffuse;
+		m_GroundTModel.modelParts[0].texDiffuse = m_StonesDiffuse;
+		m_Ground.SetModel(m_GroundModel);
+		m_GroundT.SetModel(m_GroundTModel);
 	}
 
 	// 重置滚轮值
-	mMouse->ResetScrollWheelValue();
+	m_pMouse->ResetScrollWheelValue();
 
 	// 退出程序，这里应向窗口发送销毁信息
-	if (mKeyboardTracker.IsKeyPressed(Keyboard::Escape))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
 void GameApp::DrawScene()
 {
-	assert(md3dImmediateContext);
-	assert(mSwapChain);
+	assert(m_pd3dImmediateContext);
+	assert(m_pSwapChain);
 
 	// ******************
 	// 生成动态天空盒
 	//
 
 	// 保留当前绘制的渲染目标视图和深度模板视图
-	mDaylight->Cache(md3dImmediateContext, mBasicEffect);
+	m_pDaylight->Cache(m_pd3dImmediateContext, m_BasicEffect);
 
 	// 绘制动态天空盒的每个面（以球体为中心）
 	for (int i = 0; i < 6; ++i)
 	{
-		mDaylight->BeginCapture(
-			md3dImmediateContext, mBasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i));
+		m_pDaylight->BeginCapture(
+			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i));
 
 		// 不绘制中心球
 		DrawScene(false);
 	}
 
 	// 恢复之前的绘制设定
-	mDaylight->Restore(md3dImmediateContext, mBasicEffect, *mCamera);
+	m_pDaylight->Restore(m_pd3dImmediateContext, m_BasicEffect, *m_pCamera);
 	
 	// ******************
 	// 绘制场景
 	//
 
 	// 预先清空
-	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
-	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制中心球
 	DrawScene(true);
@@ -195,23 +195,23 @@ void GameApp::DrawScene()
 	// ******************
 	// 绘制Direct2D部分
 	//
-	if (md2dRenderTarget != nullptr)
+	if (m_pd2dRenderTarget != nullptr)
 	{
-		md2dRenderTarget->BeginDraw();
+		m_pd2dRenderTarget->BeginDraw();
 		std::wstring text = L"当前摄像机模式: 自由视角  Esc退出\n"
 			"鼠标移动控制视野 W/S/A/D移动\n"
 			"1-法线贴图: ";
-		text += mEnableNormalMap ? L"开启\n" : L"关闭\n";
+		text += m_EnableNormalMap ? L"开启\n" : L"关闭\n";
 		text += L"切换纹理: 2-地板  3-鹅卵石面\n"
 			"当前纹理: ";
-		text += (mGroundMode == GroundMode::Floor ? L"地板" : L"鹅卵石面");
+		text += (m_GroundMode == GroundMode::Floor ? L"地板" : L"鹅卵石面");
 
-		md2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), mTextFormat.Get(),
-			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, mColorBrush.Get());
-		HR(md2dRenderTarget->EndDraw());
+		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
+			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
+		HR(m_pd2dRenderTarget->EndDraw());
 	}
 
-	HR(mSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, 0));
 }
 
 
@@ -221,99 +221,99 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化法线贴图相关
 	//
-	mEnableNormalMap = true;
+	m_EnableNormalMap = true;
 
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\bricks_nmap.dds", nullptr, mBricksNormalMap.GetAddressOf()));
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor_nmap.dds", nullptr, mFloorNormalMap.GetAddressOf()));
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\stones_nmap.dds", nullptr, mStonesNormalMap.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\bricks_nmap.dds", nullptr, m_BricksNormalMap.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor_nmap.dds", nullptr, m_FloorNormalMap.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\stones_nmap.dds", nullptr, m_StonesNormalMap.GetAddressOf()));
 
 	// ******************
 	// 初始化天空盒相关
 
-	mDaylight = std::make_unique<DynamicSkyRender>(
-		md3dDevice, md3dImmediateContext, 
+	m_pDaylight = std::make_unique<DynamicSkyRender>(
+		m_pd3dDevice, m_pd3dImmediateContext, 
 		L"Texture\\daylight.jpg", 
 		5000.0f, 256);
 
-	mBasicEffect.SetTextureCube(mDaylight->GetDynamicTextureCube());
+	m_BasicEffect.SetTextureCube(m_pDaylight->GetDynamicTextureCube());
 
 	// ******************
 	// 初始化游戏对象
 	//
 
-	mGroundMode = GroundMode::Floor;
+	m_GroundMode = GroundMode::Floor;
 	
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\floor.dds", nullptr, mFloorDiffuse.GetAddressOf()));
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(), L"Texture\\stones.dds", nullptr, mStonesDiffuse.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor.dds", nullptr, m_FloorDiffuse.GetAddressOf()));
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\stones.dds", nullptr, m_StonesDiffuse.GetAddressOf()));
 	// 地面
-	mGroundModel.SetMesh(md3dDevice,
+	m_GroundModel.SetMesh(m_pd3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
-	mGroundModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mGroundModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mGroundModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	mGroundModel.modelParts[0].material.Reflect = XMFLOAT4();
-	mGroundModel.modelParts[0].texDiffuse = mFloorDiffuse;
-	mGround.SetModel(mGroundModel);
+	m_GroundModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_GroundModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_GroundModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_GroundModel.modelParts[0].material.Reflect = XMFLOAT4();
+	m_GroundModel.modelParts[0].texDiffuse = m_FloorDiffuse;
+	m_Ground.SetModel(m_GroundModel);
 
 	// 带切线向量的地面
-	mGroundTModel.SetMesh(md3dDevice, Geometry::CreatePlane<VertexPosNormalTangentTex>(
+	m_GroundTModel.SetMesh(m_pd3dDevice, Geometry::CreatePlane<VertexPosNormalTangentTex>(
 		XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
-	mGroundTModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	mGroundTModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	mGroundTModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	mGroundTModel.modelParts[0].material.Reflect = XMFLOAT4();
-	mGroundTModel.modelParts[0].texDiffuse = mFloorDiffuse;
-	mGroundT.SetModel(mGroundTModel);
+	m_GroundTModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_GroundTModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_GroundTModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_GroundTModel.modelParts[0].material.Reflect = XMFLOAT4();
+	m_GroundTModel.modelParts[0].texDiffuse = m_FloorDiffuse;
+	m_GroundT.SetModel(m_GroundTModel);
 
 	// 球体
 	Model model;
 	ComPtr<ID3D11ShaderResourceView> texDiffuse;
 
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(),
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\stone.dds",
 		nullptr,
 		texDiffuse.GetAddressOf()));
 
-	model.SetMesh(md3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
+	model.SetMesh(m_pd3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	model.modelParts[0].material.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].texDiffuse = texDiffuse;
-	mSphere.SetModel(std::move(model));
+	m_Sphere.SetModel(std::move(model));
 
 	// 柱体
-	HR(CreateDDSTextureFromFile(md3dDevice.Get(),
+	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\bricks.dds",
 		nullptr,
 		texDiffuse.ReleaseAndGetAddressOf()));
 
-	model.SetMesh(md3dDevice,
+	model.SetMesh(m_pd3dDevice,
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
-	mCylinder.SetModel(std::move(model));
+	m_Cylinder.SetModel(std::move(model));
 
 	// 带切线向量的柱体
-	model.SetMesh(md3dDevice,
+	model.SetMesh(m_pd3dDevice,
 		Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 2.0f));
 	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
-	mCylinderT.SetModel(std::move(model));
+	m_CylinderT.SetModel(std::move(model));
 
 	// ******************
 	// 初始化摄像机
 	//
-	mCameraMode = CameraMode::Free;
+	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	mCamera = camera;
-	camera->SetViewPort(0.0f, 0.0f, (float)mClientWidth, (float)mClientHeight);
+	m_pCamera = camera;
+	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 	camera->LookTo(
 		XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
@@ -321,8 +321,8 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 	// 初始化并更新观察矩阵、投影矩阵(摄像机将被固定)
 	camera->UpdateViewMatrix();
-	mBasicEffect.SetViewMatrix(camera->GetViewXM());
-	mBasicEffect.SetProjMatrix(camera->GetProjXM());
+	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
+	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 
 
 	// ******************
@@ -342,7 +342,7 @@ bool GameApp::InitResource()
 	dirLight[3] = dirLight[0];
 	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
-		mBasicEffect.SetDirLight(i, dirLight[i]);
+		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
 	return true;
 }
@@ -350,34 +350,34 @@ bool GameApp::InitResource()
 void GameApp::DrawScene(bool drawCenterSphere)
 {
 	// 绘制模型
-	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
-	mBasicEffect.SetTextureUsed(true);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_BasicEffect.SetTextureUsed(true);
 	
 	// 只绘制球体的反射效果
 	if (drawCenterSphere)
 	{
-		mBasicEffect.SetReflectionEnabled(true);
-		mBasicEffect.SetRefractionEnabled(false);
-		mSphere.Draw(md3dImmediateContext, mBasicEffect);
+		m_BasicEffect.SetReflectionEnabled(true);
+		m_BasicEffect.SetRefractionEnabled(false);
+		m_Sphere.Draw(m_pd3dImmediateContext, m_BasicEffect);
 	}
 	
 	// 绘制地面
-	mBasicEffect.SetReflectionEnabled(false);
-	mBasicEffect.SetRefractionEnabled(false);
+	m_BasicEffect.SetReflectionEnabled(false);
+	m_BasicEffect.SetRefractionEnabled(false);
 	
-	if (mEnableNormalMap)
+	if (m_EnableNormalMap)
 	{
-		mBasicEffect.SetRenderWithNormalMap(md3dImmediateContext, BasicEffect::RenderObject);
-		if (mGroundMode == GroundMode::Floor)
-			mBasicEffect.SetTextureNormalMap(mFloorNormalMap);
+		m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext, BasicEffect::RenderObject);
+		if (m_GroundMode == GroundMode::Floor)
+			m_BasicEffect.SetTextureNormalMap(m_FloorNormalMap);
 		else
-			mBasicEffect.SetTextureNormalMap(mStonesNormalMap);
-		mGroundT.Draw(md3dImmediateContext, mBasicEffect);
+			m_BasicEffect.SetTextureNormalMap(m_StonesNormalMap);
+		m_GroundT.Draw(m_pd3dImmediateContext, m_BasicEffect);
 	}
 	else
 	{
-		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderObject);
-		mGround.Draw(md3dImmediateContext, mBasicEffect);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+		m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
 	}
 
 	// 绘制五个圆柱
@@ -390,20 +390,20 @@ void GameApp::DrawScene(bool drawCenterSphere)
 		XMMatrixTranslation(4.5f, -1.99f, -4.5f)
 	};
 
-	if (mEnableNormalMap)
+	if (m_EnableNormalMap)
 	{
-		mBasicEffect.SetRenderWithNormalMap(md3dImmediateContext, BasicEffect::RenderInstance);
-		mBasicEffect.SetTextureNormalMap(mBricksNormalMap);
-		mCylinderT.DrawInstanced(md3dImmediateContext, mBasicEffect, cyliderWorlds);
+		m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext, BasicEffect::RenderInstance);
+		m_BasicEffect.SetTextureNormalMap(m_BricksNormalMap);
+		m_CylinderT.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, cyliderWorlds);
 	}
 	else
 	{
-		mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
-		mCylinder.DrawInstanced(md3dImmediateContext, mBasicEffect, cyliderWorlds);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
+		m_Cylinder.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, cyliderWorlds);
 	}
 	
 	// 绘制五个圆球
-	mBasicEffect.SetRenderDefault(md3dImmediateContext, BasicEffect::RenderInstance);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
 	static float rad = 0.0f;
 	rad += 0.001f;
 	// 需要动态位置，不使用static
@@ -414,15 +414,15 @@ void GameApp::DrawScene(bool drawCenterSphere)
 		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(rad), -4.5f),
 		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(2.5f * XMScalarCos(rad), 0.0f, 2.5f * XMScalarSin(rad))
 	};
-	mSphere.DrawInstanced(md3dImmediateContext, mBasicEffect, sphereWorlds);
+	m_Sphere.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, sphereWorlds);
 
 	// 绘制天空盒
-	mSkyEffect.SetRenderDefault(md3dImmediateContext);
+	m_SkyEffect.SetRenderDefault(m_pd3dImmediateContext);
 
 	if (drawCenterSphere)
-		mDaylight->Draw(md3dImmediateContext, mSkyEffect, *mCamera);
+		m_pDaylight->Draw(m_pd3dImmediateContext, m_SkyEffect, *m_pCamera);
 	else
-		mDaylight->Draw(md3dImmediateContext, mSkyEffect, mDaylight->GetCamera());
+		m_pDaylight->Draw(m_pd3dImmediateContext, m_SkyEffect, m_pDaylight->GetCamera());
 	
 }
 

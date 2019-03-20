@@ -40,19 +40,19 @@ public:
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame> cbFrame;		// 每帧修改的常量缓冲区
-	CBufferObject<1, CBDrawingStates>	cbStates;		// 每次绘制状态改变的常量缓冲区
+	CBufferObject<0, CBChangesEveryFrame> m_CBFrame;		// 每帧修改的常量缓冲区
+	CBufferObject<1, CBDrawingStates>	m_CBStates;		    // 每次绘制状态改变的常量缓冲区
 
 
-	BOOL isDirty;										// 是否有值变更
-	std::vector<CBufferBase*> cBufferPtrs;				// 统一管理上面所有的常量缓冲区
+	BOOL m_IsDirty;										    // 是否有值变更
+	std::vector<CBufferBase*> m_pCBuffers;				    // 统一管理上面所有的常量缓冲区
 
-	ComPtr<ID3D11VertexShader> minimapVS;
-	ComPtr<ID3D11PixelShader> minimapPS;
+	ComPtr<ID3D11VertexShader> m_pMinimapVS;
+	ComPtr<ID3D11PixelShader> m_pMinimapPS;
 
-	ComPtr<ID3D11InputLayout> vertexPosTexLayout;
+	ComPtr<ID3D11InputLayout> m_pVertexPosTexLayout;
 
-	ComPtr<ID3D11ShaderResourceView> texture;			// 用于淡入淡出的纹理
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;			// 用于淡入淡出的纹理
 };
 
 
@@ -64,14 +64,14 @@ public:
 namespace
 {
 	// MinimapEffect单例
-	static MinimapEffect * pInstance = nullptr;
+	static MinimapEffect * g_pInstance = nullptr;
 }
 
 MinimapEffect::MinimapEffect()
 {
-	if (pInstance)
+	if (g_pInstance)
 		throw std::exception("MinimapEffect is a singleton!");
-	pInstance = this;
+	g_pInstance = this;
 	pImpl = std::make_unique<MinimapEffect::Impl>();
 }
 
@@ -92,9 +92,9 @@ MinimapEffect & MinimapEffect::operator=(MinimapEffect && moveFrom)
 
 MinimapEffect & MinimapEffect::Get()
 {
-	if (!pInstance)
+	if (!g_pInstance)
 		throw std::exception("MinimapEffect needs an instance!");
-	return *pInstance;
+	return *g_pInstance;
 }
 
 bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
@@ -102,7 +102,7 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	if (!device)
 		return false;
 
-	if (!pImpl->cBufferPtrs.empty())
+	if (!pImpl->m_pCBuffers.empty())
 		return true;
 
 	if (!RenderStates::IsInit())
@@ -115,26 +115,26 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_VS.cso", L"HLSL\\Minimap_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->minimapVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pMinimapVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->vertexPosTexLayout.GetAddressOf()));
+		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosTexLayout.GetAddressOf()));
 
 	// ******************
 	// 创建像素着色器
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_PS.cso", L"HLSL\\Minimap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->minimapPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pMinimapPS.GetAddressOf()));
 
 
-	pImpl->cBufferPtrs.assign({
-		&pImpl->cbFrame,
-		&pImpl->cbStates
+	pImpl->m_pCBuffers.assign({
+		&pImpl->m_CBFrame,
+		&pImpl->m_CBStates
 		});
 
 	// 创建常量缓冲区
-	for (auto& pBuffer : pImpl->cBufferPtrs)
+	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
@@ -144,9 +144,9 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 
 void MinimapEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	deviceContext->IASetInputLayout(pImpl->vertexPosTexLayout.Get());
-	deviceContext->VSSetShader(pImpl->minimapVS.Get(), nullptr, 0);
-	deviceContext->PSSetShader(pImpl->minimapPS.Get(), nullptr, 0);
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosTexLayout.Get());
+	deviceContext->VSSetShader(pImpl->m_pMinimapVS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pMinimapPS.Get(), nullptr, 0);
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -160,56 +160,56 @@ void MinimapEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 
 void MinimapEffect::SetFogState(bool isOn)
 {
-	auto& cBuffer = pImpl->cbStates;
+	auto& cBuffer = pImpl->m_CBStates;
 	cBuffer.data.fogEnabled = isOn;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void MinimapEffect::SetVisibleRange(float range)
 {
-	auto& cBuffer = pImpl->cbStates;
+	auto& cBuffer = pImpl->m_CBStates;
 	cBuffer.data.visibleRange = range;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV MinimapEffect::SetEyePos(DirectX::FXMVECTOR eyePos)
 {
-	auto& cBuffer = pImpl->cbFrame;
+	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.eyePos = eyePos;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV MinimapEffect::SetMinimapRect(DirectX::FXMVECTOR rect)
 {
-	auto& cBuffer = pImpl->cbStates;
+	auto& cBuffer = pImpl->m_CBStates;
 	cBuffer.data.rect = rect;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV MinimapEffect::SetInvisibleColor(DirectX::FXMVECTOR color)
 {
-	auto& cBuffer = pImpl->cbStates;
+	auto& cBuffer = pImpl->m_CBStates;
 	cBuffer.data.invisibleColor = color;
-	pImpl->isDirty = cBuffer.isDirty = true;
+	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void MinimapEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+void MinimapEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
 {
-	pImpl->texture = texture;
+	pImpl->m_pTexture = m_pTexture;
 }
 
 void MinimapEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
 {
-	auto& pCBuffers = pImpl->cBufferPtrs;
+	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindPS(deviceContext);
 	// 设置SRV
-	deviceContext->PSSetShaderResources(0, 1, pImpl->texture.GetAddressOf());
+	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTexture.GetAddressOf());
 
-	if (pImpl->isDirty)
+	if (pImpl->m_IsDirty)
 	{
-		pImpl->isDirty = false;
+		pImpl->m_IsDirty = false;
 		for (auto& pCBuffer : pCBuffers)
 		{
 			pCBuffer->UpdateBuffer(deviceContext);

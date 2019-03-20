@@ -2,5 +2,5 @@
 
 float4 PS(VertexPosHL pIn) : SV_Target
 {
-    return gTexCube.Sample(gSam, pIn.PosL);
+    return g_TexCube.Sample(g_Sam, pIn.PosL);
 }

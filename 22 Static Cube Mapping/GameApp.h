@@ -29,26 +29,26 @@ private:
 	
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// 单色笔刷
-	ComPtr<IDWriteFont> mFont;								// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;								// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	GameObject mSphere;										// 球
-	GameObject mGround;										// 地面
-	GameObject mCylinder;									// 圆柱
+	GameObject m_Sphere;										// 球
+	GameObject m_Ground;										// 地面
+	GameObject m_Cylinder;									    // 圆柱
 
-	BasicEffect mBasicEffect;								// 对象渲染特效管理
+	BasicEffect m_BasicEffect;								    // 对象渲染特效管理
 	
-	SkyEffect mSkyEffect;									// 天空盒特效管理
-	std::unique_ptr<SkyRender> mDaylight;					// 天空盒(白天)
-	std::unique_ptr<SkyRender> mSunset;						// 天空盒(日落)
-	std::unique_ptr<SkyRender> mDesert;						// 天空盒(沙漠)
-	SkyBoxMode mSkyBoxMode;									// 天空盒模式
+	SkyEffect m_SkyEffect;									    // 天空盒特效管理
+	std::unique_ptr<SkyRender> m_pDaylight;					    // 天空盒(白天)
+	std::unique_ptr<SkyRender> m_pSunset;						// 天空盒(日落)
+	std::unique_ptr<SkyRender> m_pDesert;						// 天空盒(沙漠)
+	SkyBoxMode m_SkyBoxMode;									// 天空盒模式
 
-	std::shared_ptr<Camera> mCamera;						// 摄像机
-	CameraMode mCameraMode;									// 摄像机模式
+	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
+	CameraMode m_CameraMode;									// 摄像机模式
 
-	ObjReader mObjReader;									// 模型读取对象
+	ObjReader m_ObjReader;									    // 模型读取对象
 };
 
 

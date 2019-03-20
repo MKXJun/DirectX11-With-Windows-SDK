@@ -43,7 +43,7 @@ struct CBufferBase
 	template<class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	bool isDirty;
+	BOOL isDirty;
 	ComPtr<ID3D11Buffer> cBuffer;
 
 	virtual HRESULT CreateBuffer(ComPtr<ID3D11Device> device) = 0;

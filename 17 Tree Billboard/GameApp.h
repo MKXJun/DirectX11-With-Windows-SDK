@@ -27,26 +27,26 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> mColorBrush;				// 单色笔刷
-	ComPtr<IDWriteFont> mFont;								// 字体
-	ComPtr<IDWriteTextFormat> mTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+	ComPtr<IDWriteFont> m_pFont;								// 字体
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	ComPtr<ID3D11Buffer> mPointSpritesBuffer;				// 点精灵顶点缓冲区
-	ComPtr<ID3D11ShaderResourceView> mTreeTexArray;			// 树的纹理数组
-	Material mTreeMat;										// 树的材质
+	ComPtr<ID3D11Buffer> mPointSpritesBuffer;				    // 点精灵顶点缓冲区
+	ComPtr<ID3D11ShaderResourceView> mTreeTexArray;			    // 树的纹理数组
+	Material m_TreeMat;										    // 树的材质
 
-	GameObject mGround;										// 地面
+	GameObject m_Ground;										// 地面
 	
-	BasicEffect mBasicEffect;							// 对象渲染特效管理
+	BasicEffect m_BasicEffect;							        // 对象渲染特效管理
 
-	CameraMode mCameraMode;									// 摄像机模式
-	std::shared_ptr<Camera> mCamera;						// 摄像机
+	CameraMode m_CameraMode;									// 摄像机模式
+	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
 
-	bool mFogEnabled;										// 是否开启雾效
-	bool mIsNight;											// 是否黑夜
-	bool mEnableAlphaToCoverage;							// 是否开启Alpha-To-Coverage
+	bool m_FogEnabled;										    // 是否开启雾效
+	bool m_IsNight;											    // 是否黑夜
+	bool m_EnableAlphaToCoverage;							    // 是否开启Alpha-To-Coverage
 
-	float mFogRange;										// 雾效范围
+	float m_FogRange;										    // 雾效范围
 };
 
 

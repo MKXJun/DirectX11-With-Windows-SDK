@@ -111,7 +111,7 @@ void GameApp::UpdateScene(float dt)
 	if (m_CurrMode == ShowMode::WoodCrate)
 	{
 		static float phi = 0.0f, theta = 0.0f;
-		phi += 0.00003f, theta += 0.00005f;
+		phi += 0.0001f, theta += 0.00015f;
 		XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 		m_VSConstantBuffer.world = XMMatrixTranspose(W);
 		m_VSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消

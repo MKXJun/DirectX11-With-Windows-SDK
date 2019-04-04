@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.24.5-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.24.6-519dd9.svg)
 
 ## 博客教程
 
@@ -33,7 +33,7 @@ QQ群号：727623616
 
 ## 如何打开教程项目
 
-**对于Win10系统，请选择DirectX11 With Windows SDK.sln打开**
+**对于Win10系统，请根据自己当前的Visual Studio版本打开**
 
 **对于Win7和Win8.x的系统，请选择DirectX11 With Windows SDK(Win7).sln打开**
 
@@ -45,17 +45,18 @@ QQ群号：727623616
 
 ## 配置表
 
-|               |默认配置          |最低配置   |
-|---------------|:----------------:|:---------:|
-|IDE            |**VS2017**        |VS2015     |
-|D3DComplier版本|**47**            |47         |
-|Windows SDK版本|**10.0.17763.0**  |8.1        |
-|Windows开发环境|**Windows 10**    |Windows 7  |
-|平台           |**x86/x64支持**   |x86/x64支持|
-|配置           |**Debug/Release支持**|Debug/Release支持|
+|IDE            |VS2019        |**VS2017**        |VS2015     |
+|--------------|:-------------:|:----------------:|:------------:|
+|D3DComplier版本|**47**          |**47**           |47         |
+|Windows SDK版本|**10.0.17763.0**|**10.0.17763.0**  |8.1        |
+|Windows开发/运行环境 |**Windows 10**      |**Windows 10**    |Windows 7 SP1  |
+|平台           |**x86/x64支持**      |**x86/x64支持**   |x86/x64支持|
+|配置           |**Debug/Release支持**|**Debug/Release支持**|Debug/Release支持|
 
 ## 支持/赞赏博主
-**[点此进入赞赏页面](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Donate/README.md)**
+**博客和项目维护不易，如果本系列教程对您有所帮助，希望能够扫码支持一下博主。**
+
+![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.png)![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/003.png)
 
 ## 遇到项目无法编译、运行的问题
 **[点此查看无法编译、运行教程项目的解决方法](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/README.md)**

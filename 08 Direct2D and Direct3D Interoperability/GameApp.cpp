@@ -78,7 +78,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 	static float phi = 0.0f, theta = 0.0f;
-	phi += 0.00003f, theta += 0.00005f;
+	phi += 0.0001f, theta += 0.00015f;
 	XMMATRIX W = XMMatrixRotationX(phi) * XMMatrixRotationY(theta);
 	m_VSConstantBuffer.world = XMMatrixTranspose(W);
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixInverse(nullptr, W);

@@ -28,6 +28,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <map>
+#include <string>
 #include <algorithm>
 #include <locale>
 #include <filesystem>

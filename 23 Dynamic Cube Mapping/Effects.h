@@ -47,8 +47,8 @@ public:
 	BasicEffect();
 	virtual ~BasicEffect() override;
 
-	BasicEffect(BasicEffect&& moveFrom);
-	BasicEffect& operator=(BasicEffect&& moveFrom);
+	BasicEffect(BasicEffect&& moveFrom) noexcept;
+	BasicEffect& operator=(BasicEffect&& moveFrom) noexcept;
 
 	// »ñÈ¡µ¥Àý
 	static BasicEffect& Get();

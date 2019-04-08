@@ -8,7 +8,7 @@ namespace
 	// This is just used to forward Windows messages from a global window
 	// procedure to our member function window procedure because we cannot
 	// assign a member function to WNDCLASS::lpfnWndProc.
-	D3DApp* g_pd3dApp = 0;
+	D3DApp* g_pd3dApp = nullptr;
 }
 
 LRESULT CALLBACK

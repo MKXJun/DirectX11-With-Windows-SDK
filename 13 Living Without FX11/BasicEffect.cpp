@@ -67,7 +67,7 @@ public:
 	CBufferObject<2, CBChangesEveryFrame>   m_CBFrame;		    // 每帧绘制的常量缓冲区
 	CBufferObject<3, CBChangesOnResize>     m_CBOnResize;		// 每次窗口大小变更的常量缓冲区
 	CBufferObject<4, CBChangesRarely>		m_CBRarely;		    // 几乎不会变更的常量缓冲区
-	BOOL m_IsDirty;											    // 是否有值变更
+	BOOL m_IsDirty;												// 是否有值变更
 	std::vector<CBufferBase*> m_pCBuffers;					    // 统一管理上面所有的常量缓冲区
 
 
@@ -105,12 +105,12 @@ BasicEffect::~BasicEffect()
 {
 }
 
-BasicEffect::BasicEffect(BasicEffect && moveFrom)
+BasicEffect::BasicEffect(BasicEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom)
+BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;

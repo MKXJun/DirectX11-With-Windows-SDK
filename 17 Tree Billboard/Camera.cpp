@@ -2,6 +2,11 @@
 using namespace DirectX;
 
 Camera::Camera()
+	: m_Position(0.0f, 0.0f, 0.0f), m_Right(0.0f, 0.0f, 0.0f), 
+	m_Up(0.0f, 0.0f, 0.0f), m_Look(0.0f, 0.0f, 0.0f),
+	m_NearZ(), m_FarZ(), m_FovY(), m_Aspect(),
+	m_NearWindowHeight(), m_FarWindowHeight(),
+	m_View(), m_Proj(), m_ViewPort()
 {
 }
 
@@ -257,7 +262,7 @@ void FirstPersonCamera::UpdateViewMatrix()
 //
 
 ThirdPersonCamera::ThirdPersonCamera()
-	: Camera(), m_Theta(), m_Phi(), m_Distance(), m_Target()
+	: Camera(), m_Target(), m_Distance(), m_MinDist(), m_MaxDist(), m_Theta(), m_Phi()
 {
 }
 

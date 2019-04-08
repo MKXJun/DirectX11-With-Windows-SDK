@@ -110,12 +110,12 @@ BasicEffect::~BasicEffect()
 {
 }
 
-BasicEffect::BasicEffect(BasicEffect && moveFrom)
+BasicEffect::BasicEffect(BasicEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom)
+BasicEffect & BasicEffect::operator=(BasicEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;

@@ -49,6 +49,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginnin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2019 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2019 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2019 Win10)", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2019 Win10).vcxproj", "{7DCC8C3F-6626-4F9A-B132-6F0A30246026}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -241,6 +243,14 @@ Global
 		{15682670-9F8D-436E-BB6C-1FE5D631CB9D}.Release|x64.Build.0 = Release|x64
 		{15682670-9F8D-436E-BB6C-1FE5D631CB9D}.Release|x86.ActiveCfg = Release|Win32
 		{15682670-9F8D-436E-BB6C-1FE5D631CB9D}.Release|x86.Build.0 = Release|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x64.ActiveCfg = Debug|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x64.Build.0 = Debug|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x86.ActiveCfg = Debug|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Debug|x86.Build.0 = Debug|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x64.ActiveCfg = Release|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x64.Build.0 = Release|x64
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x86.ActiveCfg = Release|Win32
+		{7DCC8C3F-6626-4F9A-B132-6F0A30246026}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

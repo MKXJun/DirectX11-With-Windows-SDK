@@ -199,11 +199,11 @@ void GameApp::DrawScene()
 		switch (m_SkyBoxMode)
 		{
 		case SkyBoxMode::Daylight: m_pDaylight->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Sunset: m_pSunset->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Desert: m_pDesert->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		}
 
 		// 不绘制中心球

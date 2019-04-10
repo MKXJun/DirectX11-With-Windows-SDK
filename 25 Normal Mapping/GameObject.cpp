@@ -10,11 +10,12 @@ struct InstancedData
 };
 
 GameObject::GameObject()
-	: m_WorldMatrix(
+	: m_Capacity(), 
+	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+		0.0f, 0.0f, 0.0f, 1.0f)	
 {
 }
 

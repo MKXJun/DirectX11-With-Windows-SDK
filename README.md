@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb)[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.24.7-519dd9.svg)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb)[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) ![](https://img.shields.io/badge/Ver-1.24.8-519dd9.svg)
 
 ## 博客教程
 
@@ -48,10 +48,16 @@ QQ群号：727623616
 |IDE            |VS2019        |**VS2017**        |VS2015     |
 |--------------|:-------------:|:----------------:|:------------:|
 |D3DComplier版本|**47**          |**47**           |47         |
-|Windows SDK版本|**10.0.17763.0**|**10.0.17763.0**  |8.1        |
-|Windows开发/运行环境 |**Windows 10**      |**Windows 10**    |Windows 7 SP1  |
+|Windows SDK版本|**10.0.17763.0**|**10.0.17763.0**  |10.0.14393.0        |
+|Windows开发/运行环境 |**Windows 10**|**Windows 10**|Windows 7 SP1及更高版本|
 |平台           |**x86/x64支持**      |**x86/x64支持**   |x86/x64支持|
 |配置           |**Debug/Release支持**|**Debug/Release支持**|Debug/Release支持|
+
+> **注意：** 
+> 1. **教程不支持VS2013及更低版本！**
+> 2. VS2015在安装时需要勾选VS2015 更新 3， 以及Tools(1.4.1)和Windows 10 SDK(10.0.14393)
+> 3. Win7系统需要安装Service Pack 1以及KB2670838补丁以支持Direct3D 11.1
+> 4. 建议安装配置表列出的VS所使用的对应版本的Windows SDK
 
 ## 支持/赞赏博主
 **博客和项目维护不易，如果本系列教程对您有所帮助，希望能够扫码支持一下博主。**

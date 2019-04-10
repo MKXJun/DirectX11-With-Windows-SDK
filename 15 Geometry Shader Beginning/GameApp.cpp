@@ -5,7 +5,9 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_ShowMode(Mode::SplitedTriangle),
+	m_VertexCount()
 {
 }
 

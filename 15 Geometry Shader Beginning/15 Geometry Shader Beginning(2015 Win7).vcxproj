@@ -221,7 +221,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{DE165325-35F5-4DB9-898C-8039B6C54919}</ProjectGuid>
     <RootNamespace>My15GeometryShaderBeginningWin7</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

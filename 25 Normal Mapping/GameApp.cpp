@@ -5,7 +5,10 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::Free),
+	m_GroundMode(GroundMode::Floor),
+	m_EnableNormalMap(true)
 {
 }
 
@@ -171,7 +174,7 @@ void GameApp::DrawScene()
 	for (int i = 0; i < 6; ++i)
 	{
 		m_pDaylight->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(0.0f, 0.0f, 0.0f), static_cast<D3D11_TEXTURECUBE_FACE>(i));
+			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i));
 
 		// 不绘制中心球
 		DrawScene(false);
@@ -221,8 +224,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化法线贴图相关
 	//
-	m_EnableNormalMap = true;
-
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\bricks_nmap.dds", nullptr, m_BricksNormalMap.GetAddressOf()));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor_nmap.dds", nullptr, m_FloorNormalMap.GetAddressOf()));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\stones_nmap.dds", nullptr, m_StonesNormalMap.GetAddressOf()));
@@ -240,9 +241,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化游戏对象
 	//
-
-	m_GroundMode = GroundMode::Floor;
-	
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor.dds", nullptr, m_FloorDiffuse.GetAddressOf()));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\stones.dds", nullptr, m_StonesDiffuse.GetAddressOf()));
 	// 地面
@@ -310,7 +308,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化摄像机
 	//
-	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

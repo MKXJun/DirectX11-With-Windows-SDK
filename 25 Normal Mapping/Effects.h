@@ -119,8 +119,8 @@ public:
 	SkyEffect();
 	virtual ~SkyEffect() override;
 
-	SkyEffect(SkyEffect&& moveFrom);
-	SkyEffect& operator=(SkyEffect&& moveFrom);
+	SkyEffect(SkyEffect&& moveFrom) noexcept;
+	SkyEffect& operator=(SkyEffect&& moveFrom) noexcept;
 
 	// »ñÈ¡µ¥Àý
 	static SkyEffect& Get();

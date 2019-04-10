@@ -64,12 +64,12 @@ SkyEffect::~SkyEffect()
 {
 }
 
-SkyEffect::SkyEffect(SkyEffect && moveFrom)
+SkyEffect::SkyEffect(SkyEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-SkyEffect & SkyEffect::operator=(SkyEffect && moveFrom)
+SkyEffect & SkyEffect::operator=(SkyEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;

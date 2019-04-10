@@ -3,7 +3,7 @@
 using namespace Microsoft::WRL;
 
 TextureRender::TextureRender(ComPtr<ID3D11Device> device, int texWidth, int texHeight, bool generateMips)
-	: m_GenerateMips(generateMips)
+	: m_GenerateMips(generateMips), m_CacheViewPort()
 {
 	// ******************
 	// 1. ¥¥Ω®Œ∆¿Ì

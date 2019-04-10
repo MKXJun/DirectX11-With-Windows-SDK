@@ -6,7 +6,8 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_RandomNumsCount()
 {
 }
 
@@ -83,7 +84,8 @@ bool GameApp::InitResource()
 	randEngine.seed(std::random_device()());
 	std::uniform_int_distribution<UINT> powRange(9, 18);
 	// 元素数目必须为2的次幂且不小于512个，并用最大值填充
-	m_RandomNums.assign((UINT)(1 << powRange(randEngine)), UINT_MAX);
+	UINT elemCount = 1 << powRange(randEngine);
+	m_RandomNums.assign(elemCount, UINT_MAX);
 	// 填充随机数目的随机数，数目在一半容量到最大容量之间
 	std::uniform_int_distribution<UINT> numsCountRange((UINT)m_RandomNums.size() / 2,
 		(UINT)m_RandomNums.size());

@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
+# Visual Studio 16
 VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2019 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2019 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle(2019 Win10)", "02 Rendering a Triangle\02 Rendering a Triangle(2019 Win10).vcxproj", "{642984F4-05C5-4A68-8175-F8569E3C6223}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2019 Win10)", "03 Rendering a Cube\03 Rendering a Cube(2019 Win10).vcxproj", "{10FD2630-1709-4D22-853C-2EFE3A7EFD67}"
@@ -10,6 +12,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard(2019 Win10)", "05 Mouse and Keyboard\05 Mouse and Keyboard(2019 Win10).vcxproj", "{27BB9181-5063-485E-8A9F-3A56A82CE09E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting(2019 Win10)", "07 Lighting\07 Lighting(2019 Win10).vcxproj", "{FC9AD1DA-C424-4567-A49C-DADCF83E7557}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2019 Win10)", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2019 Win10).vcxproj", "{7DCC8C3F-6626-4F9A-B132-6F0A30246026}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09 Texture Mapping(2019 Win10)", "09 Texture Mapping\09 Texture Mapping(2019 Win10).vcxproj", "{D0C5DDCA-3CED-4CF3-9F0F-AA442DB14339}"
 EndProject
@@ -22,6 +26,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13 Living Without FX11(2019 Win10)", "13 Living Without FX11\13 Living Without FX11(2019 Win10).vcxproj", "{47166790-2FCE-4D9F-A99C-07DF28F48ED7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14 Depth Test(2019 Win10)", "14 Depth Test\14 Depth Test(2019 Win10).vcxproj", "{6DAC099E-BAB8-4082-9789-B8FB3B24E20C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginning(2019 Win10)", "15 Geometry Shader Beginning\15 Geometry Shader Beginning(2019 Win10).vcxproj", "{FE018766-060B-4E29-8405-CD05BDC9C0B7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16 Stream Output(2019 Win10)", "16 Stream Output\16 Stream Output(2019 Win10).vcxproj", "{2D3D5288-6CA3-43CF-B9CA-45FC6F8DFD43}"
 EndProject
@@ -44,12 +50,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning(2019 Win10)", "26 Compute Shader Beginning\26 Compute Shader Beginning(2019 Win10).vcxproj", "{885CC79F-776D-47C8-B761-0CA45E460A90}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(2019 Win10)", "27 Bitonic Sort\27 Bitonic Sort(2019 Win10).vcxproj", "{F8858B93-185B-4A0E-BB98-17F01AA13B2C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginning(2019 Win10)", "15 Geometry Shader Beginning\15 Geometry Shader Beginning(2019 Win10).vcxproj", "{FE018766-060B-4E29-8405-CD05BDC9C0B7}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2019 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2019 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2019 Win10)", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2019 Win10).vcxproj", "{7DCC8C3F-6626-4F9A-B132-6F0A30246026}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

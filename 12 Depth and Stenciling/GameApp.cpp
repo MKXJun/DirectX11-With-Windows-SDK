@@ -364,9 +364,9 @@ bool GameApp::InitResource()
 	// 初始化游戏对象
 	ComPtr<ID3D11ShaderResourceView> texture;
 	Material material;
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	// 初始化篱笆盒
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WireFence.dds", nullptr, texture.GetAddressOf()));
 	m_WireFence.SetBuffer(m_pd3dDevice, Geometry::CreateBox());
@@ -414,9 +414,9 @@ bool GameApp::InitResource()
 	
 		
 	// 初始化水
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
-	material.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
+	material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\water.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Water.SetBuffer(m_pd3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(10.0f, 10.0f)));
@@ -424,9 +424,9 @@ bool GameApp::InitResource()
 	m_Water.SetMaterial(material);
 
 	// 初始化镜面
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
-	material.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
+	material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Mirror.SetBuffer(m_pd3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
@@ -471,17 +471,17 @@ bool GameApp::InitResource()
 	// 初始化不会变化的值
 	m_CBRarely.reflection = XMMatrixTranspose(XMMatrixReflect(XMVectorSet(0.0f, 0.0f, -1.0f, 10.0f)));
 	// 环境光
-	m_CBRarely.dirLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_CBRarely.dirLight[0].Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	m_CBRarely.dirLight[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_CBRarely.dirLight[0].Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	m_CBRarely.dirLight[0].ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_CBRarely.dirLight[0].diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_CBRarely.dirLight[0].specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_CBRarely.dirLight[0].direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	// 灯光
-	m_CBRarely.pointLight[0].Position = XMFLOAT3(0.0f, 15.0f, 0.0f);
-	m_CBRarely.pointLight[0].Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_CBRarely.pointLight[0].Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	m_CBRarely.pointLight[0].Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_CBRarely.pointLight[0].Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	m_CBRarely.pointLight[0].Range = 25.0f;
+	m_CBRarely.pointLight[0].position = XMFLOAT3(0.0f, 15.0f, 0.0f);
+	m_CBRarely.pointLight[0].ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_CBRarely.pointLight[0].diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	m_CBRarely.pointLight[0].specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_CBRarely.pointLight[0].att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	m_CBRarely.pointLight[0].range = 25.0f;
 	m_CBRarely.numDirLight = 1;
 	m_CBRarely.numPointLight = 1;
 	m_CBRarely.numSpotLight = 0;

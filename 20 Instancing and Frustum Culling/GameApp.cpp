@@ -261,16 +261,16 @@ bool GameApp::InitResource()
 
 	// ·½Ïò¹â
 	DirectionalLight dirLight[4];
-	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
-	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];
-	dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	dirLight[1].direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
 	dirLight[2] = dirLight[0];
-	dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	dirLight[2].direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
 	dirLight[3] = dirLight[0];
-	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 

@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2017 Win10)", "03 Rendering a Cube\03 Rendering a Cube(2017 Win10).vcxproj", "{10FD2630-1709-4D22-853C-2EFE3A7EFD67}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2017 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2017 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle(2017 Win10)", "02 Rendering a Triangle\02 Rendering a Triangle(2017 Win10).vcxproj", "{642984F4-05C5-4A68-8175-F8569E3C6223}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2017 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2017 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2017 Win10)", "03 Rendering a Cube\03 Rendering a Cube(2017 Win10).vcxproj", "{10FD2630-1709-4D22-853C-2EFE3A7EFD67}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard(2017 Win10)", "05 Mouse and Keyboard\05 Mouse and Keyboard(2017 Win10).vcxproj", "{27BB9181-5063-485E-8A9F-3A56A82CE09E}"
 EndProject

@@ -304,9 +304,9 @@ bool GameApp::InitResource()
 	Model model;
 	// 球体
 	model.SetMesh(m_pd3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), 
 		L"Texture\\stone.dds", 
@@ -316,9 +316,9 @@ bool GameApp::InitResource()
 	// 地面
 	model.SetMesh(m_pd3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); 
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); 
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\floor.dds",
@@ -328,9 +328,9 @@ bool GameApp::InitResource()
 	// 柱体
 	model.SetMesh(m_pd3dDevice,
 		Geometry::CreateCylinder(0.5f, 2.0f));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\bricks.dds",
@@ -362,16 +362,16 @@ bool GameApp::InitResource()
 
 	// 方向光
 	DirectionalLight dirLight[4];
-	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];
-	dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	dirLight[1].direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
 	dirLight[2] = dirLight[0];
-	dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	dirLight[2].direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
 	dirLight[3] = dirLight[0];
-	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 

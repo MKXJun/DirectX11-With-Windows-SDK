@@ -226,12 +226,12 @@ bool GameApp::InitResource()
 	m_House.SetModel(Model(m_pd3dDevice, m_ObjReader));
 	// 三角形(带反面)
 	m_TriangleMesh.vertexVec.assign({
-		{XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)},
-		{XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)}
+		VertexPosNormalTex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
+		VertexPosNormalTex(XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
+		VertexPosNormalTex(XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
+		VertexPosNormalTex(XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2()),
+		VertexPosNormalTex(XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2()),
+		VertexPosNormalTex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2())
 		});
 	m_TriangleMesh.indexVec.assign({ 0, 1, 2, 3, 4, 5 });
 	m_Triangle.SetModel(Model(m_pd3dDevice, m_TriangleMesh));
@@ -260,10 +260,10 @@ bool GameApp::InitResource()
 
 	// 方向光
 	DirectionalLight dirLight;
-	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	dirLight.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 16.0f);
-	dirLight.Direction = XMFLOAT3(-0.707f, -0.707f, 0.707f);
+	dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 16.0f);
+	dirLight.direction = XMFLOAT3(-0.707f, -0.707f, 0.707f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 
 	// 默认只按对象绘制

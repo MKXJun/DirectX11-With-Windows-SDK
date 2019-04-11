@@ -328,14 +328,14 @@ bool GameApp::InitResource()
 	// 初始化游戏对象
 	ComPtr<ID3D11ShaderResourceView> texture;
 	Material material;
-	material.Ambient = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
-	material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	material.Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 16.0f);
+	material.ambient = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
+	material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	material.specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 16.0f);
 
 	m_WoodCrateMat = material;
-	m_ShadowMat.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_ShadowMat.Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
-	m_ShadowMat.Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 16.0f);
+	m_ShadowMat.ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	m_ShadowMat.diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.5f);
+	m_ShadowMat.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 16.0f);
 
 	// 初始化木盒
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf()));
@@ -383,9 +383,9 @@ bool GameApp::InitResource()
 	m_Walls[4].SetWorldMatrix(XMMatrixRotationY(XM_PIDIV2) * XMMatrixRotationZ(-XM_PIDIV2) * XMMatrixTranslation(-10.0f, 3.0f, 0.0f));
 
 	// 初始化镜面
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
-	material.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
+	material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Mirror.SetBuffer(m_pd3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
@@ -422,19 +422,19 @@ bool GameApp::InitResource()
 
 	// 环境光
 	DirectionalLight dirLight;
-	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 	// 灯光
 	PointLight pointLight;
-	pointLight.Position = XMFLOAT3(0.0f, 10.0f, -10.0f);
-	pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	pointLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	pointLight.Range = 25.0f;
+	pointLight.position = XMFLOAT3(0.0f, 10.0f, -10.0f);
+	pointLight.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	pointLight.diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+	pointLight.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	pointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	pointLight.range = 25.0f;
 	m_BasicEffect.SetPointLight(0, pointLight);
 
 	return true;

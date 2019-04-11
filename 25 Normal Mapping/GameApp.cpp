@@ -246,9 +246,9 @@ bool GameApp::InitResource()
 	// 地面
 	m_GroundModel.SetMesh(m_pd3dDevice,
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
-	m_GroundModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_GroundModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	m_GroundModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_GroundModel.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_GroundModel.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_GroundModel.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	m_GroundModel.modelParts[0].material.Reflect = XMFLOAT4();
 	m_GroundModel.modelParts[0].texDiffuse = m_FloorDiffuse;
 	m_Ground.SetModel(m_GroundModel);
@@ -256,9 +256,9 @@ bool GameApp::InitResource()
 	// 带切线向量的地面
 	m_GroundTModel.SetMesh(m_pd3dDevice, Geometry::CreatePlane<VertexPosNormalTangentTex>(
 		XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
-	m_GroundTModel.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_GroundTModel.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	m_GroundTModel.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_GroundTModel.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_GroundTModel.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_GroundTModel.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	m_GroundTModel.modelParts[0].material.Reflect = XMFLOAT4();
 	m_GroundTModel.modelParts[0].texDiffuse = m_FloorDiffuse;
 	m_GroundT.SetModel(m_GroundTModel);
@@ -273,9 +273,9 @@ bool GameApp::InitResource()
 		texDiffuse.GetAddressOf()));
 
 	model.SetMesh(m_pd3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_Sphere.SetModel(std::move(model));
@@ -288,9 +288,9 @@ bool GameApp::InitResource()
 
 	model.SetMesh(m_pd3dDevice,
 		Geometry::CreateCylinder(0.5f, 2.0f));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_Cylinder.SetModel(std::move(model));
@@ -298,9 +298,9 @@ bool GameApp::InitResource()
 	// 带切线向量的柱体
 	model.SetMesh(m_pd3dDevice,
 		Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 2.0f));
-	model.modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_CylinderT.SetModel(std::move(model));
@@ -328,16 +328,16 @@ bool GameApp::InitResource()
 
 	// 方向光
 	DirectionalLight dirLight[4];
-	dirLight[0].Ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];
-	dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	dirLight[1].direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
 	dirLight[2] = dirLight[0];
-	dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	dirLight[2].direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
 	dirLight[3] = dirLight[0];
-	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 

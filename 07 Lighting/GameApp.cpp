@@ -5,7 +5,13 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance), 
+	m_IndexCount(),
+	m_VSConstantBuffer(),
+	m_PSConstantBuffer(),
+	m_DirLight(),
+	m_PointLight(),
+	m_SpotLight()
 {
 }
 
@@ -149,26 +155,26 @@ bool GameApp::InitResource()
 
 	// 初始化默认光照
 	// 方向光
-	m_DirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_DirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	m_DirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_DirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	m_DirLight.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_DirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	m_DirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_DirLight.direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	// 点光
-	m_PointLight.Position = XMFLOAT3(0.0f, 0.0f, -10.0f);
-	m_PointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	m_PointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	m_PointLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_PointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	m_PointLight.Range = 25.0f;
+	m_PointLight.position = XMFLOAT3(0.0f, 0.0f, -10.0f);
+	m_PointLight.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	m_PointLight.diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	m_PointLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_PointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	m_PointLight.range = 25.0f;
 	// 聚光灯
-	m_SpotLight.Position = XMFLOAT3(0.0f, 0.0f, -5.0f);
-	m_SpotLight.Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_SpotLight.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	m_SpotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_SpotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_SpotLight.Att = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	m_SpotLight.Spot = 12.0f;
-	m_SpotLight.Range = 10000.0f;
+	m_SpotLight.position = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	m_SpotLight.direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_SpotLight.ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	m_SpotLight.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_SpotLight.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_SpotLight.att = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	m_SpotLight.spot = 12.0f;
+	m_SpotLight.range = 10000.0f;
 	// 初始化用于VS的常量缓冲区的值
 	m_VSConstantBuffer.world = XMMatrixIdentity();			
 	m_VSConstantBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
@@ -180,9 +186,9 @@ bool GameApp::InitResource()
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixIdentity();
 	
 	// 初始化用于PS的常量缓冲区的值
-	m_PSConstantBuffer.material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_PSConstantBuffer.material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_PSConstantBuffer.material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
+	m_PSConstantBuffer.material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_PSConstantBuffer.material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_PSConstantBuffer.material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	// 使用默认平行光
 	m_PSConstantBuffer.dirLight = m_DirLight;
 	// 注意不要忘记设置此处的观察位置，否则高亮部分会有问题

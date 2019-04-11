@@ -20,6 +20,16 @@ struct ModelPart
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	ModelPart() : material(), texDiffuse(), vertexBuffer(), indexBuffer(),
+		vertexCount(), indexCount(), indexFormat() {}
+
+	ModelPart(const ModelPart&) = default;
+	ModelPart& operator=(const ModelPart&) = default;
+
+	ModelPart(ModelPart&&) = default;
+	ModelPart& operator=(ModelPart&&) = default;
+
+
 	Material material;
 	ComPtr<ID3D11ShaderResourceView> texDiffuse;
 	ComPtr<ID3D11Buffer> vertexBuffer;

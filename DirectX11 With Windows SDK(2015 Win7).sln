@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2015 Win7)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2015 Win7).vcxproj", "{8AB11115-A1BE-4438-93F6-09B3233242E8}"
 EndProject

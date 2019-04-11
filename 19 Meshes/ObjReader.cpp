@@ -57,9 +57,9 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			//
 			objParts.emplace_back(ObjPart());
 			// 提供默认材质
-			objParts.back().material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-			objParts.back().material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-			objParts.back().material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			objParts.back().material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+			objParts.back().material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+			objParts.back().material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 			vertexCache.clear();
 		}
@@ -406,7 +406,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			//
 			// 环境光反射颜色
 			//
-			XMFLOAT4& ambient = materials[currMtl].Ambient;
+			XMFLOAT4& ambient = materials[currMtl].ambient;
 			wfin >> ambient.x >> ambient.y >> ambient.z;
 			if (ambient.w == 0.0f)
 				ambient.w = 1.0f;
@@ -416,7 +416,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			//
 			// 漫射光反射颜色
 			//
-			XMFLOAT4& diffuse = materials[currMtl].Diffuse;
+			XMFLOAT4& diffuse = materials[currMtl].diffuse;
 			wfin >> diffuse.x >> diffuse.y >> diffuse.z;
 			if (diffuse.w == 0.0f)
 				diffuse.w = 1.0f;
@@ -426,7 +426,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			//
 			// 镜面光反射颜色
 			//
-			XMFLOAT4& specular = materials[currMtl].Specular;
+			XMFLOAT4& specular = materials[currMtl].specular;
 			wfin >> specular.x >> specular.y >> specular.z;
 		}
 		else if (wstr == L"Ns")
@@ -434,7 +434,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			//
 			// 镜面系数
 			//
-			wfin >> materials[currMtl].Specular.w;
+			wfin >> materials[currMtl].specular.w;
 		}
 		else if (wstr == L"d" || wstr == L"Tr")
 		{
@@ -445,8 +445,8 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			wfin >> alpha;
 			if (wstr == L"Tr")
 				alpha = 1.0f - alpha;
-			materials[currMtl].Ambient.w = alpha;
-			materials[currMtl].Diffuse.w = alpha;
+			materials[currMtl].ambient.w = alpha;
+			materials[currMtl].diffuse.w = alpha;
 		}
 		else if (wstr == L"map_Kd")
 		{

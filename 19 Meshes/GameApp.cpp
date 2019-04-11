@@ -203,19 +203,19 @@ bool GameApp::InitResource()
 
 	// 环境光
 	DirectionalLight dirLight;
-	dirLight.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 	// 灯光
 	PointLight pointLight;
-	pointLight.Position = XMFLOAT3(0.0f, 20.0f, 0.0f);
-	pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	pointLight.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	pointLight.Att = XMFLOAT3(0.0f, 0.1f, 0.0f);
-	pointLight.Range = 30.0f;	
+	pointLight.position = XMFLOAT3(0.0f, 20.0f, 0.0f);
+	pointLight.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	pointLight.diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	pointLight.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	pointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
+	pointLight.range = 30.0f;	
 	m_BasicEffect.SetPointLight(0, pointLight);
 
 	return true;

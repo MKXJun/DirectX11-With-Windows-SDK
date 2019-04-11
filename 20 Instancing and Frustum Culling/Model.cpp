@@ -1,19 +1,23 @@
 #include "Model.h"
 #include "d3dUtil.h"
 #include "DXTrace.h"
+
 using namespace DirectX;
 
 Model::Model()
+	: modelParts(), boundingBox(), vertexStride()
 {
 }
 
 Model::Model(ComPtr<ID3D11Device> device, const ObjReader & model)
+	: modelParts(), boundingBox(), vertexStride()
 {
 	SetModel(device, model);
 }
 
 Model::Model(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize, UINT vertexCount,
 	const void * indices, UINT indexCount, DXGI_FORMAT indexFormat)
+	: modelParts(), boundingBox(), vertexStride()
 {
 	SetMesh(device, vertices, vertexSize, vertexCount, indices, indexCount, indexFormat);
 }
@@ -102,9 +106,9 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT ver
 	modelParts[0].indexCount = indexCount;
 	modelParts[0].indexFormat = indexFormat;
 
-	modelParts[0].material.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	modelParts[0].material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	modelParts[0].material.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// …Ë÷√∂•µ„ª∫≥Â«¯√Ë ˆ
 	D3D11_BUFFER_DESC vbd;

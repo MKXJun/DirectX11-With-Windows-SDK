@@ -401,7 +401,8 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateCylinderNoCap(f
 		theta = i * per_theta;
 		vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
 			XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, 1.0f) };
-		InsertVertexElement(meshData.vertexVec[(slices + 1) + i], vertexData);
+		UINT vIndex = (slices + 1) + i;
+		InsertVertexElement(meshData.vertexVec[vIndex], vertexData);
 	}
 
 	// ·ÅÈëË÷Òý
@@ -499,4 +500,5 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreatePlane(float cen
 }
 
 #endif
+
 

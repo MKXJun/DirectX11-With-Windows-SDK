@@ -202,16 +202,16 @@ bool GameApp::InitResource()
 
 	// 方向光
 	DirectionalLight dirLight;
-	dirLight.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	dirLight.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	dirLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	dirLight.Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	dirLight.direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 	// 材质
 	Material material;
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	m_BasicEffect.SetMaterial(material);
 	// 摄像机位置
 	m_BasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));

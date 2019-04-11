@@ -287,9 +287,9 @@ bool GameApp::InitResource()
 	InitPointSpritesBuffer();
 
 	// 初始化树的材质
-	m_TreeMat.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_TreeMat.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_TreeMat.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	m_TreeMat.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_TreeMat.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_TreeMat.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化地板
@@ -297,9 +297,9 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
 	m_Ground.SetTexture(texture);
 	Material material;
-	material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	m_Ground.SetMaterial(material);
 
 	// ******************
@@ -308,16 +308,16 @@ bool GameApp::InitResource()
 
 	// 方向光
 	DirectionalLight dirLight[4];
-	dirLight[0].Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	dirLight[0].Diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
-	dirLight[0].Specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	dirLight[0].Direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
+	dirLight[0].ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];
-	dirLight[1].Direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
+	dirLight[1].direction = XMFLOAT3(0.577f, -0.577f, 0.577f);
 	dirLight[2] = dirLight[0];
-	dirLight[2].Direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
+	dirLight[2].direction = XMFLOAT3(0.577f, -0.577f, -0.577f);
 	dirLight[3] = dirLight[0];
-	dirLight[3].Direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
+	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 

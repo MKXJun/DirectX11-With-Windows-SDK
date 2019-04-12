@@ -7,7 +7,7 @@
 2019/4/11 v1.24.9</br>
 -修改.sln文件属性</br>
 -消除大部分Warning C26495，部分类添加默认构造函数 (#3)</br>
--修改LightHelper类成员拼写
+-修改LightHelper类成员拼写，并调整Geometry类</br>
 
 2019/4/10 v1.24.8</br>
 -VS2015的Windows SDK版本从8.1上调成10.0.14393.0</br>

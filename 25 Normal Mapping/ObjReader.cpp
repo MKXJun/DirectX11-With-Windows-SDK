@@ -35,7 +35,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 	std::wifstream wfin(objFileName);
 	// ÇÐ»»ÖÐÎÄ
 	std::locale china("chs");
-	wfin.imbue(china);
+	china = wfin.imbue(china);
 	for (;;)
 	{
 		std::wstring wstr;
@@ -365,7 +365,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 
 	std::wifstream wfin(mtlFileName);
 	std::locale china("chs");
-	wfin.imbue(china);
+	china = wfin.imbue(china);
 
 
 	if (!wfin.is_open())

@@ -5,7 +5,10 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::ThirdPerson),
+	m_ShadowMat(),
+	m_WoodCrateMat()
 {
 }
 
@@ -333,7 +336,7 @@ bool GameApp::InitResource()
 	for (int i = 1; i <= 60; ++i)
 	{
 		wsprintf(wstr, L"Texture\\BoltAnim\\Bolt%03d.bmp", i);
-		HR(CreateWICTextureFromFile(m_pd3dDevice.Get(), wstr, nullptr, mBoltSRVs[i - 1].GetAddressOf()));
+		HR(CreateWICTextureFromFile(m_pd3dDevice.Get(), wstr, nullptr, mBoltSRVs[static_cast<size_t>(i) - 1].GetAddressOf()));
 	}
 
 	m_BoltAnim.SetBuffer(m_pd3dDevice, Geometry::CreateCylinderNoCap(4.0f, 4.0f));
@@ -399,7 +402,6 @@ bool GameApp::InitResource()
 	// ******************
 	// ³õÊ¼»¯ÉãÏñ»ú
 	//
-	m_CameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

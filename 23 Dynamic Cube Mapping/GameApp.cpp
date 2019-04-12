@@ -5,7 +5,11 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::Free),
+	m_Eta(1.0f / 1.51f),
+	m_SkyBoxMode(SkyBoxMode::Daylight),
+	m_SphereMode(SphereMode::Reflection)
 {
 }
 
@@ -290,12 +294,7 @@ bool GameApp::InitResource()
 		L"Texture\\desertcube1024.dds",
 		5000.0f, 256);
 
-	m_SkyBoxMode = SkyBoxMode::Daylight;
 	m_BasicEffect.SetTextureCube(m_pDaylight->GetDynamicTextureCube());
-
-	// 初始化折射率(空气/镜面)
-	m_SphereMode = SphereMode::Reflection;
-	m_Eta = 1.0f / 1.51f;
 
 	// ******************
 	// 初始化游戏对象

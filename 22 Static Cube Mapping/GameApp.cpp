@@ -5,7 +5,9 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::Free),
+	m_SkyBoxMode(SkyBoxMode::Daylight)
 {
 }
 
@@ -216,7 +218,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化天空盒相关
 
-
 	m_pDaylight = std::make_unique<SkyRender>(
 		m_pd3dDevice, m_pd3dImmediateContext, 
 		L"Texture\\daylight.jpg", 
@@ -235,7 +236,6 @@ bool GameApp::InitResource()
 		L"Texture\\desertcube1024.dds",
 		5000.0f);
 
-	m_SkyBoxMode = SkyBoxMode::Daylight;
 	m_BasicEffect.SetTextureCube(m_pDaylight->GetTextureCube());
 	// ******************
 	// 初始化游戏对象
@@ -282,7 +282,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化摄像机
 	//
-	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

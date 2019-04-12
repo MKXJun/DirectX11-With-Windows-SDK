@@ -55,7 +55,7 @@ public:
 
 public:
 	// 必须显式指定
-	Impl() = default;
+	Impl() : m_IsDirty() {}
 	~Impl() = default;
 
 public:

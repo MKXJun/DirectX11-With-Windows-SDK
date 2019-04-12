@@ -43,12 +43,18 @@ class ObjReader
 public:
 	struct ObjPart
 	{
+		ObjPart() = default;
+		~ObjPart() = default;
+
 		Material material;							// 材质
 		std::vector<VertexPosNormalTex> vertices;	// 顶点集合
 		std::vector<WORD> indices16;				// 顶点数不超过65535时使用
 		std::vector<DWORD> indices32;				// 顶点数超过65535时使用
 		std::wstring texStrDiffuse;					// 漫射光纹理文件名，需为相对路径，在mbo必须占260字节
 	};
+
+	ObjReader() : vMin(), vMax() {}
+	~ObjReader() = default;
 
 	// 指定.mbo文件的情况下，若.mbo文件存在，优先读取该文件
 	// 否则会读取.obj文件
@@ -81,3 +87,4 @@ public:
 
 
 #endif
+

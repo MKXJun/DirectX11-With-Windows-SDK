@@ -60,7 +60,6 @@ private:
 	ObjReader m_ObjReader;									    // 模型读取对象
 
 	bool m_PrintScreenStarted;								    // 截屏当前帧
-	bool m_EscapePressed;									    // 退出键按下
 	bool m_FadeUsed;											// 是否使用淡入/淡出
 	float m_FadeAmount;										    // 淡入/淡出系数
 	float m_FadeSign;										    // 1.0f表示淡入，-1.0f表示淡出

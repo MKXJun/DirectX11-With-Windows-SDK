@@ -5,7 +5,10 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::ThirdPerson),
+	m_ShadowMat(),
+	m_WoodCrateMat()
 {
 }
 
@@ -397,7 +400,6 @@ bool GameApp::InitResource()
 	// ³õÊ¼»¯ÉãÏñ»ú
 	//
 
-	m_CameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

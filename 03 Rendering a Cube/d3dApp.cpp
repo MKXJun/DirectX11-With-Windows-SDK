@@ -125,7 +125,7 @@ void D3DApp::OnResize()
 		assert(m_pSwapChain1);
 	}
 
-	// 释放交换链的相关资源
+	// 释放渲染管线输出用到的相关资源
 	m_pRenderTargetView.Reset();
 	m_pDepthStencilView.Reset();
 	m_pDepthStencilBuffer.Reset();

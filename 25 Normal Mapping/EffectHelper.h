@@ -43,6 +43,9 @@ struct CBufferBase
 	template<class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	CBufferBase() : isDirty() {}
+	~CBufferBase() = default;
+
 	BOOL isDirty;
 	ComPtr<ID3D11Buffer> cBuffer;
 
@@ -60,6 +63,8 @@ template<UINT startSlot, class T>
 struct CBufferObject : CBufferBase
 {
 	T data;
+
+	CBufferObject() : CBufferBase(), data() {}
 
 	HRESULT CreateBuffer(ComPtr<ID3D11Device> device) override
 	{

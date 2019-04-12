@@ -75,12 +75,14 @@ struct Model
 
 template<class VertexType, class IndexType>
 inline Model::Model(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+	: modelParts(), boundingBox(), vertexStride()
 {
 	SetMesh(device, meshData);
 }
 
 template<class VertexType, class IndexType>
 inline Model::Model(ComPtr<ID3D11Device> device, const std::vector<VertexType> & vertices, const std::vector<IndexType>& indices)
+	: modelParts(), boundingBox(), vertexStride()
 {
 	SetMesh(device, vertices, indices);
 }

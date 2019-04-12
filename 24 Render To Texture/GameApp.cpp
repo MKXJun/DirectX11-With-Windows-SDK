@@ -5,7 +5,12 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::Free),
+	m_FadeAmount(0.0f),
+	m_FadeSign(1.0f),
+	m_FadeUsed(true),	// 开始淡入
+	m_PrintScreenStarted(false)
 {
 }
 
@@ -267,11 +272,6 @@ void GameApp::DrawScene()
 
 bool GameApp::InitResource()
 {
-	m_PrintScreenStarted = false;
-	m_FadeUsed = true;	// 开始淡入
-	m_FadeAmount = 0.0f;
-	m_FadeSign = 1.0f;
-
 
 	// ******************
 	// 初始化用于Render-To-Texture的对象

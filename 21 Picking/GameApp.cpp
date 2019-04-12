@@ -5,7 +5,8 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::FirstPerson)
 {
 }
 
@@ -239,7 +240,6 @@ bool GameApp::InitResource()
 	// ******************
 	// ³õÊ¼»¯ÉãÏñ»ú
 	//
-	m_CameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

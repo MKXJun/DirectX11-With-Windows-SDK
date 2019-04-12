@@ -5,7 +5,13 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::Free),
+	m_EnableAlphaToCoverage(true),
+	m_FogEnabled(true),
+	m_FogRange(75.0f),
+	m_IsNight(false),
+	m_TreeMat()
 {
 }
 
@@ -324,7 +330,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化摄像机
 	//
-	m_CameraMode = CameraMode::Free;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
@@ -344,14 +349,6 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化雾效和天气等
 	//
-
-	// 默认白天，开启AlphaToCoverage
-	m_IsNight = false;
-	m_EnableAlphaToCoverage = true;
-
-	// 雾状态默认开启
-	m_FogEnabled = 1;
-	m_FogRange = 75.0f;
 
 	m_BasicEffect.SetFogState(m_FogEnabled);
 	m_BasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));

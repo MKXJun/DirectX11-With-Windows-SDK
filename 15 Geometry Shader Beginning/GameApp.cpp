@@ -193,7 +193,6 @@ bool GameApp::InitResource()
 	//
 
 	// 默认绘制三角形
-	m_ShowMode = Mode::SplitedTriangle;
 	ResetTriangle();
 	
 	// ******************

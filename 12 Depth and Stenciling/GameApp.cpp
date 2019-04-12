@@ -5,7 +5,12 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_CameraMode(CameraMode::ThirdPerson),
+	m_CBFrame(),
+	m_CBStates(),
+	m_CBOnResize(),
+	m_CBRarely()
 {
 }
 
@@ -454,7 +459,6 @@ bool GameApp::InitResource()
 	//
 
 	// 初始化每帧可能会变化的值
-	m_CameraMode = CameraMode::ThirdPerson;
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
@@ -527,7 +531,10 @@ bool GameApp::InitResource()
 }
 
 GameApp::GameObject::GameObject()
-	: m_WorldMatrix(
+	: m_IndexCount(),
+	m_Material(),
+	m_VertexStride(),
+	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,

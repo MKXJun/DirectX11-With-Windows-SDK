@@ -5,7 +5,12 @@ using namespace DirectX;
 using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
-	: D3DApp(hInstance)
+	: D3DApp(hInstance),
+	m_ShowMode(Mode::SplitedTriangle),
+	m_CurrIndex(),
+	m_IsWireFrame(false),
+	m_ShowNormal(false),
+	m_VertexCounts()
 {
 }
 
@@ -279,9 +284,6 @@ bool GameApp::InitResource()
 	//
 
 	// 默认绘制三角形
-	m_ShowMode = Mode::SplitedTriangle;
-	m_IsWireFrame = false;
-	m_ShowNormal = false;
 	ResetSplitedTriangle();
 	// 预先绑定顶点缓冲区
 	UINT stride = sizeof(VertexPosColor);

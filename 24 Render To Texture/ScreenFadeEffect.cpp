@@ -76,12 +76,12 @@ ScreenFadeEffect::~ScreenFadeEffect()
 {
 }
 
-ScreenFadeEffect::ScreenFadeEffect(ScreenFadeEffect && moveFrom)
+ScreenFadeEffect::ScreenFadeEffect(ScreenFadeEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-ScreenFadeEffect & ScreenFadeEffect::operator=(ScreenFadeEffect && moveFrom)
+ScreenFadeEffect & ScreenFadeEffect::operator=(ScreenFadeEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;

@@ -3,7 +3,10 @@
 using namespace DirectX;
 
 GameObject::GameObject()
-	: m_WorldMatrix(
+	: m_IndexCount(),
+	m_Material(),
+	m_VertexStride(),
+	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,

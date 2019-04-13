@@ -11,6 +11,7 @@ SkyRender::SkyRender(
 	const std::wstring & cubemapFilename,
 	float skySphereRadius,
 	bool generateMips)
+	: m_IndexCount()
 {
 	// 天空盒纹理加载
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
@@ -43,6 +44,7 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius,
 	bool generateMips)
+	: m_IndexCount()
 {
 	// 天空盒纹理加载
 

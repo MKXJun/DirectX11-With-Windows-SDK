@@ -117,8 +117,8 @@ public:
 	ScreenFadeEffect();
 	virtual ~ScreenFadeEffect() override;
 
-	ScreenFadeEffect(ScreenFadeEffect&& moveFrom);
-	ScreenFadeEffect& operator=(ScreenFadeEffect&& moveFrom);
+	ScreenFadeEffect(ScreenFadeEffect&& moveFrom) noexcept;
+	ScreenFadeEffect& operator=(ScreenFadeEffect&& moveFrom) noexcept;
 
 	// 获取单例
 	static ScreenFadeEffect& Get();
@@ -166,8 +166,8 @@ public:
 	MinimapEffect();
 	virtual ~MinimapEffect() override;
 
-	MinimapEffect(MinimapEffect&& moveFrom);
-	MinimapEffect& operator=(MinimapEffect&& moveFrom);
+	MinimapEffect(MinimapEffect&& moveFrom) noexcept;
+	MinimapEffect& operator=(MinimapEffect&& moveFrom) noexcept;
 
 	// 获取单例
 	static MinimapEffect& Get();

@@ -43,7 +43,7 @@ class ObjReader
 public:
 	struct ObjPart
 	{
-		ObjPart() = default;
+		ObjPart() : material() {}
 		~ObjPart() = default;
 
 		Material material;							// ²ÄÖÊ

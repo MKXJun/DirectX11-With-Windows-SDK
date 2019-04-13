@@ -79,12 +79,12 @@ MinimapEffect::~MinimapEffect()
 {
 }
 
-MinimapEffect::MinimapEffect(MinimapEffect && moveFrom)
+MinimapEffect::MinimapEffect(MinimapEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 }
 
-MinimapEffect & MinimapEffect::operator=(MinimapEffect && moveFrom)
+MinimapEffect & MinimapEffect::operator=(MinimapEffect && moveFrom) noexcept
 {
 	pImpl.swap(moveFrom.pImpl);
 	return *this;

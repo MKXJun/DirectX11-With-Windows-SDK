@@ -220,4 +220,24 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.GetAddressOf()));
 
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(RSCullClockWise.Get(), "RSCullClockWise");
+	D3D11SetDebugObjectName(RSNoCull.Get(), "RSNoCull");
+	D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
+
+	D3D11SetDebugObjectName(SSAnistropicWrap.Get(), "SSAnistropicWrap");
+	D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
+
+	D3D11SetDebugObjectName(BSAlphaToCoverage.Get(), "BSAlphaToCoverage");
+	D3D11SetDebugObjectName(BSNoColorWrite.Get(), "BSNoColorWrite");
+	D3D11SetDebugObjectName(BSTransparent.Get(), "BSTransparent");
+
+	D3D11SetDebugObjectName(DSSWriteStencil.Get(), "DSSWriteStencil");
+	D3D11SetDebugObjectName(DSSDrawWithStencil.Get(), "DSSDrawWithStencil");
+	D3D11SetDebugObjectName(DSSNoDoubleBlend.Get(), "DSSNoDoubleBlend");
+	D3D11SetDebugObjectName(DSSNoDepthTest.Get(), "DSSNoDepthTest");
+	D3D11SetDebugObjectName(DSSNoDepthWrite.Get(), "DSSNoDepthWrite");
 }

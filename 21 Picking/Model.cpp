@@ -143,6 +143,24 @@ void Model::SetMesh(ComPtr<ID3D11Device> device, const void * vertices, UINT ver
 
 }
 
+void Model::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+
+	size_t modelPartSize = modelParts.size();
+	for (int i = 0; i < modelPartSize; ++i)
+	{
+		std::string vbName = name + ".part[" + std::to_string(i) + "].VertexBuffer";
+		std::string ibName = name + ".part[" + std::to_string(i) + "].IndexBuffer";
+		modelParts[i].vertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
+		modelParts[i].indexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+	}
+
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
+}
+
 
 
 

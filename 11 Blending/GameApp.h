@@ -60,6 +60,10 @@ public:
 		void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 		// 绘制
 		void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
+
+		// 设置调试对象名
+		// 若缓冲区被重新设置，调试对象名也需要被重新设置
+		void SetDebugObjectName(const std::string& name);
 	private:
 		DirectX::XMFLOAT4X4 m_WorldMatrix;				    // 世界矩阵
 		Material m_Material;								// 物体材质
@@ -95,7 +99,7 @@ private:
 
 	ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// 用于2D的顶点输入布局
 	ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// 用于3D的顶点输入布局
-	ComPtr<ID3D11Buffer> m_pConstantBuffers[5];				    // 常量缓冲区
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[4];				    // 常量缓冲区
 
 	GameObject m_WireFence;									    // 篱笆盒
 	GameObject m_Floor;										    // 地板
@@ -110,8 +114,6 @@ private:
 	CBChangesEveryFrame m_CBFrame;							    // 该缓冲区存放仅在每一帧进行更新的变量
 	CBChangesOnResize m_CBOnResize;							    // 该缓冲区存放仅在窗口大小变化时更新的变量
 	CBChangesRarely m_CBRarely;								    // 该缓冲区存放不会再进行修改的变量
-
-	ComPtr<ID3D11SamplerState> m_pSamplerState;				    // 采样器状态
 
 	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
 	CameraMode m_CameraMode;									// 摄像机模式

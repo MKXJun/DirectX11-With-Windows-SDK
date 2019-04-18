@@ -30,11 +30,11 @@ void GameApp::Compute()
 {
 	assert(m_pd3dImmediateContext);
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-//	graphicsAnalysis->BeginCapture();
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+	graphicsAnalysis->BeginCapture();
+#endif
 
 	// GPU排序
 	m_Timer.Reset();
@@ -49,9 +49,9 @@ void GameApp::Compute()
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pTypedBufferCopy.Get(), 0, D3D11_MAP_READ, 0, &mappedData));
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	graphicsAnalysis->EndCapture();
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+	graphicsAnalysis->EndCapture();
+#endif
 
 	// CPU排序
 	m_Timer.Reset();
@@ -136,6 +136,20 @@ bool GameApp::InitResource()
 	HR(CreateShaderFromFile(L"HLSL\\MatrixTranspose_CS.cso",
 		L"HLSL\\MatrixTranspose_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf()));
 	HR(m_pd3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pMatrixTranspose_CS.GetAddressOf()));
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pConstantBuffer.Get(), "ConstantBuffer");
+	D3D11SetDebugObjectName(m_pTypedBuffer1.Get(), "TypedBuffer1");
+	D3D11SetDebugObjectName(m_pTypedBuffer2.Get(), "TypedBuffer2");
+	D3D11SetDebugObjectName(m_pTypedBufferCopy.Get(), "TypedBufferCopy");
+	D3D11SetDebugObjectName(m_pDataUAV1.Get(), "DataUAV1");
+	D3D11SetDebugObjectName(m_pDataUAV2.Get(), "DataUAV2");
+	D3D11SetDebugObjectName(m_pDataSRV1.Get(), "DataSRV1");
+	D3D11SetDebugObjectName(m_pDataSRV2.Get(), "DataSRV2");
+	D3D11SetDebugObjectName(m_pBitonicSort_CS.Get(), "BitonicSort_CS");
+	D3D11SetDebugObjectName(m_pMatrixTranspose_CS.Get(), "MatrixTranspose_CS");
 
 	return true;
 }

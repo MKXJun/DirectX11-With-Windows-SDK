@@ -139,6 +139,13 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 		HR(pBuffer->CreateBuffer(device));
 	}
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosTexLayout.Get(), "MinimapEffect.VertexPosTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "MinimapEffect.CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "MinimapEffect.CBStates");
+	D3D11SetDebugObjectName(pImpl->m_pMinimapVS.Get(), "MinimapEffect.Minimap_VS");
+	D3D11SetDebugObjectName(pImpl->m_pMinimapPS.Get(), "MinimapEffect.Minimap_PS");
+
 	return true;
 }
 

@@ -110,7 +110,7 @@ void GameApp::UpdateScene(float dt)
 	
 	if (m_CameraMode == CameraMode::Free)
 	{
-		// ********************
+		// ******************
 		// 第一人称/自由摄像机的操作
 		//
 
@@ -130,7 +130,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	else if (m_CameraMode == CameraMode::ThirdPerson)
 	{
-		// ********************
+		// ******************
 		// 第三人称摄像机的操作
 		//
 
@@ -150,7 +150,7 @@ void GameApp::UpdateScene(float dt)
 	// 重置滚轮值
 	m_pMouse->ResetScrollWheelValue();
 
-	// ********************
+	// ******************
 	// 摄像机模式切换
 	//
 	
@@ -209,7 +209,7 @@ void GameApp::DrawScene()
 
 	
 	
-	// *********************
+	// ******************
 	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
@@ -217,13 +217,13 @@ void GameApp::DrawScene()
 	// 标记镜面区域的模板值为1
 	// 不写入像素颜色
 	m_pd3dImmediateContext->RSSetState(nullptr);
-	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSMarkMirror.Get(), 1);
+	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSWriteStencil.Get(), 1);
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSNoColorWrite.Get(), nullptr, 0xFFFFFFFF);
 
 
 	m_Mirror.Draw(m_pd3dImmediateContext);
 
-	// ***********************
+	// ******************
 	// 2. 绘制不透明的反射物体
 	//
 
@@ -237,7 +237,7 @@ void GameApp::DrawScene()
 	// 绘制不透明物体，需要顺时针裁剪
 	// 仅对模板值为1的镜面区域绘制
 	m_pd3dImmediateContext->RSSetState(RenderStates::RSCullClockWise.Get());
-	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawReflection.Get(), 1);
+	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
 	m_pd3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 	
 	m_Walls[2].Draw(m_pd3dImmediateContext);
@@ -245,7 +245,7 @@ void GameApp::DrawScene()
 	m_Walls[4].Draw(m_pd3dImmediateContext);
 	m_Floor.Draw(m_pd3dImmediateContext);
 
-	// ***********************
+	// ******************
 	// 3. 绘制透明的反射物体
 	//
 
@@ -253,7 +253,7 @@ void GameApp::DrawScene()
 	// 仅对模板值为1的镜面区域绘制
 	// 透明混合
 	m_pd3dImmediateContext->RSSetState(RenderStates::RSNoCull.Get());
-	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawReflection.Get(), 1);
+	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 
 	m_WireFence.Draw(m_pd3dImmediateContext);
@@ -267,7 +267,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[1].Get(), 0);
 
 
-	// ************************
+	// ******************
 	// 4. 绘制不透明的正常物体
 	//
 
@@ -279,7 +279,7 @@ void GameApp::DrawScene()
 		wall.Draw(m_pd3dImmediateContext);
 	m_Floor.Draw(m_pd3dImmediateContext);
 
-	// ***********************
+	// ******************
 	// 5. 绘制透明的正常物体
 	//
 
@@ -292,7 +292,7 @@ void GameApp::DrawScene()
 	m_WireFence.Draw(m_pd3dImmediateContext);
 	m_Water.Draw(m_pd3dImmediateContext);
 
-	// ********************
+	// ******************
 	// 绘制Direct2D部分
 	//
 	if (m_pd2dRenderTarget != nullptr)
@@ -439,21 +439,6 @@ bool GameApp::InitResource()
 	m_Mirror.SetTexture(texture);
 	m_Mirror.SetMaterial(material);
 
-	// ********************
-	// 初始化采样器状态
-	//
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(m_pd3dDevice->CreateSamplerState(&sampDesc, m_pSamplerState.GetAddressOf()));
-
-	
 	// ******************
 	// 初始化常量缓冲区的值
 	//
@@ -526,7 +511,32 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->PSSetConstantBuffers(2, 1, m_pConstantBuffers[2].GetAddressOf());
 	m_pd3dImmediateContext->PSSetConstantBuffers(4, 1, m_pConstantBuffers[4].GetAddressOf());
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader3D.Get(), nullptr, 0);
-	m_pd3dImmediateContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());
+	m_pd3dImmediateContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout2D.Get(), "VertexPosTexLayout");
+	D3D11SetDebugObjectName(m_pVertexLayout3D.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "CBDrawing");
+	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "CBStates");
+	D3D11SetDebugObjectName(m_pConstantBuffers[2].Get(), "CBFrame");
+	D3D11SetDebugObjectName(m_pConstantBuffers[3].Get(), "CBOnResize");
+	D3D11SetDebugObjectName(m_pConstantBuffers[4].Get(), "CBRarely");
+	D3D11SetDebugObjectName(m_pVertexShader2D.Get(), "Basic_VS_2D");
+	D3D11SetDebugObjectName(m_pVertexShader3D.Get(), "Basic_VS_3D");
+	D3D11SetDebugObjectName(m_pPixelShader2D.Get(), "Basic_PS_2D");
+	D3D11SetDebugObjectName(m_pPixelShader3D.Get(), "Basic_PS_3D");
+	m_Floor.SetDebugObjectName("Floor");
+	m_Mirror.SetDebugObjectName("Mirror");
+	m_Water.SetDebugObjectName("Water");
+	m_Walls[0].SetDebugObjectName("Walls[0]");
+	m_Walls[1].SetDebugObjectName("Walls[1]");
+	m_Walls[2].SetDebugObjectName("Walls[2]");
+	m_Walls[3].SetDebugObjectName("Walls[3]");
+	m_Walls[4].SetDebugObjectName("Walls[4]");
+	m_WireFence.SetDebugObjectName("WireFence");
+
 	return true;
 }
 
@@ -631,4 +641,16 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
 	// 可以开始绘制
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
+}
+
+void GameApp::GameObject::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string vbName = name + ".VertexBuffer";
+	std::string ibName = name + ".IndexBuffer";
+	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
+	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
 }

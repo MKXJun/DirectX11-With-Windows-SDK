@@ -272,6 +272,13 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
+	// ******************
+	// 设置调试对象名
+	//
+	m_Ground.SetDebugObjectName("Ground");
+	m_Trees.SetDebugObjectName("Trees");
+
+
 	return true;
 }
 
@@ -309,5 +316,7 @@ void GameApp::CreateRandomTrees()
 		}
 		theta += XM_2PI / 16;
 	}
+
+	m_Trees.ResizeBuffer(m_pd3dDevice.Get(), 256);
 }
 

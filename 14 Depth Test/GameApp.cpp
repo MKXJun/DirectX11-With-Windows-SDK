@@ -213,14 +213,14 @@ void GameApp::DrawScene()
 
 	
 	
-	// *********************
+	// ******************
 	// 1. 给镜面反射区域写入值1到模板缓冲区
 	// 
 
 	m_BasicEffect.SetWriteStencilOnly(m_pd3dImmediateContext, 1);
 	m_Mirror.Draw(m_pd3dImmediateContext, m_BasicEffect);
 
-	// ***********************
+	// ******************
 	// 2. 绘制不透明的反射物体
 	//
 
@@ -235,7 +235,7 @@ void GameApp::DrawScene()
 	
 	m_WoodCrate.Draw(m_pd3dImmediateContext, m_BasicEffect);
 
-	// ***********************
+	// ******************
 	// 3. 绘制不透明反射物体的阴影
 	//
 
@@ -249,7 +249,7 @@ void GameApp::DrawScene()
 	m_BasicEffect.SetShadowState(false);
 	m_WoodCrate.SetMaterial(m_WoodCrateMat);
 
-	// ***********************
+	// ******************
 	// 4. 绘制需要混合的反射闪电动画和透明物体
 	//
 
@@ -261,7 +261,7 @@ void GameApp::DrawScene()
 	m_BasicEffect.SetRenderAlphaBlendWithStencil(m_pd3dImmediateContext, 1);
 	m_Mirror.Draw(m_pd3dImmediateContext, m_BasicEffect);
 	
-	// ************************
+	// ******************
 	// 5. 绘制不透明的正常物体
 	//
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext);
@@ -271,7 +271,7 @@ void GameApp::DrawScene()
 	m_Floor.Draw(m_pd3dImmediateContext, m_BasicEffect);
 	m_WoodCrate.Draw(m_pd3dImmediateContext, m_BasicEffect);
 
-	// ************************
+	// ******************
 	// 6. 绘制不透明正常物体的阴影
 	//
 	m_WoodCrate.SetMaterial(m_ShadowMat);
@@ -283,7 +283,7 @@ void GameApp::DrawScene()
 	m_BasicEffect.SetShadowState(false);			// 阴影关闭
 	m_WoodCrate.SetMaterial(m_WoodCrateMat);
 
-	// ************************
+	// ******************
 	// 7. 绘制需要混合的闪电动画
 	m_BasicEffect.SetDrawBoltAnimNoDepthWrite(m_pd3dImmediateContext);
 	m_BoltAnim.Draw(m_pd3dImmediateContext, m_BasicEffect);
@@ -438,6 +438,18 @@ bool GameApp::InitResource()
 	pointLight.range = 25.0f;
 	m_BasicEffect.SetPointLight(0, pointLight);
 	
+	// ******************
+	// 设置调试对象名
+	//
+	m_BoltAnim.SetDebugObjectName("BoltAnim");
+	m_Floor.SetDebugObjectName("Floor");
+	m_Mirror.SetDebugObjectName("Mirror");
+	m_Walls[0].SetDebugObjectName("Walls[0]");
+	m_Walls[1].SetDebugObjectName("Walls[1]");
+	m_Walls[2].SetDebugObjectName("Walls[2]");
+	m_Walls[3].SetDebugObjectName("Walls[3]");
+	m_Walls[4].SetDebugObjectName("Walls[4]");
+	m_WoodCrate.SetDebugObjectName("WoodCrate");
 
 	return true;
 }

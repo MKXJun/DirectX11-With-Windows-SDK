@@ -266,6 +266,9 @@ void GameApp::ResetTriangle()
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.ReleaseAndGetAddressOf()));
 	// 三角形顶点数
 	m_VertexCount = 3;
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "TriangleVertexBuffer");
 }
 
 void GameApp::ResetRoundWire()
@@ -303,6 +306,9 @@ void GameApp::ResetRoundWire()
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.ReleaseAndGetAddressOf()));
 	// 线框顶点数
 	m_VertexCount = 41;
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "CylinderVertexBuffer");
 }
 
 

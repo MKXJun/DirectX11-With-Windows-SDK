@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 
 
-// 环境光
+// 方向光
 struct DirectionalLight
 {
 	DirectionalLight() = default;

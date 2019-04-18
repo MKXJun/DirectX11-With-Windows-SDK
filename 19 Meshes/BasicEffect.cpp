@@ -147,6 +147,16 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		HR(pBuffer->CreateBuffer(device));
 	}
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBDrawing");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBOnResize");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pBasicObjectVS.Get(), "BasicObject_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicObjectPS.Get(), "BasicObject_PS");
+
+
 	return true;
 }
 

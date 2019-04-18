@@ -99,6 +99,9 @@ bool D3DApp::InitDirect3D()
 	m_pd3dDevice.As(&m_pd3dDevice1);
 	m_pd3dImmediateContext.As(&m_pd3dImmediateContext1);
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pd3dImmediateContext.Get(), "ImmediateContext");
+
 	return true;
 }
 

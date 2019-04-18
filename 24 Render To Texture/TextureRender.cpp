@@ -1,4 +1,5 @@
 #include "TextureRender.h"
+#include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace Microsoft::WRL;
 
@@ -140,4 +141,18 @@ void TextureRender::End(ComPtr<ID3D11DeviceContext> deviceContext)
 ComPtr<ID3D11ShaderResourceView> TextureRender::GetOutputTexture()
 {
 	return m_pOutputTextureSRV;
+}
+
+void TextureRender::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string DSVName = name + ".TextureDSV";
+	std::string SRVName = name + ".TextureSRV";
+	std::string RTVName = name + ".TextureRTV";
+	m_pOutputTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(DSVName.length()), DSVName.c_str());
+	m_pOutputTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(SRVName.length()), SRVName.c_str());
+	m_pOutputTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(RTVName.length()), RTVName.c_str());
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
 }

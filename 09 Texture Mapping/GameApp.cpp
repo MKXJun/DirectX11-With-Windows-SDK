@@ -206,6 +206,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 设置常量缓冲区描述
+	//
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -219,6 +220,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 初始化纹理和采样器状态
+	//
 
 	// 初始化木箱纹理
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, m_pWoodCrate.GetAddressOf()));
@@ -246,6 +248,7 @@ bool GameApp::InitResource()
 	
 	// ******************
 	// 初始化常量缓冲区的值
+	//
 
 	// 初始化用于VS的常量缓冲区的值
 	m_VSConstantBuffer.world = XMMatrixIdentity();			
@@ -298,9 +301,18 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->PSSetShaderResources(0, 1, m_pWoodCrate.GetAddressOf());
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader3D.Get(), nullptr, 0);
 	
-	
-	// 像素着色阶段默认设置木箱纹理
-	m_CurrMode = ShowMode::WoodCrate;
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout2D.Get(), "VertexPosTexLayout");
+	D3D11SetDebugObjectName(m_pVertexLayout3D.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "VSConstantBuffer");
+	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "PSConstantBuffer");
+	D3D11SetDebugObjectName(m_pVertexShader2D.Get(), "Basic_VS_2D");
+	D3D11SetDebugObjectName(m_pVertexShader3D.Get(), "Basic_VS_3D");
+	D3D11SetDebugObjectName(m_pPixelShader2D.Get(), "Basic_PS_2D");
+	D3D11SetDebugObjectName(m_pPixelShader3D.Get(), "Basic_PS_3D");
+	D3D11SetDebugObjectName(m_pSamplerState.Get(), "SSLinearWrap");
 
 	return true;
 }
@@ -347,6 +359,12 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
 	// 输入装配阶段的索引缓冲区设置
 	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), "IndexBuffer");
 
 	return true;
 }

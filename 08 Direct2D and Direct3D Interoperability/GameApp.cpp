@@ -195,6 +195,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 设置常量缓冲区描述
+	//
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -256,6 +257,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
+	//
 
 	// 设置图元类型，设定输入布局
 	m_pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -267,6 +269,15 @@ bool GameApp::InitResource()
 	// PS常量缓冲区对应HLSL寄存于b1的常量缓冲区
 	m_pd3dImmediateContext->PSSetConstantBuffers(1, 1, m_pConstantBuffers[1].GetAddressOf());
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0);
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "VSConstantBuffer");
+	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "PSConstantBuffer");
+	D3D11SetDebugObjectName(m_pVertexShader.Get(), "Light_VS");
+	D3D11SetDebugObjectName(m_pPixelShader.Get(), "Light_PS");
 
 	return true;
 }
@@ -311,6 +322,12 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexPosNormalColor> & meshDat
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
 	// 输入装配阶段的索引缓冲区设置
 	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), "IndexBuffer");
 
 	return true;
 }

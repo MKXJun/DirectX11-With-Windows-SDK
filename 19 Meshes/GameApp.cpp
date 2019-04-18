@@ -218,6 +218,13 @@ bool GameApp::InitResource()
 	pointLight.range = 30.0f;	
 	m_BasicEffect.SetPointLight(0, pointLight);
 
+	// ******************
+	// 设置调试对象名
+	//
+	m_Ground.SetDebugObjectName("Ground");
+	m_House.SetDebugObjectName("House");
+
+
 	return true;
 }
 

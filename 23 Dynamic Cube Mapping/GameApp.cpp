@@ -106,7 +106,7 @@ void GameApp::UpdateScene(float dt)
 
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
-	// ********************
+	// ******************
 	// 自由摄像机的操作
 	//
 
@@ -312,6 +312,7 @@ bool GameApp::InitResource()
 		nullptr, 
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Sphere.SetModel(std::move(model));
+	m_Sphere.ResizeBuffer(m_pd3dDevice, 5);
 	// 地面
 	model.SetMesh(m_pd3dDevice, 
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
@@ -336,6 +337,7 @@ bool GameApp::InitResource()
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Cylinder.SetModel(std::move(model));
+	m_Cylinder.ResizeBuffer(m_pd3dDevice, 5);
 
 	// ******************
 	// 初始化摄像机
@@ -373,6 +375,16 @@ bool GameApp::InitResource()
 	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
+
+	// ******************
+	// 设置调试对象名
+	//
+	m_Cylinder.SetDebugObjectName("Cylinder");
+	m_Ground.SetDebugObjectName("Ground");
+	m_Sphere.SetDebugObjectName("Sphere");
+	m_pDaylight->SetDebugObjectName("DayLight");
+	m_pSunset->SetDebugObjectName("Sunset");
+	m_pDesert->SetDebugObjectName("Desert");
 
 	return true;
 }

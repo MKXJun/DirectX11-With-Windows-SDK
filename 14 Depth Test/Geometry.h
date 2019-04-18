@@ -239,12 +239,12 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateBox(float width
 	vertexDataArr[13].pos = XMFLOAT3(w2, h2, -d2);
 	vertexDataArr[14].pos = XMFLOAT3(w2, h2, d2);
 	vertexDataArr[15].pos = XMFLOAT3(w2, -h2, d2);
-	// 前面
+	// 背面
 	vertexDataArr[16].pos = XMFLOAT3(w2, -h2, d2);
 	vertexDataArr[17].pos = XMFLOAT3(w2, h2, d2);
 	vertexDataArr[18].pos = XMFLOAT3(-w2, h2, d2);
 	vertexDataArr[19].pos = XMFLOAT3(-w2, -h2, d2);
-	// 后面
+	// 正面
 	vertexDataArr[20].pos = XMFLOAT3(-w2, -h2, -d2);
 	vertexDataArr[21].pos = XMFLOAT3(-w2, h2, -d2);
 	vertexDataArr[22].pos = XMFLOAT3(w2, h2, -d2);
@@ -268,11 +268,11 @@ inline Geometry::MeshData<VertexType, IndexType> Geometry::CreateBox(float width
 		vertexDataArr[i + 12].tangent = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 		vertexDataArr[i + 12].color = color;
 
-		vertexDataArr[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);	// 前面
+		vertexDataArr[i + 16].normal = XMFLOAT3(0.0f, 0.0f, 1.0f);	// 背面
 		vertexDataArr[i + 16].tangent = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i + 16].color = color;
 
-		vertexDataArr[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f); // 后面
+		vertexDataArr[i + 20].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);	// 正面
 		vertexDataArr[i + 20].tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 		vertexDataArr[i + 20].color = color;
 	}

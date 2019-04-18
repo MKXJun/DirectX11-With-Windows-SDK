@@ -350,6 +350,11 @@ void GameApp::ResetSplitedTriangle()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
 
 	// 三角形顶点数
 	m_VertexCounts[0] = 3;
@@ -362,6 +367,18 @@ void GameApp::ResetSplitedTriangle()
 		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
+
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
+
+	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "TriangleVertexBuffer[0]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "TriangleVertexBuffer[1]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[2].Get(), "TriangleVertexBuffer[2]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[3].Get(), "TriangleVertexBuffer[3]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[4].Get(), "TriangleVertexBuffer[4]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[5].Get(), "TriangleVertexBuffer[5]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[6].Get(), "TriangleVertexBuffer[6]");
 }
 
 void GameApp::ResetSplitedSnow()
@@ -401,6 +418,12 @@ void GameApp::ResetSplitedSnow()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
+
 	// 顶点数
 	m_VertexCounts[0] = 6;
 	// 初始化所有顶点缓冲区
@@ -412,6 +435,18 @@ void GameApp::ResetSplitedSnow()
 		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
+
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
+
+	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SnowVertexBuffer[0]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SnowVertexBuffer[1]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[2].Get(), "SnowVertexBuffer[2]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[3].Get(), "SnowVertexBuffer[3]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[4].Get(), "SnowVertexBuffer[4]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[5].Get(), "SnowVertexBuffer[5]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[6].Get(), "SnowVertexBuffer[6]");
 }
 
 void GameApp::ResetSplitedSphere()
@@ -450,6 +485,12 @@ void GameApp::ResetSplitedSphere()
 	InitData.pSysMem = vertices.data();
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
+
 	// 顶点数
 	m_VertexCounts[0] = 24;
 	// 初始化所有顶点缓冲区
@@ -461,6 +502,18 @@ void GameApp::ResetSplitedSphere()
 		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
+
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
+
+	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SphereVertexBuffer[0]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SphereVertexBuffer[1]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[2].Get(), "SphereVertexBuffer[2]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[3].Get(), "SphereVertexBuffer[3]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[4].Get(), "SphereVertexBuffer[4]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[5].Get(), "SphereVertexBuffer[5]");
+	D3D11SetDebugObjectName(m_pVertexBuffers[6].Get(), "SphereVertexBuffer[6]");
 }
 
 

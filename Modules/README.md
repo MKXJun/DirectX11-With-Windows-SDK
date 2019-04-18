@@ -14,5 +14,4 @@
 |Geometry|几何体生成类，可生成球体、柱体、立方体、平面|
 |Keyboard|从DXTK提炼出来专用于Windows桌面应用的键盘类|
 |Mouse|从DXTK提炼出来专用于Windows桌面应用的鼠标类|
-|TextureRender|一个使用方便的Render-To-Texture类|
 

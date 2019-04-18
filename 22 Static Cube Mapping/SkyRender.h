@@ -41,6 +41,9 @@ public:
 
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect& skyEffect, const Camera& camera);
 
+	// 设置调试对象名
+	void SetDebugObjectName(const std::string& name);
+
 private:
 	void InitResource(ComPtr<ID3D11Device> device, float skySphereRadius);
 

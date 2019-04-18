@@ -412,6 +412,28 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader3D.Get(), nullptr, 0);
 	m_pd3dImmediateContext->PSSetSamplers(0, 1, m_pSamplerState.GetAddressOf());
 
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout2D.Get(), "VertexPosTexLayout");
+	D3D11SetDebugObjectName(m_pVertexLayout3D.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(m_pConstantBuffers[0].Get(), "CBDrawing");
+	D3D11SetDebugObjectName(m_pConstantBuffers[1].Get(), "CBFrame");
+	D3D11SetDebugObjectName(m_pConstantBuffers[2].Get(), "CBOnResize");
+	D3D11SetDebugObjectName(m_pConstantBuffers[3].Get(), "CBRarely");
+	D3D11SetDebugObjectName(m_pVertexShader2D.Get(), "Basic_VS_2D");
+	D3D11SetDebugObjectName(m_pVertexShader3D.Get(), "Basic_VS_3D");
+	D3D11SetDebugObjectName(m_pPixelShader2D.Get(), "Basic_PS_2D");
+	D3D11SetDebugObjectName(m_pPixelShader3D.Get(), "Basic_PS_3D");
+	D3D11SetDebugObjectName(m_pSamplerState.Get(), "SSLinearWrap");
+	m_Floor.SetDebugObjectName("Floor");
+	m_WoodCrate.SetDebugObjectName("WoodCrate");
+	m_Walls[0].SetDebugObjectName("Walls[0]");
+	m_Walls[1].SetDebugObjectName("Walls[1]");
+	m_Walls[2].SetDebugObjectName("Walls[2]");
+	m_Walls[3].SetDebugObjectName("Walls[3]");
+
+
 	return true;
 }
 
@@ -507,4 +529,16 @@ void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
 	// 可以开始绘制
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
+}
+
+void GameApp::GameObject::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string vbName = name + ".VertexBuffer";
+	std::string ibName = name + ".IndexBuffer";
+	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
+	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
 }

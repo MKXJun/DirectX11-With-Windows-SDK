@@ -14,8 +14,8 @@ ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage		= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSNoColorWrite			= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSTransparent			= nullptr;
 
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSMarkMirror		= nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSDrawReflection = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil	= nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSDrawWithStencil= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDoubleBlend	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite	= nullptr;
@@ -152,7 +152,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSMarkMirror.GetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSWriteStencil.GetAddressOf()));
 
 	// 反射绘制深度/模板状态
 	// 由于要绘制反射镜面，需要更新深度
@@ -175,7 +175,7 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
 
-	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawReflection.GetAddressOf()));
+	HR(device->CreateDepthStencilState(&dsDesc, DSSDrawWithStencil.GetAddressOf()));
 
 	// 无二次混合深度/模板状态
 	// 允许默认深度测试
@@ -221,4 +221,23 @@ void RenderStates::InitAll(ComPtr<ID3D11Device> device)
 
 	HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.GetAddressOf()));
 
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(RSCullClockWise.Get(), "RSCullClockWise");
+	D3D11SetDebugObjectName(RSNoCull.Get(), "RSNoCull");
+	D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
+
+	D3D11SetDebugObjectName(SSAnistropicWrap.Get(), "SSAnistropicWrap");
+	D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
+
+	D3D11SetDebugObjectName(BSAlphaToCoverage.Get(), "BSAlphaToCoverage");
+	D3D11SetDebugObjectName(BSNoColorWrite.Get(), "BSNoColorWrite");
+	D3D11SetDebugObjectName(BSTransparent.Get(), "BSTransparent");
+
+	D3D11SetDebugObjectName(DSSWriteStencil.Get(), "DSSWriteStencil");
+	D3D11SetDebugObjectName(DSSDrawWithStencil.Get(), "DSSDrawWithStencil");
+	D3D11SetDebugObjectName(DSSNoDoubleBlend.Get(), "DSSNoDoubleBlend");
+	D3D11SetDebugObjectName(DSSNoDepthTest.Get(), "DSSNoDepthTest");
+	D3D11SetDebugObjectName(DSSNoDepthWrite.Get(), "DSSNoDepthWrite");
 }

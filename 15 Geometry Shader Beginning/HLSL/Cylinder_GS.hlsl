@@ -4,7 +4,7 @@
 [maxvertexcount(6)]
 void GS(line VertexPosHWNormalColor input[2], inout TriangleStream<VertexPosHWNormalColor> output)
 {
-    // *****************************
+    // ***************************
     // 要求圆线是顺时针的，然后自底向上构造圆柱侧面           
     //   -->      v2____v3
 	//  ______     |\   |

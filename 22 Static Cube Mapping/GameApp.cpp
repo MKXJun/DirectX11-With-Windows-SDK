@@ -104,7 +104,7 @@ void GameApp::UpdateScene(float dt)
 
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
-	// ********************
+	// ******************
 	// 自由摄像机的操作
 	//
 
@@ -315,6 +315,16 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
+
+	// ******************
+	// 设置调试对象名
+	//
+	m_Cylinder.SetDebugObjectName("Cylinder");
+	m_Ground.SetDebugObjectName("Ground");
+	m_Sphere.SetDebugObjectName("Sphere");
+	m_pDaylight->SetDebugObjectName("DayLight");
+	m_pSunset->SetDebugObjectName("Sunset");
+	m_pDesert->SetDebugObjectName("Desert");
 	return true;
 }
 

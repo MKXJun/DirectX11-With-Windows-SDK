@@ -269,6 +269,16 @@ bool GameApp::InitResource()
 	// 默认只按对象绘制
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
 
+
+	// ******************
+	// 设置调试对象名
+	//
+	m_Cube.SetDebugObjectName("Cube");
+	m_Cylinder.SetDebugObjectName("Cylinder");
+	m_House.SetDebugObjectName("House");
+	m_Sphere.SetDebugObjectName("Sphere");
+	m_Triangle.SetDebugObjectName("Triangle");
+
 	return true;
 }
 

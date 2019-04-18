@@ -66,6 +66,14 @@ public:
 	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
 	// 绘制实例
 	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
+	
+	//
+	// 调试 
+	//
+	
+	// 设置调试对象名
+	// 若模型被重新设置，调试对象名也需要被重新设置
+	void SetDebugObjectName(const std::string& name);
 
 private:
 	Model m_Model;												// 模型

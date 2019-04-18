@@ -29,6 +29,7 @@ struct ModelPart
 	ModelPart(ModelPart&&) = default;
 	ModelPart& operator=(ModelPart&&) = default;
 
+
 	Material material;
 	ComPtr<ID3D11ShaderResourceView> texDiffuse;
 	ComPtr<ID3D11Buffer> vertexBuffer;
@@ -73,6 +74,14 @@ struct Model
 
 	void SetMesh(ComPtr<ID3D11Device> device, const void* vertices, UINT vertexSize, UINT vertexCount,
 		const void * indices, UINT indexCount, DXGI_FORMAT indexFormat);
+
+	//
+	// 调试 
+	//
+
+	// 设置调试对象名
+	// 若模型被重新设置，调试对象名也需要被重新设置
+	void SetDebugObjectName(const std::string& name);
 
 	std::vector<ModelPart> modelParts;
 	DirectX::BoundingBox boundingBox;

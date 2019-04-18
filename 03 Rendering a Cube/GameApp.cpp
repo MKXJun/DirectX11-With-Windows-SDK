@@ -120,6 +120,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 索引数组
+	//
 	WORD indices[] = {
 		// 正面
 		0, 1, 2,
@@ -156,6 +157,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 设置常量缓冲区描述
+	//
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
 	cbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -177,6 +179,7 @@ bool GameApp::InitResource()
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源
+	//
 
 	// 输入装配阶段的顶点缓冲区设置
 	UINT stride = sizeof(VertexPosColor);	// 跨越字节数
@@ -192,6 +195,16 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
 
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0);
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pVertexLayout.Get(), "VertexPosColorLayout");
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), "IndexBuffer");
+	D3D11SetDebugObjectName(m_pConstantBuffer.Get(), "ConstantBuffer");
+	D3D11SetDebugObjectName(m_pVertexShader.Get(), "Cube_VS");
+	D3D11SetDebugObjectName(m_pPixelShader.Get(), "Cube_PS");
 
 	return true;
 }

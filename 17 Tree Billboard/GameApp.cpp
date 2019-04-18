@@ -355,7 +355,12 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetFogStart(15.0f);
 	m_BasicEffect.SetFogRange(75.0f);
 
-	
+	// ******************
+	// 设置调试对象名
+	//
+	m_Ground.SetDebugObjectName("Ground");
+	D3D11SetDebugObjectName(mPointSpritesBuffer.Get(), "PointSpritesVertexBuffer");
+	D3D11SetDebugObjectName(mTreeTexArray.Get(), "TreeTexArray");
 	
 	return true;
 }

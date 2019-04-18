@@ -11,6 +11,7 @@
 
 #include <d3d11_1.h>
 #include <wrl/client.h>
+#include <string>
 
 class TextureRender
 {
@@ -31,6 +32,9 @@ public:
 	void End(ComPtr<ID3D11DeviceContext> deviceContext);
 	// 获取渲染好的纹理
 	ComPtr<ID3D11ShaderResourceView> GetOutputTexture();
+
+	// 设置调试对象名
+	void SetDebugObjectName(const std::string& name);
 
 private:
 	ComPtr<ID3D11ShaderResourceView>	m_pOutputTextureSRV;	// 输出的纹理对应的着色器资源视图

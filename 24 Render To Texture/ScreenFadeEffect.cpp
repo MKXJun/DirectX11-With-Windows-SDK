@@ -137,6 +137,13 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 		HR(pBuffer->CreateBuffer(device));
 	}
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosTexLayout.Get(), "ScreenFadeEffect.VertexPosTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "ScreenFadeEffect.CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "ScreenFadeEffect.CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pScreenFadeVS.Get(), "ScreenFadeEffect.ScreenFade_VS");
+	D3D11SetDebugObjectName(pImpl->m_pScreenFadePS.Get(), "ScreenFadeEffect.ScreenFade_PS");
+
 	return true;
 }
 

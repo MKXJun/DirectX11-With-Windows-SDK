@@ -4,6 +4,13 @@
 #include "d3dApp.h"
 #include "Effects.h"
 #include "Vertex.h"
+// ±‡≥Ã≤∂ªÒ÷°
+#if defined(DEBUG) | defined(_DEBUG)
+#include <DXGItype.h>  
+#include <dxgi1_2.h>  
+#include <dxgi1_3.h>  
+#include <DXProgrammableCapture.h>  
+#endif
 
 class GameApp : public D3DApp
 {

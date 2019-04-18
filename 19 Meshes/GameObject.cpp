@@ -86,3 +86,8 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 	}
 }
 
+void GameObject::SetDebugObjectName(const std::string& name)
+{
+	m_Model.SetDebugObjectName(name);
+}
+

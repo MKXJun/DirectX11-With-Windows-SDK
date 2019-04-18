@@ -79,6 +79,20 @@ void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyE
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
 
+void SkyRender::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string texCubeName = name + ".CubeMapSRV";
+	std::string vbName = name + ".VertexBuffer";
+	std::string ibName = name + ".IndexBuffer";
+	m_pTextureCubeSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(texCubeName.length()), texCubeName.c_str());
+	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
+	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
+}
+
 void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 {
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
@@ -204,6 +218,24 @@ ComPtr<ID3D11ShaderResourceView> DynamicSkyRender::GetDynamicTextureCube()
 const Camera & DynamicSkyRender::GetCamera() const
 {
 	return m_pCamera;
+}
+
+void DynamicSkyRender::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	SkyRender::SetDebugObjectName(name);
+	std::string DSVName = name + ".dynamicCubeMapDSV";
+	std::string SRVName = name + ".dynamicCubeMapSRV";
+	m_pDynamicCubeMapSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(SRVName.length()), SRVName.c_str());
+	m_pDynamicCubeMapDSV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(DSVName.length()), DSVName.c_str());
+	for (size_t i = 0; i < 6; ++i)
+	{
+		std::string RTVName = name + ".dynamicCubeMapRTVs[" + std::to_string(i) + "]";
+		m_pDynamicCubeMapRTVs[i]->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(RTVName.length()), RTVName.c_str());
+	}
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
 }
 
 void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCubeSize)

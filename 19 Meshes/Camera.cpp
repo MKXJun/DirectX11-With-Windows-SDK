@@ -123,7 +123,7 @@ void Camera::SetViewPort(float topLeftX, float topLeftY, float width, float heig
 }
 
 
-// ********************
+// ******************
 // 第一人称/自由视角摄像机
 //
 
@@ -257,7 +257,7 @@ void FirstPersonCamera::UpdateViewMatrix()
 	};
 }
 
-// ********************
+// ******************
 // 第三人称摄像机
 //
 

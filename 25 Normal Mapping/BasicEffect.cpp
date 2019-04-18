@@ -75,11 +75,11 @@ public:
 
 	ComPtr<ID3D11VertexShader> m_pBasicInstanceVS;
 	ComPtr<ID3D11VertexShader> m_pBasicObjectVS;
-	ComPtr<ID3D11VertexShader> m_pNormalmapInstanceVS;
-	ComPtr<ID3D11VertexShader> m_pNormalmapObjectVS;
+	ComPtr<ID3D11VertexShader> m_pNormalMapInstanceVS;
+	ComPtr<ID3D11VertexShader> m_pNormalMapObjectVS;
 
 	ComPtr<ID3D11PixelShader> m_pBasicPS;
-	ComPtr<ID3D11PixelShader> m_pNormalmapPS;
+	ComPtr<ID3D11PixelShader> m_pNormalMapPS;
 
 	ComPtr<ID3D11InputLayout> m_pInstancePosNormalTexLayout;
 	ComPtr<ID3D11InputLayout> m_pInstancePosNormalTangentTexLayout;
@@ -192,13 +192,13 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\NormalMapInstance_VS.cso", L"HLSL\\NormalMapInstance_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalmapInstanceVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalMapInstanceVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(m_pNormalmapInstLayout, ARRAYSIZE(m_pNormalmapInstLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pInstancePosNormalTangentTexLayout.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\NormalMapObject_VS.cso", L"HLSL\\NormalMapObject_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalmapObjectVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalMapObjectVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTangentTex::inputLayout, ARRAYSIZE(VertexPosNormalTangentTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTangentTexLayout.GetAddressOf()));
@@ -211,7 +211,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicPS.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\NormalMap_PS.cso", L"HLSL\\NormalMap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalmapPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalMapPS.GetAddressOf()));
 
 	pImpl->m_pCBuffers.assign({
 		&pImpl->m_CBInstDrawing,
@@ -226,6 +226,24 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "BasicEffect.InstancePosNormalTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "BasicEffect.VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTangentTexLayout.Get(), "BasicEffect.InstancePosNormalTangentTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTangentTexLayout.Get(), "BasicEffect.VertexPosNormalTangentTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "BasicEffect.CBInstDrawing");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "BasicEffect.CBObjDrawing");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "BasicEffect.CBStates");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "BasicEffect.CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[4]->cBuffer.Get(), "BasicEffect.CBOnResize");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[5]->cBuffer.Get(), "BasicEffect.CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pBasicObjectVS.Get(), "BasicEffect.BasicObject_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicInstanceVS.Get(), "BasicEffect.BasicInstance_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "BasicEffect.Basic_PS");
+	D3D11SetDebugObjectName(pImpl->m_pNormalMapObjectVS.Get(), "BasicEffect.NormalMapObject_VS");
+	D3D11SetDebugObjectName(pImpl->m_pNormalMapInstanceVS.Get(), "BasicEffect.NormalMapInstance_VS");
+	D3D11SetDebugObjectName(pImpl->m_pNormalMapPS.Get(), "BasicEffect.NormalMap_PS");
 
 	return true;
 }
@@ -262,14 +280,14 @@ void BasicEffect::SetRenderWithNormalMap(ComPtr<ID3D11DeviceContext> deviceConte
 	if (type == RenderInstance)
 	{
 		deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTangentTexLayout.Get());
-		deviceContext->VSSetShader(pImpl->m_pNormalmapInstanceVS.Get(), nullptr, 0);
-		deviceContext->PSSetShader(pImpl->m_pNormalmapPS.Get(), nullptr, 0);
+		deviceContext->VSSetShader(pImpl->m_pNormalMapInstanceVS.Get(), nullptr, 0);
+		deviceContext->PSSetShader(pImpl->m_pNormalMapPS.Get(), nullptr, 0);
 	}
 	else
 	{
 		deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTangentTexLayout.Get());
-		deviceContext->VSSetShader(pImpl->m_pNormalmapObjectVS.Get(), nullptr, 0);
-		deviceContext->PSSetShader(pImpl->m_pNormalmapPS.Get(), nullptr, 0);
+		deviceContext->VSSetShader(pImpl->m_pNormalMapObjectVS.Get(), nullptr, 0);
+		deviceContext->PSSetShader(pImpl->m_pNormalMapPS.Get(), nullptr, 0);
 	}
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -239,6 +239,29 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		HR(pBuffer->CreateBuffer(device));
 	}
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosColorLayout.Get(), "VertexPosColorLayout");
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalColorLayout.Get(), "VertexPosNormalColorLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "CBOnResize");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pNormalVS.Get(), "Normal_VS");
+	D3D11SetDebugObjectName(pImpl->m_pNormalGS.Get(), "Normal_GS");
+	D3D11SetDebugObjectName(pImpl->m_pNormalPS.Get(), "Normal_PS");
+	D3D11SetDebugObjectName(pImpl->m_pSnowVS.Get(), "Snow_VS");
+	D3D11SetDebugObjectName(pImpl->m_pSnowPS.Get(), "Snow_PS");
+	D3D11SetDebugObjectName(pImpl->m_pSnowSOVS.Get(), "SnowSO_VS");
+	D3D11SetDebugObjectName(pImpl->m_pSnowSOGS.Get(), "SnowSO_GS");
+	D3D11SetDebugObjectName(pImpl->m_pSphereVS.Get(), "Sphere_VS");
+	D3D11SetDebugObjectName(pImpl->m_pSpherePS.Get(), "Sphere_PS");
+	D3D11SetDebugObjectName(pImpl->m_pSphereSOVS.Get(), "SphereSO_VS");
+	D3D11SetDebugObjectName(pImpl->m_pSphereSOGS.Get(), "SphereSO_GS");
+	D3D11SetDebugObjectName(pImpl->m_pTriangleVS.Get(), "Triangle_VS");
+	D3D11SetDebugObjectName(pImpl->m_pTrianglePS.Get(), "Triangle_PS");
+	D3D11SetDebugObjectName(pImpl->m_pTriangleSOVS.Get(), "TriangleSO_VS");
+	D3D11SetDebugObjectName(pImpl->m_pTriangleSOGS.Get(), "TriangleSO_GS");
+
+
 	return true;
 }
 

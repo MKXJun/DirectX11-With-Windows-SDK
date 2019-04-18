@@ -57,6 +57,10 @@ public:
 		void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 		// 绘制
 		void Draw(ComPtr<ID3D11DeviceContext> deviceContext);
+
+		// 设置调试对象名
+		// 若缓冲区被重新设置，调试对象名也需要被重新设置
+		void SetDebugObjectName(const std::string& name);
 	private:
 		DirectX::XMFLOAT4X4 m_WorldMatrix;				    // 世界矩阵
 		ComPtr<ID3D11ShaderResourceView> m_pTexture;		// 纹理

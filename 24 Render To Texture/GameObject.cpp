@@ -10,12 +10,12 @@ struct InstancedData
 };
 
 GameObject::GameObject()
-	: m_Capacity(),
+	: m_Capacity(), 
 	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+		0.0f, 0.0f, 0.0f, 1.0f)	
 {
 }
 
@@ -156,4 +156,19 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		deviceContext->DrawIndexedInstanced(part.indexCount, numInsts, 0, 0, 0);
 	}
 }
+
+void GameObject::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+
+	m_Model.SetDebugObjectName(name);
+	std::string instBufferName = name + ".InstancedBuffer";
+	if (m_pInstancedBuffer)
+	{
+		m_pInstancedBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(instBufferName.length()), instBufferName.c_str());
+	}
+
+#endif
+}
+
 

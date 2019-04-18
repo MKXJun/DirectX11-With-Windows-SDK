@@ -177,6 +177,20 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 		HR(pBuffer->CreateBuffer(device));
 	}
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "VertexPosNormalTexLayout");
+	D3D11SetDebugObjectName(pImpl->m_pVertexPosSizeLayout.Get(), "VertexPosSizeLayout");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBDrawing");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "CBFrame");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBStates");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "CBOnResize");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[4]->cBuffer.Get(), "CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pBasicVS.Get(), "Basic_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "Basic_PS");
+	D3D11SetDebugObjectName(pImpl->m_pBillboardVS.Get(), "Billboard_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBillboardGS.Get(), "Billboard_GS");
+	D3D11SetDebugObjectName(pImpl->m_pBillboardPS.Get(), "Billboard_PS");
+
 	return true;
 }
 

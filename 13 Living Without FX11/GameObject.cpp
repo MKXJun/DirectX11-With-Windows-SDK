@@ -58,3 +58,16 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& ef
 
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
+
+void GameObject::SetDebugObjectName(const std::string& name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string vbName = name + ".VertexBuffer";
+	std::string ibName = name + ".IndexBuffer";
+	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
+	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+#else
+	UNREFERENCED_PARAMETER(name);
+#endif
+}
+

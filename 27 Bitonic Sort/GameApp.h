@@ -4,12 +4,12 @@
 #include "d3dApp.h"
 #include <random>
 // ±‡≥Ã≤∂ªÒ÷°
-//#if defined(DEBUG) | defined(_DEBUG)
-//#include <DXGItype.h>  
-//#include <dxgi1_2.h>  
-//#include <dxgi1_3.h>  
-//#include <DXProgrammableCapture.h>  
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+#include <DXGItype.h>  
+#include <dxgi1_2.h>  
+#include <dxgi1_3.h>  
+#include <DXProgrammableCapture.h>  
+#endif
 
 #define BITONIC_BLOCK_SIZE 512
 

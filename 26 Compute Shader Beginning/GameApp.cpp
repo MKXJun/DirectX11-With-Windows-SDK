@@ -28,11 +28,12 @@ void GameApp::Compute()
 {
 	assert(m_pd3dImmediateContext);
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-	//	graphicsAnalysis->BeginCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
+
 	m_pd3dImmediateContext->CSSetShaderResources(0, 1, m_pTextureInputA.GetAddressOf());
 	m_pd3dImmediateContext->CSSetShaderResources(1, 1, m_pTextureInputB.GetAddressOf());
 
@@ -49,9 +50,9 @@ void GameApp::Compute()
 	m_pd3dImmediateContext->Dispatch(32, 32, 1);
 
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	graphicsAnalysis->EndCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
 
 	HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), m_pTextureOutputA.Get(), L"Texture\\flareoutputA.dds"));
 	HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), m_pTextureOutputB.Get(), L"Texture\\flareoutputB.dds"));
@@ -130,6 +131,14 @@ bool GameApp::InitResource()
 
 	ComPtr<ID3D11ShaderResourceView> mBufferSRV;
 	HR(m_pd3dDevice->CreateShaderResourceView(mBuffer.Get(), &srvDesc, mBufferSRV.GetAddressOf()));
+
+	// ******************
+	// 设置调试对象名
+	//
+	D3D11SetDebugObjectName(m_pTextureOutputA_UAV.Get(), "Output_R32G32B32A32");
+	D3D11SetDebugObjectName(m_pTextureOutputB_UAV.Get(), "Output_R8G8B8A8");
+	D3D11SetDebugObjectName(m_pTextureMul_R8G8B8A8_CS.Get(), "TextureMul_R8G8B8A8_CS");
+	D3D11SetDebugObjectName(m_pTextureMul_R32G32B32A32_CS.Get(), "TextureMul_R32G32B32A32_CS");
 
 	return true;
 }

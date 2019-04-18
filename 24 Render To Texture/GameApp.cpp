@@ -133,7 +133,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	else
 	{
-		// ********************
+		// ******************
 		// 自由摄像机的操作
 		//
 
@@ -375,6 +375,16 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 	
+	// ******************
+	// 设置调试对象名
+	//
+	m_Trees.SetDebugObjectName("Trees");
+	m_Ground.SetDebugObjectName("Ground");
+	m_FullScreenShow.SetDebugObjectName("FullScreenShow");
+	m_Minimap.SetDebugObjectName("Minimap");
+	m_pMinimapRender->SetDebugObjectName("Minimap");
+	m_pScreenFadeRender->SetDebugObjectName("ScreenFade");
+	
 
 	return true;
 }
@@ -442,4 +452,6 @@ void GameApp::CreateRandomTrees()
 		}
 		theta += XM_2PI / 16;
 	}
+
+	m_Trees.ResizeBuffer(m_pd3dDevice, 144);
 }

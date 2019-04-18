@@ -105,7 +105,7 @@ void GameApp::UpdateScene(float dt)
 
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
-	// ********************
+	// ******************
 	// 自由摄像机的操作
 	//
 
@@ -279,6 +279,7 @@ bool GameApp::InitResource()
 	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_Sphere.SetModel(std::move(model));
+	m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
 
 	// 柱体
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
@@ -294,6 +295,7 @@ bool GameApp::InitResource()
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_Cylinder.SetModel(std::move(model));
+	m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
 
 	// 带切线向量的柱体
 	model.SetMesh(m_pd3dDevice,
@@ -304,6 +306,7 @@ bool GameApp::InitResource()
 	model.modelParts[0].material.Reflect = XMFLOAT4();
 	model.modelParts[0].texDiffuse = texDiffuse;
 	m_CylinderT.SetModel(std::move(model));
+	m_CylinderT.ResizeBuffer(m_pd3dDevice.Get(), 5);
 
 	// ******************
 	// 初始化摄像机
@@ -340,6 +343,17 @@ bool GameApp::InitResource()
 	dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
 	for (int i = 0; i < 4; ++i)
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
+
+	// ******************
+	// 设置调试对象名
+	//
+	m_Cylinder.SetDebugObjectName("Cylinder");
+	m_CylinderT.SetDebugObjectName("CylinderT");
+	m_Ground.SetDebugObjectName("Ground");
+	m_GroundT.SetDebugObjectName("GroundT");
+	m_Sphere.SetDebugObjectName("Sphere");
+	m_pDaylight->SetDebugObjectName("DayLight");
+	
 
 	return true;
 }

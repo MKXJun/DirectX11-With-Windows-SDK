@@ -136,7 +136,9 @@ void D3DApp::OnResize()
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
 	HR(m_pd3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, m_pRenderTargetView.GetAddressOf()));
 	
-	
+	// 设置调试对象名
+	D3D11SetDebugObjectName(backBuffer.Get(), "BackBuffer[0]");
+
 	backBuffer.Reset();
 
 
@@ -184,6 +186,12 @@ void D3DApp::OnResize()
 	m_ScreenViewport.MaxDepth = 1.0f;
 
 	m_pd3dImmediateContext->RSSetViewports(1, &m_ScreenViewport);
+
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pDepthStencilBuffer.Get(), "DepthStencilBuffer");
+	D3D11SetDebugObjectName(m_pDepthStencilView.Get(), "DepthStencilView");
+	D3D11SetDebugObjectName(m_pRenderTargetView.Get(), "BackBufferRTV[0]");
+
 }
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -505,6 +513,9 @@ bool D3DApp::InitDirect3D()
 	// 可以禁止alt+enter全屏
 	dxgiFactory1->MakeWindowAssociation(m_hMainWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
 
+	// 设置调试对象名
+	D3D11SetDebugObjectName(m_pd3dImmediateContext.Get(), "ImmediateContext");
+	DXGISetDebugObjectName(m_pSwapChain.Get(), "SwapChain");
 
 	// 每当窗口被重新调整大小的时候，都需要调用这个OnResize函数。现在调用
 	// 以避免代码重复

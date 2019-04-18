@@ -23,15 +23,18 @@
 // 宏相关
 //
 
-//
-// 辅助调试相关函数
-//
-
 // 默认开启图形调试器具名化
 // 如果不需要该项功能，可通过全局文本替换将其值设置为0
 #ifndef GRAPHICS_DEBUGGER_OBJECT_NAME
 #define GRAPHICS_DEBUGGER_OBJECT_NAME (1)
 #endif
+
+// 安全COM组件释放宏
+#define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
+
+//
+// 辅助调试相关函数
+//
 
 // ------------------------------
 // D3D11SetDebugObjectName函数

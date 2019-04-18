@@ -30,11 +30,11 @@ void GameApp::Compute()
 {
 	assert(m_pd3dImmediateContext);
 
-#if defined(DEBUG) | defined(_DEBUG)
-	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-	graphicsAnalysis->BeginCapture();
-#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
 
 	// GPU≈≈–Ú
 	m_Timer.Reset();
@@ -49,9 +49,9 @@ void GameApp::Compute()
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pTypedBufferCopy.Get(), 0, D3D11_MAP_READ, 0, &mappedData));
 
-#if defined(DEBUG) | defined(_DEBUG)
-	graphicsAnalysis->EndCapture();
-#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
 
 	// CPU≈≈–Ú
 	m_Timer.Reset();

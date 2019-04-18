@@ -45,11 +45,11 @@
     <ClInclude Include="Mouse.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="d3dUtil.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
     <ClInclude Include="Keyboard.h">
       <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,11 +80,11 @@
     <ClCompile Include="ScreenGrab.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

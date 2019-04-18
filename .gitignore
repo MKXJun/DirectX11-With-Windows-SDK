@@ -16,6 +16,8 @@ x64/
 *.iobj
 *.ipdb
 *.pdb
+*.exp
+*.lib
 *.lastcodeanalysissucceeded
 !dxtex.exe
 *.exe

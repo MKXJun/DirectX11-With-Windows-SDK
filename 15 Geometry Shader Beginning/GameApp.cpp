@@ -207,7 +207,7 @@ bool GameApp::InitResource()
 	dirLight.direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 	// ²ÄÖÊ
-	Material material;
+	Material material{};
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);

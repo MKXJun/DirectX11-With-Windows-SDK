@@ -368,7 +368,7 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化游戏对象
 	ComPtr<ID3D11ShaderResourceView> texture;
-	Material material;
+	Material material{};
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);

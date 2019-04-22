@@ -51,9 +51,6 @@
     <ClCompile Include="Keyboard.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="Geometry.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DXTrace.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

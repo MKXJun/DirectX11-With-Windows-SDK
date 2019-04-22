@@ -60,8 +60,8 @@ public:
 	std::vector<CBufferBase*> m_pCBuffers;					    // 统一管理上面所有的常量缓冲区
 
 
-	ComPtr<ID3D11VertexShader> m_pBasicObjectVS;
-	ComPtr<ID3D11PixelShader> m_pBasicObjectPS;
+	ComPtr<ID3D11VertexShader> m_pBasicVS;
+	ComPtr<ID3D11PixelShader> m_pBasicPS;
 
 	ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;		// 3D顶点输入布局
 
@@ -125,14 +125,14 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 
 	// 创建顶点着色器
 	HR(CreateShaderFromFile(L"HLSL\\Basic_VS.cso", L"HLSL\\Basic_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicObjectVS.GetAddressOf()));
+	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicVS.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	// 创建像素着色器
 	HR(CreateShaderFromFile(L"HLSL\\Basic_PS.cso", L"HLSL\\Basic_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicObjectPS.GetAddressOf()));
+	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicPS.GetAddressOf()));
 
 
 	pImpl->m_pCBuffers.assign({
@@ -153,8 +153,8 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "CBFrame");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBOnResize");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "CBRarely");
-	D3D11SetDebugObjectName(pImpl->m_pBasicObjectVS.Get(), "BasicObject_VS");
-	D3D11SetDebugObjectName(pImpl->m_pBasicObjectPS.Get(), "BasicObject_PS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicVS.Get(), "Basic_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "Basic_PS");
 
 
 	return true;
@@ -164,10 +164,10 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
-	deviceContext->VSSetShader(pImpl->m_pBasicObjectVS.Get(), nullptr, 0);
+	deviceContext->VSSetShader(pImpl->m_pBasicVS.Get(), nullptr, 0);
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	deviceContext->RSSetState(nullptr);
-	deviceContext->PSSetShader(pImpl->m_pBasicObjectPS.Get(), nullptr, 0);
+	deviceContext->PSSetShader(pImpl->m_pBasicPS.Get(), nullptr, 0);
 	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
 	deviceContext->OMSetDepthStencilState(nullptr, 0);
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);

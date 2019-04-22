@@ -295,14 +295,14 @@ bool GameApp::InitResource()
 	//
 
 	// 方向光
-	DirectionalLight dirLight;
+	DirectionalLight dirLight{};
 	dirLight.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 	// 材质
-	Material material;
+	Material material{};
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);

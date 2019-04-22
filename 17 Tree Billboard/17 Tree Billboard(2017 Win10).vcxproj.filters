@@ -73,9 +73,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Geometry.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="BasicEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>

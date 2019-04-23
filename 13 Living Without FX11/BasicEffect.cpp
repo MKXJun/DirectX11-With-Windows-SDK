@@ -124,7 +124,7 @@ BasicEffect & BasicEffect::Get()
 }
 
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -189,7 +189,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -201,7 +201,7 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderAlphaBlend(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderAlphaBlend(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -213,7 +213,7 @@ void BasicEffect::SetRenderAlphaBlend(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderNoDoubleBlend(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef)
+void BasicEffect::SetRenderNoDoubleBlend(ID3D11DeviceContext * deviceContext, UINT stencilRef)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -225,7 +225,7 @@ void BasicEffect::SetRenderNoDoubleBlend(ComPtr<ID3D11DeviceContext> deviceConte
 	deviceContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetWriteStencilOnly(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef)
+void BasicEffect::SetWriteStencilOnly(ID3D11DeviceContext * deviceContext, UINT stencilRef)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -237,7 +237,7 @@ void BasicEffect::SetWriteStencilOnly(ComPtr<ID3D11DeviceContext> deviceContext,
 	deviceContext->OMSetBlendState(RenderStates::BSNoColorWrite.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderDefaultWithStencil(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef)
+void BasicEffect::SetRenderDefaultWithStencil(ID3D11DeviceContext * deviceContext, UINT stencilRef)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -249,7 +249,7 @@ void BasicEffect::SetRenderDefaultWithStencil(ComPtr<ID3D11DeviceContext> device
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderAlphaBlendWithStencil(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef)
+void BasicEffect::SetRenderAlphaBlendWithStencil(ID3D11DeviceContext * deviceContext, UINT stencilRef)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout3D.Get());
@@ -261,7 +261,7 @@ void BasicEffect::SetRenderAlphaBlendWithStencil(ComPtr<ID3D11DeviceContext> dev
 	deviceContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::Set2DRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Set2DRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout2D.Get());
@@ -273,7 +273,7 @@ void BasicEffect::Set2DRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::Set2DRenderAlphaBlend(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Set2DRenderAlphaBlend(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexLayout2D.Get());
@@ -356,9 +356,9 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
+void BasicEffect::SetTexture(ID3D11ShaderResourceView * texture)
 {
-	pImpl->m_pTexture = m_pTexture;
+	pImpl->m_pTexture = texture;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
@@ -382,7 +382,7 @@ void BasicEffect::SetShadowState(bool isOn)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

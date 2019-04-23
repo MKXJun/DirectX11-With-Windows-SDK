@@ -3,7 +3,10 @@
 using namespace DirectX;
 
 GameObject::GameObject()
-	: m_WorldMatrix(
+	: m_IndexCount(),
+	m_Material(),
+	m_VertexStride(),
+	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -19,7 +22,7 @@ DirectX::XMFLOAT3 GameObject::GetPosition() const
 
 
 
-void GameObject::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+void GameObject::SetTexture(ID3D11ShaderResourceView * texture)
 {
 	m_pTexture = texture;
 }
@@ -39,7 +42,7 @@ void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
+void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
 {
 	// 设置顶点/索引缓冲区
 	UINT strides = m_VertexStride;
@@ -49,7 +52,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& ef
 
 	// 更新数据并应用
 	effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
-	effect.SetTexture(m_pTexture);
+	effect.SetTexture(m_pTexture.Get());
 	effect.SetMaterial(m_Material);
 	effect.Apply(deviceContext);
 

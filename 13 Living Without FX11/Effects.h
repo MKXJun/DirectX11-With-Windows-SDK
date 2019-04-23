@@ -33,7 +33,7 @@ public:
 	virtual ~IEffect() = default;
 
 	// 更新并绑定常量缓冲区
-	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
+	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 
@@ -53,7 +53,7 @@ public:
 	
 
 	// 初始化Basic.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 
 	//
@@ -61,21 +61,21 @@ public:
 	//
 
 	// 默认状态来绘制
-	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderDefault(ID3D11DeviceContext * deviceContext);
 	// Alpha混合绘制
-	void SetRenderAlphaBlend(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderAlphaBlend(ID3D11DeviceContext * deviceContext);
 	// 无二次混合
-	void SetRenderNoDoubleBlend(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef);
+	void SetRenderNoDoubleBlend(ID3D11DeviceContext * deviceContext, UINT stencilRef);
 	// 仅写入模板值
-	void SetWriteStencilOnly(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef);
+	void SetWriteStencilOnly(ID3D11DeviceContext * deviceContext, UINT stencilRef);
 	// 对指定模板值的区域进行绘制，采用默认状态
-	void SetRenderDefaultWithStencil(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef);
+	void SetRenderDefaultWithStencil(ID3D11DeviceContext * deviceContext, UINT stencilRef);
 	// 对指定模板值的区域进行绘制，采用Alpha混合
-	void SetRenderAlphaBlendWithStencil(ComPtr<ID3D11DeviceContext> deviceContext, UINT stencilRef);
+	void SetRenderAlphaBlendWithStencil(ID3D11DeviceContext * deviceContext, UINT stencilRef);
 	// 2D默认状态绘制
-	void Set2DRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Set2DRenderDefault(ID3D11DeviceContext * deviceContext);
 	// 2D混合绘制
-	void Set2DRenderAlphaBlend(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Set2DRenderAlphaBlend(ID3D11DeviceContext * deviceContext);
 
 	
 
@@ -104,7 +104,7 @@ public:
 
 	void SetMaterial(const Material& material);
 
-	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTexture(ID3D11ShaderResourceView * texture);
 
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
 
@@ -119,7 +119,7 @@ public:
 	
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 	
 private:
 	class Impl;

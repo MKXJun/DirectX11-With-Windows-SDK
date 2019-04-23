@@ -41,7 +41,7 @@ public:
 	// 获取缓冲区可容纳实例的数目
 	size_t GetCapacity() const;
 	// 重新设置实例缓冲区可容纳实例的数目
-	void ResizeBuffer(ComPtr<ID3D11Device> device, size_t count);
+	void ResizeBuffer(ID3D11Device * device, size_t count);
 	// 获取实例缓冲区
 
 	//
@@ -63,9 +63,9 @@ public:
 	//
 
 	// 绘制对象
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
+	void Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect);
 	// 绘制实例
-	void DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
+	void DrawInstanced(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
 	
 	//
 	// 调试 

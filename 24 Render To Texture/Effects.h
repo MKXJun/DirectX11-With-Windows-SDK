@@ -34,7 +34,7 @@ public:
 	virtual ~IEffect() = default;
 
 	// 更新并绑定常量缓冲区
-	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
+	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 
@@ -56,7 +56,7 @@ public:
 	
 
 	// 初始化Basic.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 
 	// 
@@ -64,7 +64,7 @@ public:
 	//
 
 	// 默认状态来绘制
-	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type);
+	void SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type);
 
 	//
 	// 矩阵设置
@@ -90,7 +90,7 @@ public:
 
 	void SetTextureUsed(bool isUsed);
 
-	void SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
 	
@@ -104,7 +104,7 @@ public:
 	void SetFogRange(float fogRange);
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 	
 private:
 	class Impl;
@@ -124,14 +124,14 @@ public:
 	static ScreenFadeEffect& Get();
 
 	// 初始化ScreenFade.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 	// 
 	// 渲染模式的变更
 	//
 
 	// 默认状态来绘制
-	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderDefault(ID3D11DeviceContext * deviceContext);
 
 	//
 	// 矩阵设置
@@ -150,10 +150,10 @@ public:
 	// 纹理设置
 	//
 
-	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTexture(ID3D11ShaderResourceView * texture);
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 
 private:
 	class Impl;
@@ -173,14 +173,14 @@ public:
 	static MinimapEffect& Get();
 
 	// 初始化Minimap.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 	// 
 	// 渲染模式的变更
 	//
 
 	// 默认状态来绘制
-	void SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderDefault(ID3D11DeviceContext * deviceContext);
 
 	//
 	// 状态设置
@@ -196,11 +196,11 @@ public:
 	// 纹理设置
 	//
 
-	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTexture(ID3D11ShaderResourceView * texture);
 
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 
 private:
 	class Impl;

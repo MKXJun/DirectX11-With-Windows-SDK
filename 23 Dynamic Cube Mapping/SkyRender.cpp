@@ -6,9 +6,9 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 SkyRender::SkyRender(
-	ComPtr<ID3D11Device> device,
-	ComPtr<ID3D11DeviceContext> deviceContext,
-	const std::wstring & cubemapFilename,
+	ID3D11Device* device,
+	ID3D11DeviceContext* deviceContext,
+	const std::wstring& cubemapFilename,
 	float skySphereRadius,
 	bool generateMips)
 	: m_IndexCount()
@@ -17,8 +17,8 @@ SkyRender::SkyRender(
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
 	{
 		HR(CreateDDSTextureFromFile(
-			device.Get(),
-			generateMips ? deviceContext.Get() : nullptr,
+			device,
+			generateMips ? deviceContext : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
 			m_pTextureCubeSRV.GetAddressOf()
@@ -27,8 +27,8 @@ SkyRender::SkyRender(
 	else
 	{
 		HR(CreateWICTexture2DCubeFromFile(
-			device.Get(),
-			deviceContext.Get(),
+			device,
+			deviceContext,
 			cubemapFilename,
 			nullptr,
 			m_pTextureCubeSRV.GetAddressOf(),
@@ -39,8 +39,8 @@ SkyRender::SkyRender(
 	InitResource(device, skySphereRadius);
 }
 
-SkyRender::SkyRender(ComPtr<ID3D11Device> device,
-	ComPtr<ID3D11DeviceContext> deviceContext,
+SkyRender::SkyRender(ID3D11Device* device,
+	ID3D11DeviceContext* deviceContext,
 	const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius,
 	bool generateMips)
@@ -49,8 +49,8 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	// 天空盒纹理加载
 
 	HR(CreateWICTexture2DCubeFromFile(
-		device.Get(),
-		deviceContext.Get(),
+		device,
+		deviceContext,
 		cubemapFilenames,
 		nullptr,
 		m_pTextureCubeSRV.GetAddressOf(),
@@ -60,12 +60,12 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	InitResource(device, skySphereRadius);
 }
 
-ComPtr<ID3D11ShaderResourceView> SkyRender::GetTextureCube()
+ID3D11ShaderResourceView* SkyRender::GetTextureCube()
 {
-	return m_pTextureCubeSRV;
+	return m_pTextureCubeSRV.Get();
 }
 
-void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyEffect, const Camera & camera)
+void SkyRender::Draw(ID3D11DeviceContext* deviceContext, SkyEffect& skyEffect, const Camera& camera)
 {
 	UINT strides[1] = { sizeof(XMFLOAT3) };
 	UINT offsets[1] = { 0 };
@@ -74,7 +74,7 @@ void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyE
 
 	XMFLOAT3 pos = camera.GetPosition();
 	skyEffect.SetWorldViewProjMatrix(XMMatrixTranslation(pos.x, pos.y, pos.z) * camera.GetViewProjXM());
-	skyEffect.SetTextureCube(m_pTextureCubeSRV);
+	skyEffect.SetTextureCube(m_pTextureCubeSRV.Get());
 	skyEffect.Apply(deviceContext);
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
@@ -93,7 +93,7 @@ void SkyRender::SetDebugObjectName(const std::string& name)
 #endif
 }
 
-void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
+void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 {
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 
@@ -128,19 +128,19 @@ void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
 
 }
 
-DynamicSkyRender::DynamicSkyRender(ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> deviceContext, const std::wstring & cubemapFilename, float skySphereRadius, int dynamicCubeSize, bool generateMips)
+DynamicSkyRender::DynamicSkyRender(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::wstring & cubemapFilename, float skySphereRadius, int dynamicCubeSize, bool generateMips)
 	: SkyRender(device, deviceContext, cubemapFilename, skySphereRadius, generateMips)
 {
 	InitResource(device, dynamicCubeSize);
 }
 
-DynamicSkyRender::DynamicSkyRender(ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> deviceContext, const std::vector<std::wstring>& cubemapFilenames, float skySphereRadius, int dynamicCubeSize, bool generateMips)
+DynamicSkyRender::DynamicSkyRender(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::vector<std::wstring> & cubemapFilenames, float skySphereRadius, int dynamicCubeSize, bool generateMips)
 	: SkyRender(device, deviceContext, cubemapFilenames, skySphereRadius, generateMips)
 {
 	InitResource(device, dynamicCubeSize);
 }
 
-void DynamicSkyRender::Cache(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect)
+void DynamicSkyRender::Cache(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
 {
 	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
 
@@ -149,7 +149,7 @@ void DynamicSkyRender::Cache(ComPtr<ID3D11DeviceContext> deviceContext, BasicEff
 	effect.Apply(deviceContext);
 }
 
-void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const XMFLOAT3& pos,
+void DynamicSkyRender::BeginCapture(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const XMFLOAT3 & pos,
 	D3D11_TEXTURECUBE_FACE face, float nearZ, float farZ)
 {
 	static XMVECTORF32 ups[6] = {
@@ -169,9 +169,9 @@ void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, B
 		{{ 0.0f, 0.0f, 1.0f, 0.0f }},	// +Z
 		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// -Z
 	};
-	
+
 	// 设置天空盒摄像机
-	m_pCamera.LookTo(XMLoadFloat3(&pos) , looks[face].v, ups[face].v);
+	m_pCamera.LookTo(XMLoadFloat3(&pos), looks[face].v, ups[face].v);
 	m_pCamera.UpdateViewMatrix();
 	// 这里尽可能捕获近距离物体
 	m_pCamera.SetFrustum(XM_PIDIV2, 1.0f, nearZ, farZ);
@@ -191,7 +191,7 @@ void DynamicSkyRender::BeginCapture(ComPtr<ID3D11DeviceContext> deviceContext, B
 
 
 
-void DynamicSkyRender::Restore(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect, const Camera & camera)
+void DynamicSkyRender::Restore(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const Camera & camera)
 {
 	// 恢复默认设定
 	deviceContext->RSSetViewports(1, &camera.GetViewPort());
@@ -203,24 +203,24 @@ void DynamicSkyRender::Restore(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	effect.SetViewMatrix(camera.GetViewXM());
 	effect.SetProjMatrix(camera.GetProjXM());
 	// 恢复绑定的动态天空盒
-	effect.SetTextureCube(m_pDynamicCubeMapSRV);
+	effect.SetTextureCube(m_pDynamicCubeMapSRV.Get());
 
 	// 清空临时缓存的渲染目标视图和深度模板视图
 	m_pCacheDSV.Reset();
 	m_pCacheRTV.Reset();
 }
 
-ComPtr<ID3D11ShaderResourceView> DynamicSkyRender::GetDynamicTextureCube()
+ID3D11ShaderResourceView* DynamicSkyRender::GetDynamicTextureCube()
 {
-	return m_pDynamicCubeMapSRV;
+	return m_pDynamicCubeMapSRV.Get();
 }
 
-const Camera & DynamicSkyRender::GetCamera() const
+const Camera& DynamicSkyRender::GetCamera() const
 {
 	return m_pCamera;
 }
 
-void DynamicSkyRender::SetDebugObjectName(const std::string& name)
+void DynamicSkyRender::SetDebugObjectName(const std::string & name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
 	SkyRender::SetDebugObjectName(name);
@@ -238,7 +238,7 @@ void DynamicSkyRender::SetDebugObjectName(const std::string& name)
 #endif
 }
 
-void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCubeSize)
+void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 {
 
 	// ******************
@@ -259,7 +259,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
-	
+
 	// 现在texCube用于新建纹理
 	HR(device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf()));
 
@@ -298,7 +298,7 @@ void DynamicSkyRender::InitResource(ComPtr<ID3D11Device> device, int dynamicCube
 		texCube.Get(),
 		&srvDesc,
 		m_pDynamicCubeMapSRV.GetAddressOf()));
-	
+
 	// ******************
 	// 4. 创建深度/模板缓冲区与对应的视图
 	//

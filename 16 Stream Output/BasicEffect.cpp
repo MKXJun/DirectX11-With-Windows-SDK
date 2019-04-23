@@ -129,7 +129,7 @@ BasicEffect & BasicEffect::Get()
 }
 
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -265,50 +265,62 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderSplitedTriangle(ID3D11DeviceContext * deviceContext)
 {
+	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
+	UINT stride = sizeof(VertexPosColor);
+	UINT offset = 0;
+	ID3D11Buffer* nullBuffer = nullptr;
+	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pTriangleVS.Get(), nullptr, 0);
-	// 关闭流输出
+
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
-	ID3D11Buffer* bufferArray[1] = { nullptr };
-	UINT offset = 0;
-	deviceContext->SOSetTargets(1, bufferArray, &offset);
+
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(pImpl->m_pTrianglePS.Get(), nullptr, 0);
 }
 
-void BasicEffect::SetRenderSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderSplitedSnow(ID3D11DeviceContext * deviceContext)
 {
+	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
+	UINT stride = sizeof(VertexPosColor);
+	UINT offset = 0;
+	ID3D11Buffer* nullBuffer = nullptr;
+	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pSnowVS.Get(), nullptr, 0);
-	// 关闭流输出
+
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
-	ID3D11Buffer* bufferArray[1] = { nullptr };
-	UINT offset = 0;
-	deviceContext->SOSetTargets(1, bufferArray, &offset);
+
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(pImpl->m_pSnowPS.Get(), nullptr, 0);
 }
 
-void BasicEffect::SetRenderSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderSplitedSphere(ID3D11DeviceContext * deviceContext)
 {
+	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
+	UINT stride = sizeof(VertexPosColor);
+	UINT offset = 0;
+	ID3D11Buffer* nullBuffer = nullptr;
+	deviceContext->SOSetTargets(1, &nullBuffer, &offset);
+
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pSphereVS.Get(), nullptr, 0);
-	// 关闭流输出
+
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
-	ID3D11Buffer* bufferArray[1] = { nullptr };
-	UINT offset = 0;
-	deviceContext->SOSetTargets(1, bufferArray, &offset);
+
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(pImpl->m_pSpherePS.Get(), nullptr, 0);
 
 }
 
-void BasicEffect::SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
+void BasicEffect::SetStreamOutputSplitedTriangle(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut)
 {
 	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
 	UINT stride = sizeof(VertexPosColor);
@@ -322,19 +334,19 @@ void BasicEffect::SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> dev
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
 
-	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferIn, &stride, &offset);
 
 	deviceContext->VSSetShader(pImpl->m_pTriangleSOVS.Get(), nullptr, 0);
 	deviceContext->GSSetShader(pImpl->m_pTriangleSOGS.Get(), nullptr, 0);
 
-	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
+	deviceContext->SOSetTargets(1, &vertexBufferOut, &offset);
 
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 }
 
-void BasicEffect::SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
+void BasicEffect::SetStreamOutputSplitedSnow(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut)
 {
 	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
 	UINT stride = sizeof(VertexPosColor);
@@ -344,19 +356,19 @@ void BasicEffect::SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceC
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
-	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferIn, &stride, &offset);
 
 	deviceContext->VSSetShader(pImpl->m_pSnowSOVS.Get(), nullptr, 0);
 	deviceContext->GSSetShader(pImpl->m_pSnowSOGS.Get(), nullptr, 0);
 
-	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
+	deviceContext->SOSetTargets(1, &vertexBufferOut, &offset);
 
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 }
 
-void BasicEffect::SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut)
+void BasicEffect::SetStreamOutputSplitedSphere(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut)
 {
 	// 先恢复流输出默认设置，防止顶点缓冲区同时绑定在输入和输出阶段
 	UINT stride = sizeof(VertexPosNormalColor);
@@ -367,19 +379,19 @@ void BasicEffect::SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> devic
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
 
-	deviceContext->IASetVertexBuffers(0, 1, vertexBufferIn.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferIn, &stride, &offset);
 
 	deviceContext->VSSetShader(pImpl->m_pSphereSOVS.Get(), nullptr, 0);
 	deviceContext->GSSetShader(pImpl->m_pSphereSOGS.Get(), nullptr, 0);
 
-	deviceContext->SOSetTargets(1, vertexBufferOut.GetAddressOf(), &offset);
+	deviceContext->SOSetTargets(1, &vertexBufferOut, &offset);
 
 	deviceContext->RSSetState(nullptr);
 	deviceContext->PSSetShader(nullptr, nullptr, 0);
 
 }
 
-void BasicEffect::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderNormal(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
@@ -467,7 +479,7 @@ void BasicEffect::SetSphereRadius(float radius)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

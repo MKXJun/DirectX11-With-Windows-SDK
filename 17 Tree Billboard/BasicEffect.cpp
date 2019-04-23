@@ -125,7 +125,7 @@ BasicEffect & BasicEffect::Get()
 }
 
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -194,7 +194,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
@@ -207,7 +207,7 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderBillboard(ComPtr<ID3D11DeviceContext> deviceContext, bool enableAlphaToCoverage)
+void BasicEffect::SetRenderBillboard(ID3D11DeviceContext * deviceContext, bool enableAlphaToCoverage)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosSizeLayout.Get());
@@ -273,14 +273,14 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
+void BasicEffect::SetTexture(ID3D11ShaderResourceView * texture)
 {
-	pImpl->m_pTexture = m_pTexture;
+	pImpl->m_pTexture = texture;
 }
 
-void BasicEffect::SetTextureArray(ComPtr<ID3D11ShaderResourceView> m_pTextures)
+void BasicEffect::SetTextureArray(ID3D11ShaderResourceView * textures)
 {
-	pImpl->m_pTextures = m_pTextures;
+	pImpl->m_pTextures = textures;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
@@ -320,7 +320,7 @@ void BasicEffect::SetFogRange(float fogRange)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

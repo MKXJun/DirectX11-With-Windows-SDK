@@ -1,6 +1,5 @@
 #include "TextureRender.h"
-#include "d3dUtil.h"
-#include "DXTrace.h"
+
 using namespace Microsoft::WRL;
 
 TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight, bool generateMips)

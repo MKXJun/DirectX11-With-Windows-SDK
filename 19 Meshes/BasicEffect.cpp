@@ -109,7 +109,7 @@ BasicEffect & BasicEffect::Get()
 }
 
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -160,7 +160,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
@@ -225,9 +225,9 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> m_pTextureDiffuse)
+void BasicEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
 {
-	pImpl->m_pTextureDiffuse = m_pTextureDiffuse;
+	pImpl->m_pTextureDiffuse = textureDiffuse;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
@@ -237,7 +237,7 @@ void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

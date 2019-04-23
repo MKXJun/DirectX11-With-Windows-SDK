@@ -33,7 +33,7 @@ public:
 	virtual ~IEffect() = default;
 
 	// 更新并绑定常量缓冲区
-	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
+	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 
@@ -53,7 +53,7 @@ public:
 	
 
 	// 初始化Basic.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 
 	//
@@ -61,20 +61,20 @@ public:
 	//
 
 	// 绘制三角形分形
-	void SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderSplitedTriangle(ID3D11DeviceContext * deviceContext);
 	// 绘制雪花
-	void SetRenderSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderSplitedSnow(ID3D11DeviceContext * deviceContext);
 	// 绘制球体
-	void SetRenderSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderSplitedSphere(ID3D11DeviceContext * deviceContext);
 	// 通过流输出阶段获取三角形分裂的下一阶分形
-	void SetStreamOutputSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut);
+	void SetStreamOutputSplitedTriangle(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut);
 	// 通过流输出阶段获取雪花的下一阶分形
-	void SetStreamOutputSplitedSnow(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut);
+	void SetStreamOutputSplitedSnow(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut);
 	// 通过流输出阶段获取球的下一阶分形
-	void SetStreamOutputSplitedSphere(ComPtr<ID3D11DeviceContext> deviceContext, ComPtr<ID3D11Buffer> vertexBufferIn, ComPtr<ID3D11Buffer> vertexBufferOut);
+	void SetStreamOutputSplitedSphere(ID3D11DeviceContext * deviceContext, ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut);
 
 	// 绘制所有顶点的法向量
-	void SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderNormal(ID3D11DeviceContext * deviceContext);
 
 
 	//
@@ -111,7 +111,7 @@ public:
 	void SetSphereRadius(float radius);
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 	
 private:
 	class Impl;

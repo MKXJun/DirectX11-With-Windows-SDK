@@ -116,7 +116,7 @@ BasicEffect & BasicEffect::Get()
 	return *g_pInstance;
 }
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -195,7 +195,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderSplitedTriangle(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosColorLayout.Get());
@@ -206,7 +206,7 @@ void BasicEffect::SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceCon
 
 }
 
-void BasicEffect::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderCylinderNoCap(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
@@ -217,7 +217,7 @@ void BasicEffect::SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceConte
 
 }
 
-void BasicEffect::SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::SetRenderNormal(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalColorLayout.Get());
@@ -296,7 +296,7 @@ void BasicEffect::SetCylinderHeight(float height)
 
 
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

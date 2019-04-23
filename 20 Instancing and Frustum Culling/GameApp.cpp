@@ -22,9 +22,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -183,23 +183,23 @@ void GameApp::DrawScene()
 	if (m_EnableInstancing)
 	{
 		// 硬件实例化绘制
-		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
-		m_Trees.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, refData);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
+		m_Trees.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, refData);
 	}
 	else
 	{
 		// 遍历的形式逐个绘制
-		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 		for (FXMMATRIX mat : refData)
 		{
 			m_Trees.SetWorldMatrix(mat);
-			m_Trees.Draw(m_pd3dImmediateContext, m_BasicEffect);
+			m_Trees.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 		}
 	}
 
 	// 绘制地面
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
-	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
+	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// ******************
 	// 绘制Direct2D部分
@@ -236,7 +236,7 @@ bool GameApp::InitResource()
 
 	// 初始化地面
 	m_ObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
-	m_Ground.SetModel(Model(m_pd3dDevice, m_ObjReader));
+	m_Ground.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 
 	// ******************
 	// 初始化摄像机
@@ -287,7 +287,7 @@ void GameApp::CreateRandomTrees()
 	srand((unsigned)time(nullptr));
 	// 初始化树
 	m_ObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
-	m_Trees.SetModel(Model(m_pd3dDevice, m_ObjReader));
+	m_Trees.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 	
 	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();

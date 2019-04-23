@@ -21,12 +21,12 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
-	if (!m_SkyEffect.InitAll(m_pd3dDevice))
+	if (!m_SkyEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -164,23 +164,23 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制模型
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 	m_BasicEffect.SetReflectionEnabled(true);
 	m_BasicEffect.SetTextureUsed(true);
-	m_Sphere.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	m_BasicEffect.SetReflectionEnabled(false);
-	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
-	m_Cylinder.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+	m_Cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 
 	// 绘制天空盒
-	m_SkyEffect.SetRenderDefault(m_pd3dImmediateContext);
+	m_SkyEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
 	switch (m_SkyBoxMode)
 	{
-	case SkyBoxMode::Daylight: m_pDaylight->Draw(m_pd3dImmediateContext, m_SkyEffect, *m_pCamera); break;
-	case SkyBoxMode::Sunset: m_pSunset->Draw(m_pd3dImmediateContext, m_SkyEffect, *m_pCamera); break;
-	case SkyBoxMode::Desert: m_pDesert->Draw(m_pd3dImmediateContext, m_SkyEffect, *m_pCamera); break;
+	case SkyBoxMode::Daylight: m_pDaylight->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect, *m_pCamera); break;
+	case SkyBoxMode::Sunset: m_pSunset->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect, *m_pCamera); break;
+	case SkyBoxMode::Desert: m_pDesert->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect, *m_pCamera); break;
 	}
 	
 
@@ -219,12 +219,12 @@ bool GameApp::InitResource()
 	// 初始化天空盒相关
 
 	m_pDaylight = std::make_unique<SkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext, 
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\daylight.jpg", 
 		5000.0f);
 
 	m_pSunset = std::make_unique<SkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext,
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 		L"Texture\\sunset_posX.bmp", L"Texture\\sunset_negX.bmp",
 		L"Texture\\sunset_posY.bmp", L"Texture\\sunset_negY.bmp", 
@@ -232,7 +232,7 @@ bool GameApp::InitResource()
 		5000.0f);
 
 	m_pDesert = std::make_unique<SkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext,
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\desertcube1024.dds",
 		5000.0f);
 
@@ -243,7 +243,7 @@ bool GameApp::InitResource()
 	
 	Model model;
 	// 球体
-	model.SetMesh(m_pd3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
+	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
@@ -254,7 +254,7 @@ bool GameApp::InitResource()
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Sphere.SetModel(std::move(model));
 	// 地面
-	model.SetMesh(m_pd3dDevice, 
+	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -266,7 +266,7 @@ bool GameApp::InitResource()
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Ground.SetModel(std::move(model));
 	// 柱体
-	model.SetMesh(m_pd3dDevice,
+	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);

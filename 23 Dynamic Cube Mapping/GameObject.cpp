@@ -50,7 +50,7 @@ size_t GameObject::GetCapacity() const
 	return m_Capacity;
 }
 
-void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
+void GameObject::ResizeBuffer(ID3D11Device * device, size_t count)
 {
 	// 设置实例缓冲区描述
 	D3D11_BUFFER_DESC vbd;
@@ -91,7 +91,7 @@ void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
+void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
 {
 	UINT strides = m_Model.vertexStride;
 	UINT offsets = 0;
@@ -104,7 +104,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 		// 更新数据并应用
 		effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
-		effect.SetTextureDiffuse(part.texDiffuse);
+		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);
 		
 		effect.Apply(deviceContext);
@@ -113,7 +113,7 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 	}
 }
 
-void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data)
+void GameObject::DrawInstanced(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
@@ -122,7 +122,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	{
 		ComPtr<ID3D11Device> device;
 		deviceContext->GetDevice(device.GetAddressOf());
-		ResizeBuffer(device, numInsts);
+		ResizeBuffer(device.Get(), numInsts);
 	}
 
 	HR(deviceContext->Map(m_pInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
@@ -149,7 +149,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
-		effect.SetTextureDiffuse(part.texDiffuse);
+		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);
 		effect.Apply(deviceContext);
 

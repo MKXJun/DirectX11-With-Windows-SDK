@@ -132,7 +132,7 @@ BasicEffect & BasicEffect::Get()
 }
 
 
-bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
+bool BasicEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -249,7 +249,7 @@ bool BasicEffect::InitAll(ComPtr<ID3D11Device> device)
 }
 
 
-void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type)
+void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type)
 {
 	if (type == RenderInstance)
 	{
@@ -275,7 +275,7 @@ void BasicEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext, Re
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-void BasicEffect::SetRenderWithNormalMap(ComPtr<ID3D11DeviceContext> deviceContext, RenderType type)
+void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext * deviceContext, RenderType type)
 {
 	if (type == RenderInstance)
 	{
@@ -358,19 +358,19 @@ void BasicEffect::SetTextureUsed(bool isUsed)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::SetTextureDiffuse(ComPtr<ID3D11ShaderResourceView> m_pTextureDiffuse)
+void BasicEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
 {
-	pImpl->m_pTextureDiffuse = m_pTextureDiffuse;
+	pImpl->m_pTextureDiffuse = textureDiffuse;
 }
 
-void BasicEffect::SetTextureNormalMap(ComPtr<ID3D11ShaderResourceView> m_pTextureNormalMap)
+void BasicEffect::SetTextureNormalMap(ID3D11ShaderResourceView * textureNormalMap)
 {
-	pImpl->m_pTextureNormalMap = m_pTextureNormalMap;
+	pImpl->m_pTextureNormalMap = textureNormalMap;
 }
 
-void BasicEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> m_pTextureCube)
+void BasicEffect::SetTextureCube(ID3D11ShaderResourceView * textureCube)
 {
-	pImpl->m_pTextureCube = m_pTextureCube;
+	pImpl->m_pTextureCube = textureCube;
 }
 
 void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
@@ -401,7 +401,7 @@ void BasicEffect::SetRefractionEta(float eta)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void BasicEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

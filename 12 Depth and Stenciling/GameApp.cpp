@@ -221,7 +221,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSNoColorWrite.Get(), nullptr, 0xFFFFFFFF);
 
 
-	m_Mirror.Draw(m_pd3dImmediateContext);
+	m_Mirror.Draw(m_pd3dImmediateContext.Get());
 
 	// ******************
 	// 2. 绘制不透明的反射物体
@@ -240,10 +240,10 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
 	m_pd3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 	
-	m_Walls[2].Draw(m_pd3dImmediateContext);
-	m_Walls[3].Draw(m_pd3dImmediateContext);
-	m_Walls[4].Draw(m_pd3dImmediateContext);
-	m_Floor.Draw(m_pd3dImmediateContext);
+	m_Walls[2].Draw(m_pd3dImmediateContext.Get());
+	m_Walls[3].Draw(m_pd3dImmediateContext.Get());
+	m_Walls[4].Draw(m_pd3dImmediateContext.Get());
+	m_Floor.Draw(m_pd3dImmediateContext.Get());
 
 	// ******************
 	// 3. 绘制透明的反射物体
@@ -256,9 +256,9 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetDepthStencilState(RenderStates::DSSDrawWithStencil.Get(), 1);
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 
-	m_WireFence.Draw(m_pd3dImmediateContext);
-	m_Water.Draw(m_pd3dImmediateContext);
-	m_Mirror.Draw(m_pd3dImmediateContext);
+	m_WireFence.Draw(m_pd3dImmediateContext.Get());
+	m_Water.Draw(m_pd3dImmediateContext.Get());
+	m_Mirror.Draw(m_pd3dImmediateContext.Get());
 	
 	// 关闭反射绘制
 	m_CBStates.isReflection = false;
@@ -276,8 +276,8 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 
 	for (auto& wall : m_Walls)
-		wall.Draw(m_pd3dImmediateContext);
-	m_Floor.Draw(m_pd3dImmediateContext);
+		wall.Draw(m_pd3dImmediateContext.Get());
+	m_Floor.Draw(m_pd3dImmediateContext.Get());
 
 	// ******************
 	// 5. 绘制透明的正常物体
@@ -289,8 +289,8 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetDepthStencilState(nullptr, 0);
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 
-	m_WireFence.Draw(m_pd3dImmediateContext);
-	m_Water.Draw(m_pd3dImmediateContext);
+	m_WireFence.Draw(m_pd3dImmediateContext.Get());
+	m_Water.Draw(m_pd3dImmediateContext.Get());
 
 	// ******************
 	// 绘制Direct2D部分
@@ -374,19 +374,19 @@ bool GameApp::InitResource()
 	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	// 初始化篱笆盒
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WireFence.dds", nullptr, texture.GetAddressOf()));
-	m_WireFence.SetBuffer(m_pd3dDevice, Geometry::CreateBox());
+	m_WireFence.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateBox());
 	// 抬起高度避免深度缓冲区资源争夺
 	m_WireFence.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 7.5f));
-	m_WireFence.SetTexture(texture);
+	m_WireFence.SetTexture(texture.Get());
 	m_WireFence.SetMaterial(material);
 	
 	
 
 	// 初始化地板
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	m_Floor.SetBuffer(m_pd3dDevice, 
+	m_Floor.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
-	m_Floor.SetTexture(texture);
+	m_Floor.SetTexture(texture.Get());
 	m_Floor.SetMaterial(material);
 
 	// 初始化墙体
@@ -403,13 +403,13 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 5; ++i)
 	{
 		m_Walls[i].SetMaterial(material);
-		m_Walls[i].SetTexture(texture);
+		m_Walls[i].SetTexture(texture.Get());
 	}
-	m_Walls[0].SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
-	m_Walls[1].SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
-	m_Walls[2].SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
-	m_Walls[3].SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
-	m_Walls[4].SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	m_Walls[0].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
+	m_Walls[1].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(6.0f, 8.0f), XMFLOAT2(1.5f, 2.0f)));
+	m_Walls[2].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	m_Walls[3].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
+	m_Walls[4].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	
 	m_Walls[0].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(-7.0f, 3.0f, 10.0f));
 	m_Walls[1].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(7.0f, 3.0f, 10.0f));
@@ -423,9 +423,9 @@ bool GameApp::InitResource()
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\water.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	m_Water.SetBuffer(m_pd3dDevice,
+	m_Water.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(10.0f, 10.0f)));
-	m_Water.SetTexture(texture);
+	m_Water.SetTexture(texture.Get());
 	m_Water.SetMaterial(material);
 
 	// 初始化镜面
@@ -433,10 +433,10 @@ bool GameApp::InitResource()
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	m_Mirror.SetBuffer(m_pd3dDevice,
+	m_Mirror.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
 	m_Mirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
-	m_Mirror.SetTexture(texture);
+	m_Mirror.SetTexture(texture.Get());
 	m_Mirror.SetMaterial(material);
 
 	// ******************
@@ -487,7 +487,7 @@ bool GameApp::InitResource()
 	memcpy_s(mappedData.pData, sizeof(CBChangesRarely), &m_CBRarely, sizeof(CBChangesRarely));
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[4].Get(), 0);
 	// 初始化所有渲染状态
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 	
 	
 	// ******************
@@ -559,7 +559,7 @@ DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
 
 
 template<class VertexType, class IndexType>
-void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+void GameApp::GameObject::SetBuffer(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
 	m_pVertexBuffer.Reset();
@@ -596,7 +596,7 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 
 }
 
-void GameApp::GameObject::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+void GameApp::GameObject::SetTexture(ID3D11ShaderResourceView * texture)
 {
 	m_pTexture = texture;
 }
@@ -616,7 +616,7 @@ void XM_CALLCONV GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
-void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
+void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 {
 	// 设置顶点/索引缓冲区
 	UINT strides = m_VertexStride;

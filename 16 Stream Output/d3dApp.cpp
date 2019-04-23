@@ -48,7 +48,9 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 
 D3DApp::~D3DApp()
 {
-	
+	// 恢复所有默认设定
+	if (m_pd3dImmediateContext)
+		m_pd3dImmediateContext->ClearState();
 }
 
 HINSTANCE D3DApp::AppInst()const

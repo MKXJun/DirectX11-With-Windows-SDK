@@ -20,9 +20,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -181,14 +181,14 @@ void GameApp::DrawScene()
 
 	// 绘制不需要纹理的模型
 	m_BasicEffect.SetTextureUsed(false);
-	m_Sphere.Draw(m_pd3dImmediateContext, m_BasicEffect);
-	m_Cube.Draw(m_pd3dImmediateContext, m_BasicEffect);
-	m_Cylinder.Draw(m_pd3dImmediateContext, m_BasicEffect);
-	m_Triangle.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+	m_Cube.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+	m_Cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+	m_Triangle.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// 绘制需要纹理的模型
 	m_BasicEffect.SetTextureUsed(true);
-	m_House.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// ******************
 	// 绘制Direct2D部分
@@ -215,16 +215,16 @@ bool GameApp::InitResource()
 	//
 	
 	// 球体(预先设好包围球)
-	m_Sphere.SetModel(Model(m_pd3dDevice, Geometry::CreateSphere()));
+	m_Sphere.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateSphere()));
 	m_BoundingSphere.Center = XMFLOAT3(-5.0f, 0.0f, 0.0f);
 	m_BoundingSphere.Radius = 1.0f;
 	// 立方体
-	m_Cube.SetModel(Model(m_pd3dDevice, Geometry::CreateBox()));
+	m_Cube.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateBox()));
 	// 圆柱体
-	m_Cylinder.SetModel(Model(m_pd3dDevice, Geometry::CreateCylinder()));
+	m_Cylinder.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateCylinder()));
 	// 房屋
 	m_ObjReader.Read(L"Model\\house.mbo", L"Model\\house.obj");
-	m_House.SetModel(Model(m_pd3dDevice, m_ObjReader));
+	m_House.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 	// 三角形(带反面)
 	m_TriangleMesh.vertexVec.assign({
 		VertexPosNormalTex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
@@ -235,7 +235,7 @@ bool GameApp::InitResource()
 		VertexPosNormalTex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2())
 		});
 	m_TriangleMesh.indexVec.assign({ 0, 1, 2, 3, 4, 5 });
-	m_Triangle.SetModel(Model(m_pd3dDevice, m_TriangleMesh));
+	m_Triangle.SetModel(Model(m_pd3dDevice.Get(), m_TriangleMesh));
 
 	// ******************
 	// 初始化摄像机
@@ -267,7 +267,7 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetDirLight(0, dirLight);
 
 	// 默认只按对象绘制
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 
 
 	// ******************

@@ -33,7 +33,7 @@ public:
 	virtual ~IEffect() = default;
 
 	// 更新并绑定常量缓冲区
-	virtual void Apply(ComPtr<ID3D11DeviceContext> deviceContext) = 0;
+	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 
@@ -53,7 +53,7 @@ public:
 	
 
 	// 初始化Basic.hlsli所需资源并初始化渲染状态
-	bool InitAll(ComPtr<ID3D11Device> device);
+	bool InitAll(ID3D11Device * device);
 
 
 	//
@@ -61,11 +61,11 @@ public:
 	//
 
 	// 绘制三角形分裂
-	void SetRenderSplitedTriangle(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderSplitedTriangle(ID3D11DeviceContext * deviceContext);
 	// 绘制无上下盖的圆柱体
-	void SetRenderCylinderNoCap(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderCylinderNoCap(ID3D11DeviceContext * deviceContext);
 	// 绘制所有顶点的法向量
-	void SetRenderNormal(ComPtr<ID3D11DeviceContext> deviceContext);
+	void SetRenderNormal(ID3D11DeviceContext * deviceContext);
 	
 
 	//
@@ -98,7 +98,7 @@ public:
 	void SetCylinderHeight(float height);
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ComPtr<ID3D11DeviceContext> deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext);
 	
 private:
 	class Impl;

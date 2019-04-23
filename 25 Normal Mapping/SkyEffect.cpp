@@ -82,7 +82,7 @@ SkyEffect & SkyEffect::Get()
 	return *g_pInstance;
 }
 
-bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
+bool SkyEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -132,7 +132,7 @@ bool SkyEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void SkyEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void SkyEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pSkyVS.Get(), nullptr, 0);
@@ -162,12 +162,12 @@ void XM_CALLCONV SkyEffect::SetWorldViewProjMatrix(DirectX::FXMMATRIX WVP)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void SkyEffect::SetTextureCube(ComPtr<ID3D11ShaderResourceView> m_pTextureCube)
+void SkyEffect::SetTextureCube(ID3D11ShaderResourceView * m_pTextureCube)
 {
 	pImpl->m_pTextureCube = m_pTextureCube;
 }
 
-void SkyEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void SkyEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

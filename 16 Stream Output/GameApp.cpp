@@ -24,9 +24,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -200,15 +200,15 @@ void GameApp::DrawScene()
 	// 根据当前绘制模式设置需要用于渲染的各项资源
 	if (m_ShowMode == Mode::SplitedTriangle)
 	{
-		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext.Get());
 	}
 	else if (m_ShowMode == Mode::SplitedSnow)
 	{
-		m_BasicEffect.SetRenderSplitedSnow(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedSnow(m_pd3dImmediateContext.Get());
 	}
 	else if (m_ShowMode == Mode::SplitedSphere)
 	{
-		m_BasicEffect.SetRenderSplitedSphere(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedSphere(m_pd3dImmediateContext.Get());
 	}
 
 	// 设置线框/面模式
@@ -222,13 +222,13 @@ void GameApp::DrawScene()
 	}
 
 	// 进行绘制，记得应用常量缓冲区的变更
-	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
 	// 绘制法向量
 	if (m_ShowNormal)
 	{
-		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext);
-		m_BasicEffect.Apply(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext.Get());
+		m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 		m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
 	}
 
@@ -364,7 +364,7 @@ void GameApp::ResetSplitedTriangle()
 		vbd.ByteWidth *= 3;
 		m_VertexCounts[i] = m_VertexCounts[i - 1] * 3;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
-		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 
@@ -432,7 +432,7 @@ void GameApp::ResetSplitedSnow()
 		vbd.ByteWidth *= 4;
 		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
-		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 
@@ -499,7 +499,7 @@ void GameApp::ResetSplitedSphere()
 		vbd.ByteWidth *= 4;
 		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
-		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext, m_pVertexBuffers[i - 1], m_pVertexBuffers[i]);
+		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
 		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
 	}
 

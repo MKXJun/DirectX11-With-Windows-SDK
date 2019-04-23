@@ -6,12 +6,12 @@
 #include "Vertex.h"
 
 // 编程捕获帧(需支持DirectX 11.2 API)
-//#if defined(DEBUG) | defined(_DEBUG)
-//#include <DXGItype.h>  
-//#include <dxgi1_2.h>  
-//#include <dxgi1_3.h>  
-//#include <DXProgrammableCapture.h>  
-//#endif
+#if defined(DEBUG) | defined(_DEBUG)
+#include <DXGItype.h>  
+#include <dxgi1_2.h>  
+#include <dxgi1_3.h>  
+#include <DXProgrammableCapture.h>  
+#endif
 
 class GameApp : public D3DApp
 {

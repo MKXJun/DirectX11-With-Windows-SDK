@@ -97,7 +97,7 @@ MinimapEffect & MinimapEffect::Get()
 	return *g_pInstance;
 }
 
-bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
+bool MinimapEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -149,7 +149,7 @@ bool MinimapEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void MinimapEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void MinimapEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosTexLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pMinimapVS.Get(), nullptr, 0);
@@ -200,12 +200,12 @@ void XM_CALLCONV MinimapEffect::SetInvisibleColor(DirectX::FXMVECTOR color)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void MinimapEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
+void MinimapEffect::SetTexture(ID3D11ShaderResourceView * texture)
 {
-	pImpl->m_pTexture = m_pTexture;
+	pImpl->m_pTexture = texture;
 }
 
-void MinimapEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void MinimapEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

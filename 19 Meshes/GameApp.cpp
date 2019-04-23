@@ -20,9 +20,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -133,11 +133,11 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
 	
-	m_BasicEffect.Apply(m_pd3dImmediateContext);
-	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
-	m_House.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
+	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
+	m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	
 
 	// ******************
@@ -166,11 +166,11 @@ bool GameApp::InitResource()
 
 	// 初始化地板
 	m_ObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
-	m_Ground.SetModel(Model(m_pd3dDevice, m_ObjReader));
+	m_Ground.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 
 	// 初始化房屋模型
 	m_ObjReader.Read(L"Model\\house.mbo", L"Model\\house.obj");
-	m_House.SetModel(Model(m_pd3dDevice, m_ObjReader));
+	m_House.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 	// 获取房屋包围盒
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 	BoundingBox houseBox = m_House.GetLocalBoundingBox();

@@ -21,9 +21,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -116,7 +116,7 @@ void GameApp::UpdateScene(float dt)
 		UINT stride = sizeof(VertexPosColor);		// 跨越字节数
 		UINT offset = 0;							// 起始偏移量
 		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext.Get());
 	}
 	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
 	{
@@ -126,7 +126,7 @@ void GameApp::UpdateScene(float dt)
 		UINT stride = sizeof(VertexPosNormalColor);		// 跨越字节数
 		UINT offset = 0;								// 起始偏移量
 		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext.Get());
 	}
 
 	// 显示法向量
@@ -149,16 +149,16 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 应用常量缓冲区的变化
-	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->Draw(m_VertexCount, 0);
 	// 绘制法向量，绘制完后记得归位
 	if (m_ShowMode == Mode::CylinderNoCapWithNormal)
 	{
-		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext.Get());
 		// 应用常量缓冲区的变化
-		m_BasicEffect.Apply(m_pd3dImmediateContext);
+		m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 		m_pd3dImmediateContext->Draw(m_VertexCount, 0);
-		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext);
+		m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext.Get());
 	}
 
 
@@ -232,7 +232,7 @@ bool GameApp::InitResource()
 	UINT offset = 0;							// 起始偏移量
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
 	// 设置默认渲染状态
-	m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext);
+	m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext.Get());
 
 
 	return true;

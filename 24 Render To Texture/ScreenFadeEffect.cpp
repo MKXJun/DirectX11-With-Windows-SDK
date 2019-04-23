@@ -94,7 +94,7 @@ ScreenFadeEffect & ScreenFadeEffect::Get()
 	return *g_pInstance;
 }
 
-bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
+bool ScreenFadeEffect::InitAll(ID3D11Device * device)
 {
 	if (!device)
 		return false;
@@ -147,7 +147,7 @@ bool ScreenFadeEffect::InitAll(ComPtr<ID3D11Device> device)
 	return true;
 }
 
-void ScreenFadeEffect::SetRenderDefault(ComPtr<ID3D11DeviceContext> deviceContext)
+void ScreenFadeEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosTexLayout.Get());
 	deviceContext->VSSetShader(pImpl->m_pScreenFadeVS.Get(), nullptr, 0);
@@ -185,12 +185,12 @@ void ScreenFadeEffect::SetFadeAmount(float fadeAmount)
 }
 
 
-void ScreenFadeEffect::SetTexture(ComPtr<ID3D11ShaderResourceView> m_pTexture)
+void ScreenFadeEffect::SetTexture(ID3D11ShaderResourceView * texture)
 {
-	pImpl->m_pTexture = m_pTexture;
+	pImpl->m_pTexture = texture;
 }
 
-void ScreenFadeEffect::Apply(ComPtr<ID3D11DeviceContext> deviceContext)
+void ScreenFadeEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上

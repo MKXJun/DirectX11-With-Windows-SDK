@@ -25,9 +25,9 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -227,16 +227,16 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制地面
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext);
-	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// 绘制树
-	m_BasicEffect.SetRenderBillboard(m_pd3dImmediateContext, m_EnableAlphaToCoverage);
+	m_BasicEffect.SetRenderBillboard(m_pd3dImmediateContext.Get(), m_EnableAlphaToCoverage);
 	m_BasicEffect.SetMaterial(m_TreeMat);
 	UINT stride = sizeof(VertexPosSize);
 	UINT offset = 0;
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, mPointSpritesBuffer.GetAddressOf(), &stride, &offset);
-	m_BasicEffect.Apply(m_pd3dImmediateContext);
+	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->Draw(16, 0);
 
 	// ******************
@@ -287,7 +287,7 @@ bool GameApp::InitResource()
 			L"Texture\\tree3.dds"},
 		test.GetAddressOf(),
 		mTreeTexArray.GetAddressOf()));
-	m_BasicEffect.SetTextureArray(mTreeTexArray);
+	m_BasicEffect.SetTextureArray(mTreeTexArray.Get());
 
 	// 初始化点精灵缓冲区
 	InitPointSpritesBuffer();
@@ -299,9 +299,9 @@ bool GameApp::InitResource()
 
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化地板
-	m_Ground.SetBuffer(m_pd3dDevice, Geometry::CreatePlane(XMFLOAT3(0.0f, -5.0f, 0.0f), XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
+	m_Ground.SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(0.0f, -5.0f, 0.0f), XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
-	m_Ground.SetTexture(texture);
+	m_Ground.SetTexture(texture.Get());
 	Material material{};
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);

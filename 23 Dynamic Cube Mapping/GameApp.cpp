@@ -23,12 +23,12 @@ bool GameApp::Init()
 		return false;
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 
-	if (!m_BasicEffect.InitAll(m_pd3dDevice))
+	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
-	if (!m_SkyEffect.InitAll(m_pd3dDevice))
+	if (!m_SkyEffect.InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -192,9 +192,9 @@ void GameApp::DrawScene()
 	// 保留当前绘制的渲染目标视图和深度模板视图
 	switch (m_SkyBoxMode)
 	{
-	case SkyBoxMode::Daylight: m_pDaylight->Cache(m_pd3dImmediateContext, m_BasicEffect); break;
-	case SkyBoxMode::Sunset: m_pSunset->Cache(m_pd3dImmediateContext, m_BasicEffect); break;
-	case SkyBoxMode::Desert: m_pDesert->Cache(m_pd3dImmediateContext, m_BasicEffect); break;
+	case SkyBoxMode::Daylight: m_pDaylight->Cache(m_pd3dImmediateContext.Get(), m_BasicEffect); break;
+	case SkyBoxMode::Sunset: m_pSunset->Cache(m_pd3dImmediateContext.Get(), m_BasicEffect); break;
+	case SkyBoxMode::Desert: m_pDesert->Cache(m_pd3dImmediateContext.Get(), m_BasicEffect); break;
 	}
 
 	// 绘制动态天空盒的每个面（以球体为中心）
@@ -203,11 +203,11 @@ void GameApp::DrawScene()
 		switch (m_SkyBoxMode)
 		{
 		case SkyBoxMode::Daylight: m_pDaylight->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext.Get(), m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Sunset: m_pSunset->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext.Get(), m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		case SkyBoxMode::Desert: m_pDesert->BeginCapture(
-			m_pd3dImmediateContext, m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
+			m_pd3dImmediateContext.Get(), m_BasicEffect, XMFLOAT3(), static_cast<D3D11_TEXTURECUBE_FACE>(i)); break;
 		}
 
 		// 不绘制中心球
@@ -217,9 +217,9 @@ void GameApp::DrawScene()
 	// 恢复之前的绘制设定
 	switch (m_SkyBoxMode)
 	{
-	case SkyBoxMode::Daylight: m_pDaylight->Restore(m_pd3dImmediateContext, m_BasicEffect, *m_pCamera); break;
-	case SkyBoxMode::Sunset: m_pSunset->Restore(m_pd3dImmediateContext, m_BasicEffect, *m_pCamera); break;
-	case SkyBoxMode::Desert: m_pDesert->Restore(m_pd3dImmediateContext, m_BasicEffect, *m_pCamera); break;
+	case SkyBoxMode::Daylight: m_pDaylight->Restore(m_pd3dImmediateContext.Get(), m_BasicEffect, *m_pCamera); break;
+	case SkyBoxMode::Sunset: m_pSunset->Restore(m_pd3dImmediateContext.Get(), m_BasicEffect, *m_pCamera); break;
+	case SkyBoxMode::Desert: m_pDesert->Restore(m_pd3dImmediateContext.Get(), m_BasicEffect, *m_pCamera); break;
 	}
 	
 	// ******************
@@ -277,12 +277,12 @@ bool GameApp::InitResource()
 	// 初始化天空盒相关
 
 	m_pDaylight = std::make_unique<DynamicSkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext, 
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\daylight.jpg", 
 		5000.0f, 256);
 
 	m_pSunset = std::make_unique<DynamicSkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext,
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 		L"Texture\\sunset_posX.bmp", L"Texture\\sunset_negX.bmp",
 		L"Texture\\sunset_posY.bmp", L"Texture\\sunset_negY.bmp", 
@@ -290,7 +290,7 @@ bool GameApp::InitResource()
 		5000.0f, 256);
 
 	m_pDesert = std::make_unique<DynamicSkyRender>(
-		m_pd3dDevice, m_pd3dImmediateContext,
+		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\desertcube1024.dds",
 		5000.0f, 256);
 
@@ -302,7 +302,7 @@ bool GameApp::InitResource()
 	
 	Model model;
 	// 球体
-	model.SetMesh(m_pd3dDevice, Geometry::CreateSphere(1.0f, 30, 30));
+	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
@@ -312,9 +312,9 @@ bool GameApp::InitResource()
 		nullptr, 
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Sphere.SetModel(std::move(model));
-	m_Sphere.ResizeBuffer(m_pd3dDevice, 5);
+	m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
 	// 地面
-	model.SetMesh(m_pd3dDevice, 
+	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -326,7 +326,7 @@ bool GameApp::InitResource()
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Ground.SetModel(std::move(model));
 	// 柱体
-	model.SetMesh(m_pd3dDevice,
+	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -337,7 +337,7 @@ bool GameApp::InitResource()
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Cylinder.SetModel(std::move(model));
-	m_Cylinder.ResizeBuffer(m_pd3dDevice, 5);
+	m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
 
 	// ******************
 	// 初始化摄像机
@@ -392,7 +392,7 @@ bool GameApp::InitResource()
 void GameApp::DrawScene(bool drawCenterSphere)
 {
 	// 绘制模型
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderObject);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 	m_BasicEffect.SetTextureUsed(true);
 	
 	// 只有球体才有反射或折射效果
@@ -413,16 +413,16 @@ void GameApp::DrawScene(bool drawCenterSphere)
 			m_BasicEffect.SetRefractionEnabled(true);
 			break;
 		}
-		m_Sphere.Draw(m_pd3dImmediateContext, m_BasicEffect);
+		m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	}
 	
 	// 绘制地面
 	m_BasicEffect.SetReflectionEnabled(false);
 	m_BasicEffect.SetRefractionEnabled(false);
-	m_Ground.Draw(m_pd3dImmediateContext, m_BasicEffect);
+	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// 绘制五个圆柱
-	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext, BasicEffect::RenderInstance);
+	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
 	// 需要固定位置
 	static std::vector<XMMATRIX> cyliderWorlds = {
 		XMMatrixTranslation(0.0f, -1.99f, 0.0f),
@@ -431,7 +431,7 @@ void GameApp::DrawScene(bool drawCenterSphere)
 		XMMatrixTranslation(-4.5f, -1.99f, -4.5f),
 		XMMatrixTranslation(4.5f, -1.99f, -4.5f)
 	};
-	m_Cylinder.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, cyliderWorlds);
+	m_Cylinder.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, cyliderWorlds);
 	
 	// 绘制五个圆球
 	static float rad = 0.0f;
@@ -444,17 +444,17 @@ void GameApp::DrawScene(bool drawCenterSphere)
 		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(rad), -4.5f),
 		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(2.5f * XMScalarCos(rad), 0.0f, 2.5f * XMScalarSin(rad))
 	};
-	m_Sphere.DrawInstanced(m_pd3dImmediateContext, m_BasicEffect, sphereWorlds);
+	m_Sphere.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, sphereWorlds);
 
 	// 绘制天空盒
-	m_SkyEffect.SetRenderDefault(m_pd3dImmediateContext);
+	m_SkyEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
 	switch (m_SkyBoxMode)
 	{
-	case SkyBoxMode::Daylight: m_pDaylight->Draw(m_pd3dImmediateContext, m_SkyEffect, 
+	case SkyBoxMode::Daylight: m_pDaylight->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect,
 		(drawCenterSphere ? *m_pCamera : m_pDaylight->GetCamera())); break;
-	case SkyBoxMode::Sunset: m_pSunset->Draw(m_pd3dImmediateContext, m_SkyEffect,
+	case SkyBoxMode::Sunset: m_pSunset->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect,
 		(drawCenterSphere ? *m_pCamera : m_pSunset->GetCamera())); break;
-	case SkyBoxMode::Desert: m_pDesert->Draw(m_pd3dImmediateContext, m_SkyEffect, 
+	case SkyBoxMode::Desert: m_pDesert->Draw(m_pd3dImmediateContext.Get(), m_SkyEffect,
 		(drawCenterSphere ? *m_pCamera : m_pDesert->GetCamera())); break;
 	}
 	

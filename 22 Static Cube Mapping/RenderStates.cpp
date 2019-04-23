@@ -30,7 +30,7 @@ bool RenderStates::IsInit()
 	return RSWireframe != nullptr;
 }
 
-void RenderStates::InitAll(ComPtr<ID3D11Device> device)
+void RenderStates::InitAll(ID3D11Device * device)
 {
 	// 先前初始化过的话就没必要重来了
 	if (IsInit())

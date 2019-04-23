@@ -10,12 +10,12 @@ struct InstancedData
 };
 
 GameObject::GameObject()
-	: m_Capacity(), 
+	: m_Capacity(),
 	m_WorldMatrix(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)	
+		0.0f, 0.0f, 0.0f, 1.0f)
 {
 }
 
@@ -50,7 +50,7 @@ size_t GameObject::GetCapacity() const
 	return m_Capacity;
 }
 
-void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
+void GameObject::ResizeBuffer(ID3D11Device* device, size_t count)
 {
 	// 设置实例缓冲区描述
 	D3D11_BUFFER_DESC vbd;
@@ -69,19 +69,19 @@ void GameObject::ResizeBuffer(ComPtr<ID3D11Device> device, size_t count)
 
 
 
-void GameObject::SetModel(Model && model)
+void GameObject::SetModel(Model&& model)
 {
 	std::swap(m_Model, model);
 	model.modelParts.clear();
 	model.boundingBox = BoundingBox();
 }
 
-void GameObject::SetModel(const Model & model)
+void GameObject::SetModel(const Model& model)
 {
 	m_Model = model;
 }
 
-void GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
+void GameObject::SetWorldMatrix(const XMFLOAT4X4& world)
 {
 	m_WorldMatrix = world;
 }
@@ -91,7 +91,7 @@ void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
-void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect)
+void GameObject::Draw(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
 {
 	UINT strides = m_Model.vertexStride;
 	UINT offsets = 0;
@@ -104,16 +104,16 @@ void GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & e
 
 		// 更新数据并应用
 		effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
-		effect.SetTextureDiffuse(part.texDiffuse);
+		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);
-		
+
 		effect.Apply(deviceContext);
 
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);
 	}
 }
 
-void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data)
+void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const std::vector<DirectX::XMMATRIX>& data)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
@@ -122,12 +122,12 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 	{
 		ComPtr<ID3D11Device> device;
 		deviceContext->GetDevice(device.GetAddressOf());
-		ResizeBuffer(device, numInsts);
+		ResizeBuffer(device.Get(), numInsts);
 	}
 
 	HR(deviceContext->Map(m_pInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 
-	InstancedData * iter = reinterpret_cast<InstancedData *>(mappedData.pData);
+	InstancedData* iter = reinterpret_cast<InstancedData*>(mappedData.pData);
 	for (auto& mat : data)
 	{
 		iter->world = XMMatrixTranspose(mat);
@@ -139,7 +139,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 
 	UINT strides[2] = { m_Model.vertexStride, sizeof(InstancedData) };
 	UINT offsets[2] = { 0, 0 };
-	ID3D11Buffer * buffers[2] = { nullptr, m_pInstancedBuffer.Get() };
+	ID3D11Buffer* buffers[2] = { nullptr, m_pInstancedBuffer.Get() };
 	for (auto& part : m_Model.modelParts)
 	{
 		buffers[0] = part.vertexBuffer.Get();
@@ -149,7 +149,7 @@ void GameObject::DrawInstanced(ComPtr<ID3D11DeviceContext> deviceContext, BasicE
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
-		effect.SetTextureDiffuse(part.texDiffuse);
+		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);
 		effect.Apply(deviceContext);
 
@@ -170,4 +170,5 @@ void GameObject::SetDebugObjectName(const std::string& name)
 
 #endif
 }
+
 

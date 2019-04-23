@@ -51,7 +51,7 @@ public:
 	//
 
 	// 绘制对象
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
+	void Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect);
 	
 	//
 	// 调试 

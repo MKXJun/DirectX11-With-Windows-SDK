@@ -6,8 +6,8 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 SkyRender::SkyRender(
-	ComPtr<ID3D11Device> device,
-	ComPtr<ID3D11DeviceContext> deviceContext,
+	ID3D11Device * device,
+	ID3D11DeviceContext * deviceContext,
 	const std::wstring & cubemapFilename,
 	float skySphereRadius,
 	bool generateMips)
@@ -17,8 +17,8 @@ SkyRender::SkyRender(
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
 	{
 		HR(CreateDDSTextureFromFile(
-			device.Get(),
-			generateMips ? deviceContext.Get() : nullptr,
+			device,
+			generateMips ? deviceContext : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
 			m_pTextureCubeSRV.GetAddressOf()
@@ -27,8 +27,8 @@ SkyRender::SkyRender(
 	else
 	{
 		HR(CreateWICTexture2DCubeFromFile(
-			device.Get(),
-			deviceContext.Get(),
+			device,
+			deviceContext,
 			cubemapFilename,
 			nullptr,
 			m_pTextureCubeSRV.GetAddressOf(),
@@ -39,8 +39,8 @@ SkyRender::SkyRender(
 	InitResource(device, skySphereRadius);
 }
 
-SkyRender::SkyRender(ComPtr<ID3D11Device> device,
-	ComPtr<ID3D11DeviceContext> deviceContext,
+SkyRender::SkyRender(ID3D11Device * device,
+	ID3D11DeviceContext * deviceContext,
 	const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius,
 	bool generateMips)
@@ -49,8 +49,8 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	// ÃÏø’∫–Œ∆¿Ìº”‘ÿ
 
 	HR(CreateWICTexture2DCubeFromFile(
-		device.Get(),
-		deviceContext.Get(),
+		device,
+		deviceContext,
 		cubemapFilenames,
 		nullptr,
 		m_pTextureCubeSRV.GetAddressOf(),
@@ -60,12 +60,12 @@ SkyRender::SkyRender(ComPtr<ID3D11Device> device,
 	InitResource(device, skySphereRadius);
 }
 
-ComPtr<ID3D11ShaderResourceView> SkyRender::GetTextureCube()
+ID3D11ShaderResourceView * SkyRender::GetTextureCube()
 {
-	return m_pTextureCubeSRV;
+	return m_pTextureCubeSRV.Get();
 }
 
-void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyEffect, const Camera & camera)
+void SkyRender::Draw(ID3D11DeviceContext * deviceContext, SkyEffect & skyEffect, const Camera & camera)
 {
 	UINT strides[1] = { sizeof(XMFLOAT3) };
 	UINT offsets[1] = { 0 };
@@ -74,7 +74,7 @@ void SkyRender::Draw(ComPtr<ID3D11DeviceContext> deviceContext, SkyEffect & skyE
 
 	XMFLOAT3 pos = camera.GetPosition();
 	skyEffect.SetWorldViewProjMatrix(XMMatrixTranslation(pos.x, pos.y, pos.z) * camera.GetViewProjXM());
-	skyEffect.SetTextureCube(m_pTextureCubeSRV);
+	skyEffect.SetTextureCube(m_pTextureCubeSRV.Get());
 	skyEffect.Apply(deviceContext);
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
 }
@@ -93,7 +93,7 @@ void SkyRender::SetDebugObjectName(const std::string& name)
 #endif
 }
 
-void SkyRender::InitResource(ComPtr<ID3D11Device> device, float skySphereRadius)
+void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 {
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 

@@ -150,8 +150,8 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 
 	for (auto& wall : m_Walls)
-		wall.Draw(m_pd3dImmediateContext);
-	m_Floor.Draw(m_pd3dImmediateContext);
+		wall.Draw(m_pd3dImmediateContext.Get());
+	m_Floor.Draw(m_pd3dImmediateContext.Get());
 
 	// ******************
 	// 2. 绘制透明对象
@@ -161,11 +161,11 @@ void GameApp::DrawScene()
 
 	// 篱笆盒稍微抬起一点高度
 	m_WireFence.SetWorldMatrix(XMMatrixTranslation(2.0f, 0.01f, 0.0f));
-	m_WireFence.Draw(m_pd3dImmediateContext);
+	m_WireFence.Draw(m_pd3dImmediateContext.Get());
 	m_WireFence.SetWorldMatrix(XMMatrixTranslation(-2.0f, 0.01f, 0.0f));
-	m_WireFence.Draw(m_pd3dImmediateContext);
+	m_WireFence.Draw(m_pd3dImmediateContext.Get());
 	// 绘制了篱笆盒后再绘制水面
-	m_Water.Draw(m_pd3dImmediateContext);
+	m_Water.Draw(m_pd3dImmediateContext.Get());
 	
 
 
@@ -246,15 +246,15 @@ bool GameApp::InitResource()
 	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	// 初始化篱笆盒
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WireFence.dds", nullptr, texture.GetAddressOf()));
-	m_WireFence.SetBuffer(m_pd3dDevice, Geometry::CreateBox());
-	m_WireFence.SetTexture(texture);
+	m_WireFence.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateBox());
+	m_WireFence.SetTexture(texture.Get());
 	m_WireFence.SetMaterial(material);
 	
 	// 初始化地板
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	m_Floor.SetBuffer(m_pd3dDevice, 
+	m_Floor.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
-	m_Floor.SetTexture(texture);
+	m_Floor.SetTexture(texture.Get());
 	m_Floor.SetMaterial(material);
 
 	// 初始化墙体
@@ -263,13 +263,13 @@ bool GameApp::InitResource()
 	// 这里控制墙体四个面的生成
 	for (int i = 0; i < 4; ++i)
 	{
-		m_Walls[i].SetBuffer(m_pd3dDevice,
+		m_Walls[i].SetBuffer(m_pd3dDevice.Get(),
 			Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
 		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
 			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		m_Walls[i].SetMaterial(material);
 		m_Walls[i].SetWorldMatrix(world);
-		m_Walls[i].SetTexture(texture);
+		m_Walls[i].SetTexture(texture.Get());
 	}
 		
 	// 初始化水
@@ -277,9 +277,9 @@ bool GameApp::InitResource()
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\water.dds", nullptr, texture.ReleaseAndGetAddressOf()));
-	m_Water.SetBuffer(m_pd3dDevice,
+	m_Water.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(10.0f, 10.0f)));
-	m_Water.SetTexture(texture);
+	m_Water.SetTexture(texture.Get());
 	m_Water.SetMaterial(material);
 	
 	// ******************
@@ -330,7 +330,7 @@ bool GameApp::InitResource()
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[3].Get(), 0);
 
 	// 初始化所有渲染状态
-	RenderStates::InitAll(m_pd3dDevice);
+	RenderStates::InitAll(m_pd3dDevice.Get());
 	
 	
 	// ******************
@@ -398,7 +398,7 @@ DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
 }
 
 template<class VertexType, class IndexType>
-void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+void GameApp::GameObject::SetBuffer(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
 	m_pVertexBuffer.Reset();
@@ -435,7 +435,7 @@ void GameApp::GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry:
 
 }
 
-void GameApp::GameObject::SetTexture(ComPtr<ID3D11ShaderResourceView> texture)
+void GameApp::GameObject::SetTexture(ID3D11ShaderResourceView * texture)
 {
 	m_pTexture = texture;
 }
@@ -455,7 +455,7 @@ void XM_CALLCONV GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
 	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
-void GameApp::GameObject::Draw(ComPtr<ID3D11DeviceContext> deviceContext)
+void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 {
 	// 设置顶点/索引缓冲区
 	UINT strides = m_VertexStride;

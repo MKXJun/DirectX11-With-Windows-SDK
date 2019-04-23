@@ -27,9 +27,9 @@ public:
 
 	// 设置缓冲区
 	template<class VertexType, class IndexType>
-	void SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData);
+	void SetBuffer(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData);
 	// 设置纹理
-	void SetTexture(ComPtr<ID3D11ShaderResourceView> texture);
+	void SetTexture(ID3D11ShaderResourceView * texture);
 	// 设置材质
 	void SetMaterial(const Material& material);
 	// 设置矩阵
@@ -37,7 +37,7 @@ public:
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 
 	// 绘制
-	void Draw(ComPtr<ID3D11DeviceContext> deviceContext, BasicEffect& effect);
+	void Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect);
 	
 	// 设置调试对象名
 	// 若缓冲区被重新设置，调试对象名也需要被重新设置
@@ -53,7 +53,7 @@ private:
 };
 
 template<class VertexType, class IndexType>
-inline void GameObject::SetBuffer(ComPtr<ID3D11Device> device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+inline void GameObject::SetBuffer(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
 	m_pVertexBuffer.Reset();

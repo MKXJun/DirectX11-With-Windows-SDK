@@ -88,6 +88,17 @@ void GameApp::UpdateScene(float dt)
 		auto meshData = Geometry::CreateCylinder<VertexPosNormalColor>();
 		ResetMesh(meshData);
 	}
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::R))
+	{
+		auto meshData = Geometry::CreateCone<VertexPosNormalColor>();
+		ResetMesh(meshData);
+	}
+	// 键盘切换光栅化状态
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::S))
+	{
+		m_IsWireframeMode = !m_IsWireframeMode;
+		m_pd3dImmediateContext->RSSetState(m_IsWireframeMode ? m_pRSWireframe.Get() : nullptr);
+	}
 
 	// 更新常量缓冲区，让立方体转起来
 	D3D11_MAPPED_SUBRESOURCE mappedData;
@@ -135,7 +146,9 @@ bool GameApp::InitEffect()
 
 bool GameApp::InitResource()
 {
+	// ******************
 	// 初始化网格模型
+	//
 	auto meshData = Geometry::CreateBox<VertexPosNormalColor>();
 	ResetMesh(meshData);
 
@@ -154,6 +167,7 @@ bool GameApp::InitResource()
 	cbd.ByteWidth = sizeof(PSConstantBuffer);
 	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pConstantBuffers[1].GetAddressOf()));
 
+	// ******************
 	// 初始化默认光照
 	// 方向光
 	m_DirLight.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -200,6 +214,17 @@ bool GameApp::InitResource()
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &m_VSConstantBuffer, sizeof(PSConstantBuffer));
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[1].Get(), 0);
+
+	// ******************
+	// 初始化光栅化状态
+	//
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(rasterizerDesc));
+	rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.FrontCounterClockwise = false;
+	rasterizerDesc.DepthClipEnable = true;
+	HR(m_pd3dDevice->CreateRasterizerState(&rasterizerDesc, m_pRSWireframe.GetAddressOf()));
 
 	// ******************
 	// 给渲染管线各个阶段绑定好所需资源

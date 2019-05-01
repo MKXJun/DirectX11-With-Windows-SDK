@@ -36,7 +36,6 @@ namespace Geometry
 	MeshData<VertexType, IndexType> CreateSphere(float radius = 1.0f, UINT levels = 20, UINT slices = 20,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
-
 	// 创建立方体网格数据
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	MeshData<VertexType, IndexType> CreateBox(float width = 2.0f, float height = 2.0f, float depth = 2.0f,
@@ -47,11 +46,19 @@ namespace Geometry
 	MeshData<VertexType, IndexType> CreateCylinder(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
-
-
 	// 创建只有圆柱体侧面的网格数据，slices越大，精度越高
 	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
 	MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
+		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 创建圆锥体网格数据，slices越大，精度越高。
+	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
+	MeshData<VertexType, IndexType> CreateCone(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
+		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	// 创建只有圆锥体侧面网格数据，slices越大，精度越高。
+	template<class VertexType = VertexPosNormalTex, class IndexType = WORD>
+	MeshData<VertexType, IndexType> CreateConeNoCap(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
 		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// 创建一个覆盖NDC屏幕的面
@@ -340,6 +347,11 @@ namespace Geometry
 			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 		}
 
+		// 放入底端圆心
+		vertexData = { XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
+			XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
+		Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+
 		// 放入底部圆上各点
 		for (UINT i = 0; i <= slices; ++i)
 		{
@@ -349,10 +361,7 @@ namespace Geometry
 			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 		}
 
-		// 放入底端圆心
-		vertexData = { XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
-			XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
-		Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+		
 
 		// 逐渐放入顶部三角形索引
 		for (UINT i = 1; i <= slices; ++i)
@@ -424,6 +433,94 @@ namespace Geometry
 			meshData.indexVec[iIndex++] = i;
 		}
 
+
+		return meshData;
+	}
+
+	template<class VertexType, class IndexType>
+	MeshData<VertexType, IndexType> CreateCone(float radius, float height, UINT slices, const DirectX::XMFLOAT4& color)
+	{
+		using namespace DirectX;
+		auto meshData = CreateConeNoCap<VertexType, IndexType>(radius, height, slices, color);
+
+		UINT vertexCount = 3 * slices + 1;
+		UINT indexCount = 6 * slices;
+		meshData.vertexVec.resize(vertexCount);
+		meshData.indexVec.resize(indexCount);
+		
+		float h2 = height / 2;
+		float theta = 0.0f;
+		float per_theta = XM_2PI / slices;
+		UINT iIndex = 3 * slices;
+		UINT vIndex = 2 * slices;
+		Internal::VertexData vertexData;
+
+		// 放入圆锥底面顶点
+		for (UINT i = 0; i < slices; ++i)
+		{
+			theta = i * per_theta;
+			vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
+				XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
+			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+		}
+		vertexData = { XMFLOAT3(0.0f, -h2, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f),
+				XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
+		Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+
+		// 放入索引
+		UINT offset = 2 * slices;
+		for (UINT i = 0; i < slices; ++i)
+		{
+			meshData.indexVec[iIndex++] = offset + slices;
+			meshData.indexVec[iIndex++] = offset + i % slices;
+			meshData.indexVec[iIndex++] = offset + (i + 1) % slices;
+		}
+
+		return meshData;
+	}
+
+	template<class VertexType, class IndexType>
+	MeshData<VertexType, IndexType> CreateConeNoCap(float radius, float height, UINT slices, const DirectX::XMFLOAT4& color)
+	{
+		using namespace DirectX;
+
+		MeshData<VertexType, IndexType> meshData;
+		meshData.vertexVec.resize(2 * slices);
+		meshData.indexVec.resize(3 * slices);
+
+		float h2 = height / 2;
+		float theta = 0.0f;
+		float per_theta = XM_2PI / slices;
+		float len = sqrtf(height * height + radius * radius);
+		UINT iIndex = 0;
+		UINT vIndex = 0;
+		Internal::VertexData vertexData;
+
+		// 放入圆锥尖端顶点(每个顶点包含不同的法向量和切线向量)
+		for (UINT i = 0; i < slices; ++i)
+		{
+			theta = i * per_theta + per_theta / 2;
+			vertexData = { XMFLOAT3(0.0f, h2, 0.0f), XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len),
+				XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(0.5f, 0.5f) };
+			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+		}
+
+		// 放入圆锥底面顶点
+		for (UINT i = 0; i < slices; ++i)
+		{
+			theta = i * per_theta;
+			vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len),
+				XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
+			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+		}
+
+		// 放入索引
+		for (UINT i = 0; i < slices; ++i)
+		{
+			meshData.indexVec[iIndex++] = i;
+			meshData.indexVec[iIndex++] = slices + (i + 1) % slices;
+			meshData.indexVec[iIndex++] = slices + i % slices;
+		}
 
 		return meshData;
 	}
@@ -508,4 +605,5 @@ namespace Geometry
 
 
 #endif
+
 

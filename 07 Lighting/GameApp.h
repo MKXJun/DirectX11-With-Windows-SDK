@@ -60,6 +60,9 @@ private:
 	DirectionalLight m_DirLight;					// 默认环境光
 	PointLight m_PointLight;						// 默认点光
 	SpotLight m_SpotLight;						    // 默认汇聚光
+
+	ComPtr<ID3D11RasterizerState> m_pRSWireframe;	// 光栅化状态: 线框模式
+	bool m_IsWireframeMode;							// 当前是否为线框模式
 	
 };
 

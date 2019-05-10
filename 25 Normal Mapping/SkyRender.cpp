@@ -85,6 +85,9 @@ void SkyRender::SetDebugObjectName(const std::string& name)
 	std::string texCubeName = name + ".CubeMapSRV";
 	std::string vbName = name + ".VertexBuffer";
 	std::string ibName = name + ".IndexBuffer";
+	// 先清空可能存在的名称
+	m_pTextureCubeSRV->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+
 	m_pTextureCubeSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(texCubeName.length()), texCubeName.c_str());
 	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
 	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
@@ -305,7 +308,7 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 
 	texDesc.Width = dynamicCubeSize;
 	texDesc.Height = dynamicCubeSize;
-	texDesc.MipLevels = 0;
+	texDesc.MipLevels = 1;
 	texDesc.ArraySize = 1;
 	texDesc.SampleDesc.Count = 1;
 	texDesc.SampleDesc.Quality = 0;

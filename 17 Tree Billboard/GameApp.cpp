@@ -276,7 +276,6 @@ bool GameApp::InitResource()
 	//
 
 	// 初始化树纹理资源
-	ComPtr<ID3D11Texture2D> test;
 	HR(CreateDDSTexture2DArrayFromFile(
 		m_pd3dDevice.Get(),
 		m_pd3dImmediateContext.Get(),
@@ -285,7 +284,7 @@ bool GameApp::InitResource()
 			L"Texture\\tree1.dds",
 			L"Texture\\tree2.dds",
 			L"Texture\\tree3.dds"},
-		test.GetAddressOf(),
+		nullptr,
 		mTreeTexArray.GetAddressOf()));
 	m_BasicEffect.SetTextureArray(mTreeTexArray.Get());
 

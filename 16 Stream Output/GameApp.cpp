@@ -224,7 +224,7 @@ void GameApp::DrawScene()
 	// 应用常量缓冲区的变更
 	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 	// 除了索引为0的缓冲区缺少内部图元数目记录，其余都可以使用DrawAuto方法
-	if (m_CurrIndex <= 0)
+	if (m_CurrIndex == 0)
 	{
 		m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
 	}
@@ -239,7 +239,7 @@ void GameApp::DrawScene()
 		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext.Get());
 		m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 		// 除了索引为0的缓冲区缺少内部图元数目记录，其余都可以使用DrawAuto方法
-		if (m_CurrIndex <= 0)
+		if (m_CurrIndex == 0)
 		{
 			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
 		}
@@ -367,11 +367,11 @@ void GameApp::ResetSplitedTriangle()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-	//	graphicsAnalysis->BeginCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
 
 	// 三角形顶点数
 	m_InitVertexCounts = 3;
@@ -393,9 +393,9 @@ void GameApp::ResetSplitedTriangle()
 
 	}
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	graphicsAnalysis->EndCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "TriangleVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "TriangleVertexBuffer[1]");
@@ -443,11 +443,11 @@ void GameApp::ResetSplitedSnow()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-	//	graphicsAnalysis->BeginCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
 
 	// 顶点数
 	m_InitVertexCounts = 6;
@@ -468,9 +468,9 @@ void GameApp::ResetSplitedSnow()
 		}
 	}
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	graphicsAnalysis->EndCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SnowVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SnowVertexBuffer[1]");
@@ -517,11 +517,11 @@ void GameApp::ResetSplitedSphere()
 	InitData.pSysMem = vertices.data();
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-	//	graphicsAnalysis->BeginCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+//	graphicsAnalysis->BeginCapture();
+//#endif
 
 	// 顶点数
 	m_InitVertexCounts = 24;
@@ -542,9 +542,9 @@ void GameApp::ResetSplitedSphere()
 		}
 	}
 
-	//#if defined(DEBUG) | defined(_DEBUG)
-	//	graphicsAnalysis->EndCapture();
-	//#endif
+//#if defined(DEBUG) | defined(_DEBUG)
+//	graphicsAnalysis->EndCapture();
+//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SphereVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SphereVertexBuffer[1]");

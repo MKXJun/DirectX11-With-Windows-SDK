@@ -10,7 +10,7 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_CurrIndex(),
 	m_IsWireFrame(false),
 	m_ShowNormal(false),
-	m_VertexCounts()
+	m_InitVertexCounts()
 {
 }
 
@@ -221,15 +221,32 @@ void GameApp::DrawScene()
 		m_pd3dImmediateContext->RSSetState(nullptr);
 	}
 
-	// 进行绘制，记得应用常量缓冲区的变更
+	// 应用常量缓冲区的变更
 	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
-	m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
+	// 除了索引为0的缓冲区缺少内部图元数目记录，其余都可以使用DrawAuto方法
+	if (m_CurrIndex <= 0)
+	{
+		m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
+	}
+	else
+	{
+		m_pd3dImmediateContext->DrawAuto();
+	}
+		
 	// 绘制法向量
 	if (m_ShowNormal)
 	{
 		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext.Get());
 		m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
-		m_pd3dImmediateContext->Draw(m_VertexCounts[m_CurrIndex], 0);
+		// 除了索引为0的缓冲区缺少内部图元数目记录，其余都可以使用DrawAuto方法
+		if (m_CurrIndex <= 0)
+		{
+			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
+		}
+		else
+		{
+			m_pd3dImmediateContext->DrawAuto();
+		}
 	}
 
 
@@ -350,27 +367,35 @@ void GameApp::ResetSplitedTriangle()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-//	graphicsAnalysis->BeginCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+	//	graphicsAnalysis->BeginCapture();
+	//#endif
 
 	// 三角形顶点数
-	m_VertexCounts[0] = 3;
+	m_InitVertexCounts = 3;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 3;
-		m_VertexCounts[i] = m_VertexCounts[i - 1] * 3;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
+		// 第一次绘制需要调用一般绘制指令，之后就可以使用DrawAuto了
+		if (i == 1)
+		{
+			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
+		}
+		else
+		{
+			m_pd3dImmediateContext->DrawAuto();
+		}
+
 	}
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	graphicsAnalysis->EndCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	graphicsAnalysis->EndCapture();
+	//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "TriangleVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "TriangleVertexBuffer[1]");
@@ -418,27 +443,34 @@ void GameApp::ResetSplitedSnow()
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-//	graphicsAnalysis->BeginCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+	//	graphicsAnalysis->BeginCapture();
+	//#endif
 
 	// 顶点数
-	m_VertexCounts[0] = 6;
+	m_InitVertexCounts = 6;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
-		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
+		// 第一次绘制需要调用一般绘制指令，之后就可以使用DrawAuto了
+		if (i == 1)
+		{
+			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
+		}
+		else
+		{
+			m_pd3dImmediateContext->DrawAuto();
+		}
 	}
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	graphicsAnalysis->EndCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	graphicsAnalysis->EndCapture();
+	//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SnowVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SnowVertexBuffer[1]");
@@ -485,27 +517,34 @@ void GameApp::ResetSplitedSphere()
 	InitData.pSysMem = vertices.data();
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffers[0].ReleaseAndGetAddressOf()));
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
-//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
-//	graphicsAnalysis->BeginCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	ComPtr<IDXGraphicsAnalysis> graphicsAnalysis;
+	//	HR(DXGIGetDebugInterface1(0, __uuidof(graphicsAnalysis.Get()), reinterpret_cast<void**>(graphicsAnalysis.GetAddressOf())));
+	//	graphicsAnalysis->BeginCapture();
+	//#endif
 
 	// 顶点数
-	m_VertexCounts[0] = 24;
+	m_InitVertexCounts = 24;
 	// 初始化所有顶点缓冲区
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
-		m_VertexCounts[i] = m_VertexCounts[i - 1] * 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		m_pd3dImmediateContext->Draw(m_VertexCounts[i - 1], 0);
+		// 第一次绘制需要调用一般绘制指令，之后就可以使用DrawAuto了
+		if (i == 1)
+		{
+			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
+		}
+		else
+		{
+			m_pd3dImmediateContext->DrawAuto();
+		}
 	}
 
-//#if defined(DEBUG) | defined(_DEBUG)
-//	graphicsAnalysis->EndCapture();
-//#endif
+	//#if defined(DEBUG) | defined(_DEBUG)
+	//	graphicsAnalysis->EndCapture();
+	//#endif
 
 	D3D11SetDebugObjectName(m_pVertexBuffers[0].Get(), "SphereVertexBuffer[0]");
 	D3D11SetDebugObjectName(m_pVertexBuffers[1].Get(), "SphereVertexBuffer[1]");

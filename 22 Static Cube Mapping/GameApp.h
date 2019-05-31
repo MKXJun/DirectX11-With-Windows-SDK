@@ -10,9 +10,9 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
-	// Ìì¿ÕºĞÄ£Ê½
+	// å¤©ç©ºç›’æ¨¡å¼
 	enum class SkyBoxMode { Daylight, Sunset, Desert };
 
 public:
@@ -29,26 +29,26 @@ private:
 	
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	GameObject m_Sphere;										// Çò
-	GameObject m_Ground;										// µØÃæ
-	GameObject m_Cylinder;									    // Ô²Öù
+	GameObject m_Sphere;										// çƒ
+	GameObject m_Ground;										// åœ°é¢
+	GameObject m_Cylinder;									    // åœ†æŸ±
 
-	BasicEffect m_BasicEffect;								    // ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	BasicEffect m_BasicEffect;								    // å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
 	
-	SkyEffect m_SkyEffect;									    // Ìì¿ÕºĞÌØĞ§¹ÜÀí
-	std::unique_ptr<SkyRender> m_pDaylight;					    // Ìì¿ÕºĞ(°×Ìì)
-	std::unique_ptr<SkyRender> m_pSunset;						// Ìì¿ÕºĞ(ÈÕÂä)
-	std::unique_ptr<SkyRender> m_pDesert;						// Ìì¿ÕºĞ(É³Ä®)
-	SkyBoxMode m_SkyBoxMode;									// Ìì¿ÕºĞÄ£Ê½
+	SkyEffect m_SkyEffect;									    // å¤©ç©ºç›’ç‰¹æ•ˆç®¡ç†
+	std::unique_ptr<SkyRender> m_pDaylight;					    // å¤©ç©ºç›’(ç™½å¤©)
+	std::unique_ptr<SkyRender> m_pSunset;						// å¤©ç©ºç›’(æ—¥è½)
+	std::unique_ptr<SkyRender> m_pDesert;						// å¤©ç©ºç›’(æ²™æ¼ )
+	SkyBoxMode m_SkyBoxMode;									// å¤©ç©ºç›’æ¨¡å¼
 
-	std::shared_ptr<Camera> m_pCamera;						    // ÉãÏñ»ú
-	CameraMode m_CameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> m_pCamera;						    // æ‘„åƒæœº
+	CameraMode m_CameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
-	ObjReader m_ObjReader;									    // Ä£ĞÍ¶ÁÈ¡¶ÔÏó
+	ObjReader m_ObjReader;									    // æ¨¡å‹è¯»å–å¯¹è±¡
 };
 
 

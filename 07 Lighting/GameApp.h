@@ -46,23 +46,23 @@ private:
 
 
 private:
-	ComPtr<ID3D11InputLayout> m_pVertexLayout;	    // ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;			// ¶¥µã»º³åÇø
-	ComPtr<ID3D11Buffer> m_pIndexBuffer;			// Ë÷Òı»º³åÇø
-	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];	    // ³£Á¿»º³åÇø
-	UINT m_IndexCount;							    // »æÖÆÎïÌåµÄË÷ÒıÊı×é´óĞ¡
+	ComPtr<ID3D11InputLayout> m_pVertexLayout;	    // é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;			// é¡¶ç‚¹ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;			// ç´¢å¼•ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];	    // å¸¸é‡ç¼“å†²åŒº
+	UINT m_IndexCount;							    // ç»˜åˆ¶ç‰©ä½“çš„ç´¢å¼•æ•°ç»„å¤§å°
 
-	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> m_pPixelShader;		// ÏñËØ×ÅÉ«Æ÷
-	VSConstantBuffer m_VSConstantBuffer;			// ÓÃÓÚĞŞ¸ÄÓÃÓÚVSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
-	PSConstantBuffer m_PSConstantBuffer;			// ÓÃÓÚĞŞ¸ÄÓÃÓÚPSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
+	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> m_pPixelShader;		// åƒç´ ç€è‰²å™¨
+	VSConstantBuffer m_VSConstantBuffer;			// ç”¨äºä¿®æ”¹ç”¨äºVSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
+	PSConstantBuffer m_PSConstantBuffer;			// ç”¨äºä¿®æ”¹ç”¨äºPSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
 
-	DirectionalLight m_DirLight;					// Ä¬ÈÏ»·¾³¹â
-	PointLight m_PointLight;						// Ä¬ÈÏµã¹â
-	SpotLight m_SpotLight;						    // Ä¬ÈÏ»ã¾Û¹â
+	DirectionalLight m_DirLight;					// é»˜è®¤ç¯å¢ƒå…‰
+	PointLight m_PointLight;						// é»˜è®¤ç‚¹å…‰
+	SpotLight m_SpotLight;						    // é»˜è®¤æ±‡èšå…‰
 
-	ComPtr<ID3D11RasterizerState> m_pRSWireframe;	// ¹âÕ¤»¯×´Ì¬: Ïß¿òÄ£Ê½
-	bool m_IsWireframeMode;							// µ±Ç°ÊÇ·ñÎªÏß¿òÄ£Ê½
+	ComPtr<ID3D11RasterizerState> m_pRSWireframe;	// å…‰æ …åŒ–çŠ¶æ€: çº¿æ¡†æ¨¡å¼
+	bool m_IsWireframeMode;							// å½“å‰æ˜¯å¦ä¸ºçº¿æ¡†æ¨¡å¼
 	
 };
 

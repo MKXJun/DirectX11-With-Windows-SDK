@@ -36,7 +36,7 @@ void GameApp::Compute()
 //	graphicsAnalysis->BeginCapture();
 //#endif
 
-	// GPUÅÅĞò
+	// GPUæ’åº
 	m_Timer.Reset();
 	m_Timer.Start();
 	GPUSort();
@@ -44,7 +44,7 @@ void GameApp::Compute()
 	m_Timer.Stop();
 	float gpuTotalTime = m_Timer.TotalTime();
 
-	// ½á¹û¿½±´³öÀ´
+	// ç»“æœæ‹·è´å‡ºæ¥
 	m_pd3dImmediateContext->CopyResource(m_pTypedBufferCopy.Get(), m_pTypedBuffer1.Get());
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pTypedBufferCopy.Get(), 0, D3D11_MAP_READ, 0, &mappedData));
@@ -53,7 +53,7 @@ void GameApp::Compute()
 //	graphicsAnalysis->EndCapture();
 //#endif
 
-	// CPUÅÅĞò
+	// CPUæ’åº
 	m_Timer.Reset();
 	m_Timer.Start();
 	std::sort(m_RandomNums.begin(), m_RandomNums.begin() + m_RandomNumsCount);
@@ -66,12 +66,12 @@ void GameApp::Compute()
 
 	m_pd3dImmediateContext->Unmap(m_pTypedBufferCopy.Get(), 0);
 
-	std::wstring wstr = L"ÅÅĞòÔªËØÊıÄ¿£º" + std::to_wstring(m_RandomNumsCount) +
+	std::wstring wstr = L"æ’åºå…ƒç´ æ•°ç›®ï¼š" + std::to_wstring(m_RandomNumsCount) +
 		L"/" + std::to_wstring(m_RandomNums.size());
-	wstr += L"\nGPUÓÃÊ±£º" + std::to_wstring(gpuTotalTime) + L"Ãë";
-	wstr += L"\nCPUÓÃÊ±£º" + std::to_wstring(cpuTotalTime) + L"Ãë";
-	wstr += isSame ? L"\nÅÅĞò½á¹ûÒ»ÖÂ" : L"\nÅÅĞò½á¹û²»Ò»ÖÂ";
-	MessageBox(nullptr, wstr.c_str(), L"ÅÅĞò½áÊø", MB_OK);
+	wstr += L"\nGPUç”¨æ—¶ï¼š" + std::to_wstring(gpuTotalTime) + L"ç§’";
+	wstr += L"\nCPUç”¨æ—¶ï¼š" + std::to_wstring(cpuTotalTime) + L"ç§’";
+	wstr += isSame ? L"\næ’åºç»“æœä¸€è‡´" : L"\næ’åºç»“æœä¸ä¸€è‡´";
+	MessageBox(nullptr, wstr.c_str(), L"æ’åºç»“æŸ", MB_OK);
 
 }
 
@@ -79,14 +79,14 @@ void GameApp::Compute()
 
 bool GameApp::InitResource()
 {
-	// ³õÊ¼»¯Ëæ»úÊıÊı¾İ
+	// åˆå§‹åŒ–éšæœºæ•°æ•°æ®
 	std::mt19937 randEngine;
 	randEngine.seed(std::random_device()());
 	std::uniform_int_distribution<UINT> powRange(9, 18);
-	// ÔªËØÊıÄ¿±ØĞëÎª2µÄ´ÎÃİÇÒ²»Ğ¡ÓÚ512¸ö£¬²¢ÓÃ×î´óÖµÌî³ä
+	// å…ƒç´ æ•°ç›®å¿…é¡»ä¸º2çš„æ¬¡å¹‚ä¸”ä¸å°äº512ä¸ªï¼Œå¹¶ç”¨æœ€å¤§å€¼å¡«å……
 	UINT elemCount = 1 << powRange(randEngine);
 	m_RandomNums.assign(elemCount, UINT_MAX);
-	// Ìî³äËæ»úÊıÄ¿µÄËæ»úÊı£¬ÊıÄ¿ÔÚÒ»°ëÈİÁ¿µ½×î´óÈİÁ¿Ö®¼ä
+	// å¡«å……éšæœºæ•°ç›®çš„éšæœºæ•°ï¼Œæ•°ç›®åœ¨ä¸€åŠå®¹é‡åˆ°æœ€å¤§å®¹é‡ä¹‹é—´
 	std::uniform_int_distribution<UINT> numsCountRange((UINT)m_RandomNums.size() / 2,
 		(UINT)m_RandomNums.size());
 	m_RandomNumsCount = numsCountRange(randEngine);
@@ -104,7 +104,7 @@ bool GameApp::InitResource()
 	HR(CreateConstantBuffer(m_pd3dDevice.Get(), nullptr, sizeof(CB),
 		m_pConstantBuffer.GetAddressOf(), false, true));
 
-	// ´´½¨×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
+	// åˆ›å»ºç€è‰²å™¨èµ„æºè§†å›¾
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 	srvDesc.Format = DXGI_FORMAT_R32_UINT;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
@@ -115,7 +115,7 @@ bool GameApp::InitResource()
 	HR(m_pd3dDevice->CreateShaderResourceView(m_pTypedBuffer2.Get(), &srvDesc,
 		m_pDataSRV2.GetAddressOf()));
 
-	// ´´½¨ÎŞĞò·ÃÎÊÊÓÍ¼
+	// åˆ›å»ºæ— åºè®¿é—®è§†å›¾
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 	uavDesc.Format = DXGI_FORMAT_R32_UINT;
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
@@ -127,7 +127,7 @@ bool GameApp::InitResource()
 	HR(m_pd3dDevice->CreateUnorderedAccessView(m_pTypedBuffer2.Get(), &uavDesc,
 		m_pDataUAV2.GetAddressOf()));
 
-	// ´´½¨¼ÆËã×ÅÉ«Æ÷
+	// åˆ›å»ºè®¡ç®—ç€è‰²å™¨
 	ComPtr<ID3DBlob> blob;
 	HR(CreateShaderFromFile(L"HLSL\\BitonicSort_CS.cso",
 		L"HLSL\\BitonicSort_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf()));
@@ -138,7 +138,7 @@ bool GameApp::InitResource()
 	HR(m_pd3dDevice->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pMatrixTranspose_CS.GetAddressOf()));
 
 	// ******************
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	//
 	D3D11SetDebugObjectName(m_pConstantBuffer.Get(), "ConstantBuffer");
 	D3D11SetDebugObjectName(m_pTypedBuffer1.Get(), "TypedBuffer1");
@@ -168,14 +168,14 @@ void GameApp::GPUSort()
 	m_pd3dImmediateContext->CSSetShader(m_pBitonicSort_CS.Get(), nullptr, 0);
 	m_pd3dImmediateContext->CSSetUnorderedAccessViews(0, 1, m_pDataUAV1.GetAddressOf(), nullptr);
 
-	// °´ĞĞÊı¾İ½øĞĞÅÅĞò£¬ÏÈÅÅĞòlevel <= BLOCK_SIZE µÄËùÓĞÇé¿ö
+	// æŒ‰è¡Œæ•°æ®è¿›è¡Œæ’åºï¼Œå…ˆæ’åºlevel <= BLOCK_SIZE çš„æ‰€æœ‰æƒ…å†µ
 	for (UINT level = 2; level <= size && level <= BITONIC_BLOCK_SIZE; level *= 2)
 	{
 		SetConstants(level, level, 0, 0);
 		m_pd3dImmediateContext->Dispatch((size + BITONIC_BLOCK_SIZE - 1) / BITONIC_BLOCK_SIZE, 1, 1);
 	}
 	
-	// ¼ÆËãÏà½üµÄ¾ØÕó¿í¸ß(¿í>=¸ßÇÒĞèÒª¶¼Îª2µÄ´ÎÃİ)
+	// è®¡ç®—ç›¸è¿‘çš„çŸ©é˜µå®½é«˜(å®½>=é«˜ä¸”éœ€è¦éƒ½ä¸º2çš„æ¬¡å¹‚)
 	UINT matrixWidth = 2, matrixHeight = 2;
 	while (matrixWidth * matrixWidth < size)
 	{
@@ -183,11 +183,11 @@ void GameApp::GPUSort()
 	}
 	matrixHeight = size / matrixWidth;
 
-	// ÅÅĞòlevel > BLOCK_SIZE µÄËùÓĞÇé¿ö
+	// æ’åºlevel > BLOCK_SIZE çš„æ‰€æœ‰æƒ…å†µ
 	ComPtr<ID3D11ShaderResourceView> pNullSRV;
 	for (UINT level = BITONIC_BLOCK_SIZE * 2; level <= size; level *= 2)
 	{
-		// Èç¹û´ïµ½×î¸ßµÈ¼¶£¬ÔòÎªÈ«µİÔöĞòÁĞ
+		// å¦‚æœè¾¾åˆ°æœ€é«˜ç­‰çº§ï¼Œåˆ™ä¸ºå…¨é€’å¢åºåˆ—
 		if (level == size)
 		{
 			SetConstants(level / matrixWidth, level, matrixWidth, matrixHeight);
@@ -196,7 +196,7 @@ void GameApp::GPUSort()
 		{
 			SetConstants(level / matrixWidth, level / matrixWidth, matrixWidth, matrixHeight);
 		}
-		// ÏÈ½øĞĞ×ªÖÃ£¬²¢°ÑÊı¾İÊä³öµ½Buffer2
+		// å…ˆè¿›è¡Œè½¬ç½®ï¼Œå¹¶æŠŠæ•°æ®è¾“å‡ºåˆ°Buffer2
 		m_pd3dImmediateContext->CSSetShader(m_pMatrixTranspose_CS.Get(), nullptr, 0);
 		m_pd3dImmediateContext->CSSetShaderResources(0, 1, pNullSRV.GetAddressOf());
 		m_pd3dImmediateContext->CSSetUnorderedAccessViews(0, 1, m_pDataUAV2.GetAddressOf(), nullptr);
@@ -204,11 +204,11 @@ void GameApp::GPUSort()
 		m_pd3dImmediateContext->Dispatch(matrixWidth / TRANSPOSE_BLOCK_SIZE, 
 			matrixHeight / TRANSPOSE_BLOCK_SIZE, 1);
 
-		// ¶ÔBuffer2ÅÅĞòÁĞÊı¾İ
+		// å¯¹Buffer2æ’åºåˆ—æ•°æ®
 		m_pd3dImmediateContext->CSSetShader(m_pBitonicSort_CS.Get(), nullptr, 0);
 		m_pd3dImmediateContext->Dispatch(size / BITONIC_BLOCK_SIZE, 1, 1);
 
-		// ½Ó×Å×ªÖÃ»ØÀ´£¬²¢°ÑÊı¾İÊä³öµ½Buffer1
+		// æ¥ç€è½¬ç½®å›æ¥ï¼Œå¹¶æŠŠæ•°æ®è¾“å‡ºåˆ°Buffer1
 		SetConstants(matrixWidth, level, matrixWidth, matrixHeight);
 		m_pd3dImmediateContext->CSSetShader(m_pMatrixTranspose_CS.Get(), nullptr, 0);
 		m_pd3dImmediateContext->CSSetShaderResources(0, 1, pNullSRV.GetAddressOf());
@@ -217,7 +217,7 @@ void GameApp::GPUSort()
 		m_pd3dImmediateContext->Dispatch(matrixWidth / TRANSPOSE_BLOCK_SIZE,
 			matrixHeight / TRANSPOSE_BLOCK_SIZE, 1);
 
-		// ¶ÔBuffer1ÅÅĞòÊ£ÓàĞĞÊı¾İ
+		// å¯¹Buffer1æ’åºå‰©ä½™è¡Œæ•°æ®
 		m_pd3dImmediateContext->CSSetShader(m_pBitonicSort_CS.Get(), nullptr, 0);
 		m_pd3dImmediateContext->Dispatch(size / BITONIC_BLOCK_SIZE, 1, 1);
 	}

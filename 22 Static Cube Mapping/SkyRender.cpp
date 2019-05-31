@@ -13,7 +13,7 @@ SkyRender::SkyRender(
 	bool generateMips)
 	: m_IndexCount()
 {
-	// Ìì¿ÕºĞÎÆÀí¼ÓÔØ
+	// å¤©ç©ºç›’çº¹ç†åŠ è½½
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
 	{
 		HR(CreateDDSTextureFromFile(
@@ -46,7 +46,7 @@ SkyRender::SkyRender(ID3D11Device * device,
 	bool generateMips)
 	: m_IndexCount()
 {
-	// Ìì¿ÕºĞÎÆÀí¼ÓÔØ
+	// å¤©ç©ºç›’çº¹ç†åŠ è½½
 
 	HR(CreateWICTexture2DCubeFromFile(
 		device,
@@ -97,7 +97,7 @@ void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 {
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 
-	// ¶¥µã»º³åÇø´´½¨
+	// é¡¶ç‚¹ç¼“å†²åŒºåˆ›å»º
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)sphere.vertexVec.size();
@@ -111,7 +111,7 @@ void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 
 	HR(device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer));
 
-	// Ë÷Òı»º³åÇø´´½¨
+	// ç´¢å¼•ç¼“å†²åŒºåˆ›å»º
 	m_IndexCount = (UINT)sphere.indexVec.size();
 
 	D3D11_BUFFER_DESC ibd;

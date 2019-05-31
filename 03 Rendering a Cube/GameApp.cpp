@@ -43,7 +43,7 @@ void GameApp::UpdateScene(float dt)
 	static float phi = 0.0f, theta = 0.0f;
 	phi += 0.0001f, theta += 0.00015f;
 	m_CBuffer.world = XMMatrixTranspose(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
-	// ¸üĞÂ³£Á¿»º³åÇø£¬ÈÃÁ¢·½Ìå×ªÆğÀ´
+	// æ›´æ–°å¸¸é‡ç¼“å†²åŒºï¼Œè®©ç«‹æ–¹ä½“è½¬èµ·æ¥
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(m_CBuffer), &m_CBuffer, sizeof(m_CBuffer));
@@ -59,7 +59,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&black));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// »æÖÆÁ¢·½Ìå
+	// ç»˜åˆ¶ç«‹æ–¹ä½“
 	m_pd3dImmediateContext->DrawIndexed(36, 0, 0);
 	HR(m_pSwapChain->Present(0, 0));
 }
@@ -69,14 +69,14 @@ bool GameApp::InitEffect()
 {
 	ComPtr<ID3DBlob> blob;
 
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Cube_VS.cso", L"HLSL\\Cube_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(m_pd3dDevice->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pVertexShader.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(m_pd3dDevice->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), m_pVertexLayout.GetAddressOf()));
 
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Cube_PS.cso", L"HLSL\\Cube_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(m_pd3dDevice->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pPixelShader.GetAddressOf()));
 
@@ -86,7 +86,7 @@ bool GameApp::InitEffect()
 bool GameApp::InitResource()
 {
 	// ******************
-	// ÉèÖÃÁ¢·½Ìå¶¥µã
+	// è®¾ç½®ç«‹æ–¹ä½“é¡¶ç‚¹
 	//    5________ 6
 	//    /|      /|
 	//   /_|_____/ |
@@ -105,58 +105,58 @@ bool GameApp::InitResource()
 		{ XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 		{ XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }
 	};
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof vertices;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// ĞÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
 	HR(m_pd3dDevice->CreateBuffer(&vbd, &InitData, m_pVertexBuffer.GetAddressOf()));
 
 	// ******************
-	// Ë÷ÒıÊı×é
+	// ç´¢å¼•æ•°ç»„
 	//
 	WORD indices[] = {
-		// ÕıÃæ
+		// æ­£é¢
 		0, 1, 2,
 		2, 3, 0,
-		// ×óÃæ
+		// å·¦é¢
 		4, 5, 1,
 		1, 0, 4,
-		// ¶¥Ãæ
+		// é¡¶é¢
 		1, 5, 6,
 		6, 2, 1,
-		// ±³Ãæ
+		// èƒŒé¢
 		7, 6, 5,
 		5, 4, 7,
-		// ÓÒÃæ
+		// å³é¢
 		3, 2, 6,
 		6, 7, 3,
-		// µ×Ãæ
+		// åº•é¢
 		4, 0, 3,
 		3, 7, 4
 	};
-	// ÉèÖÃË÷Òı»º³åÇøÃèÊö
+	// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
 	ibd.ByteWidth = sizeof indices;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
-	// ĞÂ½¨Ë÷Òı»º³åÇø
+	// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
 	InitData.pSysMem = indices;
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
-	// ÊäÈë×°Åä½×¶ÎµÄË÷Òı»º³åÇøÉèÖÃ
+	// è¾“å…¥è£…é…é˜¶æ®µçš„ç´¢å¼•ç¼“å†²åŒºè®¾ç½®
 	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 
 	// ******************
-	// ÉèÖÃ³£Á¿»º³åÇøÃèÊö
+	// è®¾ç½®å¸¸é‡ç¼“å†²åŒºæè¿°
 	//
 	D3D11_BUFFER_DESC cbd;
 	ZeroMemory(&cbd, sizeof(cbd));
@@ -164,11 +164,11 @@ bool GameApp::InitResource()
 	cbd.ByteWidth = sizeof(ConstantBuffer);
 	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	// ĞÂ½¨³£Á¿»º³åÇø£¬²»Ê¹ÓÃ³õÊ¼Êı¾İ
+	// æ–°å»ºå¸¸é‡ç¼“å†²åŒºï¼Œä¸ä½¿ç”¨åˆå§‹æ•°æ®
 	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pConstantBuffer.GetAddressOf()));
 
-	// ³õÊ¼»¯³£Á¿»º³åÇøµÄÖµ
-	m_CBuffer.world = XMMatrixIdentity();	// µ¥Î»¾ØÕóµÄ×ªÖÃÊÇËü±¾Éí
+	// åˆå§‹åŒ–å¸¸é‡ç¼“å†²åŒºçš„å€¼
+	m_CBuffer.world = XMMatrixIdentity();	// å•ä½çŸ©é˜µçš„è½¬ç½®æ˜¯å®ƒæœ¬èº«
 	m_CBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),
 		XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f),
@@ -178,26 +178,26 @@ bool GameApp::InitResource()
 
 
 	// ******************
-	// ¸øäÖÈ¾¹ÜÏß¸÷¸ö½×¶Î°ó¶¨ºÃËùĞè×ÊÔ´
+	// ç»™æ¸²æŸ“ç®¡çº¿å„ä¸ªé˜¶æ®µç»‘å®šå¥½æ‰€éœ€èµ„æº
 	//
 
-	// ÊäÈë×°Åä½×¶ÎµÄ¶¥µã»º³åÇøÉèÖÃ
-	UINT stride = sizeof(VertexPosColor);	// ¿çÔ½×Ö½ÚÊı
-	UINT offset = 0;						// ÆğÊ¼Æ«ÒÆÁ¿
+	// è¾“å…¥è£…é…é˜¶æ®µçš„é¡¶ç‚¹ç¼“å†²åŒºè®¾ç½®
+	UINT stride = sizeof(VertexPosColor);	// è·¨è¶Šå­—èŠ‚æ•°
+	UINT offset = 0;						// èµ·å§‹åç§»é‡
 
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
-	// ÉèÖÃÍ¼ÔªÀàĞÍ£¬Éè¶¨ÊäÈë²¼¾Ö
+	// è®¾ç½®å›¾å…ƒç±»å‹ï¼Œè®¾å®šè¾“å…¥å¸ƒå±€
 	m_pd3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_pd3dImmediateContext->IASetInputLayout(m_pVertexLayout.Get());
-	// ½«×ÅÉ«Æ÷°ó¶¨µ½äÖÈ¾¹ÜÏß
+	// å°†ç€è‰²å™¨ç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿
 	m_pd3dImmediateContext->VSSetShader(m_pVertexShader.Get(), nullptr, 0);
-	// ½«¸üĞÂºÃµÄ³£Á¿»º³åÇø°ó¶¨µ½¶¥µã×ÅÉ«Æ÷
+	// å°†æ›´æ–°å¥½çš„å¸¸é‡ç¼“å†²åŒºç»‘å®šåˆ°é¡¶ç‚¹ç€è‰²å™¨
 	m_pd3dImmediateContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
 
 	m_pd3dImmediateContext->PSSetShader(m_pPixelShader.Get(), nullptr, 0);
 
 	// ******************
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	//
 	D3D11SetDebugObjectName(m_pVertexLayout.Get(), "VertexPosColorLayout");
 	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), "VertexBuffer");

@@ -9,7 +9,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -27,26 +27,26 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	ComPtr<ID3D11Buffer> mPointSpritesBuffer;				    // µã¾«Áé¶¥µã»º³åÇø
-	ComPtr<ID3D11ShaderResourceView> mTreeTexArray;			    // Ê÷µÄÎÆÀíÊı×é
-	Material m_TreeMat;										    // Ê÷µÄ²ÄÖÊ
+	ComPtr<ID3D11Buffer> mPointSpritesBuffer;				    // ç‚¹ç²¾çµé¡¶ç‚¹ç¼“å†²åŒº
+	ComPtr<ID3D11ShaderResourceView> mTreeTexArray;			    // æ ‘çš„çº¹ç†æ•°ç»„
+	Material m_TreeMat;										    // æ ‘çš„æè´¨
 
-	GameObject m_Ground;										// µØÃæ
+	GameObject m_Ground;										// åœ°é¢
 	
-	BasicEffect m_BasicEffect;							        // ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	BasicEffect m_BasicEffect;							        // å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
 
-	CameraMode m_CameraMode;									// ÉãÏñ»úÄ£Ê½
-	std::shared_ptr<Camera> m_pCamera;						    // ÉãÏñ»ú
+	CameraMode m_CameraMode;									// æ‘„åƒæœºæ¨¡å¼
+	std::shared_ptr<Camera> m_pCamera;						    // æ‘„åƒæœº
 
-	bool m_FogEnabled;										    // ÊÇ·ñ¿ªÆôÎíĞ§
-	bool m_IsNight;											    // ÊÇ·ñºÚÒ¹
-	bool m_EnableAlphaToCoverage;							    // ÊÇ·ñ¿ªÆôAlpha-To-Coverage
+	bool m_FogEnabled;										    // æ˜¯å¦å¼€å¯é›¾æ•ˆ
+	bool m_IsNight;											    // æ˜¯å¦é»‘å¤œ
+	bool m_EnableAlphaToCoverage;							    // æ˜¯å¦å¼€å¯Alpha-To-Coverage
 
-	float m_FogRange;										    // ÎíĞ§·¶Î§
+	float m_FogRange;										    // é›¾æ•ˆèŒƒå›´
 };
 
 

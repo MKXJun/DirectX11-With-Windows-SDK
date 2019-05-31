@@ -19,7 +19,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
+	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
 	RenderStates::InitAll(m_pd3dDevice.Get());
 
 	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
@@ -28,7 +28,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
+	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
@@ -39,13 +39,13 @@ void GameApp::OnResize()
 {
 	assert(m_pd2dFactory);
 	assert(m_pdwriteFactory);
-	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
+	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
+	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -56,29 +56,29 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugStringW(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
-			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
-			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
-			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
+		OutputDebugStringW(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
+			L"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
+			L"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+			L"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
+			L"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
+		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
 		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			m_pColorBrush.GetAddressOf()));
-		HR(m_pdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(m_pdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// ±¨¸æÒì³£ÎÊÌâ
+		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
 		assert(m_pd2dRenderTarget);
 	}
 
-	// ÉãÏñ»ú±ä¸üÏÔÊ¾
+	// æ‘„åƒæœºå˜æ›´æ˜¾ç¤º
 	if (m_pCamera != nullptr)
 	{
 		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
@@ -90,7 +90,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
+	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
 	m_MouseTracker.Update(mouseState);
@@ -99,7 +99,7 @@ void GameApp::UpdateScene(float dt)
 	m_KeyboardTracker.Update(keyState);
 
 	// ******************
-	// ¼ÇÂ¼²¢¸üĞÂÎïÌåÎ»ÖÃºÍĞı×ª»¡¶È
+	// è®°å½•å¹¶æ›´æ–°ç‰©ä½“ä½ç½®å’Œæ—‹è½¬å¼§åº¦
 	//
 	static float theta = 0.0f, phi = 0.0f;
 	static XMMATRIX Left = XMMatrixTranslation(-5.0f, 0.0f, 0.0f);
@@ -109,7 +109,7 @@ void GameApp::UpdateScene(float dt)
 
 	theta += dt * 0.5f;
 	phi += dt * 0.3f;
-	// ¸üĞÂÎïÌåÔË¶¯
+	// æ›´æ–°ç‰©ä½“è¿åŠ¨
 	m_Sphere.SetWorldMatrix(Left);
 	m_Cube.SetWorldMatrix(XMMatrixRotationX(-phi) * XMMatrixRotationY(theta) * Top);
 	m_Cylinder.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta) * Right);
@@ -117,12 +117,12 @@ void GameApp::UpdateScene(float dt)
 	m_Triangle.SetWorldMatrix(XMMatrixRotationY(theta));
 
 	// ******************
-	// Ê°È¡¼ì²â
+	// æ‹¾å–æ£€æµ‹
 	//
-	m_PickedObjStr = L"ÎŞ";
+	m_PickedObjStr = L"æ— ";
 	Ray ray = Ray::ScreenToRay(*m_pCamera, (float)mouseState.x, (float)mouseState.y);
 	
-	// Èı½ÇĞÎ¶¥µã±ä»»
+	// ä¸‰è§’å½¢é¡¶ç‚¹å˜æ¢
 	static XMVECTOR V[3];
 	for (int i = 0; i < 3; ++i)
 	{
@@ -133,38 +133,38 @@ void GameApp::UpdateScene(float dt)
 	bool hitObject = false;
 	if (ray.Hit(m_BoundingSphere))
 	{
-		m_PickedObjStr = L"ÇòÌå";
+		m_PickedObjStr = L"çƒä½“";
 		hitObject = true;
 	}
 	else if (ray.Hit(m_Cube.GetBoundingOrientedBox()))
 	{
-		m_PickedObjStr = L"Á¢·½Ìå";
+		m_PickedObjStr = L"ç«‹æ–¹ä½“";
 		hitObject = true;
 	}
 	else if (ray.Hit(m_Cylinder.GetBoundingOrientedBox()))
 	{
-		m_PickedObjStr = L"Ô²ÖùÌå";
+		m_PickedObjStr = L"åœ†æŸ±ä½“";
 		hitObject = true;
 	}
 	else if (ray.Hit(m_House.GetBoundingOrientedBox()))
 	{
-		m_PickedObjStr = L"·¿Îİ";
+		m_PickedObjStr = L"æˆ¿å±‹";
 		hitObject = true;
 	}
 	else if (ray.Hit(V[0], V[1], V[2]))
 	{
-		m_PickedObjStr = L"Èı½ÇĞÎ";
+		m_PickedObjStr = L"ä¸‰è§’å½¢";
 		hitObject = true;
 	}
 
 	if (hitObject == true && m_MouseTracker.leftButton == Mouse::ButtonStateTracker::PRESSED)
 	{
-		std::wstring wstr = L"Äãµã»÷ÁË";
+		std::wstring wstr = L"ä½ ç‚¹å‡»äº†";
 		wstr += m_PickedObjStr + L"!";
-		MessageBox(nullptr, wstr.c_str(), L"×¢Òâ", 0);
+		MessageBox(nullptr, wstr.c_str(), L"æ³¨æ„", 0);
 	}
 
-	// ÖØÖÃ¹öÂÖÖµ
+	// é‡ç½®æ»šè½®å€¼
 	m_pMouse->ResetScrollWheelValue();
 }
 
@@ -174,29 +174,29 @@ void GameApp::DrawScene()
 	assert(m_pSwapChain);
 
 	// ******************
-	// »æÖÆDirect3D²¿·Ö
+	// ç»˜åˆ¶Direct3Déƒ¨åˆ†
 	//
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// »æÖÆ²»ĞèÒªÎÆÀíµÄÄ£ĞÍ
+	// ç»˜åˆ¶ä¸éœ€è¦çº¹ç†çš„æ¨¡å‹
 	m_BasicEffect.SetTextureUsed(false);
 	m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Cube.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Triangle.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
-	// »æÖÆĞèÒªÎÆÀíµÄÄ£ĞÍ
+	// ç»˜åˆ¶éœ€è¦çº¹ç†çš„æ¨¡å‹
 	m_BasicEffect.SetTextureUsed(true);
 	m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// ******************
-	// »æÖÆDirect2D²¿·Ö
+	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
 	//
 	if (m_pd2dRenderTarget != nullptr)
 	{
 		m_pd2dRenderTarget->BeginDraw();
-		std::wstring text = L"µ±Ç°Ê°È¡ÎïÌå: " + m_PickedObjStr;
+		std::wstring text = L"å½“å‰æ‹¾å–ç‰©ä½“: " + m_PickedObjStr;
 
 		m_pd2dRenderTarget->DrawTextW(text.c_str(), (UINT32)text.length(), m_pTextFormat.Get(),
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
@@ -211,21 +211,21 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	// ******************
-	// ³õÊ¼»¯ÓÎÏ·¶ÔÏó
+	// åˆå§‹åŒ–æ¸¸æˆå¯¹è±¡
 	//
 	
-	// ÇòÌå(Ô¤ÏÈÉèºÃ°üÎ§Çò)
+	// çƒä½“(é¢„å…ˆè®¾å¥½åŒ…å›´çƒ)
 	m_Sphere.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateSphere()));
 	m_BoundingSphere.Center = XMFLOAT3(-5.0f, 0.0f, 0.0f);
 	m_BoundingSphere.Radius = 1.0f;
-	// Á¢·½Ìå
+	// ç«‹æ–¹ä½“
 	m_Cube.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateBox()));
-	// Ô²ÖùÌå
+	// åœ†æŸ±ä½“
 	m_Cylinder.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateCylinder()));
-	// ·¿Îİ
+	// æˆ¿å±‹
 	m_ObjReader.Read(L"Model\\house.mbo", L"Model\\house.obj");
 	m_House.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
-	// Èı½ÇĞÎ(´ø·´Ãæ)
+	// ä¸‰è§’å½¢(å¸¦åé¢)
 	m_TriangleMesh.vertexVec.assign({
 		VertexPosNormalTex(XMFLOAT3(-1.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
 		VertexPosNormalTex(XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2()),
@@ -238,7 +238,7 @@ bool GameApp::InitResource()
 	m_Triangle.SetModel(Model(m_pd3dDevice.Get(), m_TriangleMesh));
 
 	// ******************
-	// ³õÊ¼»¯ÉãÏñ»ú
+	// åˆå§‹åŒ–æ‘„åƒæœº
 	//
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
@@ -248,17 +248,17 @@ bool GameApp::InitResource()
 		XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
 		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
 		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	// ³õÊ¼»¯²¢¸üĞÂ¹Û²ì¾ØÕó¡¢Í¶Ó°¾ØÕó(ÉãÏñ»ú½«±»¹Ì¶¨)
+	// åˆå§‹åŒ–å¹¶æ›´æ–°è§‚å¯ŸçŸ©é˜µã€æŠ•å½±çŸ©é˜µ(æ‘„åƒæœºå°†è¢«å›ºå®š)
 	camera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 	
 
 	// ******************
-	// ³õÊ¼»¯²»»á±ä»¯µÄÖµ
+	// åˆå§‹åŒ–ä¸ä¼šå˜åŒ–çš„å€¼
 	//
 
-	// ·½Ïò¹â
+	// æ–¹å‘å…‰
 	DirectionalLight dirLight;
 	dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -266,12 +266,12 @@ bool GameApp::InitResource()
 	dirLight.direction = XMFLOAT3(-0.707f, -0.707f, 0.707f);
 	m_BasicEffect.SetDirLight(0, dirLight);
 
-	// Ä¬ÈÏÖ»°´¶ÔÏó»æÖÆ
+	// é»˜è®¤åªæŒ‰å¯¹è±¡ç»˜åˆ¶
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 
 
 	// ******************
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	//
 	m_Cube.SetDebugObjectName("Cube");
 	m_Cylinder.SetDebugObjectName("Cylinder");

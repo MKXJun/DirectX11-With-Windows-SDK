@@ -28,7 +28,7 @@ void Model::SetModel(ID3D11Device * device, const ObjReader & model)
 
 	modelParts.resize(model.objParts.size());
 
-	// ´´½¨°üÎ§ºÐ
+	// åˆ›å»ºåŒ…å›´ç›’
 	BoundingBox::CreateFromPoints(boundingBox, XMLoadFloat3(&model.vMin), XMLoadFloat3(&model.vMax));
 
 	for (size_t i = 0; i < model.objParts.size(); ++i)
@@ -36,20 +36,20 @@ void Model::SetModel(ID3D11Device * device, const ObjReader & model)
 		auto part = model.objParts[i];
 
 		modelParts[i].vertexCount = (UINT)part.vertices.size();
-		// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+		// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 		D3D11_BUFFER_DESC vbd;
 		ZeroMemory(&vbd, sizeof(vbd));
 		vbd.Usage = D3D11_USAGE_IMMUTABLE;
 		vbd.ByteWidth = modelParts[i].vertexCount * (UINT)sizeof(VertexPosNormalTex);
 		vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vbd.CPUAccessFlags = 0;
-		// ÐÂ½¨¶¥µã»º³åÇø
+		// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 		D3D11_SUBRESOURCE_DATA InitData;
 		ZeroMemory(&InitData, sizeof(InitData));
 		InitData.pSysMem = part.vertices.data();
 		HR(device->CreateBuffer(&vbd, &InitData, modelParts[i].vertexBuffer.ReleaseAndGetAddressOf()));
 
-		// ÉèÖÃË÷Òý»º³åÇøÃèÊö
+		// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
 		D3D11_BUFFER_DESC ibd;
 		ZeroMemory(&ibd, sizeof(ibd));
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -70,11 +70,11 @@ void Model::SetModel(ID3D11Device * device, const ObjReader & model)
 			ibd.ByteWidth = modelParts[i].indexCount * (UINT)sizeof(WORD);
 			InitData.pSysMem = part.indices16.data();
 		}
-		// ÐÂ½¨Ë÷Òý»º³åÇø
+		// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
 		HR(device->CreateBuffer(&ibd, &InitData, modelParts[i].indexBuffer.ReleaseAndGetAddressOf()));
 
 		
-		// ´´½¨ÂþÉä¹â¶ÔÓ¦ÎÆÀí
+		// åˆ›å»ºæ¼«å°„å…‰å¯¹åº”çº¹ç†
 		auto& strD = part.texStrDiffuse;
 		if (strD.size() > 4)
 		{
@@ -110,20 +110,20 @@ void Model::SetMesh(ID3D11Device * device, const void * vertices, UINT vertexSiz
 	modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = vertexSize * vertexCount;
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
-	// ÐÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
 	HR(device->CreateBuffer(&vbd, &InitData, modelParts[0].vertexBuffer.ReleaseAndGetAddressOf()));
 
-	// ÉèÖÃË÷Òý»º³åÇøÃèÊö
+	// è®¾ç½®ç´¢å¼•ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -137,7 +137,7 @@ void Model::SetMesh(ID3D11Device * device, const void * vertices, UINT vertexSiz
 	}
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
-	// ÐÂ½¨Ë÷Òý»º³åÇø
+	// æ–°å»ºç´¢å¼•ç¼“å†²åŒº
 	InitData.pSysMem = indices;
 	HR(device->CreateBuffer(&ibd, &InitData, modelParts[0].indexBuffer.ReleaseAndGetAddressOf()));
 

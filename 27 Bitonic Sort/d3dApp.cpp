@@ -12,7 +12,7 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 
 D3DApp::~D3DApp()
 {
-	// »Ö¸´ËùÓĞÄ¬ÈÏÉè¶¨
+	// æ¢å¤æ‰€æœ‰é»˜è®¤è®¾å®š
 	if (m_pd3dImmediateContext)
 		m_pd3dImmediateContext->ClearState();
 }
@@ -41,12 +41,12 @@ bool D3DApp::InitDirect3D()
 {
 	HRESULT hr = S_OK;
 
-	// ´´½¨D3DÉè±¸ ºÍ D3DÉè±¸ÉÏÏÂÎÄ
-	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;	// Direct2DĞèÒªÖ§³ÖBGRA¸ñÊ½
+	// åˆ›å»ºD3Dè®¾å¤‡ å’Œ D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;	// Direct2Déœ€è¦æ”¯æŒBGRAæ ¼å¼
 #if defined(DEBUG) || defined(_DEBUG)  
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	// Çı¶¯ÀàĞÍÊı×é
+	// é©±åŠ¨ç±»å‹æ•°ç»„
 	D3D_DRIVER_TYPE driverTypes[] =
 	{
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -55,7 +55,7 @@ bool D3DApp::InitDirect3D()
 	};
 	UINT numDriverTypes = ARRAYSIZE(driverTypes);
 
-	// ÌØĞÔµÈ¼¶Êı×é
+	// ç‰¹æ€§ç­‰çº§æ•°ç»„
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_1,
@@ -73,7 +73,7 @@ bool D3DApp::InitDirect3D()
 		
 		if (hr == E_INVALIDARG)
 		{
-			// Direct3D 11.0 µÄAPI²»³ĞÈÏD3D_FEATURE_LEVEL_11_1£¬ËùÒÔÎÒÃÇĞèÒª³¢ÊÔÌØĞÔµÈ¼¶11.0ÒÔ¼°ÒÔÏÂµÄ°æ±¾
+			// Direct3D 11.0 çš„APIä¸æ‰¿è®¤D3D_FEATURE_LEVEL_11_1ï¼Œæ‰€ä»¥æˆ‘ä»¬éœ€è¦å°è¯•ç‰¹æ€§ç­‰çº§11.0ä»¥åŠä»¥ä¸‹çš„ç‰ˆæœ¬
 			hr = D3D11CreateDevice(nullptr, d3dDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
 				D3D11_SDK_VERSION, m_pd3dDevice.GetAddressOf(), &featureLevel, m_pd3dImmediateContext.GetAddressOf());
 		}
@@ -88,18 +88,18 @@ bool D3DApp::InitDirect3D()
 		return false;
 	}
 
-	// ¼ì²âÊÇ·ñÖ§³ÖÌØĞÔµÈ¼¶11.0»ò11.1
+	// æ£€æµ‹æ˜¯å¦æ”¯æŒç‰¹æ€§ç­‰çº§11.0æˆ–11.1
 	if (featureLevel != D3D_FEATURE_LEVEL_11_0 && featureLevel != D3D_FEATURE_LEVEL_11_1)
 	{
 		MessageBox(0, L"Direct3D Feature Level 11 unsupported.", 0, 0);
 		return false;
 	}
 
-	// ²é¿´ÊÇ·ñÖ§³ÖDirect3D 11.1
+	// æŸ¥çœ‹æ˜¯å¦æ”¯æŒDirect3D 11.1
 	m_pd3dDevice.As(&m_pd3dDevice1);
 	m_pd3dImmediateContext.As(&m_pd3dImmediateContext1);
 
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	D3D11SetDebugObjectName(m_pd3dImmediateContext.Get(), "ImmediateContext");
 
 	return true;

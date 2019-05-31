@@ -2,15 +2,15 @@
 // d3dUtil.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3DÊµÓÃ¹¤¾ß¼¯
+// D3Då®ç”¨å·¥å…·é›†
 // Direct3D utility tools.
 //***************************************************************************************
 
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// ÒÑ°üº¬Windows.h
-#include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
+#include <d3d11_1.h>			// å·²åŒ…å«Windows.h
+#include <DirectXCollision.h>	// å·²åŒ…å«DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -19,28 +19,28 @@
 #include <string>
 
 //
-// ºêÏà¹Ø
+// å®ç›¸å…³
 //
 
-// Ä¬ÈÏ¿ªÆôÍ¼ĞÎµ÷ÊÔÆ÷¾ßÃû»¯
-// Èç¹û²»ĞèÒª¸ÃÏî¹¦ÄÜ£¬¿ÉÍ¨¹ıÈ«¾ÖÎÄ±¾Ìæ»»½«ÆäÖµÉèÖÃÎª0
+// é»˜è®¤å¼€å¯å›¾å½¢è°ƒè¯•å™¨å…·ååŒ–
+// å¦‚æœä¸éœ€è¦è¯¥é¡¹åŠŸèƒ½ï¼Œå¯é€šè¿‡å…¨å±€æ–‡æœ¬æ›¿æ¢å°†å…¶å€¼è®¾ç½®ä¸º0
 #ifndef GRAPHICS_DEBUGGER_OBJECT_NAME
 #define GRAPHICS_DEBUGGER_OBJECT_NAME (1)
 #endif
 
-// °²È«COM×é¼şÊÍ·Åºê
+// å®‰å…¨COMç»„ä»¶é‡Šæ”¾å®
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 //
-// ¸¨Öúµ÷ÊÔÏà¹Øº¯Êı
+// è¾…åŠ©è°ƒè¯•ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// D3D11SetDebugObjectNameº¯Êı
+// D3D11SetDebugObjectNameå‡½æ•°
 // ------------------------------
-// ÎªD3DÉè±¸´´½¨³öÀ´µÄ¶ÔÏóÔÚÍ¼ĞÎµ÷ÊÔÆ÷ÖĞÉèÖÃ¶ÔÏóÃû
-// [In]ID3D11DeviceChild	D3D11Éè±¸´´½¨³öµÄ¶ÔÏó
-// [In]name					¶ÔÏóÃû
+// ä¸ºD3Dè®¾å¤‡åˆ›å»ºå‡ºæ¥çš„å¯¹è±¡åœ¨å›¾å½¢è°ƒè¯•å™¨ä¸­è®¾ç½®å¯¹è±¡å
+// [In]ID3D11DeviceChild	D3D11è®¾å¤‡åˆ›å»ºå‡ºçš„å¯¹è±¡
+// [In]name					å¯¹è±¡å
 template<UINT TNameLength>
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
 {
@@ -53,11 +53,11 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 }
 
 // ------------------------------
-// DXGISetDebugObjectNameº¯Êı
+// DXGISetDebugObjectNameå‡½æ•°
 // ------------------------------
-// ÎªDXGI¶ÔÏóÔÚÍ¼ĞÎµ÷ÊÔÆ÷ÖĞÉèÖÃ¶ÔÏóÃû
-// [In]IDXGIObject			DXGI¶ÔÏó
-// [In]name					¶ÔÏóÃû
+// ä¸ºDXGIå¯¹è±¡åœ¨å›¾å½¢è°ƒè¯•å™¨ä¸­è®¾ç½®å¯¹è±¡å
+// [In]IDXGIObject			DXGIå¯¹è±¡
+// [In]name					å¯¹è±¡å
 template<UINT TNameLength>
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* resource, _In_ const char(&name)[TNameLength])
 {

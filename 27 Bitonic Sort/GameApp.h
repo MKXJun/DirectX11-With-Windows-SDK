@@ -3,7 +3,7 @@
 
 #include "d3dApp.h"
 #include <random>
-// ±à³Ì²¶»ñÖ¡(ĞèÖ§³ÖDirectX 11.2 API)
+// ç¼–ç¨‹æ•è·å¸§(éœ€æ”¯æŒDirectX 11.2 API)
 //#if defined(DEBUG) | defined(_DEBUG)
 //#include <DXGItype.h>  
 //#include <dxgi1_2.h>  
@@ -38,14 +38,14 @@ private:
 	void SetConstants(UINT level, UINT descendMask, UINT matrixWidth, UINT matrixHeight);
 	void GPUSort();
 private:
-	ComPtr<ID3D11Buffer> m_pConstantBuffer;				// ³£Á¿»º³åÇø
-	ComPtr<ID3D11Buffer> m_pTypedBuffer1;				// ÓĞÀàĞÍ»º³åÇø1
-	ComPtr<ID3D11Buffer> m_pTypedBuffer2;				// ÓĞÀàĞÍ»º³åÇø2
-	ComPtr<ID3D11Buffer> m_pTypedBufferCopy;			// ÓÃÓÚ¿½±´µÄÓĞÀàĞÍ»º³åÇø
-	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV1;		// ÓĞÀàĞÍ»º³åÇø1¶ÔÓ¦µÄÎŞĞò·ÃÎÊÊÓÍ¼
-	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV2;		// ÓĞÀàĞÍ»º³åÇø2¶ÔÓ¦µÄÎŞĞò·ÃÎÊÊÓÍ¼
-	ComPtr<ID3D11ShaderResourceView> m_pDataSRV1;		// ÓĞÀàĞÍ»º³åÇø1¶ÔÓ¦µÄ×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
-	ComPtr<ID3D11ShaderResourceView> m_pDataSRV2;		// ÓĞÀàĞÍ»º³åÇø2¶ÔÓ¦µÄ×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼
+	ComPtr<ID3D11Buffer> m_pConstantBuffer;				// å¸¸é‡ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pTypedBuffer1;				// æœ‰ç±»å‹ç¼“å†²åŒº1
+	ComPtr<ID3D11Buffer> m_pTypedBuffer2;				// æœ‰ç±»å‹ç¼“å†²åŒº2
+	ComPtr<ID3D11Buffer> m_pTypedBufferCopy;			// ç”¨äºæ‹·è´çš„æœ‰ç±»å‹ç¼“å†²åŒº
+	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV1;		// æœ‰ç±»å‹ç¼“å†²åŒº1å¯¹åº”çš„æ— åºè®¿é—®è§†å›¾
+	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV2;		// æœ‰ç±»å‹ç¼“å†²åŒº2å¯¹åº”çš„æ— åºè®¿é—®è§†å›¾
+	ComPtr<ID3D11ShaderResourceView> m_pDataSRV1;		// æœ‰ç±»å‹ç¼“å†²åŒº1å¯¹åº”çš„ç€è‰²å™¨èµ„æºè§†å›¾
+	ComPtr<ID3D11ShaderResourceView> m_pDataSRV2;		// æœ‰ç±»å‹ç¼“å†²åŒº2å¯¹åº”çš„ç€è‰²å™¨èµ„æºè§†å›¾
 
 	std::vector<UINT> m_RandomNums;
 	UINT m_RandomNumsCount;

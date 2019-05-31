@@ -37,14 +37,14 @@ private:
 
 
 private:
-	ComPtr<ID3D11InputLayout> m_pVertexLayout;	    // ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;			// ¶¥µã»º³åÇø
-	ComPtr<ID3D11Buffer> m_pIndexBuffer;			// Ë÷Òı»º³åÇø
-	ComPtr<ID3D11Buffer> m_pConstantBuffer;		    // ³£Á¿»º³åÇø
+	ComPtr<ID3D11InputLayout> m_pVertexLayout;	    // é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;			// é¡¶ç‚¹ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;			// ç´¢å¼•ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pConstantBuffer;		    // å¸¸é‡ç¼“å†²åŒº
 	
-	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> m_pPixelShader;		// ÏñËØ×ÅÉ«Æ÷
-	ConstantBuffer m_CBuffer;	                    // ÓÃÓÚĞŞ¸ÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
+	ComPtr<ID3D11VertexShader> m_pVertexShader;	    // é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> m_pPixelShader;		// åƒç´ ç€è‰²å™¨
+	ConstantBuffer m_CBuffer;	                    // ç”¨äºä¿®æ”¹GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
 };
 
 

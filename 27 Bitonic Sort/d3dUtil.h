@@ -2,15 +2,15 @@
 // d3dUtil.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3DÊµÓÃ¹¤¾ß¼¯
+// D3Då®ç”¨å·¥å…·é›†
 // Direct3D utility tools.
 //***************************************************************************************
 
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// ÒÑ°üº¬Windows.h
-#include <DirectXCollision.h>	// ÒÑ°üº¬DirectXMath.h
+#include <d3d11_1.h>			// å·²åŒ…å«Windows.h
+#include <DirectXCollision.h>	// å·²åŒ…å«DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -23,28 +23,28 @@
 #include "WICTextureLoader.h"
 
 //
-// ºêÏà¹Ø
+// å®ç›¸å…³
 //
 
-// Ä¬ÈÏ¿ªÆôÍ¼ĞÎµ÷ÊÔÆ÷¾ßÃû»¯
-// Èç¹û²»ĞèÒª¸ÃÏî¹¦ÄÜ£¬¿ÉÍ¨¹ıÈ«¾ÖÎÄ±¾Ìæ»»½«ÆäÖµÉèÖÃÎª0
+// é»˜è®¤å¼€å¯å›¾å½¢è°ƒè¯•å™¨å…·ååŒ–
+// å¦‚æœä¸éœ€è¦è¯¥é¡¹åŠŸèƒ½ï¼Œå¯é€šè¿‡å…¨å±€æ–‡æœ¬æ›¿æ¢å°†å…¶å€¼è®¾ç½®ä¸º0
 #ifndef GRAPHICS_DEBUGGER_OBJECT_NAME
 #define GRAPHICS_DEBUGGER_OBJECT_NAME (1)
 #endif
 
-// °²È«COM×é¼şÊÍ·Åºê
+// å®‰å…¨COMç»„ä»¶é‡Šæ”¾å®
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
 
 //
-// ¸¨Öúµ÷ÊÔÏà¹Øº¯Êı
+// è¾…åŠ©è°ƒè¯•ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// D3D11SetDebugObjectNameº¯Êı
+// D3D11SetDebugObjectNameå‡½æ•°
 // ------------------------------
-// ÎªD3DÉè±¸´´½¨³öÀ´µÄ¶ÔÏóÔÚÍ¼ĞÎµ÷ÊÔÆ÷ÖĞÉèÖÃ¶ÔÏóÃû
-// [In]ID3D11DeviceChild	D3D11Éè±¸´´½¨³öµÄ¶ÔÏó
-// [In]name					¶ÔÏóÃû
+// ä¸ºD3Dè®¾å¤‡åˆ›å»ºå‡ºæ¥çš„å¯¹è±¡åœ¨å›¾å½¢è°ƒè¯•å™¨ä¸­è®¾ç½®å¯¹è±¡å
+// [In]ID3D11DeviceChild	D3D11è®¾å¤‡åˆ›å»ºå‡ºçš„å¯¹è±¡
+// [In]name					å¯¹è±¡å
 template<UINT TNameLength>
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
 {
@@ -57,11 +57,11 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 }
 
 // ------------------------------
-// DXGISetDebugObjectNameº¯Êı
+// DXGISetDebugObjectNameå‡½æ•°
 // ------------------------------
-// ÎªDXGI¶ÔÏóÔÚÍ¼ĞÎµ÷ÊÔÆ÷ÖĞÉèÖÃ¶ÔÏóÃû
-// [In]IDXGIObject			DXGI¶ÔÏó
-// [In]name					¶ÔÏóÃû
+// ä¸ºDXGIå¯¹è±¡åœ¨å›¾å½¢è°ƒè¯•å™¨ä¸­è®¾ç½®å¯¹è±¡å
+// [In]IDXGIObject			DXGIå¯¹è±¡
+// [In]name					å¯¹è±¡å
 template<UINT TNameLength>
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* resource, _In_ const char(&name)[TNameLength])
 {
@@ -74,17 +74,17 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* resource, _In_ const char(&
 }
 
 //
-// ×ÅÉ«Æ÷±àÒëÏà¹Øº¯Êı
+// ç€è‰²å™¨ç¼–è¯‘ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// CreateShaderFromFileº¯Êı
+// CreateShaderFromFileå‡½æ•°
 // ------------------------------
-// [In]csoFileNameInOut ±àÒëºÃµÄ×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼ş(.cso)£¬ÈôÓĞÖ¸¶¨ÔòÓÅÏÈÑ°ÕÒ¸ÃÎÄ¼ş²¢¶ÁÈ¡
-// [In]hlslFileName     ×ÅÉ«Æ÷´úÂë£¬ÈôÎ´ÕÒµ½×ÅÉ«Æ÷¶ş½øÖÆÎÄ¼şÔò±àÒë×ÅÉ«Æ÷´úÂë
-// [In]entryPoint       Èë¿Úµã(Ö¸¶¨¿ªÊ¼µÄº¯Êı)
-// [In]shaderModel      ×ÅÉ«Æ÷Ä£ĞÍ£¬¸ñÊ½Îª"*s_5_0"£¬*¿ÉÒÔÎªc,d,g,h,p,vÖ®Ò»
-// [Out]ppBlobOut       Êä³ö×ÅÉ«Æ÷¶ş½øÖÆĞÅÏ¢
+// [In]csoFileNameInOut ç¼–è¯‘å¥½çš„ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶(.cso)ï¼Œè‹¥æœ‰æŒ‡å®šåˆ™ä¼˜å…ˆå¯»æ‰¾è¯¥æ–‡ä»¶å¹¶è¯»å–
+// [In]hlslFileName     ç€è‰²å™¨ä»£ç ï¼Œè‹¥æœªæ‰¾åˆ°ç€è‰²å™¨äºŒè¿›åˆ¶æ–‡ä»¶åˆ™ç¼–è¯‘ç€è‰²å™¨ä»£ç 
+// [In]entryPoint       å…¥å£ç‚¹(æŒ‡å®šå¼€å§‹çš„å‡½æ•°)
+// [In]shaderModel      ç€è‰²å™¨æ¨¡å‹ï¼Œæ ¼å¼ä¸º"*s_5_0"ï¼Œ*å¯ä»¥ä¸ºc,d,g,h,p,vä¹‹ä¸€
+// [Out]ppBlobOut       è¾“å‡ºç€è‰²å™¨äºŒè¿›åˆ¶ä¿¡æ¯
 HRESULT CreateShaderFromFile(
 	const WCHAR* csoFileNameInOut,
 	const WCHAR* hlslFileName,
@@ -93,133 +93,133 @@ HRESULT CreateShaderFromFile(
 	ID3DBlob** ppBlobOut);
 
 //
-// »º³åÇøÏà¹Øº¯Êı
+// ç¼“å†²åŒºç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// CreateVertexBufferº¯Êı
+// CreateVertexBufferå‡½æ•°
 // ------------------------------
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı
-// [Out]vertexBuffer		Êä³öµÄ¶¥µã»º³åÇø
-// [InOpt]dynamic			ÊÇ·ñĞèÒªCPU¾­³£¸üĞÂ
-// [InOpt]streamOutput		ÊÇ·ñ»¹ÓÃÓÚÁ÷Êä³ö½×¶Î(²»ÄÜÓëdynamicÍ¬Ê±ÉèÎªtrue)
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°
+// [Out]vertexBuffer		è¾“å‡ºçš„é¡¶ç‚¹ç¼“å†²åŒº
+// [InOpt]dynamic			æ˜¯å¦éœ€è¦CPUç»å¸¸æ›´æ–°
+// [InOpt]streamOutput		æ˜¯å¦è¿˜ç”¨äºæµè¾“å‡ºé˜¶æ®µ(ä¸èƒ½ä¸dynamicåŒæ—¶è®¾ä¸ºtrue)
 HRESULT CreateVertexBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	ID3D11Buffer ** vertexBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool dynamic = false,
 	bool streamOutput = false);
 
 // ------------------------------
-// CreateIndexBufferº¯Êı
+// CreateIndexBufferå‡½æ•°
 // ------------------------------
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı
-// [Out]indexBuffer			Êä³öµÄË÷Òı»º³åÇø
-// [InOpt]dynamic			ÊÇ·ñĞèÒªCPU¾­³£¸üĞÂ
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°
+// [Out]indexBuffer			è¾“å‡ºçš„ç´¢å¼•ç¼“å†²åŒº
+// [InOpt]dynamic			æ˜¯å¦éœ€è¦CPUç»å¸¸æ›´æ–°
 HRESULT CreateIndexBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	ID3D11Buffer ** indexBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool dynamic = false);
 
 // ------------------------------
-// CreateConstantBufferº¯Êı
+// CreateConstantBufferå‡½æ•°
 // ------------------------------
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı£¬±ØĞëÊÇ16µÄ±¶Êı
-// [Out]indexBuffer			Êä³öµÄË÷Òı»º³åÇø
-// [InOpt]cpuUpdates		ÊÇ·ñÔÊĞíCPU¸üĞÂ
-// [InOpt]gpuUpdates		ÊÇ·ñÔÊĞíGPU¸üĞÂ
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°ï¼Œå¿…é¡»æ˜¯16çš„å€æ•°
+// [Out]indexBuffer			è¾“å‡ºçš„ç´¢å¼•ç¼“å†²åŒº
+// [InOpt]cpuUpdates		æ˜¯å¦å…è®¸CPUæ›´æ–°
+// [InOpt]gpuUpdates		æ˜¯å¦å…è®¸GPUæ›´æ–°
 HRESULT CreateConstantBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	ID3D11Buffer ** constantBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool cpuUpdates = true,
 	bool gpuUpdates = false);
 
 // ------------------------------
-// CreateTypedBufferº¯Êı
+// CreateTypedBufferå‡½æ•°
 // ------------------------------
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı
-// [Out]typedBuffer			Êä³öµÄÓĞÀàĞÍµÄ»º³åÇø
-// [InOpt]cpuUpdates		ÊÇ·ñÔÊĞíCPU¸üĞÂ
-// [InOpt]gpuUpdates		ÊÇ·ñÔÊĞíÊ¹ÓÃRWBuffer
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°
+// [Out]typedBuffer			è¾“å‡ºçš„æœ‰ç±»å‹çš„ç¼“å†²åŒº
+// [InOpt]cpuUpdates		æ˜¯å¦å…è®¸CPUæ›´æ–°
+// [InOpt]gpuUpdates		æ˜¯å¦å…è®¸ä½¿ç”¨RWBuffer
 HRESULT CreateTypedBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	ID3D11Buffer ** typedBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool cpuUpdates = false,
 	bool gpuUpdates = false);
 
 // ------------------------------
-// CreateStructuredBufferº¯Êı
+// CreateStructuredBufferå‡½æ•°
 // ------------------------------
-// Èç¹ûĞèÒª´´½¨Append/Consume Buffer£¬ĞèÖ¸¶¨cpuUpdatesÎªfalse, gpuUpdatesÎªtrue
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı
-// [In]structuredByteStride Ã¿¸ö½á¹¹ÌåµÄ×Ö½ÚÊı
-// [Out]structuredBuffer	Êä³öµÄ½á¹¹»¯»º³åÇø
-// [InOpt]cpuUpdates		ÊÇ·ñÔÊĞíCPU¸üĞÂ
-// [InOpt]gpuUpdates		ÊÇ·ñÔÊĞíÊ¹ÓÃRWStructuredBuffer
+// å¦‚æœéœ€è¦åˆ›å»ºAppend/Consume Bufferï¼Œéœ€æŒ‡å®šcpuUpdatesä¸ºfalse, gpuUpdatesä¸ºtrue
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°
+// [In]structuredByteStride æ¯ä¸ªç»“æ„ä½“çš„å­—èŠ‚æ•°
+// [Out]structuredBuffer	è¾“å‡ºçš„ç»“æ„åŒ–ç¼“å†²åŒº
+// [InOpt]cpuUpdates		æ˜¯å¦å…è®¸CPUæ›´æ–°
+// [InOpt]gpuUpdates		æ˜¯å¦å…è®¸ä½¿ç”¨RWStructuredBuffer
 HRESULT CreateStructuredBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	UINT structuredByteStride,
 	ID3D11Buffer ** structuredBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool cpuUpdates = false,
 	bool gpuUpdates = false);
 
 // ------------------------------
-// CreateRawBufferº¯Êı
+// CreateRawBufferå‡½æ•°
 // ------------------------------
-// [In]d3dDevice			D3DÉè±¸
-// [In]data					³õÊ¼»¯Êı¾İ
-// [In]byteWidth			»º³åÇø×Ö½ÚÊı
-// [Out]rawBuffer			Êä³öµÄ×Ö½ÚµØÖ·»º³åÇø
-// [InOpt]cpuUpdates		ÊÇ·ñÔÊĞíCPU¸üĞÂ
-// [InOpt]gpuUpdates		ÊÇ·ñÔÊĞíÊ¹ÓÃRWByteAddressBuffer
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]data					åˆå§‹åŒ–æ•°æ®
+// [In]byteWidth			ç¼“å†²åŒºå­—èŠ‚æ•°
+// [Out]rawBuffer			è¾“å‡ºçš„å­—èŠ‚åœ°å€ç¼“å†²åŒº
+// [InOpt]cpuUpdates		æ˜¯å¦å…è®¸CPUæ›´æ–°
+// [InOpt]gpuUpdates		æ˜¯å¦å…è®¸ä½¿ç”¨RWByteAddressBuffer
 HRESULT CreateRawBuffer(
 	ID3D11Device * d3dDevice,
 	void * data,
 	UINT byteWidth,
 	ID3D11Buffer ** rawBuffer,
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
-	/* ¿ÉÑ¡À©Õ¹²¿·Ö */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
+	/* å¯é€‰æ‰©å±•éƒ¨åˆ† */
 	bool cpuUpdates = false,
 	bool gpuUpdates = false);
 
 //
-// ÎÆÀíÊı×éÏà¹Øº¯Êı
+// çº¹ç†æ•°ç»„ç›¸å…³å‡½æ•°
 //
 
 // ------------------------------
-// CreateDDSTexture2DArrayFromFileº¯Êı
+// CreateDDSTexture2DArrayFromFileå‡½æ•°
 // ------------------------------
-// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]fileNames			ddsÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateDDSTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -229,15 +229,15 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	bool generateMips = false);
 
 // ------------------------------
-// CreateWICTexture2DArrayFromFileº¯Êı
+// CreateWICTexture2DArrayFromFileå‡½æ•°
 // ------------------------------
-// ¸Ãº¯ÊıÒªÇóËùÓĞµÄddsÎÆÀíµÄ¿í¸ß¡¢Êı¾İ¸ñÊ½¡¢mipµÈ¼¶Ò»ÖÂ
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]fileNames			ddsÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureArrayView Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// è¯¥å‡½æ•°è¦æ±‚æ‰€æœ‰çš„ddsçº¹ç†çš„å®½é«˜ã€æ•°æ®æ ¼å¼ã€mipç­‰çº§ä¸€è‡´
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]fileNames			ddsæ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureArrayView è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DArrayFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -248,24 +248,24 @@ HRESULT CreateWICTexture2DArrayFromFile(
 
 
 //
-// ÎÆÀíÁ¢·½ÌåÏà¹Øº¯Êı
+// çº¹ç†ç«‹æ–¹ä½“ç›¸å…³å‡½æ•°
 //
 
 
 // ------------------------------
-// CreateWICTexture2DCubeFromFileº¯Êı
+// CreateWICTexture2DCubeFromFileå‡½æ•°
 // ------------------------------
-// ¸ù¾İ¸ø¶¨µÄÒ»ÕÅ°üº¬Á¢·½ÌåÁù¸öÃæµÄÎ»Í¼£¬´´½¨ÎÆÀíÁ¢·½Ìå
-// ÒªÇóÎÆÀí¿í¸ß±ÈÎª4:3£¬ÇÒ°´ÏÂÃæĞÎÊ½²¼¾Ö:
+// æ ¹æ®ç»™å®šçš„ä¸€å¼ åŒ…å«ç«‹æ–¹ä½“å…­ä¸ªé¢çš„ä½å›¾ï¼Œåˆ›å»ºçº¹ç†ç«‹æ–¹ä½“
+// è¦æ±‚çº¹ç†å®½é«˜æ¯”ä¸º4:3ï¼Œä¸”æŒ‰ä¸‹é¢å½¢å¼å¸ƒå±€:
 // .  +Y .  .
 // -X +Z +X -Z 
 // .  -Y .  .
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]cubeMapFileName		Î»Í¼ÎÄ¼şÃû
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureCubeView	Êä³öµÄÎÆÀíÁ¢·½Ìå×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]cubeMapFileName		ä½å›¾æ–‡ä»¶å
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureCubeView	è¾“å‡ºçš„çº¹ç†ç«‹æ–¹ä½“èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -275,17 +275,17 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	bool generateMips = false);
 
 // ------------------------------
-// CreateWICTexture2DCubeFromFileº¯Êı
+// CreateWICTexture2DCubeFromFileå‡½æ•°
 // ------------------------------
-// ¸ù¾İ°´D3D11_TEXTURECUBE_FACEË÷ÒıË³Ğò¸ø¶¨µÄÁùÕÅÎÆÀí£¬´´½¨ÎÆÀíÁ¢·½Ìå
-// ÒªÇóÎ»Í¼ÊÇÍ¬Ñù¿í¸ß¡¢Êı¾İ¸ñÊ½µÄÕı·½ĞÎ
-// ÄãÒ²¿ÉÒÔ¸ø¶¨³¬¹ı6ÕÅµÄÎÆÀí£¬È»ºóÔÚ»ñÈ¡µ½ÎÆÀíÊı×éµÄ»ù´¡ÉÏ×ÔĞĞ´´½¨¸ü¶àµÄ×ÊÔ´ÊÓÍ¼
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]cubeMapFileNames		Î»Í¼ÎÄ¼şÃûÊı×é
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureCubeView	Êä³öµÄÎÆÀíÁ¢·½Ìå×ÊÔ´ÊÓÍ¼
-// [In]generateMips			ÊÇ·ñÉú³Émipmaps
+// æ ¹æ®æŒ‰D3D11_TEXTURECUBE_FACEç´¢å¼•é¡ºåºç»™å®šçš„å…­å¼ çº¹ç†ï¼Œåˆ›å»ºçº¹ç†ç«‹æ–¹ä½“
+// è¦æ±‚ä½å›¾æ˜¯åŒæ ·å®½é«˜ã€æ•°æ®æ ¼å¼çš„æ­£æ–¹å½¢
+// ä½ ä¹Ÿå¯ä»¥ç»™å®šè¶…è¿‡6å¼ çš„çº¹ç†ï¼Œç„¶ååœ¨è·å–åˆ°çº¹ç†æ•°ç»„çš„åŸºç¡€ä¸Šè‡ªè¡Œåˆ›å»ºæ›´å¤šçš„èµ„æºè§†å›¾
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]cubeMapFileNames		ä½å›¾æ–‡ä»¶åæ•°ç»„
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureCubeView	è¾“å‡ºçš„çº¹ç†ç«‹æ–¹ä½“èµ„æºè§†å›¾
+// [In]generateMips			æ˜¯å¦ç”Ÿæˆmipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,

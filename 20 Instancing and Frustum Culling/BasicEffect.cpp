@@ -1,6 +1,6 @@
 #include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -8,7 +8,7 @@ using namespace std::experimental;
 
 
 //
-// BasicEffect::Impl ĞèÒªÏÈÓÚBasicEffectµÄ¶¨Òå
+// BasicEffect::Impl éœ€è¦å…ˆäºBasicEffectçš„å®šä¹‰
 //
 
 class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
@@ -16,7 +16,7 @@ class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 public:
 
 	//
-	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
+	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
 	//
 
 	struct CBChangesEveryInstanceDrawing
@@ -50,19 +50,19 @@ public:
 
 
 public:
-	// ±ØĞëÏÔÊ½Ö¸¶¨
+	// å¿…é¡»æ˜¾å¼æŒ‡å®š
 	Impl() : m_IsDirty() {}
 	~Impl() = default;
 
 public:
-	// ĞèÒª16×Ö½Ú¶ÔÆëµÄÓÅÏÈ·ÅÔÚÇ°Ãæ
-	CBufferObject<0, CBChangesEveryInstanceDrawing>	m_CBInstDrawing;		// Ã¿´ÎÊµÀı»æÖÆµÄ³£Á¿»º³åÇø
-	CBufferObject<1, CBChangesEveryObjectDrawing>	m_CBObjDrawing;		    // Ã¿´Î¶ÔÏó»æÖÆµÄ³£Á¿»º³åÇø
-	CBufferObject<2, CBChangesEveryFrame>			m_CBFrame;			    // Ã¿Ö¡»æÖÆµÄ³£Á¿»º³åÇø
-	CBufferObject<3, CBChangesOnResize>				m_CBOnResize;			// Ã¿´Î´°¿Ú´óĞ¡±ä¸üµÄ³£Á¿»º³åÇø
-	CBufferObject<4, CBChangesRarely>				m_CBRarely;			    // ¼¸ºõ²»»á±ä¸üµÄ³£Á¿»º³åÇø
-	BOOL m_IsDirty;											                // ÊÇ·ñÓĞÖµ±ä¸ü
-	std::vector<CBufferBase*> m_pCBuffers;					                // Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
+	// éœ€è¦16å­—èŠ‚å¯¹é½çš„ä¼˜å…ˆæ”¾åœ¨å‰é¢
+	CBufferObject<0, CBChangesEveryInstanceDrawing>	m_CBInstDrawing;		// æ¯æ¬¡å®ä¾‹ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<1, CBChangesEveryObjectDrawing>	m_CBObjDrawing;		    // æ¯æ¬¡å¯¹è±¡ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<2, CBChangesEveryFrame>			m_CBFrame;			    // æ¯å¸§ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<3, CBChangesOnResize>				m_CBOnResize;			// æ¯æ¬¡çª—å£å¤§å°å˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<4, CBChangesRarely>				m_CBRarely;			    // å‡ ä¹ä¸ä¼šå˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
+	BOOL m_IsDirty;											                // æ˜¯å¦æœ‰å€¼å˜æ›´
+	std::vector<CBufferBase*> m_pCBuffers;					                // ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
 
 
 	ComPtr<ID3D11VertexShader> m_pBasicInstanceVS;
@@ -73,7 +73,7 @@ public:
 	ComPtr<ID3D11InputLayout> m_pInstancePosNormalTexLayout;	
 	ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;		
 
-	ComPtr<ID3D11ShaderResourceView> m_pTextureDiffuse;		                // Âş·´Éä¼yÀí
+	ComPtr<ID3D11ShaderResourceView> m_pTextureDiffuse;		                // æ¼«åå°„ç´‹ç†
 };
 
 //
@@ -82,7 +82,7 @@ public:
 
 namespace
 {
-	// BasicEffectµ¥Àı
+	// BasicEffectå•ä¾‹
 	static BasicEffect * g_pInstance = nullptr;
 }
 
@@ -130,7 +130,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 
 	ComPtr<ID3DBlob> blob;
 
-	// ÊµÀıÊäÈë²¼¾Ö
+	// å®ä¾‹è¾“å…¥å¸ƒå±€
 	D3D11_INPUT_ELEMENT_DESC basicInstLayout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -146,23 +146,23 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	};
 
 	//
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\BasicInstance_VS.cso", L"HLSL\\BasicInstance_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicInstanceVS.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(device->CreateInputLayout(basicInstLayout, ARRAYSIZE(basicInstLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pInstancePosNormalTexLayout.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\BasicObject_VS.cso", L"HLSL\\BasicObject_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicObjectVS.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	//
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Basic_PS.cso", L"HLSL\\Basic_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -175,13 +175,13 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 		&pImpl->m_CBOnResize, 
 		&pImpl->m_CBRarely});
 
-	// ´´½¨³£Á¿»º³åÇø
+	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
 	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
 
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "InstancePosNormalTexLayout");
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "VertexPosNormalTexLayout");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBInstDrawing");
@@ -226,7 +226,7 @@ void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->m_CBInstDrawing;
 	cBuffer.data.world = XMMatrixTranspose(W);
-	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// Á½´Î×ªÖÃµÖÏû
+	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// ä¸¤æ¬¡è½¬ç½®æŠµæ¶ˆ
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
@@ -287,7 +287,7 @@ void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
 void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
-	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
+	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[2]->BindVS(deviceContext);
 	pCBuffers[3]->BindVS(deviceContext);
@@ -296,7 +296,7 @@ void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 	pCBuffers[2]->BindPS(deviceContext);
 	pCBuffers[4]->BindPS(deviceContext);
 
-	// ÉèÖÃÎÆÀí
+	// è®¾ç½®çº¹ç†
 	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTextureDiffuse.GetAddressOf());
 
 	if (pImpl->m_IsDirty)

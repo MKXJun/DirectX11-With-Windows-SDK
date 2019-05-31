@@ -9,7 +9,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -26,25 +26,25 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	GameObject m_BoltAnim;									    // ÉÁµç¶¯»­
-	GameObject m_WoodCrate;									    // Ä¾ºĞ
-	GameObject m_Floor;										    // µØ°å
-	std::vector<GameObject> m_Walls;							// Ç½±Ú
-	GameObject m_Mirror;										// ¾µÃæ
+	GameObject m_BoltAnim;									    // é—ªç”µåŠ¨ç”»
+	GameObject m_WoodCrate;									    // æœ¨ç›’
+	GameObject m_Floor;										    // åœ°æ¿
+	std::vector<GameObject> m_Walls;							// å¢™å£
+	GameObject m_Mirror;										// é•œé¢
 
-	std::vector<ComPtr<ID3D11ShaderResourceView>> mBoltSRVs;    // ÉÁµç¶¯»­ÎÆÀí
+	std::vector<ComPtr<ID3D11ShaderResourceView>> mBoltSRVs;    // é—ªç”µåŠ¨ç”»çº¹ç†
 
-	Material m_ShadowMat;									    // ÒõÓ°²ÄÖÊ
-	Material m_WoodCrateMat;									// Ä¾ºĞ²ÄÖÊ
+	Material m_ShadowMat;									    // é˜´å½±æè´¨
+	Material m_WoodCrateMat;									// æœ¨ç›’æè´¨
 
-	BasicEffect m_BasicEffect;							        // ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	BasicEffect m_BasicEffect;							        // å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
 
-	std::shared_ptr<Camera> m_pCamera;						    // ÉãÏñ»ú
-	CameraMode m_CameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> m_pCamera;						    // æ‘„åƒæœº
+	CameraMode m_CameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
 };
 

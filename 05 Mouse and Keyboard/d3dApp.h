@@ -9,7 +9,7 @@
 #include "Keyboard.h"
 #include "GameTimer.h"
 
-// Ìí¼ÓËùÓĞÒªÒıÓÃµÄ¿â
+// æ·»åŠ æ‰€æœ‰è¦å¼•ç”¨çš„åº“
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -19,68 +19,68 @@
 class D3DApp
 {
 public:
-	D3DApp(HINSTANCE hInstance);    // ÔÚ¹¹Ôìº¯ÊıµÄ³õÊ¼»¯ÁĞ±íÓ¦µ±ÉèÖÃºÃ³õÊ¼²ÎÊı
+	D3DApp(HINSTANCE hInstance);    // åœ¨æ„é€ å‡½æ•°çš„åˆå§‹åŒ–åˆ—è¡¨åº”å½“è®¾ç½®å¥½åˆå§‹å‚æ•°
 	virtual ~D3DApp();
 
-	HINSTANCE AppInst()const;       // »ñÈ¡Ó¦ÓÃÊµÀıµÄ¾ä±ú
-	HWND      MainWnd()const;       // »ñÈ¡Ö÷´°¿Ú¾ä±ú
-	float     AspectRatio()const;   // »ñÈ¡ÆÁÄ»¿í¸ß±È
+	HINSTANCE AppInst()const;       // è·å–åº”ç”¨å®ä¾‹çš„å¥æŸ„
+	HWND      MainWnd()const;       // è·å–ä¸»çª—å£å¥æŸ„
+	float     AspectRatio()const;   // è·å–å±å¹•å®½é«˜æ¯”
 
-	int Run();                      // ÔËĞĞ³ÌĞò£¬Ö´ĞĞÏûÏ¢ÊÂ¼şµÄÑ­»·
+	int Run();                      // è¿è¡Œç¨‹åºï¼Œæ‰§è¡Œæ¶ˆæ¯äº‹ä»¶çš„å¾ªç¯
 
-	// ¿ò¼Ü·½·¨¡£¿Í»§ÅÉÉúÀàĞèÒªÖØÔØÕâĞ©·½·¨ÒÔÊµÏÖÌØ¶¨µÄÓ¦ÓÃĞèÇó
-	virtual bool Init();                      // ¸Ã¸¸Àà·½·¨ĞèÒª³õÊ¼»¯´°¿Ú¡¢Direct2DºÍDirect3D²¿·Ö
-	virtual void OnResize();                  // ¸Ã¸¸Àà·½·¨ĞèÒªÔÚ´°¿Ú´óĞ¡±ä¶¯µÄÊ±ºòµ÷ÓÃ
-	virtual void UpdateScene(float dt) = 0;   // ×ÓÀàĞèÒªÊµÏÖ¸Ã·½·¨£¬Íê³ÉÃ¿Ò»Ö¡µÄ¸üĞÂ
-	virtual void DrawScene() = 0;             // ×ÓÀàĞèÒªÊµÏÖ¸Ã·½·¨£¬Íê³ÉÃ¿Ò»Ö¡µÄ»æÖÆ
+	// æ¡†æ¶æ–¹æ³•ã€‚å®¢æˆ·æ´¾ç”Ÿç±»éœ€è¦é‡è½½è¿™äº›æ–¹æ³•ä»¥å®ç°ç‰¹å®šçš„åº”ç”¨éœ€æ±‚
+	virtual bool Init();                      // è¯¥çˆ¶ç±»æ–¹æ³•éœ€è¦åˆå§‹åŒ–çª—å£ã€Direct2Då’ŒDirect3Déƒ¨åˆ†
+	virtual void OnResize();                  // è¯¥çˆ¶ç±»æ–¹æ³•éœ€è¦åœ¨çª—å£å¤§å°å˜åŠ¨çš„æ—¶å€™è°ƒç”¨
+	virtual void UpdateScene(float dt) = 0;   // å­ç±»éœ€è¦å®ç°è¯¥æ–¹æ³•ï¼Œå®Œæˆæ¯ä¸€å¸§çš„æ›´æ–°
+	virtual void DrawScene() = 0;             // å­ç±»éœ€è¦å®ç°è¯¥æ–¹æ³•ï¼Œå®Œæˆæ¯ä¸€å¸§çš„ç»˜åˆ¶
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	// ´°¿ÚµÄÏûÏ¢»Øµ÷º¯Êı
+	// çª—å£çš„æ¶ˆæ¯å›è°ƒå‡½æ•°
 protected:
-	bool InitMainWindow();       // ´°¿Ú³õÊ¼»¯
-	bool InitDirect3D();         // Direct3D³õÊ¼»¯
+	bool InitMainWindow();       // çª—å£åˆå§‹åŒ–
+	bool InitDirect3D();         // Direct3Dåˆå§‹åŒ–
 
 
-	void CalculateFrameStats();  // ¼ÆËãÃ¿ÃëÖ¡Êı²¢ÔÚ´°¿ÚÏÔÊ¾
+	void CalculateFrameStats();  // è®¡ç®—æ¯ç§’å¸§æ•°å¹¶åœ¨çª—å£æ˜¾ç¤º
 
 protected:
 
-	HINSTANCE m_hAppInst;        // Ó¦ÓÃÊµÀı¾ä±ú
-	HWND      m_hMainWnd;        // Ö÷´°¿Ú¾ä±ú
-	bool      m_AppPaused;       // Ó¦ÓÃÊÇ·ñÔİÍ£
-	bool      m_Minimized;       // Ó¦ÓÃÊÇ·ñ×îĞ¡»¯
-	bool      m_Maximized;       // Ó¦ÓÃÊÇ·ñ×î´ó»¯
-	bool      m_Resizing;        // ´°¿Ú´óĞ¡ÊÇ·ñ±ä»¯
-	bool	  m_Enable4xMsaa;	 // ÊÇ·ñ¿ªÆô4±¶¶àÖØ²ÉÑù
-	UINT      m_4xMsaaQuality;   // MSAAÖ§³ÖµÄÖÊÁ¿µÈ¼¶
+	HINSTANCE m_hAppInst;        // åº”ç”¨å®ä¾‹å¥æŸ„
+	HWND      m_hMainWnd;        // ä¸»çª—å£å¥æŸ„
+	bool      m_AppPaused;       // åº”ç”¨æ˜¯å¦æš‚åœ
+	bool      m_Minimized;       // åº”ç”¨æ˜¯å¦æœ€å°åŒ–
+	bool      m_Maximized;       // åº”ç”¨æ˜¯å¦æœ€å¤§åŒ–
+	bool      m_Resizing;        // çª—å£å¤§å°æ˜¯å¦å˜åŒ–
+	bool	  m_Enable4xMsaa;	 // æ˜¯å¦å¼€å¯4å€å¤šé‡é‡‡æ ·
+	UINT      m_4xMsaaQuality;   // MSAAæ”¯æŒçš„è´¨é‡ç­‰çº§
 
-	GameTimer m_Timer;           // ¼ÆÊ±Æ÷
+	GameTimer m_Timer;           // è®¡æ—¶å™¨
 
 
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// Direct3D 11
-	ComPtr<ID3D11Device> m_pd3dDevice;							    // D3D11Éè±¸
-	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;			    // D3D11Éè±¸ÉÏÏÂÎÄ
-	ComPtr<IDXGISwapChain> m_pSwapChain;							// D3D11½»»»Á´
+	ComPtr<ID3D11Device> m_pd3dDevice;							    // D3D11è®¾å¤‡
+	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;			    // D3D11è®¾å¤‡ä¸Šä¸‹æ–‡
+	ComPtr<IDXGISwapChain> m_pSwapChain;							// D3D11äº¤æ¢é“¾
 	// Direct3D 11.1
-	ComPtr<ID3D11Device1> m_pd3dDevice1;							// D3D11.1Éè±¸
-	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;			// D3D11.1Éè±¸ÉÏÏÂÎÄ
-	ComPtr<IDXGISwapChain1> m_pSwapChain1;						    // D3D11.1½»»»Á´
-	// ³£ÓÃ×ÊÔ´
-	ComPtr<ID3D11Texture2D> m_pDepthStencilBuffer;					// Éî¶ÈÄ£°å»º³åÇø
-	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;				// äÖÈ¾Ä¿±êÊÓÍ¼
-	ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;				// Éî¶ÈÄ£°åÊÓÍ¼
-	D3D11_VIEWPORT m_ScreenViewport;								// ÊÓ¿Ú
-	// ¼üÊóÊäÈë
-	std::unique_ptr<DirectX::Mouse> m_pMouse;						// Êó±ê
-	DirectX::Mouse::ButtonStateTracker m_MouseTracker;				// Êó±ê×´Ì¬×·×ÙÆ÷
-	std::unique_ptr<DirectX::Keyboard> m_pKeyboard;					// ¼üÅÌ
-	DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;		// ¼üÅÌ×´Ì¬×·×ÙÆ÷
-	// ÅÉÉúÀàÓ¦¸ÃÔÚ¹¹Ôìº¯ÊıÉèÖÃºÃÕâĞ©×Ô¶¨ÒåµÄ³õÊ¼²ÎÊı
-	std::wstring m_MainWndCaption;									// Ö÷´°¿Ú±êÌâ
-	int m_ClientWidth;												// ÊÓ¿Ú¿í¶È
-	int m_ClientHeight;												// ÊÓ¿Ú¸ß¶È
+	ComPtr<ID3D11Device1> m_pd3dDevice1;							// D3D11.1è®¾å¤‡
+	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;			// D3D11.1è®¾å¤‡ä¸Šä¸‹æ–‡
+	ComPtr<IDXGISwapChain1> m_pSwapChain1;						    // D3D11.1äº¤æ¢é“¾
+	// å¸¸ç”¨èµ„æº
+	ComPtr<ID3D11Texture2D> m_pDepthStencilBuffer;					// æ·±åº¦æ¨¡æ¿ç¼“å†²åŒº
+	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;				// æ¸²æŸ“ç›®æ ‡è§†å›¾
+	ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;				// æ·±åº¦æ¨¡æ¿è§†å›¾
+	D3D11_VIEWPORT m_ScreenViewport;								// è§†å£
+	// é”®é¼ è¾“å…¥
+	std::unique_ptr<DirectX::Mouse> m_pMouse;						// é¼ æ ‡
+	DirectX::Mouse::ButtonStateTracker m_MouseTracker;				// é¼ æ ‡çŠ¶æ€è¿½è¸ªå™¨
+	std::unique_ptr<DirectX::Keyboard> m_pKeyboard;					// é”®ç›˜
+	DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;		// é”®ç›˜çŠ¶æ€è¿½è¸ªå™¨
+	// æ´¾ç”Ÿç±»åº”è¯¥åœ¨æ„é€ å‡½æ•°è®¾ç½®å¥½è¿™äº›è‡ªå®šä¹‰çš„åˆå§‹å‚æ•°
+	std::wstring m_MainWndCaption;									// ä¸»çª—å£æ ‡é¢˜
+	int m_ClientWidth;												// è§†å£å®½åº¦
+	int m_ClientHeight;												// è§†å£é«˜åº¦
 };
 
 #endif // D3DAPP_H

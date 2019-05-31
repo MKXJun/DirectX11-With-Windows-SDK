@@ -2,7 +2,7 @@
 // GameObject.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ¼òÒ×ÓÎÏ·¶ÔÏó
+// ç®€æ˜“æ¸¸æˆå¯¹è±¡
 // Simple game object.
 //***************************************************************************************
 
@@ -15,17 +15,17 @@
 class GameObject
 {
 public:
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	GameObject();
 
-	// »ñÈ¡Î»ÖÃ
+	// è·å–ä½ç½®
 	DirectX::XMFLOAT3 GetPosition() const;
 	
 	//
-	// »ñÈ¡°üÎ§ºĞ
+	// è·å–åŒ…å›´ç›’
 	//
 
 	DirectX::BoundingBox GetLocalBoundingBox() const;
@@ -33,37 +33,37 @@ public:
 	DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
 
 	//
-	// ÉèÖÃÄ£ĞÍ
+	// è®¾ç½®æ¨¡å‹
 	//
 	
 	void SetModel(Model&& model);
 	void SetModel(const Model& model);
 
 	//
-	// ÉèÖÃ¾ØÕó
+	// è®¾ç½®çŸ©é˜µ
 	//
 
 	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
 
 	//
-	// »æÖÆ
+	// ç»˜åˆ¶
 	//
 
-	// »æÖÆ¶ÔÏó
+	// ç»˜åˆ¶å¯¹è±¡
 	void Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect);
 	
 	//
-	// µ÷ÊÔ 
+	// è°ƒè¯• 
 	//
 	
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
-	// ÈôÄ£ĞÍ±»ÖØĞÂÉèÖÃ£¬µ÷ÊÔ¶ÔÏóÃûÒ²ĞèÒª±»ÖØĞÂÉèÖÃ
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
+	// è‹¥æ¨¡å‹è¢«é‡æ–°è®¾ç½®ï¼Œè°ƒè¯•å¯¹è±¡åä¹Ÿéœ€è¦è¢«é‡æ–°è®¾ç½®
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	Model m_Model;												// Ä£ĞÍ
-	DirectX::XMFLOAT4X4 m_WorldMatrix;							// ÊÀ½ç¾ØÕó
+	Model m_Model;												// æ¨¡å‹
+	DirectX::XMFLOAT4X4 m_WorldMatrix;							// ä¸–ç•ŒçŸ©é˜µ
 
 };
 

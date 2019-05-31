@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 
 
-// ·½Ïò¹â
+// æ–¹å‘å…‰
 struct DirectionalLight
 {
 	DirectionalLight() = default;
@@ -24,10 +24,10 @@ struct DirectionalLight
 	DirectX::XMFLOAT4 diffuse;
 	DirectX::XMFLOAT4 specular;
 	DirectX::XMFLOAT3 direction;
-	float pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// µã¹â
+// ç‚¹å…‰
 struct PointLight
 {
 	PointLight() = default;
@@ -46,16 +46,16 @@ struct PointLight
 	DirectX::XMFLOAT4 diffuse;
 	DirectX::XMFLOAT4 specular;
 
-	// ´ò°ü³É4DÏòÁ¿: (position, range)
+	// æ‰“åŒ…æˆ4Då‘é‡: (position, range)
 	DirectX::XMFLOAT3 position;
 	float range;
 
-	// ´ò°ü³É4DÏòÁ¿: (A0, A1, A2, pad)
+	// æ‰“åŒ…æˆ4Då‘é‡: (A0, A1, A2, pad)
 	DirectX::XMFLOAT3 att;
-	float pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// ¾Û¹âµÆ
+// èšå…‰ç¯
 struct SpotLight
 {
 	SpotLight() = default;
@@ -76,20 +76,20 @@ struct SpotLight
 	DirectX::XMFLOAT4 diffuse;
 	DirectX::XMFLOAT4 specular;
 
-	// ´ò°ü³É4DÏòÁ¿: (position, range)
+	// æ‰“åŒ…æˆ4Då‘é‡: (position, range)
 	DirectX::XMFLOAT3 position;
 	float range;
 
-	// ´ò°ü³É4DÏòÁ¿: (direction, spot)
+	// æ‰“åŒ…æˆ4Då‘é‡: (direction, spot)
 	DirectX::XMFLOAT3 direction;
 	float spot;
 
-	// ´ò°ü³É4DÏòÁ¿: (att, pad)
+	// æ‰“åŒ…æˆ4Då‘é‡: (att, pad)
 	DirectX::XMFLOAT3 att;
-	float pad; // ×îºóÓÃÒ»¸ö¸¡µãÊıÌî³äÊ¹µÃ¸Ã½á¹¹Ìå´óĞ¡Âú×ã16µÄ±¶Êı£¬±ãÓÚÎÒÃÇÒÔºóÔÚHLSLÉèÖÃÊı×é
+	float pad; // æœ€åç”¨ä¸€ä¸ªæµ®ç‚¹æ•°å¡«å……ä½¿å¾—è¯¥ç»“æ„ä½“å¤§å°æ»¡è¶³16çš„å€æ•°ï¼Œä¾¿äºæˆ‘ä»¬ä»¥ååœ¨HLSLè®¾ç½®æ•°ç»„
 };
 
-// ÎïÌå±íÃæ²ÄÖÊ
+// ç‰©ä½“è¡¨é¢æè´¨
 struct Material
 {
 	Material() = default;
@@ -106,7 +106,7 @@ struct Material
 
 	DirectX::XMFLOAT4 ambient;
 	DirectX::XMFLOAT4 diffuse;
-	DirectX::XMFLOAT4 specular; // w = ¾µÃæ·´ÉäÇ¿¶È
+	DirectX::XMFLOAT4 specular; // w = é•œé¢åå°„å¼ºåº¦
 	DirectX::XMFLOAT4 Reflect;
 };
 

@@ -1,6 +1,6 @@
 #include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -10,7 +10,7 @@ using namespace std::experimental;
 
 
 //
-// BasicEffect::Impl ĞèÒªÏÈÓÚBasicEffectµÄ¶¨Òå
+// BasicEffect::Impl éœ€è¦å…ˆäºBasicEffectçš„å®šä¹‰
 //
 
 class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
@@ -18,7 +18,7 @@ class BasicEffect::Impl : public AlignedType<BasicEffect::Impl>
 public:
 
 	//
-	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
+	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
 	//
 
 	struct CBChangesEveryFrame
@@ -44,17 +44,17 @@ public:
 	};
 
 public:
-	// ±ØĞëÏÔÊ½Ö¸¶¨
+	// å¿…é¡»æ˜¾å¼æŒ‡å®š
 	Impl() : m_IsDirty() {}
 	~Impl() = default;
 
 public:
-	// ĞèÒª16×Ö½Ú¶ÔÆëµÄÓÅÏÈ·ÅÔÚÇ°Ãæ
-	CBufferObject<0, CBChangesEveryFrame>   m_CBFrame;		    // Ã¿´Î¶ÔÏó»æÖÆµÄ³£Á¿»º³åÇø
-	CBufferObject<1, CBChangesOnResize>     m_CBOnResize;		// Ã¿´Î´°¿Ú´óĞ¡±ä¸üµÄ³£Á¿»º³åÇø
-	CBufferObject<2, CBChangesRarely>		m_CBRarely;		    // ¼¸ºõ²»»á±ä¸üµÄ³£Á¿»º³åÇø
-	BOOL m_IsDirty;											    // ÊÇ·ñÓĞÖµ±ä¸ü
-	std::vector<CBufferBase*> m_pCBuffers;					    // Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
+	// éœ€è¦16å­—èŠ‚å¯¹é½çš„ä¼˜å…ˆæ”¾åœ¨å‰é¢
+	CBufferObject<0, CBChangesEveryFrame>   m_CBFrame;		    // æ¯æ¬¡å¯¹è±¡ç»˜åˆ¶çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<1, CBChangesOnResize>     m_CBOnResize;		// æ¯æ¬¡çª—å£å¤§å°å˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<2, CBChangesRarely>		m_CBRarely;		    // å‡ ä¹ä¸ä¼šå˜æ›´çš„å¸¸é‡ç¼“å†²åŒº
+	BOOL m_IsDirty;											    // æ˜¯å¦æœ‰å€¼å˜æ›´
+	std::vector<CBufferBase*> m_pCBuffers;					    // ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
 
 
 	ComPtr<ID3D11VertexShader> m_pTriangleVS;
@@ -69,10 +69,10 @@ public:
 	ComPtr<ID3D11PixelShader> m_pNormalPS;
 	ComPtr<ID3D11GeometryShader> m_pNormalGS;
 
-	ComPtr<ID3D11InputLayout> m_pVertexPosColorLayout;			// VertexPosColorÊäÈë²¼¾Ö
-	ComPtr<ID3D11InputLayout> m_pVertexPosNormalColorLayout;	// VertexPosNormalColorÊäÈë²¼¾Ö
+	ComPtr<ID3D11InputLayout> m_pVertexPosColorLayout;			// VertexPosColorè¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11InputLayout> m_pVertexPosNormalColorLayout;	// VertexPosNormalColorè¾“å…¥å¸ƒå±€
 
-	ComPtr<ID3D11ShaderResourceView> m_pTexture;				// ÓÃÓÚ»æÖÆµÄÎÆÀí
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;				// ç”¨äºç»˜åˆ¶çš„çº¹ç†
 
 };
 
@@ -82,7 +82,7 @@ public:
 
 namespace
 {
-	// BasicEffectµ¥Àı
+	// BasicEffectå•ä¾‹
 	static BasicEffect * g_pInstance = nullptr;
 }
 
@@ -129,7 +129,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 
 	ComPtr<ID3DBlob> blob;
 
-	// ´´½¨¶¥µã×ÅÉ«Æ÷ºÍ¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨å’Œé¡¶ç‚¹å¸ƒå±€
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_VS.cso", L"HLSL\\Triangle_VS.hlsl", "VS", "vs_5_0", blob.GetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTriangleVS.GetAddressOf()));
 	HR(device->CreateInputLayout(VertexPosColor::inputLayout, ARRAYSIZE(VertexPosColor::inputLayout),
@@ -143,7 +143,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	HR(CreateShaderFromFile(L"HLSL\\Normal_VS.cso", L"HLSL\\Normal_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalVS.GetAddressOf()));
 
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_PS.cso", L"HLSL\\Triangle_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTrianglePS.GetAddressOf()));
 
@@ -153,7 +153,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	HR(CreateShaderFromFile(L"HLSL\\Normal_PS.cso", L"HLSL\\Normal_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pNormalPS.GetAddressOf()));
 
-	// ´´½¨¼¸ºÎ×ÅÉ«Æ÷
+	// åˆ›å»ºå‡ ä½•ç€è‰²å™¨
 	HR(CreateShaderFromFile(L"HLSL\\Triangle_GS.cso", L"HLSL\\Triangle_GS.hlsl", "GS", "gs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateGeometryShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pTriangleGS.GetAddressOf()));
 
@@ -169,13 +169,13 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 		&pImpl->m_CBOnResize, 
 		&pImpl->m_CBRarely});
 
-	// ´´½¨³£Á¿»º³åÇø
+	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
 	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
 
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosColorLayout.Get(), "VertexPosColorLayout");
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalColorLayout.Get(), "VertexPosNormalColorLayout");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBFrame");
@@ -234,7 +234,7 @@ void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.world = XMMatrixTranspose(W);
-	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// Á½´Î×ªÖÃµÖÏû
+	cBuffer.data.worldInvTranspose = XMMatrixInverse(nullptr, W);	// ä¸¤æ¬¡è½¬ç½®æŠµæ¶ˆ
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
@@ -299,7 +299,7 @@ void BasicEffect::SetCylinderHeight(float height)
 void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
-	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
+	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
 	pCBuffers[2]->BindVS(deviceContext);
@@ -310,7 +310,7 @@ void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 	
 	pCBuffers[2]->BindPS(deviceContext);
 
-	// ÉèÖÃÎÆÀí
+	// è®¾ç½®çº¹ç†
 	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTexture.GetAddressOf());
 
 	if (pImpl->m_IsDirty)

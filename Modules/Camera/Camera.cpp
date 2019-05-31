@@ -124,7 +124,7 @@ void Camera::SetViewPort(float topLeftX, float topLeftY, float width, float heig
 
 
 // ********************
-// µÚÒ»ÈË³Æ/×ÔÓÉÊÓ½ÇÉãÏñ»ú
+// ç¬¬ä¸€äººç§°/è‡ªç”±è§†è§’æ‘„åƒæœº
 //
 
 FirstPersonCamera::FirstPersonCamera()
@@ -208,8 +208,8 @@ void FirstPersonCamera::Pitch(float rad)
 	XMVECTOR Up = XMVector3TransformNormal(XMLoadFloat3(&m_Up), R);
 	XMVECTOR Look = XMVector3TransformNormal(XMLoadFloat3(&m_Look), R);
 	float cosPhi = XMVectorGetY(Look);
-	// ½«ÉÏÏÂÊÓÒ°½Ç¶ÈPhiÏŞÖÆÔÚ[2pi/9, 7pi/9]£¬
-	// ¼´ÓàÏÒÖµ[-cos(2pi/9), cos(2pi/9)]Ö®¼ä
+	// å°†ä¸Šä¸‹è§†é‡è§’åº¦Phié™åˆ¶åœ¨[2pi/9, 7pi/9]ï¼Œ
+	// å³ä½™å¼¦å€¼[-cos(2pi/9), cos(2pi/9)]ä¹‹é—´
 	if (fabs(cosPhi) > cosf(XM_2PI / 9))
 		return;
 	
@@ -233,14 +233,14 @@ void FirstPersonCamera::UpdateViewMatrix()
 	XMVECTOR L = XMLoadFloat3(&m_Look);
 	XMVECTOR P = XMLoadFloat3(&m_Position);
 
-	// ±£³ÖÉãÏñ»úµÄÖá»¥ÎªÕı½»£¬ÇÒ³¤¶È¶¼Îª1
+	// ä¿æŒæ‘„åƒæœºçš„è½´äº’ä¸ºæ­£äº¤ï¼Œä¸”é•¿åº¦éƒ½ä¸º1
 	L = XMVector3Normalize(L);
 	U = XMVector3Normalize(XMVector3Cross(L, R));
 
-	// U, LÒÑ¾­Õı½»»¯£¬ĞèÒª¼ÆËã¶ÔÓ¦²æ³ËµÃµ½R
+	// U, Lå·²ç»æ­£äº¤åŒ–ï¼Œéœ€è¦è®¡ç®—å¯¹åº”å‰ä¹˜å¾—åˆ°R
 	R = XMVector3Cross(U, L);
 
-	// Ìî³ä¹Û²ì¾ØÕó
+	// å¡«å……è§‚å¯ŸçŸ©é˜µ
 	float x = -XMVectorGetX(XMVector3Dot(P, R));
 	float y = -XMVectorGetX(XMVector3Dot(P, U));
 	float z = -XMVectorGetX(XMVector3Dot(P, L));
@@ -258,7 +258,7 @@ void FirstPersonCamera::UpdateViewMatrix()
 }
 
 // ********************
-// µÚÈıÈË³ÆÉãÏñ»ú
+// ç¬¬ä¸‰äººç§°æ‘„åƒæœº
 //
 
 ThirdPersonCamera::ThirdPersonCamera()
@@ -293,8 +293,8 @@ float ThirdPersonCamera::GetRotationY() const
 void ThirdPersonCamera::RotateX(float rad)
 {
 	m_Phi -= rad;
-	// ½«ÉÏÏÂÊÓÒ°½Ç¶ÈPhiÏŞÖÆÔÚ[pi/6, pi/2]£¬
-	// ¼´ÓàÏÒÖµ[0, cos(pi/6)]Ö®¼ä
+	// å°†ä¸Šä¸‹è§†é‡è§’åº¦Phié™åˆ¶åœ¨[pi/6, pi/2]ï¼Œ
+	// å³ä½™å¼¦å€¼[0, cos(pi/6)]ä¹‹é—´
 	if (m_Phi < XM_PI / 6)
 		m_Phi = XM_PI / 6;
 	else if (m_Phi > XM_PIDIV2)
@@ -309,7 +309,7 @@ void ThirdPersonCamera::RotateY(float rad)
 void ThirdPersonCamera::Approach(float dist)
 {
 	m_Distance += dist;
-	// ÏŞÖÆ¾àÀëÔÚ[m_MinDist, m_MaxDist]Ö®¼ä
+	// é™åˆ¶è·ç¦»åœ¨[m_MinDist, m_MaxDist]ä¹‹é—´
 	if (m_Distance < m_MinDist)
 		m_Distance = m_MinDist;
 	else if (m_Distance > m_MaxDist)
@@ -319,8 +319,8 @@ void ThirdPersonCamera::Approach(float dist)
 void ThirdPersonCamera::SetRotationX(float phi)
 {
 	m_Phi = XMScalarModAngle(phi);
-	// ½«ÉÏÏÂÊÓÒ°½Ç¶ÈPhiÏŞÖÆÔÚ[pi/6, pi/2]£¬
-	// ¼´ÓàÏÒÖµ[0, cos(pi/6)]Ö®¼ä
+	// å°†ä¸Šä¸‹è§†é‡è§’åº¦Phié™åˆ¶åœ¨[pi/6, pi/2]ï¼Œ
+	// å³ä½™å¼¦å€¼[0, cos(pi/6)]ä¹‹é—´
 	if (m_Phi < XM_PI / 6)
 		m_Phi = XM_PI / 6;
 	else if (m_Phi > XM_PIDIV2)
@@ -350,7 +350,7 @@ void ThirdPersonCamera::SetDistanceMinMax(float minDist, float maxDist)
 
 void ThirdPersonCamera::UpdateViewMatrix()
 {
-	// ÇòÃæ×ø±êÏµ
+	// çƒé¢åæ ‡ç³»
 	float x = m_Target.x + m_Distance * sinf(m_Phi) * cosf(m_Theta);
 	float z = m_Target.z + m_Distance * sinf(m_Phi) * sinf(m_Theta);
 	float y = m_Target.y + m_Distance * cosf(m_Phi);
@@ -360,7 +360,7 @@ void ThirdPersonCamera::UpdateViewMatrix()
 	XMVECTOR R = XMVector3Normalize(XMVector3Cross(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), L));
 	XMVECTOR U = XMVector3Cross(L, R);
 	
-	// ¸üĞÂÏòÁ¿
+	// æ›´æ–°å‘é‡
 	XMStoreFloat3(&m_Right, R);
 	XMStoreFloat3(&m_Up, U);
 	XMStoreFloat3(&m_Look, L);

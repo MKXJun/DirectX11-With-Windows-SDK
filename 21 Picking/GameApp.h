@@ -10,7 +10,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 	
 public:
@@ -27,28 +27,28 @@ private:
 	
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
 	
-	GameObject m_Sphere;										// Çò
-	GameObject m_Cube;										    // Á¢·½Ìå
-	GameObject m_Cylinder;									    // Ô²ÖùÌå
-	GameObject m_House;										    // ·¿Îİ
-	GameObject m_Triangle;									    // Èı½ÇĞÎ
-	DirectX::BoundingSphere m_BoundingSphere;				    // ÇòµÄ°üÎ§ºĞ
+	GameObject m_Sphere;										// çƒ
+	GameObject m_Cube;										    // ç«‹æ–¹ä½“
+	GameObject m_Cylinder;									    // åœ†æŸ±ä½“
+	GameObject m_House;										    // æˆ¿å±‹
+	GameObject m_Triangle;									    // ä¸‰è§’å½¢
+	DirectX::BoundingSphere m_BoundingSphere;				    // çƒçš„åŒ…å›´ç›’
 
-	Geometry::MeshData<> m_TriangleMesh;						// Èı½ÇĞÎÍø¸ñÄ£ĞÍ
+	Geometry::MeshData<> m_TriangleMesh;						// ä¸‰è§’å½¢ç½‘æ ¼æ¨¡å‹
 
-	std::wstring m_PickedObjStr;								// ÒÑ¾­Ê°È¡µÄ¶ÔÏóÃû
+	std::wstring m_PickedObjStr;								// å·²ç»æ‹¾å–çš„å¯¹è±¡å
 
-	BasicEffect m_BasicEffect;								    // ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
+	BasicEffect m_BasicEffect;								    // å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
 
-	std::shared_ptr<Camera> m_pCamera;						    // ÉãÏñ»ú
-	CameraMode m_CameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> m_pCamera;						    // æ‘„åƒæœº
+	CameraMode m_CameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
-	ObjReader m_ObjReader;									    // Ä£ĞÍ¶ÁÈ¡¶ÔÏó
+	ObjReader m_ObjReader;									    // æ¨¡å‹è¯»å–å¯¹è±¡
 };
 
 

@@ -1,6 +1,6 @@
 #include "Effects.h"
 #include "d3dUtil.h"
-#include "EffectHelper.h"	// ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+#include "EffectHelper.h"	// å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
@@ -8,7 +8,7 @@ using namespace std::experimental;
 
 
 //
-// MinimapEffect::Impl ĞèÒªÏÈÓÚMinimapEffectµÄ¶¨Òå
+// MinimapEffect::Impl éœ€è¦å…ˆäºMinimapEffectçš„å®šä¹‰
 //
 
 class MinimapEffect::Impl : public AlignedType<MinimapEffect::Impl>
@@ -16,7 +16,7 @@ class MinimapEffect::Impl : public AlignedType<MinimapEffect::Impl>
 public:
 
 	//
-	// ÕâĞ©½á¹¹Ìå¶ÔÓ¦HLSLµÄ½á¹¹Ìå¡£ĞèÒª°´16×Ö½Ú¶ÔÆë
+	// è¿™äº›ç»“æ„ä½“å¯¹åº”HLSLçš„ç»“æ„ä½“ã€‚éœ€è¦æŒ‰16å­—èŠ‚å¯¹é½
 	//
 
 	struct CBChangesEveryFrame
@@ -35,24 +35,24 @@ public:
 
 
 public:
-	// ±ØĞëÏÔÊ½Ö¸¶¨
+	// å¿…é¡»æ˜¾å¼æŒ‡å®š
 	Impl() : m_IsDirty() {}
 	~Impl() = default;
 
 public:
-	CBufferObject<0, CBChangesEveryFrame> m_CBFrame;		// Ã¿Ö¡ĞŞ¸ÄµÄ³£Á¿»º³åÇø
-	CBufferObject<1, CBDrawingStates>	m_CBStates;		    // Ã¿´Î»æÖÆ×´Ì¬¸Ä±äµÄ³£Á¿»º³åÇø
+	CBufferObject<0, CBChangesEveryFrame> m_CBFrame;		// æ¯å¸§ä¿®æ”¹çš„å¸¸é‡ç¼“å†²åŒº
+	CBufferObject<1, CBDrawingStates>	m_CBStates;		    // æ¯æ¬¡ç»˜åˆ¶çŠ¶æ€æ”¹å˜çš„å¸¸é‡ç¼“å†²åŒº
 
 
-	BOOL m_IsDirty;										    // ÊÇ·ñÓĞÖµ±ä¸ü
-	std::vector<CBufferBase*> m_pCBuffers;				    // Í³Ò»¹ÜÀíÉÏÃæËùÓĞµÄ³£Á¿»º³åÇø
+	BOOL m_IsDirty;										    // æ˜¯å¦æœ‰å€¼å˜æ›´
+	std::vector<CBufferBase*> m_pCBuffers;				    // ç»Ÿä¸€ç®¡ç†ä¸Šé¢æ‰€æœ‰çš„å¸¸é‡ç¼“å†²åŒº
 
 	ComPtr<ID3D11VertexShader> m_pMinimapVS;
 	ComPtr<ID3D11PixelShader> m_pMinimapPS;
 
 	ComPtr<ID3D11InputLayout> m_pVertexPosTexLayout;
 
-	ComPtr<ID3D11ShaderResourceView> m_pTexture;			// ÓÃÓÚµ­Èëµ­³öµÄÎÆÀí
+	ComPtr<ID3D11ShaderResourceView> m_pTexture;			// ç”¨äºæ·¡å…¥æ·¡å‡ºçš„çº¹ç†
 };
 
 
@@ -63,7 +63,7 @@ public:
 
 namespace
 {
-	// MinimapEffectµ¥Àı
+	// MinimapEffectå•ä¾‹
 	static MinimapEffect * g_pInstance = nullptr;
 }
 
@@ -111,17 +111,17 @@ bool MinimapEffect::InitAll(ID3D11Device * device)
 	ComPtr<ID3DBlob> blob;
 
 	// ******************
-	// ´´½¨¶¥µã×ÅÉ«Æ÷
+	// åˆ›å»ºé¡¶ç‚¹ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_VS.cso", L"HLSL\\Minimap_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pMinimapVS.GetAddressOf()));
-	// ´´½¨¶¥µã²¼¾Ö
+	// åˆ›å»ºé¡¶ç‚¹å¸ƒå±€
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosTexLayout.GetAddressOf()));
 
 	// ******************
-	// ´´½¨ÏñËØ×ÅÉ«Æ÷
+	// åˆ›å»ºåƒç´ ç€è‰²å™¨
 	//
 
 	HR(CreateShaderFromFile(L"HLSL\\Minimap_PS.cso", L"HLSL\\Minimap_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -133,13 +133,13 @@ bool MinimapEffect::InitAll(ID3D11Device * device)
 		&pImpl->m_CBStates
 		});
 
-	// ´´½¨³£Á¿»º³åÇø
+	// åˆ›å»ºå¸¸é‡ç¼“å†²åŒº
 	for (auto& pBuffer : pImpl->m_pCBuffers)
 	{
 		HR(pBuffer->CreateBuffer(device));
 	}
 
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosTexLayout.Get(), "MinimapEffect.VertexPosTexLayout");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "MinimapEffect.CBFrame");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "MinimapEffect.CBStates");
@@ -161,7 +161,7 @@ void MinimapEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 	deviceContext->RSSetState(nullptr);
 
 	deviceContext->PSSetSamplers(0, 1, RenderStates::SSLinearWrap.GetAddressOf());
-	deviceContext->OMSetDepthStencilState(RenderStates::DSSNoDepthTest.Get(), 0);	// ¹Ø±ÕÉî¶È²âÊÔ
+	deviceContext->OMSetDepthStencilState(RenderStates::DSSNoDepthTest.Get(), 0);	// å…³é—­æ·±åº¦æµ‹è¯•
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
@@ -208,10 +208,10 @@ void MinimapEffect::SetTexture(ID3D11ShaderResourceView * texture)
 void MinimapEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
 	auto& pCBuffers = pImpl->m_pCBuffers;
-	// ½«»º³åÇø°ó¶¨µ½äÖÈ¾¹ÜÏßÉÏ
+	// å°†ç¼“å†²åŒºç»‘å®šåˆ°æ¸²æŸ“ç®¡çº¿ä¸Š
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindPS(deviceContext);
-	// ÉèÖÃSRV
+	// è®¾ç½®SRV
 	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTexture.GetAddressOf());
 
 	if (pImpl->m_IsDirty)

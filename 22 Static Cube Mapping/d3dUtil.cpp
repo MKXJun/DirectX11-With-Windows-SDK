@@ -7,18 +7,18 @@ using namespace std::experimental;
 
 
 // ------------------------------
-// CreateTexture2DArrayº¯Êı
+// CreateTexture2DArrayå‡½æ•°
 // ------------------------------
-// ¸ù¾İÒÑÓĞÎÆÀí´´½¨ÎÆÀíÊı×é
-// [In]d3dDevice			D3DÉè±¸
-// [In]d3dDeviceContext		D3DÉè±¸ÉÏÏÂÎÄ
-// [In]srcTexVec			´æ·ÅÎÆÀíµÄÊı×é
-// [In]usage				D3D11_USAGEÃ¶¾ÙÖµ
-// [In]bindFlags			D3D11_BIND_FLAGÃ¶¾ÙÖµ
-// [In]cpuAccessFlags		D3D11_CPU_ACCESS_FLAGÃ¶¾ÙÖµ
-// [In]miscFlags			D3D11_RESOURCE_MISC_FLAGÃ¶¾ÙÖµ
-// [OutOpt]textureArray		Êä³öµÄÎÆÀíÊı×é×ÊÔ´
-// [OutOpt]textureCubeView	Êä³öµÄÎÆÀíÊı×é×ÊÔ´ÊÓÍ¼
+// æ ¹æ®å·²æœ‰çº¹ç†åˆ›å»ºçº¹ç†æ•°ç»„
+// [In]d3dDevice			D3Dè®¾å¤‡
+// [In]d3dDeviceContext		D3Dè®¾å¤‡ä¸Šä¸‹æ–‡
+// [In]srcTexVec			å­˜æ”¾çº¹ç†çš„æ•°ç»„
+// [In]usage				D3D11_USAGEæšä¸¾å€¼
+// [In]bindFlags			D3D11_BIND_FLAGæšä¸¾å€¼
+// [In]cpuAccessFlags		D3D11_CPU_ACCESS_FLAGæšä¸¾å€¼
+// [In]miscFlags			D3D11_RESOURCE_MISC_FLAGæšä¸¾å€¼
+// [OutOpt]textureArray		è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æº
+// [OutOpt]textureCubeView	è¾“å‡ºçš„çº¹ç†æ•°ç»„èµ„æºè§†å›¾
 static HRESULT CreateTexture2DArray(
 	ID3D11Device * d3dDevice,
 	ID3D11DeviceContext * d3dDeviceContext,
@@ -31,7 +31,7 @@ static HRESULT CreateTexture2DArray(
 	ID3D11ShaderResourceView** textureArrayView);
 
 //
-// º¯Êı¶¨Òå²¿·Ö
+// å‡½æ•°å®šä¹‰éƒ¨åˆ†
 //
 
 HRESULT CreateShaderFromFile(
@@ -43,7 +43,7 @@ HRESULT CreateShaderFromFile(
 {
 	HRESULT hr = S_OK;
 
-	// Ñ°ÕÒÊÇ·ñÓĞÒÑ¾­±àÒëºÃµÄ¶¥µã×ÅÉ«Æ÷
+	// å¯»æ‰¾æ˜¯å¦æœ‰å·²ç»ç¼–è¯‘å¥½çš„é¡¶ç‚¹ç€è‰²å™¨
 	if (csoFileNameInOut && filesystem::exists(csoFileNameInOut))
 	{
 		return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
@@ -52,11 +52,11 @@ HRESULT CreateShaderFromFile(
 	{
 		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
-		// ÉèÖÃ D3DCOMPILE_DEBUG ±êÖ¾ÓÃÓÚ»ñÈ¡×ÅÉ«Æ÷µ÷ÊÔĞÅÏ¢¡£¸Ã±êÖ¾¿ÉÒÔÌáÉıµ÷ÊÔÌåÑé£¬
-		// µ«ÈÔÈ»ÔÊĞí×ÅÉ«Æ÷½øĞĞÓÅ»¯²Ù×÷
+		// è®¾ç½® D3DCOMPILE_DEBUG æ ‡å¿—ç”¨äºè·å–ç€è‰²å™¨è°ƒè¯•ä¿¡æ¯ã€‚è¯¥æ ‡å¿—å¯ä»¥æå‡è°ƒè¯•ä½“éªŒï¼Œ
+		// ä½†ä»ç„¶å…è®¸ç€è‰²å™¨è¿›è¡Œä¼˜åŒ–æ“ä½œ
 		dwShaderFlags |= D3DCOMPILE_DEBUG;
 
-		// ÔÚDebug»·¾³ÏÂ½ûÓÃÓÅ»¯ÒÔ±ÜÃâ³öÏÖÒ»Ğ©²»ºÏÀíµÄÇé¿ö
+		// åœ¨Debugç¯å¢ƒä¸‹ç¦ç”¨ä¼˜åŒ–ä»¥é¿å…å‡ºç°ä¸€äº›ä¸åˆç†çš„æƒ…å†µ
 		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 		ID3DBlob* errorBlob = nullptr;
@@ -72,7 +72,7 @@ HRESULT CreateShaderFromFile(
 			return hr;
 		}
 
-		// ÈôÖ¸¶¨ÁËÊä³öÎÄ¼şÃû£¬Ôò½«×ÅÉ«Æ÷¶ş½øÖÆĞÅÏ¢Êä³ö
+		// è‹¥æŒ‡å®šäº†è¾“å‡ºæ–‡ä»¶åï¼Œåˆ™å°†ç€è‰²å™¨äºŒè¿›åˆ¶ä¿¡æ¯è¾“å‡º
 		if (csoFileNameInOut)
 		{
 			return D3DWriteBlobToFile(*ppBlobOut, csoFileNameInOut, FALSE);
@@ -102,7 +102,7 @@ HRESULT CreateTexture2DArray(
 	bool generateMips = (bindFlags & D3D11_BIND_RENDER_TARGET) &&
 		(miscFlags & D3D11_RESOURCE_MISC_GENERATE_MIPS);
 	// ******************
-	// ´´½¨ÎÆÀíÊı×é
+	// åˆ›å»ºçº¹ç†æ•°ç»„
 	//
 
 	D3D11_TEXTURE2D_DESC texDesc;
@@ -114,7 +114,7 @@ HRESULT CreateTexture2DArray(
 	texArrayDesc.MipLevels = generateMips ? 0 : texDesc.MipLevels;
 	texArrayDesc.ArraySize = arraySize;
 	texArrayDesc.Format = texDesc.Format;
-	texArrayDesc.SampleDesc.Count = 1;		// ²»ÄÜÊ¹ÓÃ¶àÖØ²ÉÑù
+	texArrayDesc.SampleDesc.Count = 1;		// ä¸èƒ½ä½¿ç”¨å¤šé‡é‡‡æ ·
 	texArrayDesc.SampleDesc.Quality = 0;
 	texArrayDesc.Usage = usage;
 	texArrayDesc.BindFlags = bindFlags;
@@ -130,18 +130,18 @@ HRESULT CreateTexture2DArray(
 
 	texArray->GetDesc(&texArrayDesc);
 	// ******************
-	// ½«ËùÓĞµÄÎÆÀí×Ó×ÊÔ´¸³Öµµ½ÎÆÀíÊı×éÖĞ
+	// å°†æ‰€æœ‰çš„çº¹ç†å­èµ„æºèµ‹å€¼åˆ°çº¹ç†æ•°ç»„ä¸­
 	//
 
 	UINT minMipLevels = (generateMips ? 1 : texArrayDesc.MipLevels);
-	// Ã¿¸öÎÆÀíÔªËØ
+	// æ¯ä¸ªçº¹ç†å…ƒç´ 
 	for (UINT i = 0; i < texArrayDesc.ArraySize; ++i)
 	{
-		// ÎÆÀíÖĞµÄÃ¿¸ömipmapµÈ¼¶
+		// çº¹ç†ä¸­çš„æ¯ä¸ªmipmapç­‰çº§
 		for (UINT j = 0; j < minMipLevels; ++j)
 		{
 			D3D11_MAPPED_SUBRESOURCE mappedTex2D;
-			// ÔÊĞíÓ³ÉäË÷ÒıiÎÆÀíÖĞ£¬Ë÷ÒıjµÄmipmapµÈ¼¶µÄ2DÎÆÀí
+			// å…è®¸æ˜ å°„ç´¢å¼•içº¹ç†ä¸­ï¼Œç´¢å¼•jçš„mipmapç­‰çº§çš„2Dçº¹ç†
 			d3dDeviceContext->Map(srcTexVec[i],
 				j, D3D11_MAP_READ, 0, &mappedTex2D);
 
@@ -152,13 +152,13 @@ HRESULT CreateTexture2DArray(
 				mappedTex2D.pData,
 				mappedTex2D.RowPitch,
 				mappedTex2D.DepthPitch);
-			// Í£Ö¹Ó³Éä
+			// åœæ­¢æ˜ å°„
 			d3dDeviceContext->Unmap(srcTexVec[i], j);
 		}
 	}
 
 	// ******************
-	// ´´½¨ÎÆÀíÊı×éµÄSRV
+	// åˆ›å»ºçº¹ç†æ•°ç»„çš„SRV
 	//
 	if (textureArrayView)
 	{
@@ -172,14 +172,14 @@ HRESULT CreateTexture2DArray(
 
 		hResult = d3dDevice->CreateShaderResourceView(texArray, &viewDesc, textureArrayView);
 
-		// Éú³Émipmaps
+		// ç”Ÿæˆmipmaps
 		if (hResult == S_OK && generateMips)
 		{
 			d3dDeviceContext->GenerateMips(*textureArrayView);
 		}
 	}
 
-	// ¼ì²éÊÇ·ñĞèÒªÎÆÀíÊı×é
+	// æ£€æŸ¥æ˜¯å¦éœ€è¦çº¹ç†æ•°ç»„
 	if (textureArray)
 	{
 		*textureArray = texArray;
@@ -201,13 +201,13 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	ID3D11ShaderResourceView** textureArrayView,
 	bool generateMips)
 {
-	// ¼ì²éÉè±¸¡¢×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼¡¢ÎÄ¼şÃûÊı×éÊÇ·ñ·Ç¿Õ
+	// æ£€æŸ¥è®¾å¤‡ã€ç€è‰²å™¨èµ„æºè§†å›¾ã€æ–‡ä»¶åæ•°ç»„æ˜¯å¦éç©º
 	if (!d3dDevice || !textureArrayView || fileNames.empty())
 		return E_INVALIDARG;
 
 	HRESULT hResult;
 	// ******************
-	// ¶ÁÈ¡ËùÓĞÎÆÀí
+	// è¯»å–æ‰€æœ‰çº¹ç†
 	//
 
 	UINT arraySize = (UINT)fileNames.size();
@@ -215,14 +215,14 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 	std::vector<D3D11_TEXTURE2D_DESC> texDescVec(arraySize);
 	for (UINT i = 0; i < arraySize; ++i)
 	{
-		// ÓÉÓÚÕâĞ©ÎÆÀí²¢²»»á±»GPUÊ¹ÓÃ£¬ÎÒÃÇÊ¹ÓÃD3D11_USAGE_STAGINGÃ¶¾ÙÖµ
-		// Ê¹µÃCPU¿ÉÒÔ¶ÁÈ¡×ÊÔ´
+		// ç”±äºè¿™äº›çº¹ç†å¹¶ä¸ä¼šè¢«GPUä½¿ç”¨ï¼Œæˆ‘ä»¬ä½¿ç”¨D3D11_USAGE_STAGINGæšä¸¾å€¼
+		// ä½¿å¾—CPUå¯ä»¥è¯»å–èµ„æº
 		hResult = CreateDDSTextureFromFileEx(d3dDevice,
 			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,	
 			0, false, (ID3D11Resource**)&srcTexVec[i], nullptr);
 
-		// ¶ÁÈ¡Ê§°ÜÔòÊÍ·ÅÖ®Ç°¶ÁÈ¡µÄÎÆÀí²¢·µ»Ø
+		// è¯»å–å¤±è´¥åˆ™é‡Šæ”¾ä¹‹å‰è¯»å–çš„çº¹ç†å¹¶è¿”å›
 		if (FAILED(hResult))
 		{
 			for (UINT j = 0; j < i; ++j)
@@ -230,12 +230,12 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 			return hResult;
 		}
 
-		// ¶ÁÈ¡´´½¨ºÃµÄÎÆÀíĞÅÏ¢
+		// è¯»å–åˆ›å»ºå¥½çš„çº¹ç†ä¿¡æ¯
 		srcTexVec[i]->GetDesc(&texDescVec[i]);
 
-		// ĞèÒª¼ìÑéËùÓĞÎÆÀíµÄmipLevels£¬¿í¶ÈºÍ¸ß¶È£¬Êı¾İ¸ñÊ½ÊÇ·ñÒ»ÖÂ£¬
-		// Èô´æÔÚÊı¾İ¸ñÊ½²»Ò»ÖÂµÄÇé¿ö£¬ÇëÊ¹ÓÃdxtex.exe(DirectX Texture Tool)
-		// ½«ËùÓĞµÄÍ¼Æ¬×ª³ÉÒ»ÖÂµÄÊı¾İ¸ñÊ½
+		// éœ€è¦æ£€éªŒæ‰€æœ‰çº¹ç†çš„mipLevelsï¼Œå®½åº¦å’Œé«˜åº¦ï¼Œæ•°æ®æ ¼å¼æ˜¯å¦ä¸€è‡´ï¼Œ
+		// è‹¥å­˜åœ¨æ•°æ®æ ¼å¼ä¸ä¸€è‡´çš„æƒ…å†µï¼Œè¯·ä½¿ç”¨dxtex.exe(DirectX Texture Tool)
+		// å°†æ‰€æœ‰çš„å›¾ç‰‡è½¬æˆä¸€è‡´çš„æ•°æ®æ ¼å¼
 		if (texDescVec[i].MipLevels != texDescVec[0].MipLevels || texDescVec[i].Width != texDescVec[0].Width ||
 			texDescVec[i].Height != texDescVec[0].Height || texDescVec[i].Format != texDescVec[0].Format)
 		{
@@ -266,13 +266,13 @@ HRESULT CreateWICTexture2DArrayFromFile(
 	ID3D11ShaderResourceView** textureArrayView,
 	bool generateMips)
 {
-	// ¼ì²éÉè±¸¡¢×ÅÉ«Æ÷×ÊÔ´ÊÓÍ¼¡¢ÎÄ¼şÃûÊı×éÊÇ·ñ·Ç¿Õ
+	// æ£€æŸ¥è®¾å¤‡ã€ç€è‰²å™¨èµ„æºè§†å›¾ã€æ–‡ä»¶åæ•°ç»„æ˜¯å¦éç©º
 	if (!d3dDevice || !textureArrayView || fileNames.empty())
 		return E_INVALIDARG;
 
 	HRESULT hResult;
 	// ******************
-	// ¶ÁÈ¡ËùÓĞÎÆÀí
+	// è¯»å–æ‰€æœ‰çº¹ç†
 	//
 
 	UINT arraySize = (UINT)fileNames.size();
@@ -280,14 +280,14 @@ HRESULT CreateWICTexture2DArrayFromFile(
 	std::vector<D3D11_TEXTURE2D_DESC> texDescVec(arraySize);
 	for (UINT i = 0; i < arraySize; ++i)
 	{
-		// ÓÉÓÚÕâĞ©ÎÆÀí²¢²»»á±»GPUÊ¹ÓÃ£¬ÎÒÃÇÊ¹ÓÃD3D11_USAGE_STAGINGÃ¶¾ÙÖµ
-		// Ê¹µÃCPU¿ÉÒÔ¶ÁÈ¡×ÊÔ´
+		// ç”±äºè¿™äº›çº¹ç†å¹¶ä¸ä¼šè¢«GPUä½¿ç”¨ï¼Œæˆ‘ä»¬ä½¿ç”¨D3D11_USAGE_STAGINGæšä¸¾å€¼
+		// ä½¿å¾—CPUå¯ä»¥è¯»å–èµ„æº
 		hResult = CreateWICTextureFromFileEx(d3dDevice,
 			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 			0, WIC_LOADER_DEFAULT, (ID3D11Resource**)&srcTexVec[i], nullptr);
 
-		// ¶ÁÈ¡Ê§°ÜÔòÊÍ·ÅÖ®Ç°¶ÁÈ¡µÄÎÆÀí²¢·µ»Ø
+		// è¯»å–å¤±è´¥åˆ™é‡Šæ”¾ä¹‹å‰è¯»å–çš„çº¹ç†å¹¶è¿”å›
 		if (FAILED(hResult))
 		{
 			for (UINT j = 0; j < i; ++j)
@@ -295,12 +295,12 @@ HRESULT CreateWICTexture2DArrayFromFile(
 			return hResult;
 		}
 
-		// ¶ÁÈ¡´´½¨ºÃµÄÎÆÀíĞÅÏ¢
+		// è¯»å–åˆ›å»ºå¥½çš„çº¹ç†ä¿¡æ¯
 		srcTexVec[i]->GetDesc(&texDescVec[i]);
 
-		// ĞèÒª¼ìÑéËùÓĞÎÆÀíµÄmipLevels£¬¿í¶ÈºÍ¸ß¶È£¬Êı¾İ¸ñÊ½ÊÇ·ñÒ»ÖÂ£¬
-		// Èô´æÔÚÊı¾İ¸ñÊ½²»Ò»ÖÂµÄÇé¿ö£¬ÇëÊ¹ÓÃÍ¼Ïñ´¦ÀíÈí¼şÍ³Ò»´¦Àí£¬
-		// ½«ËùÓĞµÄÍ¼Æ¬×ª³ÉÒ»ÖÂµÄÊı¾İ¸ñÊ½
+		// éœ€è¦æ£€éªŒæ‰€æœ‰çº¹ç†çš„mipLevelsï¼Œå®½åº¦å’Œé«˜åº¦ï¼Œæ•°æ®æ ¼å¼æ˜¯å¦ä¸€è‡´ï¼Œ
+		// è‹¥å­˜åœ¨æ•°æ®æ ¼å¼ä¸ä¸€è‡´çš„æƒ…å†µï¼Œè¯·ä½¿ç”¨å›¾åƒå¤„ç†è½¯ä»¶ç»Ÿä¸€å¤„ç†ï¼Œ
+		// å°†æ‰€æœ‰çš„å›¾ç‰‡è½¬æˆä¸€è‡´çš„æ•°æ®æ ¼å¼
 		if (texDescVec[i].MipLevels != texDescVec[0].MipLevels || texDescVec[i].Width != texDescVec[0].Width ||
 			texDescVec[i].Height != texDescVec[0].Height || texDescVec[i].Format != texDescVec[0].Format)
 		{
@@ -331,26 +331,26 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11ShaderResourceView ** textureCubeView,
 	bool generateMips)
 {
-	// ¼ì²éÉè±¸¡¢Éè±¸ÉÏÏÂÎÄÊÇ·ñ·Ç¿Õ
-	// ÎÆÀíÊı×éºÍÎÆÀíÁ¢·½ÌåÊÓÍ¼Ö»ÒªÓĞÆäÖĞÒ»¸ö·Ç¿Õ¼´¿É
+	// æ£€æŸ¥è®¾å¤‡ã€è®¾å¤‡ä¸Šä¸‹æ–‡æ˜¯å¦éç©º
+	// çº¹ç†æ•°ç»„å’Œçº¹ç†ç«‹æ–¹ä½“è§†å›¾åªè¦æœ‰å…¶ä¸­ä¸€ä¸ªéç©ºå³å¯
 	if (!d3dDevice || !d3dDeviceContext || !(textureArray || textureCubeView))
 		return E_INVALIDARG;
 
 	// ******************
-	// ¶ÁÈ¡Ìì¿ÕºĞÎÆÀí
+	// è¯»å–å¤©ç©ºç›’çº¹ç†
 	//
 
 	ID3D11Texture2D* srcTex = nullptr;
 	ID3D11ShaderResourceView* srcTexSRV = nullptr;
 
-	// ¸Ã×ÊÔ´ÓÃÓÚGPU¸´ÖÆ
+	// è¯¥èµ„æºç”¨äºGPUå¤åˆ¶
 	HRESULT hResult = CreateWICTextureFromFile(d3dDevice,
 		(generateMips ? d3dDeviceContext : nullptr),
 		cubeMapFileName.c_str(),
 		(ID3D11Resource**)&srcTex,
 		(generateMips ? &srcTexSRV : nullptr));
 
-	// ÎÄ¼şÎ´´ò¿ª
+	// æ–‡ä»¶æœªæ‰“å¼€
 	if (FAILED(hResult))
 	{
 		return hResult;
@@ -359,7 +359,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	D3D11_TEXTURE2D_DESC texDesc, texArrayDesc;
 	srcTex->GetDesc(&texDesc);
 
-	// ÒªÇó¿í¸ß±È4:3
+	// è¦æ±‚å®½é«˜æ¯”4:3
 	if (texDesc.Width * 3 != texDesc.Height * 4)
 	{
 		SAFE_RELEASE(srcTex);
@@ -368,13 +368,13 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	}
 
 	// ******************
-	// ´´½¨°üº¬6¸öÎÆÀíµÄÊı×é
+	// åˆ›å»ºåŒ…å«6ä¸ªçº¹ç†çš„æ•°ç»„
 	//
 
 	UINT squareLength = texDesc.Width / 4;
 	texArrayDesc.Width = squareLength;
 	texArrayDesc.Height = squareLength;
-	texArrayDesc.MipLevels = (generateMips ? texDesc.MipLevels - 2 : 1);	// Á¢·½ÌåµÄmipµÈ¼¶±ÈÕûÕÅÎ»Í¼µÄÉÙ2
+	texArrayDesc.MipLevels = (generateMips ? texDesc.MipLevels - 2 : 1);	// ç«‹æ–¹ä½“çš„mipç­‰çº§æ¯”æ•´å¼ ä½å›¾çš„å°‘2
 	texArrayDesc.ArraySize = 6;
 	texArrayDesc.Format = texDesc.Format;
 	texArrayDesc.SampleDesc.Count = 1;
@@ -382,7 +382,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	texArrayDesc.Usage = D3D11_USAGE_DEFAULT;
 	texArrayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	texArrayDesc.CPUAccessFlags = 0;
-	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;	// ÔÊĞí´ÓÖĞ´´½¨TextureCube
+	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;	// å…è®¸ä»ä¸­åˆ›å»ºTextureCube
 
 	ID3D11Texture2D* texArray = nullptr;
 	hResult = d3dDevice->CreateTexture2D(&texArrayDesc, nullptr, &texArray);
@@ -394,11 +394,11 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	}
 
 	// ******************
-	// Ñ¡È¡Ô­Ìì¿ÕºĞÎÆÀíµÄ6¸ö×ÓÕı·½ĞÎÇøÓò£¬¿½±´µ½¸ÃÊı×éÖĞ
+	// é€‰å–åŸå¤©ç©ºç›’çº¹ç†çš„6ä¸ªå­æ­£æ–¹å½¢åŒºåŸŸï¼Œæ‹·è´åˆ°è¯¥æ•°ç»„ä¸­
 	//
 
 	D3D11_BOX box;
-	// box×ø±êÖáÈçÏÂ: 
+	// boxåæ ‡è½´å¦‚ä¸‹: 
 	//    front
 	//   / 
 	//  /_____right
@@ -410,7 +410,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 
 	for (UINT i = 0; i < texArrayDesc.MipLevels; ++i)
 	{
-		// +XÃæ¿½±´
+		// +Xé¢æ‹·è´
 		box.left = squareLength * 2;
 		box.top = squareLength;
 		box.right = squareLength * 3;
@@ -423,7 +423,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			i,
 			&box);
 
-		// -XÃæ¿½±´
+		// -Xé¢æ‹·è´
 		box.left = 0;
 		box.top = squareLength;
 		box.right = squareLength;
@@ -436,7 +436,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			i,
 			&box);
 
-		// +YÃæ¿½±´
+		// +Yé¢æ‹·è´
 		box.left = squareLength;
 		box.top = 0;
 		box.right = squareLength * 2;
@@ -450,7 +450,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			&box);
 
 
-		// -YÃæ¿½±´
+		// -Yé¢æ‹·è´
 		box.left = squareLength;
 		box.top = squareLength * 2;
 		box.right = squareLength * 2;
@@ -463,7 +463,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			i,
 			&box);
 
-		// +ZÃæ¿½±´
+		// +Zé¢æ‹·è´
 		box.left = squareLength;
 		box.top = squareLength;
 		box.right = squareLength * 2;
@@ -476,7 +476,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			i,
 			&box);
 
-		// -ZÃæ¿½±´
+		// -Zé¢æ‹·è´
 		box.left = squareLength * 3;
 		box.top = squareLength;
 		box.right = squareLength * 4;
@@ -489,13 +489,13 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			i,
 			&box);
 
-		// ÏÂÒ»¸ömipLevelµÄÎÆÀí¿í¸ß¶¼ÊÇÔ­À´µÄ1/2
+		// ä¸‹ä¸€ä¸ªmipLevelçš„çº¹ç†å®½é«˜éƒ½æ˜¯åŸæ¥çš„1/2
 		squareLength /= 2;
 	}
 
 
 	// ******************
-	// ´´½¨Á¢·½ÌåÎÆÀíµÄSRV
+	// åˆ›å»ºç«‹æ–¹ä½“çº¹ç†çš„SRV
 	//
 	if (textureCubeView)
 	{
@@ -508,7 +508,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 		hResult = d3dDevice->CreateShaderResourceView(texArray, &viewDesc, textureCubeView);
 	}
 
-	// ¼ì²éÊÇ·ñĞèÒªÎÆÀíÊı×é
+	// æ£€æŸ¥æ˜¯å¦éœ€è¦çº¹ç†æ•°ç»„
 	if (textureArray)
 	{
 		*textureArray = texArray;
@@ -532,16 +532,16 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	ID3D11ShaderResourceView ** textureCubeView,
 	bool generateMips)
 {
-	// ¼ì²éÉè±¸ÓëÉè±¸ÉÏÏÂÎÄÊÇ·ñ·Ç¿Õ
-	// ÎÄ¼şÃûÊıÄ¿ĞèÒª²»Ğ¡ÓÚ6
-	// ÎÆÀíÊı×éºÍ×ÊÔ´ÊÓÍ¼Ö»ÒªÓĞÆäÖĞÒ»¸ö·Ç¿Õ¼´¿É
+	// æ£€æŸ¥è®¾å¤‡ä¸è®¾å¤‡ä¸Šä¸‹æ–‡æ˜¯å¦éç©º
+	// æ–‡ä»¶åæ•°ç›®éœ€è¦ä¸å°äº6
+	// çº¹ç†æ•°ç»„å’Œèµ„æºè§†å›¾åªè¦æœ‰å…¶ä¸­ä¸€ä¸ªéç©ºå³å¯
 	UINT arraySize = (UINT)cubeMapFileNames.size();
 
 	if (!d3dDevice || !d3dDeviceContext || arraySize < 6 || !(textureArray || textureCubeView))
 		return E_INVALIDARG;
 
 	// ******************
-	// ¶ÁÈ¡ÎÆÀí
+	// è¯»å–çº¹ç†
 	//
 
 	HRESULT hResult;
@@ -551,19 +551,19 @@ HRESULT CreateWICTexture2DCubeFromFile(
 
 	for (UINT i = 0; i < arraySize; ++i)
 	{
-		// ¸Ã×ÊÔ´ÓÃÓÚGPU¸´ÖÆ
+		// è¯¥èµ„æºç”¨äºGPUå¤åˆ¶
 		hResult = CreateWICTextureFromFile(d3dDevice,
 			(generateMips ? d3dDeviceContext : nullptr),
 			cubeMapFileNames[i].c_str(),
 			(ID3D11Resource**)&srcTexVec[i],
 			(generateMips ? &srcTexSRVVec[i] : nullptr));
 
-		// ¶ÁÈ¡´´½¨ºÃµÄÎÆÀíĞÅÏ¢
+		// è¯»å–åˆ›å»ºå¥½çš„çº¹ç†ä¿¡æ¯
 		srcTexVec[i]->GetDesc(&texDescVec[i]);
 
-		// ĞèÒª¼ìÑéËùÓĞÎÆÀíµÄmipLevels£¬¿í¶ÈºÍ¸ß¶È£¬Êı¾İ¸ñÊ½ÊÇ·ñÒ»ÖÂ£¬
-		// Èô´æÔÚÊı¾İ¸ñÊ½²»Ò»ÖÂµÄÇé¿ö£¬ÇëÊ¹ÓÃdxtex.exe(DirectX Texture Tool)
-		// ½«ËùÓĞµÄÍ¼Æ¬×ª³ÉÒ»ÖÂµÄÊı¾İ¸ñÊ½
+		// éœ€è¦æ£€éªŒæ‰€æœ‰çº¹ç†çš„mipLevelsï¼Œå®½åº¦å’Œé«˜åº¦ï¼Œæ•°æ®æ ¼å¼æ˜¯å¦ä¸€è‡´ï¼Œ
+		// è‹¥å­˜åœ¨æ•°æ®æ ¼å¼ä¸ä¸€è‡´çš„æƒ…å†µï¼Œè¯·ä½¿ç”¨dxtex.exe(DirectX Texture Tool)
+		// å°†æ‰€æœ‰çš„å›¾ç‰‡è½¬æˆä¸€è‡´çš„æ•°æ®æ ¼å¼
 		if (texDescVec[i].MipLevels != texDescVec[0].MipLevels || texDescVec[i].Width != texDescVec[0].Width ||
 			texDescVec[i].Height != texDescVec[0].Height || texDescVec[i].Format != texDescVec[0].Format)
 		{
@@ -577,7 +577,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	}
 
 	// ******************
-	// ´´½¨ÎÆÀíÊı×é
+	// åˆ›å»ºçº¹ç†æ•°ç»„
 	//
 	D3D11_TEXTURE2D_DESC texArrayDesc;
 	texArrayDesc.Width = texDescVec[0].Width;
@@ -590,7 +590,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	texArrayDesc.Usage = D3D11_USAGE_DEFAULT;
 	texArrayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	texArrayDesc.CPUAccessFlags = 0;
-	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;	// ÔÊĞí´ÓÖĞ´´½¨TextureCube
+	texArrayDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;	// å…è®¸ä»ä¸­åˆ›å»ºTextureCube
 
 	ID3D11Texture2D* texArray = nullptr;
 	hResult = d3dDevice->CreateTexture2D(&texArrayDesc, nullptr, &texArray);
@@ -607,7 +607,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	}
 
 	// ******************
-	// ½«Ô­ÎÆÀíµÄËùÓĞ×Ó×ÊÔ´¿½±´µ½¸ÃÊı×éÖĞ
+	// å°†åŸçº¹ç†çš„æ‰€æœ‰å­èµ„æºæ‹·è´åˆ°è¯¥æ•°ç»„ä¸­
 	//
 	texArray->GetDesc(&texArrayDesc);
 
@@ -626,7 +626,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 	}
 
 	// ******************
-	// ´´½¨Á¢·½ÌåÎÆÀíµÄSRV
+	// åˆ›å»ºç«‹æ–¹ä½“çº¹ç†çš„SRV
 	//
 	if (textureCubeView)
 	{
@@ -639,7 +639,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 		hResult = d3dDevice->CreateShaderResourceView(texArray, &viewDesc, textureCubeView);
 	}
 
-	// ¼ì²éÊÇ·ñĞèÒªÎÆÀíÊı×é
+	// æ£€æŸ¥æ˜¯å¦éœ€è¦çº¹ç†æ•°ç»„
 	if (textureArray)
 	{
 		*textureArray = texArray;
@@ -649,7 +649,7 @@ HRESULT CreateWICTexture2DCubeFromFile(
 		SAFE_RELEASE(texArray);
 	}
 
-	// ÊÍ·ÅËùÓĞ×ÊÔ´
+	// é‡Šæ”¾æ‰€æœ‰èµ„æº
 	for (UINT i = 0; i < arraySize; ++i)
 	{
 		SAFE_RELEASE(srcTexVec[i]);

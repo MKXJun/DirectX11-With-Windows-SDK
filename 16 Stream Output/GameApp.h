@@ -5,7 +5,7 @@
 #include "Effects.h"
 #include "Vertex.h"
 
-// ±à³Ì²¶»ñÖ¡(ĞèÖ§³ÖDirectX 11.2 API)
+// ç¼–ç¨‹æ•è·å¸§(éœ€æ”¯æŒDirectX 11.2 API)
 //#if defined(DEBUG) | defined(_DEBUG)
 //#include <DXGItype.h>  
 //#include <dxgi1_2.h>  
@@ -37,18 +37,18 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	ComPtr<ID3D11Buffer> m_pVertexBuffers[7];					// ¶¥µã»º³åÇøÊı×é
-	int m_InitVertexCounts;									    // ³õÊ¼¶¥µãÊıÄ¿
-	int m_CurrIndex;											// µ±Ç°Ë÷Òı
-	Mode m_ShowMode;											// µ±Ç°ÏÔÊ¾Ä£Ê½
-	bool m_IsWireFrame;										    // ÊÇ·ñÎªÏß¿òÄ£Ê½
-	bool m_ShowNormal;										    // ÊÇ·ñÏÔÊ¾·¨ÏòÁ¿
+	ComPtr<ID3D11Buffer> m_pVertexBuffers[7];					// é¡¶ç‚¹ç¼“å†²åŒºæ•°ç»„
+	int m_InitVertexCounts;									    // åˆå§‹é¡¶ç‚¹æ•°ç›®
+	int m_CurrIndex;											// å½“å‰ç´¢å¼•
+	Mode m_ShowMode;											// å½“å‰æ˜¾ç¤ºæ¨¡å¼
+	bool m_IsWireFrame;										    // æ˜¯å¦ä¸ºçº¿æ¡†æ¨¡å¼
+	bool m_ShowNormal;										    // æ˜¯å¦æ˜¾ç¤ºæ³•å‘é‡
 
-	BasicEffect m_BasicEffect;							        // ¶ÔÏó»æÖÆÌØĞ§¹ÜÀíÀà
+	BasicEffect m_BasicEffect;							        // å¯¹è±¡ç»˜åˆ¶ç‰¹æ•ˆç®¡ç†ç±»
 
 };
 

@@ -44,13 +44,13 @@ void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
 
 void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
 {
-	// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
+	// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
 	UINT strides = m_VertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
 	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-	// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
+	// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
 	effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
 	effect.SetTexture(m_pTexture.Get());
 	effect.SetMaterial(m_Material);

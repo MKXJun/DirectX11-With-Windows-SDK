@@ -23,7 +23,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
+	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
 	RenderStates::InitAll(m_pd3dDevice.Get());
 
 	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
@@ -32,7 +32,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
+	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 
@@ -43,13 +43,13 @@ void GameApp::OnResize()
 {
 	assert(m_pd2dFactory);
 	assert(m_pdwriteFactory);
-	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
+	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
+	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -60,29 +60,29 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugStringW(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
-			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
-			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
-			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
+		OutputDebugStringW(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
+			L"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
+			L"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+			L"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
+			L"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
+		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
 		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			m_pColorBrush.GetAddressOf()));
-		HR(m_pdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(m_pdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// ±¨¸æÒì³£ÎÊÌâ
+		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
 		assert(m_pd2dRenderTarget);
 	}
 
-	// ¸üĞÂÍ¶Ó°¾ØÕó
+	// æ›´æ–°æŠ•å½±çŸ©é˜µ
 	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 
 }
@@ -90,7 +90,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
+	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
 	m_MouseTracker.Update(mouseState);
@@ -103,7 +103,7 @@ void GameApp::UpdateScene(float dt)
 
 
 	// ******************
-	// ÇĞ»»·ÖĞÎ
+	// åˆ‡æ¢åˆ†å½¢
 	//
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
 	{
@@ -137,7 +137,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// ******************
-	// ÇĞ»»½×Êı
+	// åˆ‡æ¢é˜¶æ•°
 	//
 	for (int i = 0; i < 7; ++i)
 	{
@@ -149,7 +149,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// ******************
-	// ÇĞ»»Ïß¿ò/Ãæ
+	// åˆ‡æ¢çº¿æ¡†/é¢
 	//
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::M))
 	{
@@ -160,7 +160,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// ******************
-	// ÊÇ·ñÌí¼Ó·¨ÏòÁ¿
+	// æ˜¯å¦æ·»åŠ æ³•å‘é‡
 	//
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::N))
 	{
@@ -171,11 +171,11 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	// ******************
-	// ¸üĞÂÃ¿Ö¡±ä»¯µÄÖµ
+	// æ›´æ–°æ¯å¸§å˜åŒ–çš„å€¼
 	//
 	if (m_ShowMode == Mode::SplitedSphere)
 	{
-		// ÈÃÇòÌå×ªÆğÀ´
+		// è®©çƒä½“è½¬èµ·æ¥
 		static float theta = 0.0f;
 		theta += 0.3f * dt;
 		m_BasicEffect.SetWorldMatrix(XMMatrixRotationY(theta));
@@ -197,7 +197,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 
-	// ¸ù¾İµ±Ç°»æÖÆÄ£Ê½ÉèÖÃĞèÒªÓÃÓÚäÖÈ¾µÄ¸÷Ïî×ÊÔ´
+	// æ ¹æ®å½“å‰ç»˜åˆ¶æ¨¡å¼è®¾ç½®éœ€è¦ç”¨äºæ¸²æŸ“çš„å„é¡¹èµ„æº
 	if (m_ShowMode == Mode::SplitedTriangle)
 	{
 		m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext.Get());
@@ -211,7 +211,7 @@ void GameApp::DrawScene()
 		m_BasicEffect.SetRenderSplitedSphere(m_pd3dImmediateContext.Get());
 	}
 
-	// ÉèÖÃÏß¿ò/ÃæÄ£Ê½
+	// è®¾ç½®çº¿æ¡†/é¢æ¨¡å¼
 	if (m_IsWireFrame)
 	{
 		m_pd3dImmediateContext->RSSetState(RenderStates::RSWireframe.Get());
@@ -221,9 +221,9 @@ void GameApp::DrawScene()
 		m_pd3dImmediateContext->RSSetState(nullptr);
 	}
 
-	// Ó¦ÓÃ³£Á¿»º³åÇøµÄ±ä¸ü
+	// åº”ç”¨å¸¸é‡ç¼“å†²åŒºçš„å˜æ›´
 	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
-	// ³ıÁËË÷ÒıÎª0µÄ»º³åÇøÈ±ÉÙÄÚ²¿Í¼ÔªÊıÄ¿¼ÇÂ¼£¬ÆäÓà¶¼¿ÉÒÔÊ¹ÓÃDrawAuto·½·¨
+	// é™¤äº†ç´¢å¼•ä¸º0çš„ç¼“å†²åŒºç¼ºå°‘å†…éƒ¨å›¾å…ƒæ•°ç›®è®°å½•ï¼Œå…¶ä½™éƒ½å¯ä»¥ä½¿ç”¨DrawAutoæ–¹æ³•
 	if (m_CurrIndex == 0)
 	{
 		m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
@@ -233,12 +233,12 @@ void GameApp::DrawScene()
 		m_pd3dImmediateContext->DrawAuto();
 	}
 		
-	// »æÖÆ·¨ÏòÁ¿
+	// ç»˜åˆ¶æ³•å‘é‡
 	if (m_ShowNormal)
 	{
 		m_BasicEffect.SetRenderNormal(m_pd3dImmediateContext.Get());
 		m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
-		// ³ıÁËË÷ÒıÎª0µÄ»º³åÇøÈ±ÉÙÄÚ²¿Í¼ÔªÊıÄ¿¼ÇÂ¼£¬ÆäÓà¶¼¿ÉÒÔÊ¹ÓÃDrawAuto·½·¨
+		// é™¤äº†ç´¢å¼•ä¸º0çš„ç¼“å†²åŒºç¼ºå°‘å†…éƒ¨å›¾å…ƒæ•°ç›®è®°å½•ï¼Œå…¶ä½™éƒ½å¯ä»¥ä½¿ç”¨DrawAutoæ–¹æ³•
 		if (m_CurrIndex == 0)
 		{
 			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
@@ -251,34 +251,34 @@ void GameApp::DrawScene()
 
 
 	// ******************
-	// »æÖÆDirect2D²¿·Ö
+	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
 	//
 	if (m_pd2dRenderTarget != nullptr)
 	{
 		m_pd2dRenderTarget->BeginDraw();
-		std::wstring text = L"ÇĞ»»·ÖĞÎ£ºQ-Èı½ÇĞÎ(Ãæ/Ïß¿ò) W-Ñ©»¨(Ïß¿ò) E-Çò(Ãæ/Ïß¿ò)\n"
-			L"Ö÷¼üÅÌÊı×Ö1 - 7£º·ÖĞÎ½×Êı£¬Ô½¸ßÔ½¾«Ï¸\n"
-			L"M-Ãæ/Ïß¿òÇĞ»»\n\n"
-			L"µ±Ç°½×Êı: " + std::to_wstring(m_CurrIndex + 1) + L"\n"
-			"µ±Ç°·ÖĞÎ: ";
+		std::wstring text = L"åˆ‡æ¢åˆ†å½¢ï¼šQ-ä¸‰è§’å½¢(é¢/çº¿æ¡†) W-é›ªèŠ±(çº¿æ¡†) E-çƒ(é¢/çº¿æ¡†)\n"
+			L"ä¸»é”®ç›˜æ•°å­—1 - 7ï¼šåˆ†å½¢é˜¶æ•°ï¼Œè¶Šé«˜è¶Šç²¾ç»†\n"
+			L"M-é¢/çº¿æ¡†åˆ‡æ¢\n\n"
+			L"å½“å‰é˜¶æ•°: " + std::to_wstring(m_CurrIndex + 1) + L"\n"
+			L"å½“å‰åˆ†å½¢: ";
 		if (m_ShowMode == Mode::SplitedTriangle)
-			text += L"Èı½ÇĞÎ";
+			text += L"ä¸‰è§’å½¢";
 		else if (m_ShowMode == Mode::SplitedSnow)
-			text += L"Ñ©»¨";
+			text += L"é›ªèŠ±";
 		else
-			text += L"Çò";
+			text += L"çƒ";
 
 		if (m_IsWireFrame)
-			text += L"(Ïß¿ò)";
+			text += L"(çº¿æ¡†)";
 		else
-			text += L"(Ãæ)";
+			text += L"(é¢)";
 
 		if (m_ShowMode == Mode::SplitedSphere)
 		{
 			if (m_ShowNormal)
-				text += L"(N-¹Ø±Õ·¨ÏòÁ¿)";
+				text += L"(N-å…³é—­æ³•å‘é‡)";
 			else
-				text += L"(N-¿ªÆô·¨ÏòÁ¿)";
+				text += L"(N-å¼€å¯æ³•å‘é‡)";
 		}
 
 
@@ -297,36 +297,36 @@ void GameApp::DrawScene()
 bool GameApp::InitResource()
 {
 	// ******************
-	// ³õÊ¼»¯¶ÔÏó
+	// åˆå§‹åŒ–å¯¹è±¡
 	//
 
-	// Ä¬ÈÏ»æÖÆÈı½ÇĞÎ
+	// é»˜è®¤ç»˜åˆ¶ä¸‰è§’å½¢
 	ResetSplitedTriangle();
-	// Ô¤ÏÈ°ó¶¨¶¥µã»º³åÇø
+	// é¢„å…ˆç»‘å®šé¡¶ç‚¹ç¼“å†²åŒº
 	UINT stride = sizeof(VertexPosColor);
 	UINT offset = 0;
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 
 	// ******************
-	// ³õÊ¼»¯²»»á±ä»¯µÄÖµ
+	// åˆå§‹åŒ–ä¸ä¼šå˜åŒ–çš„å€¼
 	//
 
-	// ·½Ïò¹â
+	// æ–¹å‘å…‰
 	DirectionalLight dirLight{};
 	dirLight.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight.direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	m_BasicEffect.SetDirLight(0, dirLight);
-	// ²ÄÖÊ
+	// æè´¨
 	Material material{};
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	m_BasicEffect.SetMaterial(material);
-	// ÉãÏñ»úÎ»ÖÃ
+	// æ‘„åƒæœºä½ç½®
 	m_BasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
-	// ¾ØÕó
+	// çŸ©é˜µ
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	m_BasicEffect.SetViewMatrix(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f),
@@ -344,24 +344,24 @@ bool GameApp::InitResource()
 void GameApp::ResetSplitedTriangle()
 {
 	// ******************
-	// ³õÊ¼»¯Èı½ÇĞÎ
+	// åˆå§‹åŒ–ä¸‰è§’å½¢
 	//
 
-	// ÉèÖÃÈı½ÇĞÎ¶¥µã
+	// è®¾ç½®ä¸‰è§’å½¢é¡¶ç‚¹
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(-1.0f * 3, -0.866f * 3, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) },
 		{ XMFLOAT3(0.0f * 3, 0.866f * 3, 0.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) },
 		{ XMFLOAT3(1.0f * 3, -0.866f * 3, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }
 	};
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;	// ÕâÀïĞèÒªÔÊĞíÁ÷Êä³ö½×¶ÎÍ¨¹ıGPUĞ´Èë
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// è¿™é‡Œéœ€è¦å…è®¸æµè¾“å‡ºé˜¶æ®µé€šè¿‡GPUå†™å…¥
 	vbd.ByteWidth = sizeof vertices;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// ĞèÒª¶îÍâÌí¼ÓÁ÷Êä³ö±êÇ©
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// éœ€è¦é¢å¤–æ·»åŠ æµè¾“å‡ºæ ‡ç­¾
 	vbd.CPUAccessFlags = 0;
-	// ĞÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
@@ -373,15 +373,15 @@ void GameApp::ResetSplitedTriangle()
 //	graphicsAnalysis->BeginCapture();
 //#endif
 
-	// Èı½ÇĞÎ¶¥µãÊı
+	// ä¸‰è§’å½¢é¡¶ç‚¹æ•°
 	m_InitVertexCounts = 3;
-	// ³õÊ¼»¯ËùÓĞ¶¥µã»º³åÇø
+	// åˆå§‹åŒ–æ‰€æœ‰é¡¶ç‚¹ç¼“å†²åŒº
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 3;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedTriangle(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		// µÚÒ»´Î»æÖÆĞèÒªµ÷ÓÃÒ»°ã»æÖÆÖ¸Áî£¬Ö®ºó¾Í¿ÉÒÔÊ¹ÓÃDrawAutoÁË
+		// ç¬¬ä¸€æ¬¡ç»˜åˆ¶éœ€è¦è°ƒç”¨ä¸€èˆ¬ç»˜åˆ¶æŒ‡ä»¤ï¼Œä¹‹åå°±å¯ä»¥ä½¿ç”¨DrawAutoäº†
 		if (i == 1)
 		{
 			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
@@ -409,10 +409,10 @@ void GameApp::ResetSplitedTriangle()
 void GameApp::ResetSplitedSnow()
 {
 	// ******************
-	// Ñ©»¨·ÖĞÎ´Ó³õÊ¼»¯Èı½ÇĞÎ¿ªÊ¼£¬ĞèÒª6¸ö¶¥µã
+	// é›ªèŠ±åˆ†å½¢ä»åˆå§‹åŒ–ä¸‰è§’å½¢å¼€å§‹ï¼Œéœ€è¦6ä¸ªé¡¶ç‚¹
 	//
 
-	// ÉèÖÃÈı½ÇĞÎ¶¥µã
+	// è®¾ç½®ä¸‰è§’å½¢é¡¶ç‚¹
 	float sqrt3 = sqrt(3.0f);
 	VertexPosColor vertices[] =
 	{
@@ -423,21 +423,21 @@ void GameApp::ResetSplitedSnow()
 		{ XMFLOAT3(3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },
 		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }
 	};
-	// ½«Èı½ÇĞÎ¿í¶ÈºÍ¸ß¶È¶¼·Å´ó3±¶
+	// å°†ä¸‰è§’å½¢å®½åº¦å’Œé«˜åº¦éƒ½æ”¾å¤§3å€
 	for (VertexPosColor& v : vertices)
 	{
 		v.pos.x *= 3;
 		v.pos.y *= 3;
 	}
 
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;	// ÕâÀïĞèÒªÔÊĞíÁ÷Êä³ö½×¶ÎÍ¨¹ıGPUĞ´Èë
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// è¿™é‡Œéœ€è¦å…è®¸æµè¾“å‡ºé˜¶æ®µé€šè¿‡GPUå†™å…¥
 	vbd.ByteWidth = sizeof vertices;
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// ĞèÒª¶îÍâÌí¼ÓÁ÷Êä³ö±êÇ©
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// éœ€è¦é¢å¤–æ·»åŠ æµè¾“å‡ºæ ‡ç­¾
 	vbd.CPUAccessFlags = 0;
-	// ĞÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
@@ -449,15 +449,15 @@ void GameApp::ResetSplitedSnow()
 //	graphicsAnalysis->BeginCapture();
 //#endif
 
-	// ¶¥µãÊı
+	// é¡¶ç‚¹æ•°
 	m_InitVertexCounts = 6;
-	// ³õÊ¼»¯ËùÓĞ¶¥µã»º³åÇø
+	// åˆå§‹åŒ–æ‰€æœ‰é¡¶ç‚¹ç¼“å†²åŒº
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedSnow(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		// µÚÒ»´Î»æÖÆĞèÒªµ÷ÓÃÒ»°ã»æÖÆÖ¸Áî£¬Ö®ºó¾Í¿ÉÒÔÊ¹ÓÃDrawAutoÁË
+		// ç¬¬ä¸€æ¬¡ç»˜åˆ¶éœ€è¦è°ƒç”¨ä¸€èˆ¬ç»˜åˆ¶æŒ‡ä»¤ï¼Œä¹‹åå°±å¯ä»¥ä½¿ç”¨DrawAutoäº†
 		if (i == 1)
 		{
 			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);
@@ -484,7 +484,7 @@ void GameApp::ResetSplitedSnow()
 void GameApp::ResetSplitedSphere()
 {
 	// ******************
-	// ·ÖĞÎÇòÌå
+	// åˆ†å½¢çƒä½“
 	//
 
 	VertexPosNormalColor basePoint[] = {
@@ -504,14 +504,14 @@ void GameApp::ResetSplitedSphere()
 	}
 
 
-	// ÉèÖÃ¶¥µã»º³åÇøÃèÊö
+	// è®¾ç½®é¡¶ç‚¹ç¼“å†²åŒºæè¿°
 	D3D11_BUFFER_DESC vbd;
 	ZeroMemory(&vbd, sizeof(vbd));
-	vbd.Usage = D3D11_USAGE_DEFAULT;	// ÕâÀïĞèÒªÔÊĞíÁ÷Êä³ö½×¶ÎÍ¨¹ıGPUĞ´Èë
+	vbd.Usage = D3D11_USAGE_DEFAULT;	// è¿™é‡Œéœ€è¦å…è®¸æµè¾“å‡ºé˜¶æ®µé€šè¿‡GPUå†™å…¥
 	vbd.ByteWidth = (UINT)(vertices.size() * sizeof(VertexPosNormalColor));
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// ĞèÒª¶îÍâÌí¼ÓÁ÷Êä³ö±êÇ©
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;	// éœ€è¦é¢å¤–æ·»åŠ æµè¾“å‡ºæ ‡ç­¾
 	vbd.CPUAccessFlags = 0;
-	// ĞÂ½¨¶¥µã»º³åÇø
+	// æ–°å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices.data();
@@ -523,15 +523,15 @@ void GameApp::ResetSplitedSphere()
 //	graphicsAnalysis->BeginCapture();
 //#endif
 
-	// ¶¥µãÊı
+	// é¡¶ç‚¹æ•°
 	m_InitVertexCounts = 24;
-	// ³õÊ¼»¯ËùÓĞ¶¥µã»º³åÇø
+	// åˆå§‹åŒ–æ‰€æœ‰é¡¶ç‚¹ç¼“å†²åŒº
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 4;
 		HR(m_pd3dDevice->CreateBuffer(&vbd, nullptr, m_pVertexBuffers[i].ReleaseAndGetAddressOf()));
 		m_BasicEffect.SetStreamOutputSplitedSphere(m_pd3dImmediateContext.Get(), m_pVertexBuffers[i - 1].Get(), m_pVertexBuffers[i].Get());
-		// µÚÒ»´Î»æÖÆĞèÒªµ÷ÓÃÒ»°ã»æÖÆÖ¸Áî£¬Ö®ºó¾Í¿ÉÒÔÊ¹ÓÃDrawAutoÁË
+		// ç¬¬ä¸€æ¬¡ç»˜åˆ¶éœ€è¦è°ƒç”¨ä¸€èˆ¬ç»˜åˆ¶æŒ‡ä»¤ï¼Œä¹‹åå°±å¯ä»¥ä½¿ç”¨DrawAutoäº†
 		if (i == 1)
 		{
 			m_pd3dImmediateContext->Draw(m_InitVertexCounts, 0);

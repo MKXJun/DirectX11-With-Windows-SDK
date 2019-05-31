@@ -7,7 +7,7 @@
 #include <DirectXMath.h>
 #include "GameTimer.h"
 
-// Ìí¼ÓËùÓĞÒªÒıÓÃµÄ¿â
+// æ·»åŠ æ‰€æœ‰è¦å¼•ç”¨çš„åº“
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -17,34 +17,34 @@
 class D3DApp
 {
 public:
-	D3DApp(HINSTANCE hInstance);    // ÔÚ¹¹Ôìº¯ÊıµÄ³õÊ¼»¯ÁĞ±íÓ¦µ±ÉèÖÃºÃ³õÊ¼²ÎÊı
+	D3DApp(HINSTANCE hInstance);    // åœ¨æ„é€ å‡½æ•°çš„åˆå§‹åŒ–åˆ—è¡¨åº”å½“è®¾ç½®å¥½åˆå§‹å‚æ•°
 	virtual ~D3DApp();
 
-	HINSTANCE AppInst()const;       // »ñÈ¡Ó¦ÓÃÊµÀıµÄ¾ä±ú
+	HINSTANCE AppInst()const;       // è·å–åº”ç”¨å®ä¾‹çš„å¥æŸ„
 
-	int Run();                      // ÔËĞĞ³ÌĞò£¬Ö´ĞĞÏûÏ¢ÊÂ¼şµÄÑ­»·
+	int Run();                      // è¿è¡Œç¨‹åºï¼Œæ‰§è¡Œæ¶ˆæ¯äº‹ä»¶çš„å¾ªç¯
 
-	// ¿ò¼Ü·½·¨¡£¿Í»§ÅÉÉúÀàĞèÒªÖØÔØÕâĞ©·½·¨ÒÔÊµÏÖÌØ¶¨µÄÓ¦ÓÃĞèÇó
-	virtual bool Init();            // ¸Ã¸¸Àà·½·¨ĞèÒª³õÊ¼»¯Direct3D²¿·Ö
-	virtual void Compute() = 0;     // ×ÓÀàĞèÒªÊµÏÖ¸Ã·½·¨£¬Íê³ÉÃ¿Ò»Ö¡µÄ»æÖÆ
-	                                // ´°¿ÚµÄÏûÏ¢»Øµ÷º¯Êı
+	// æ¡†æ¶æ–¹æ³•ã€‚å®¢æˆ·æ´¾ç”Ÿç±»éœ€è¦é‡è½½è¿™äº›æ–¹æ³•ä»¥å®ç°ç‰¹å®šçš„åº”ç”¨éœ€æ±‚
+	virtual bool Init();            // è¯¥çˆ¶ç±»æ–¹æ³•éœ€è¦åˆå§‹åŒ–Direct3Déƒ¨åˆ†
+	virtual void Compute() = 0;     // å­ç±»éœ€è¦å®ç°è¯¥æ–¹æ³•ï¼Œå®Œæˆæ¯ä¸€å¸§çš„ç»˜åˆ¶
+	                                // çª—å£çš„æ¶ˆæ¯å›è°ƒå‡½æ•°
 protected:
-	bool InitDirect3D();            // Direct3D³õÊ¼»¯
+	bool InitDirect3D();            // Direct3Dåˆå§‹åŒ–
 
 protected:
 
-	HINSTANCE m_hAppInst;           // Ó¦ÓÃÊµÀı¾ä±ú
-	GameTimer m_Timer;              // ¼ÆÊ±Æ÷
+	HINSTANCE m_hAppInst;           // åº”ç”¨å®ä¾‹å¥æŸ„
+	GameTimer m_Timer;              // è®¡æ—¶å™¨
 
-	// Ê¹ÓÃÄ£°å±ğÃû(C++11)¼ò»¯ÀàĞÍÃû
+	// ä½¿ç”¨æ¨¡æ¿åˆ«å(C++11)ç®€åŒ–ç±»å‹å
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// Direct3D 11
-	ComPtr<ID3D11Device> m_pd3dDevice;								// D3D11Éè±¸
-	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;				// D3D11Éè±¸ÉÏÏÂÎÄ
+	ComPtr<ID3D11Device> m_pd3dDevice;								// D3D11è®¾å¤‡
+	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;				// D3D11è®¾å¤‡ä¸Šä¸‹æ–‡
 	// Direct3D 11.1
-	ComPtr<ID3D11Device1> m_pd3dDevice1;							// D3D11.1Éè±¸
-	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;			// D3D11.1Éè±¸ÉÏÏÂÎÄ
+	ComPtr<ID3D11Device1> m_pd3dDevice1;							// D3D11.1è®¾å¤‡
+	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;			// D3D11.1è®¾å¤‡ä¸Šä¸‹æ–‡
 };
 
 #endif // D3DAPP_H

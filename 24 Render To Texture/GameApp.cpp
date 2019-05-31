@@ -9,7 +9,7 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_CameraMode(CameraMode::Free),
 	m_FadeAmount(0.0f),
 	m_FadeSign(1.0f),
-	m_FadeUsed(true),	// ¿ªÊ¼µ­Èë
+	m_FadeUsed(true),	// å¼€å§‹æ·¡å…¥
 	m_PrintScreenStarted(false)
 {
 }
@@ -23,7 +23,7 @@ bool GameApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	// Îñ±ØÏÈ³õÊ¼»¯ËùÓĞäÖÈ¾×´Ì¬£¬ÒÔ¹©ÏÂÃæµÄÌØĞ§Ê¹ÓÃ
+	// åŠ¡å¿…å…ˆåˆå§‹åŒ–æ‰€æœ‰æ¸²æŸ“çŠ¶æ€ï¼Œä»¥ä¾›ä¸‹é¢çš„ç‰¹æ•ˆä½¿ç”¨
 	RenderStates::InitAll(m_pd3dDevice.Get());
 
 	if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
@@ -38,7 +38,7 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-	// ³õÊ¼»¯Êó±ê£¬¼üÅÌ²»ĞèÒª
+	// åˆå§‹åŒ–é¼ æ ‡ï¼Œé”®ç›˜ä¸éœ€è¦
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 
@@ -49,13 +49,13 @@ void GameApp::OnResize()
 {
 	assert(m_pd2dFactory);
 	assert(m_pdwriteFactory);
-	// ÊÍ·ÅD2DµÄÏà¹Ø×ÊÔ´
+	// é‡Šæ”¾D2Dçš„ç›¸å…³èµ„æº
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
-	// ÎªD2D´´½¨DXGI±íÃæäÖÈ¾Ä¿±ê
+	// ä¸ºD2Dåˆ›å»ºDXGIè¡¨é¢æ¸²æŸ“ç›®æ ‡
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
@@ -66,38 +66,38 @@ void GameApp::OnResize()
 
 	if (hr == E_NOINTERFACE)
 	{
-		OutputDebugStringW(L"\n¾¯¸æ£ºDirect2DÓëDirect3D»¥²Ù×÷ĞÔ¹¦ÄÜÊÜÏŞ£¬Äã½«ÎŞ·¨¿´µ½ÎÄ±¾ĞÅÏ¢¡£ÏÖÌá¹©ÏÂÊö¿ÉÑ¡·½·¨£º\n"
-			"1. ¶ÔÓÚWin7ÏµÍ³£¬ĞèÒª¸üĞÂÖÁWin7 SP1£¬²¢°²×°KB2670838²¹¶¡ÒÔÖ§³ÖDirect2DÏÔÊ¾¡£\n"
-			"2. ×ÔĞĞÍê³ÉDirect3D 10.1ÓëDirect2DµÄ½»»¥¡£ÏêÇé²ÎÔÄ£º"
-			"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
-			"3. Ê¹ÓÃ±ğµÄ×ÖÌå¿â£¬±ÈÈçFreeType¡£\n\n");
+		OutputDebugStringW(L"\nè­¦å‘Šï¼šDirect2Dä¸Direct3Däº’æ“ä½œæ€§åŠŸèƒ½å—é™ï¼Œä½ å°†æ— æ³•çœ‹åˆ°æ–‡æœ¬ä¿¡æ¯ã€‚ç°æä¾›ä¸‹è¿°å¯é€‰æ–¹æ³•ï¼š\n"
+			L"1. å¯¹äºWin7ç³»ç»Ÿï¼Œéœ€è¦æ›´æ–°è‡³Win7 SP1ï¼Œå¹¶å®‰è£…KB2670838è¡¥ä¸ä»¥æ”¯æŒDirect2Dæ˜¾ç¤ºã€‚\n"
+			L"2. è‡ªè¡Œå®ŒæˆDirect3D 10.1ä¸Direct2Dçš„äº¤äº’ã€‚è¯¦æƒ…å‚é˜…ï¼š"
+			L"https://docs.microsoft.com/zh-cn/windows/desktop/Direct2D/direct2d-and-direct3d-interoperation-overview""\n"
+			L"3. ä½¿ç”¨åˆ«çš„å­—ä½“åº“ï¼Œæ¯”å¦‚FreeTypeã€‚\n\n");
 	}
 	else if (hr == S_OK)
 	{
-		// ´´½¨¹Ì¶¨ÑÕÉ«Ë¢ºÍÎÄ±¾¸ñÊ½
+		// åˆ›å»ºå›ºå®šé¢œè‰²åˆ·å’Œæ–‡æœ¬æ ¼å¼
 		HR(m_pd2dRenderTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::White),
 			m_pColorBrush.GetAddressOf()));
-		HR(m_pdwriteFactory->CreateTextFormat(L"ËÎÌå", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		HR(m_pdwriteFactory->CreateTextFormat(L"å®‹ä½“", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 			DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 15, L"zh-cn",
 			m_pTextFormat.GetAddressOf()));
 	}
 	else
 	{
-		// ±¨¸æÒì³£ÎÊÌâ
+		// æŠ¥å‘Šå¼‚å¸¸é—®é¢˜
 		assert(m_pd2dRenderTarget);
 	}
 
-	// ÉãÏñ»ú±ä¸üÏÔÊ¾
+	// æ‘„åƒæœºå˜æ›´æ˜¾ç¤º
 	if (m_pCamera != nullptr)
 	{
 		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
-		// Ğ¡µØÍ¼Íø¸ñÄ£ĞÍÖØÉè
+		// å°åœ°å›¾ç½‘æ ¼æ¨¡å‹é‡è®¾
 		m_Minimap.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow(1.0f - 100.0f / m_ClientWidth * 2,  -1.0f + 100.0f / m_ClientHeight * 2,
 			100.0f / m_ClientWidth * 2, 100.0f / m_ClientHeight * 2));
-		// ÆÁÄ»µ­Èëµ­³öÎÆÀí´óĞ¡ÖØÉè
+		// å±å¹•æ·¡å…¥æ·¡å‡ºçº¹ç†å¤§å°é‡è®¾
 		m_pScreenFadeRender = std::make_unique<TextureRender>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, false);
 	}
 }
@@ -105,7 +105,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
 
-	// ¸üĞÂÊó±êÊÂ¼ş£¬»ñÈ¡Ïà¶ÔÆ«ÒÆÁ¿
+	// æ›´æ–°é¼ æ ‡äº‹ä»¶ï¼Œè·å–ç›¸å¯¹åç§»é‡
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
 	m_MouseTracker.Update(mouseState);
@@ -115,29 +115,29 @@ void GameApp::UpdateScene(float dt)
 
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
-	// ¸üĞÂµ­Èëµ­³öÖµ£¬²¢ÏŞÖÆÉãÏñ»úĞĞ¶¯
+	// æ›´æ–°æ·¡å…¥æ·¡å‡ºå€¼ï¼Œå¹¶é™åˆ¶æ‘„åƒæœºè¡ŒåŠ¨
 	if (m_FadeUsed)
 	{
-		m_FadeAmount += m_FadeSign * dt / 2.0f;	// 2sÊ±¼äµ­Èë/µ­³ö
+		m_FadeAmount += m_FadeSign * dt / 2.0f;	// 2sæ—¶é—´æ·¡å…¥/æ·¡å‡º
 		if (m_FadeSign > 0.0f && m_FadeAmount > 1.0f)
 		{
 			m_FadeAmount = 1.0f;
-			m_FadeUsed = false;	// ½áÊøµ­Èë
+			m_FadeUsed = false;	// ç»“æŸæ·¡å…¥
 		}
 		else if (m_FadeSign < 0.0f && m_FadeAmount < 0.0f)
 		{
 			m_FadeAmount = 0.0f;
-			SendMessage(MainWnd(), WM_DESTROY, 0, 0);	// ¹Ø±Õ³ÌĞò
-			// ÕâÀï²»½áÊøµ­³öÊÇÒòÎª·¢ËÍ¹Ø±Õ´°¿ÚµÄÏûÏ¢»¹Òª¹ıÒ»»á²ÅÕæÕı¹Ø±Õ
+			SendMessage(MainWnd(), WM_DESTROY, 0, 0);	// å…³é—­ç¨‹åº
+			// è¿™é‡Œä¸ç»“æŸæ·¡å‡ºæ˜¯å› ä¸ºå‘é€å…³é—­çª—å£çš„æ¶ˆæ¯è¿˜è¦è¿‡ä¸€ä¼šæ‰çœŸæ­£å…³é—­
 		}
 	}
 	else
 	{
 		// ******************
-		// ×ÔÓÉÉãÏñ»úµÄ²Ù×÷
+		// è‡ªç”±æ‘„åƒæœºçš„æ“ä½œ
 		//
 
-		// ·½ÏòÒÆ¶¯
+		// æ–¹å‘ç§»åŠ¨
 		if (keyState.IsKeyDown(Keyboard::W))
 			cam1st->Walk(dt * 3.0f);
 		if (keyState.IsKeyDown(Keyboard::S))
@@ -147,30 +147,30 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// ÊÓÒ°Ğı×ª£¬·ÀÖ¹¿ªÊ¼µÄ²îÖµ¹ı´óµ¼ÖÂµÄÍ»È»Ğı×ª
+		// è§†é‡æ—‹è½¬ï¼Œé˜²æ­¢å¼€å§‹çš„å·®å€¼è¿‡å¤§å¯¼è‡´çš„çªç„¶æ—‹è½¬
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 
-		// ÏŞÖÆÒÆ¶¯·¶Î§
+		// é™åˆ¶ç§»åŠ¨èŒƒå›´
 		XMFLOAT3 adjustedPos;
 		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorReplicate(-90.0f), XMVectorReplicate(90.0f)));
 		cam1st->SetPosition(adjustedPos);
 	}
 
-	// ¸üĞÂ¹Û²ì¾ØÕó
+	// æ›´æ–°è§‚å¯ŸçŸ©é˜µ
 	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 	m_MinimapEffect.SetEyePos(m_pCamera->GetPositionXM());
 	
-	// ½ØÆÁ
+	// æˆªå±
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
 		m_PrintScreenStarted = true;
 		
-	// ÖØÖÃ¹öÂÖÖµ
+	// é‡ç½®æ»šè½®å€¼
 	m_pMouse->ResetScrollWheelValue();
 
-	// ÍË³ö³ÌĞò£¬¿ªÊ¼µ­³ö
+	// é€€å‡ºç¨‹åºï¼Œå¼€å§‹æ·¡å‡º
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 	{
 		m_FadeSign = -1.0f;
@@ -185,78 +185,78 @@ void GameApp::DrawScene()
 
 	
 	// ******************
-	// »æÖÆDirect3D²¿·Ö
+	// ç»˜åˆ¶Direct3Déƒ¨åˆ†
 	//
 
-	// Ô¤ÏÈÇå¿Õºó±¸»º³åÇø
+	// é¢„å…ˆæ¸…ç©ºåå¤‡ç¼“å†²åŒº
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	if (m_FadeUsed)
 	{
-		// ¿ªÊ¼µ­Èë/µ­³ö
+		// å¼€å§‹æ·¡å…¥/æ·¡å‡º
 		m_pScreenFadeRender->Begin(m_pd3dImmediateContext.Get());
 	}
 
 
-	// »æÖÆÖ÷³¡¾°
+	// ç»˜åˆ¶ä¸»åœºæ™¯
 	DrawScene(false);
 
-	// ´Ë´¦ÓÃÓÚĞ¡µØÍ¼ºÍÆÁÄ»»æÖÆ
+	// æ­¤å¤„ç”¨äºå°åœ°å›¾å’Œå±å¹•ç»˜åˆ¶
 	UINT strides[1] = { sizeof(VertexPosTex) };
 	UINT offsets[1] = { 0 };
 	
-	// Ğ¡µØÍ¼ÌØĞ§Ó¦ÓÃ
+	// å°åœ°å›¾ç‰¹æ•ˆåº”ç”¨
 	m_MinimapEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
 	m_MinimapEffect.Apply(m_pd3dImmediateContext.Get());
-	// ×îºó»æÖÆĞ¡µØÍ¼
+	// æœ€åç»˜åˆ¶å°åœ°å›¾
 	m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_Minimap.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
 	m_pd3dImmediateContext->IASetIndexBuffer(m_Minimap.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 	m_pd3dImmediateContext->DrawIndexed(6, 0, 0);
 
 	if (m_FadeUsed)
 	{
-		// ½áÊøµ­Èë/µ­³ö£¬´ËÊ±»æÖÆµÄ³¡¾°ÔÚÆÁÄ»µ­Èëµ­³öäÖÈ¾µÄÎÆÀí
+		// ç»“æŸæ·¡å…¥/æ·¡å‡ºï¼Œæ­¤æ—¶ç»˜åˆ¶çš„åœºæ™¯åœ¨å±å¹•æ·¡å…¥æ·¡å‡ºæ¸²æŸ“çš„çº¹ç†
 		m_pScreenFadeRender->End(m_pd3dImmediateContext.Get());
 
-		// ÆÁÄ»µ­Èëµ­³öÌØĞ§Ó¦ÓÃ
+		// å±å¹•æ·¡å…¥æ·¡å‡ºç‰¹æ•ˆåº”ç”¨
 		m_ScreenFadeEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
 		m_ScreenFadeEffect.SetFadeAmount(m_FadeAmount);
 		m_ScreenFadeEffect.SetTexture(m_pScreenFadeRender->GetOutputTexture());
 		m_ScreenFadeEffect.SetWorldViewProjMatrix(XMMatrixIdentity());
 		m_ScreenFadeEffect.Apply(m_pd3dImmediateContext.Get());
-		// ½«±£´æµÄÎÆÀíÊä³öµ½ÆÁÄ»
+		// å°†ä¿å­˜çš„çº¹ç†è¾“å‡ºåˆ°å±å¹•
 		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_FullScreenShow.modelParts[0].vertexBuffer.GetAddressOf(), strides, offsets);
 		m_pd3dImmediateContext->IASetIndexBuffer(m_FullScreenShow.modelParts[0].indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 		m_pd3dImmediateContext->DrawIndexed(6, 0, 0);
-		// Îñ±Ø½â³ı°ó¶¨ÔÚ×ÅÉ«Æ÷ÉÏµÄ×ÊÔ´£¬ÒòÎªÏÂÒ»Ö¡¿ªÊ¼Ëü»á×÷ÎªäÖÈ¾Ä¿±ê
+		// åŠ¡å¿…è§£é™¤ç»‘å®šåœ¨ç€è‰²å™¨ä¸Šçš„èµ„æºï¼Œå› ä¸ºä¸‹ä¸€å¸§å¼€å§‹å®ƒä¼šä½œä¸ºæ¸²æŸ“ç›®æ ‡
 		m_ScreenFadeEffect.SetTexture(nullptr);
 		m_ScreenFadeEffect.Apply(m_pd3dImmediateContext.Get());
 	}
 	
-	// Èô½ØÆÁ¼üQ°´ÏÂ£¬Ôò·Ö±ğ±£´æµ½output.ddsºÍoutput.pngÖĞ
+	// è‹¥æˆªå±é”®QæŒ‰ä¸‹ï¼Œåˆ™åˆ†åˆ«ä¿å­˜åˆ°output.ddså’Œoutput.pngä¸­
 	if (m_PrintScreenStarted)
 	{
 		ComPtr<ID3D11Texture2D> backBuffer;
-		// Êä³ö½ØÆÁ
+		// è¾“å‡ºæˆªå±
 		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
 		HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), L"Screenshot\\output.dds"));
 		HR(SaveWICTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatPng, L"Screenshot\\output.png"));
-		// ½áÊø½ØÆÁ
+		// ç»“æŸæˆªå±
 		m_PrintScreenStarted = false;
 	}
 
 
 
 	// ******************
-	// »æÖÆDirect2D²¿·Ö
+	// ç»˜åˆ¶Direct2Déƒ¨åˆ†
 	//
 	if (m_pd2dRenderTarget != nullptr)
 	{
 		m_pd2dRenderTarget->BeginDraw();
-		std::wstring text = L"µ±Ç°ÉãÏñ»úÄ£Ê½: µÚÒ»ÈË³Æ  EscÍË³ö\n"
-			"Êó±êÒÆ¶¯¿ØÖÆÊÓÒ° W/S/A/DÒÆ¶¯\n"
-			"Q-½ØÆÁ(Êä³öoutput.ddsºÍoutput.pngµ½ScreenShotÎÄ¼ş¼Ğ)";
+		std::wstring text = L"å½“å‰æ‘„åƒæœºæ¨¡å¼: ç¬¬ä¸€äººç§°  Escé€€å‡º\n"
+			L"é¼ æ ‡ç§»åŠ¨æ§åˆ¶è§†é‡ W/S/A/Dç§»åŠ¨\n"
+			L"Q-æˆªå±(è¾“å‡ºoutput.ddså’Œoutput.pngåˆ°ScreenShotæ–‡ä»¶å¤¹)";
 
 
 
@@ -274,33 +274,33 @@ bool GameApp::InitResource()
 {
 
 	// ******************
-	// ³õÊ¼»¯ÓÃÓÚRender-To-TextureµÄ¶ÔÏó
+	// åˆå§‹åŒ–ç”¨äºRender-To-Textureçš„å¯¹è±¡
 	//
 	m_pMinimapRender = std::make_unique<TextureRender>(m_pd3dDevice.Get(), 400, 400, true);
 	m_pScreenFadeRender = std::make_unique<TextureRender>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, false);
 
 	// ******************
-	// ³õÊ¼»¯ÓÎÏ·¶ÔÏó
+	// åˆå§‹åŒ–æ¸¸æˆå¯¹è±¡
 	//
 
-	// ´´½¨Ëæ»úµÄÊ÷
+	// åˆ›å»ºéšæœºçš„æ ‘
 	CreateRandomTrees();
 
-	// ³õÊ¼»¯µØÃæ
+	// åˆå§‹åŒ–åœ°é¢
 	m_ObjReader.Read(L"Model\\ground.mbo", L"Model\\ground.obj");
 	m_Ground.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 
-	// ³õÊ¼»¯Íø¸ñ£¬·ÅÖÃÔÚÓÒÏÂ½Ç200x200
+	// åˆå§‹åŒ–ç½‘æ ¼ï¼Œæ”¾ç½®åœ¨å³ä¸‹è§’200x200
 	m_Minimap.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow(0.75f, -0.66666666f, 0.25f, 0.33333333f));
 	
-	// ¸²¸ÇÕû¸öÆÁÄ»ÃæµÄÍø¸ñÄ£ĞÍ
+	// è¦†ç›–æ•´ä¸ªå±å¹•é¢çš„ç½‘æ ¼æ¨¡å‹
 	m_FullScreenShow.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow());
 
 	// ******************
-	// ³õÊ¼»¯ÉãÏñ»ú
+	// åˆå§‹åŒ–æ‘„åƒæœº
 	//
 
-	// Ä¬ÈÏÉãÏñ»ú
+	// é»˜è®¤æ‘„åƒæœº
 	m_CameraMode = CameraMode::FirstPerson;
 	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_pCamera = camera;
@@ -313,9 +313,9 @@ bool GameApp::InitResource()
 	camera->UpdateViewMatrix();
 	
 
-	// Ğ¡µØÍ¼ÉãÏñ»ú
+	// å°åœ°å›¾æ‘„åƒæœº
 	m_MinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	m_MinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200Ğ¡µØÍ¼
+	m_MinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200å°åœ°å›¾
 	m_MinimapCamera->LookTo(
 		XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f),
 		XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f),
@@ -323,21 +323,21 @@ bool GameApp::InitResource()
 	m_MinimapCamera->UpdateViewMatrix();
 
 	// ******************
-	// ³õÊ¼»¯¼¸ºõ²»»á±ä»¯µÄÖµ
+	// åˆå§‹åŒ–å‡ ä¹ä¸ä¼šå˜åŒ–çš„å€¼
 	//
 
-	// ºÚÒ¹ÌØĞ§
+	// é»‘å¤œç‰¹æ•ˆ
 	m_BasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 	m_BasicEffect.SetFogStart(5.0f);
 	m_BasicEffect.SetFogRange(20.0f);
 
-	// Ğ¡µØÍ¼·¶Î§¿ÉÊÓ
+	// å°åœ°å›¾èŒƒå›´å¯è§†
 	m_MinimapEffect.SetFogState(true);
 	m_MinimapEffect.SetInvisibleColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
 	m_MinimapEffect.SetMinimapRect(XMVectorSet(-95.0f, 95.0f, 95.0f, -95.0f));
 	m_MinimapEffect.SetVisibleRange(25.0f);
 
-	// ·½Ïò¹â(Ä¬ÈÏ)
+	// æ–¹å‘å…‰(é»˜è®¤)
 	DirectionalLight dirLight[4];
 	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 	dirLight[0].diffuse = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
@@ -353,12 +353,12 @@ bool GameApp::InitResource()
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 
 	// ******************
-	// äÖÈ¾Ğ¡µØÍ¼ÎÆÀí
+	// æ¸²æŸ“å°åœ°å›¾çº¹ç†
 	// 
 
 	m_BasicEffect.SetViewMatrix(m_MinimapCamera->GetViewXM());
-	m_BasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// Ê¹ÓÃÕı½»Í¶Ó°¾ØÕó(ÖĞĞÄÔÚÉãÏñ»úÎ»ÖÃ)
-	// ¹Ø±ÕÎíĞ§
+	m_BasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// ä½¿ç”¨æ­£äº¤æŠ•å½±çŸ©é˜µ(ä¸­å¿ƒåœ¨æ‘„åƒæœºä½ç½®)
+	// å…³é—­é›¾æ•ˆ
 	m_BasicEffect.SetFogState(false);
 	m_pMinimapRender->Begin(m_pd3dImmediateContext.Get());
 	DrawScene(true);
@@ -367,7 +367,7 @@ bool GameApp::InitResource()
 	m_MinimapEffect.SetTexture(m_pMinimapRender->GetOutputTexture());
 
 
-	// ¿ªÆôÎíĞ§£¬»Ö¸´Í¶Ó°¾ØÕó²¢ÉèÖÃÆ«°µµÄ¹âÕÕ
+	// å¼€å¯é›¾æ•ˆï¼Œæ¢å¤æŠ•å½±çŸ©é˜µå¹¶è®¾ç½®åæš—çš„å…‰ç…§
 	m_BasicEffect.SetFogState(true);
 	m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	dirLight[0].ambient = XMFLOAT4(0.08f, 0.08f, 0.08f, 1.0f);
@@ -376,7 +376,7 @@ bool GameApp::InitResource()
 		m_BasicEffect.SetDirLight(i, dirLight[i]);
 	
 	// ******************
-	// ÉèÖÃµ÷ÊÔ¶ÔÏóÃû
+	// è®¾ç½®è°ƒè¯•å¯¹è±¡å
 	//
 	m_Trees.SetDebugObjectName("Trees");
 	m_Ground.SetDebugObjectName("Ground");
@@ -398,22 +398,22 @@ void GameApp::DrawScene(bool drawMinimap)
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
 	if (drawMinimap)
 	{
-		// Ğ¡µØÍ¼ÏÂ»æÖÆËùÓĞÊ÷
+		// å°åœ°å›¾ä¸‹ç»˜åˆ¶æ‰€æœ‰æ ‘
 		m_Trees.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, m_InstancedData);
 	}
 	else
 	{
-		// Í³¼ÆÊµ¼Ê»æÖÆµÄÎïÌåÊıÄ¿
+		// ç»Ÿè®¡å®é™…ç»˜åˆ¶çš„ç‰©ä½“æ•°ç›®
 		std::vector<XMMATRIX> acceptedData;
-		// Ä¬ÈÏÊÓ×¶Ìå²Ã¼ô
+		// é»˜è®¤è§†é”¥ä½“è£å‰ª
 		acceptedData = Collision::FrustumCulling(m_InstancedData, m_Trees.GetLocalBoundingBox(),
 			m_pCamera->GetViewXM(), m_pCamera->GetProjXM());
-		// Ä¬ÈÏÓ²¼şÊµÀı»¯»æÖÆ
+		// é»˜è®¤ç¡¬ä»¶å®ä¾‹åŒ–ç»˜åˆ¶
 		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
 		m_Trees.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, acceptedData);
 	}
 	
-	// »æÖÆµØÃæ
+	// ç»˜åˆ¶åœ°é¢
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
 	m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 }
@@ -421,25 +421,25 @@ void GameApp::DrawScene(bool drawMinimap)
 void GameApp::CreateRandomTrees()
 {
 	srand((unsigned)time(nullptr));
-	// ³õÊ¼»¯Ê÷
+	// åˆå§‹åŒ–æ ‘
 	m_ObjReader.Read(L"Model\\tree.mbo", L"Model\\tree.obj");
 	m_Trees.SetModel(Model(m_pd3dDevice.Get(), m_ObjReader));
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 
 	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();
-	// »ñÈ¡Ê÷°üÎ§ºĞ¶¥µã
+	// è·å–æ ‘åŒ…å›´ç›’é¡¶ç‚¹
 	m_TreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	// ÈÃÊ÷Ä¾µ×²¿½ôÌùµØÃæÎ»ÓÚy = -2µÄÆ½Ãæ
+	// è®©æ ‘æœ¨åº•éƒ¨ç´§è´´åœ°é¢ä½äºy = -2çš„å¹³é¢
 	treeBox.Transform(treeBox, S);
 	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
-	// Ëæ»úÉú³É144¿ÅËæ»ú³¯ÏòµÄÊ÷
+	// éšæœºç”Ÿæˆ144é¢—éšæœºæœå‘çš„æ ‘
 	float theta = 0.0f;
 	for (int i = 0; i < 16; ++i)
 	{
-		// È¡5-95µÄ°ë¾¶·ÅÖÃËæ»úµÄÊ÷
+		// å–5-95çš„åŠå¾„æ”¾ç½®éšæœºçš„æ ‘
 		for (int j = 0; j < 3; ++j)
 		{
-			// ¾àÀëÔ½Ô¶£¬Ê÷Ä¾Ô½¶à
+			// è·ç¦»è¶Šè¿œï¼Œæ ‘æœ¨è¶Šå¤š
 			for (int k = 0; k < 2 * j + 1; ++k)
 			{
 				float radius = (float)(rand() % 30 + 30 * j + 5);

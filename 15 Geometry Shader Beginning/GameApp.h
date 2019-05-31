@@ -29,15 +29,15 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
-	ComPtr<IDWriteFont> m_pFont;								// 字体
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 鍗曡壊绗斿埛
+	ComPtr<IDWriteFont> m_pFont;								// 瀛椾綋
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 鏂囨湰鏍煎紡
 
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// 顶点集合
-	int m_VertexCount;										    // 顶点数目
-	Mode m_ShowMode;											// 当前显示模式
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// 椤剁偣闆嗗悎
+	int m_VertexCount;										    // 椤剁偣鏁扮洰
+	Mode m_ShowMode;											// 褰撳墠鏄剧ず妯″紡
 
-	BasicEffect m_BasicEffect;							        // 对象渲染特效管理
+	BasicEffect m_BasicEffect;							        // 瀵硅薄娓叉煋鐗规晥绠＄悊
 
 };
 

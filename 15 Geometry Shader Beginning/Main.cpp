@@ -5,11 +5,11 @@
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE prevInstance,
 				   _In_ LPSTR cmdLine, _In_ int showCmd)
 {
-	// ÕâÐ©²ÎÊý²»Ê¹ÓÃ
+	// è¿™äº›å‚æ•°ä¸ä½¿ç”¨
 	UNREFERENCED_PARAMETER(prevInstance);
 	UNREFERENCED_PARAMETER(cmdLine);
 	UNREFERENCED_PARAMETER(showCmd);
-	// ÔÊÐíÔÚDebug°æ±¾½øÐÐÔËÐÐÊ±ÄÚ´æ·ÖÅäºÍÐ¹Â©¼ì²â
+	// å…è®¸åœ¨Debugç‰ˆæœ¬è¿›è¡Œè¿è¡Œæ—¶å†…å­˜åˆ†é…å’Œæ³„æ¼æ£€æµ‹
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif

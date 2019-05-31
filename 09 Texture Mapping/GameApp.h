@@ -25,7 +25,7 @@ public:
 		int numDirLight;
 		int numPointLight;
 		int numSpotLight;
-		float pad;		// ´ò°ü±£Ö¤16×Ö½Ú¶ÔÆë
+		float pad;		// æ‰“åŒ…ä¿è¯16å­—èŠ‚å¯¹é½
 		DirectX::XMFLOAT4 eyePos;
 	};
 
@@ -51,30 +51,30 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// ÓÃÓÚ2DµÄ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// ÓÃÓÚ3DµÄ¶¥µãÊäÈë²¼¾Ö
-	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// ¶¥µã»º³åÇø
-	ComPtr<ID3D11Buffer> m_pIndexBuffer;						// Ë÷Òı»º³åÇø
-	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];				    // ³£Á¿»º³åÇø
-	UINT m_IndexCount;										    // »æÖÆÎïÌåµÄË÷ÒıÊı×é´óĞ¡
-	int m_CurrFrame;											// µ±Ç°»ğÑæ¶¯»­²¥·Åµ½µÚ¼¸Ö¡
-	ShowMode m_CurrMode;										// µ±Ç°ÏÔÊ¾µÄÄ£Ê½
+	ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// ç”¨äº2Dçš„é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// ç”¨äº3Dçš„é¡¶ç‚¹è¾“å…¥å¸ƒå±€
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;						// é¡¶ç‚¹ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pIndexBuffer;						// ç´¢å¼•ç¼“å†²åŒº
+	ComPtr<ID3D11Buffer> m_pConstantBuffers[2];				    // å¸¸é‡ç¼“å†²åŒº
+	UINT m_IndexCount;										    // ç»˜åˆ¶ç‰©ä½“çš„ç´¢å¼•æ•°ç»„å¤§å°
+	int m_CurrFrame;											// å½“å‰ç«ç„°åŠ¨ç”»æ’­æ”¾åˆ°ç¬¬å‡ å¸§
+	ShowMode m_CurrMode;										// å½“å‰æ˜¾ç¤ºçš„æ¨¡å¼
 
-	ComPtr<ID3D11ShaderResourceView> m_pWoodCrate;			    // Ä¾ºĞÎÆÀí
-	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pFireAnims; // »ğÑæÎÆÀí¼¯
-	ComPtr<ID3D11SamplerState> m_pSamplerState;				    // ²ÉÑùÆ÷×´Ì¬
+	ComPtr<ID3D11ShaderResourceView> m_pWoodCrate;			    // æœ¨ç›’çº¹ç†
+	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pFireAnims; // ç«ç„°çº¹ç†é›†
+	ComPtr<ID3D11SamplerState> m_pSamplerState;				    // é‡‡æ ·å™¨çŠ¶æ€
 
-	ComPtr<ID3D11VertexShader> m_pVertexShader3D;				// ÓÃÓÚ3DµÄ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> m_pPixelShader3D;				    // ÓÃÓÚ3DµÄÏñËØ×ÅÉ«Æ÷
-	ComPtr<ID3D11VertexShader> m_pVertexShader2D;				// ÓÃÓÚ2DµÄ¶¥µã×ÅÉ«Æ÷
-	ComPtr<ID3D11PixelShader> m_pPixelShader2D;				    // ÓÃÓÚ2DµÄÏñËØ×ÅÉ«Æ÷
+	ComPtr<ID3D11VertexShader> m_pVertexShader3D;				// ç”¨äº3Dçš„é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> m_pPixelShader3D;				    // ç”¨äº3Dçš„åƒç´ ç€è‰²å™¨
+	ComPtr<ID3D11VertexShader> m_pVertexShader2D;				// ç”¨äº2Dçš„é¡¶ç‚¹ç€è‰²å™¨
+	ComPtr<ID3D11PixelShader> m_pPixelShader2D;				    // ç”¨äº2Dçš„åƒç´ ç€è‰²å™¨
 
-	VSConstantBuffer m_VSConstantBuffer;						// ÓÃÓÚĞŞ¸ÄÓÃÓÚVSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
-	PSConstantBuffer m_PSConstantBuffer;						// ÓÃÓÚĞŞ¸ÄÓÃÓÚPSµÄGPU³£Á¿»º³åÇøµÄ±äÁ¿
+	VSConstantBuffer m_VSConstantBuffer;						// ç”¨äºä¿®æ”¹ç”¨äºVSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
+	PSConstantBuffer m_PSConstantBuffer;						// ç”¨äºä¿®æ”¹ç”¨äºPSçš„GPUå¸¸é‡ç¼“å†²åŒºçš„å˜é‡
 };
 
 

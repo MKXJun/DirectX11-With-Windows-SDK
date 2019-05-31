@@ -71,11 +71,11 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
 
 	for (auto& part : m_Model.modelParts)
 	{
-		// ÉèÖÃ¶¥µã/Ë÷Òı»º³åÇø
+		// è®¾ç½®é¡¶ç‚¹/ç´¢å¼•ç¼“å†²åŒº
 		deviceContext->IASetVertexBuffers(0, 1, part.vertexBuffer.GetAddressOf(), &strides, &offsets);
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
-		// ¸üĞÂÊı¾İ²¢Ó¦ÓÃ
+		// æ›´æ–°æ•°æ®å¹¶åº”ç”¨
 		effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
 		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);

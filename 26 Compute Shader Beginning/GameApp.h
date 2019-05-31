@@ -2,7 +2,7 @@
 #define GAMEAPP_H
 
 #include "d3dApp.h"
-// ±à³Ì²¶»ñÖ¡(ĞèÖ§³ÖDirectX 11.2 API)
+// ç¼–ç¨‹æ•è·å¸§(éœ€æ”¯æŒDirectX 11.2 API)
 //#if defined(DEBUG) | defined(_DEBUG)
 //#include <DXGItype.h>  
 //#include <dxgi1_2.h>  

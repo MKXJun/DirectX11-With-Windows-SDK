@@ -2,19 +2,19 @@
 // EffectsHelper.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// ¶¨ÒåÒ»Ğ©ÊµÓÃµÄÌØĞ§Àà
+// å®šä¹‰ä¸€äº›å®ç”¨çš„ç‰¹æ•ˆç±»
 // Define utility effect classes.
 //***************************************************************************************
 
 //
-// ¸ÃÍ·ÎÄ¼şĞèÒªÔÚ°üº¬ÌØĞ§ÀàÊµÏÖµÄÔ´ÎÄ¼şÖĞÊ¹ÓÃ£¬ÇÒ±ØĞëÍíÓÚEffects.hºÍd3dUtil.h°üº¬
+// è¯¥å¤´æ–‡ä»¶éœ€è¦åœ¨åŒ…å«ç‰¹æ•ˆç±»å®ç°çš„æºæ–‡ä»¶ä¸­ä½¿ç”¨ï¼Œä¸”å¿…é¡»æ™šäºEffects.hå’Œd3dUtil.håŒ…å«
 // 
 
 #ifndef EFFECTHELPER_H
 #define EFFECTHELPER_H
 
 
-// ÈôÀàĞèÒªÄÚ´æ¶ÔÆë£¬´Ó¸ÃÀàÅÉÉú
+// è‹¥ç±»éœ€è¦å†…å­˜å¯¹é½ï¼Œä»è¯¥ç±»æ´¾ç”Ÿ
 template<class DerivedType>
 struct AlignedType
 {

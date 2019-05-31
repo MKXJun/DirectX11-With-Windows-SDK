@@ -11,7 +11,7 @@
 class GameApp : public D3DApp
 {
 public:
-	// ÉãÏñ»úÄ£Ê½
+	// æ‘„åƒæœºæ¨¡å¼
 	enum class CameraMode { FirstPerson, ThirdPerson, Free };
 
 public:
@@ -31,38 +31,38 @@ private:
 
 private:
 	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // µ¥É«±ÊË¢
-	ComPtr<IDWriteFont> m_pFont;								// ×ÖÌå
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// ÎÄ±¾¸ñÊ½
+	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // å•è‰²ç¬”åˆ·
+	ComPtr<IDWriteFont> m_pFont;								// å­—ä½“
+	ComPtr<IDWriteTextFormat> m_pTextFormat;					// æ–‡æœ¬æ ¼å¼
 
-	GameObject m_Trees;										    // Ê÷
-	GameObject m_Ground;										// µØÃæ
-	std::vector<DirectX::XMMATRIX> m_InstancedData;			    // Ê÷µÄÊµÀıÊı¾İ
-	Collision::WireFrameData m_TreeBoxData;					    // Ê÷°üÎ§ºĞÏß¿òÊı¾İ
+	GameObject m_Trees;										    // æ ‘
+	GameObject m_Ground;										// åœ°é¢
+	std::vector<DirectX::XMMATRIX> m_InstancedData;			    // æ ‘çš„å®ä¾‹æ•°æ®
+	Collision::WireFrameData m_TreeBoxData;					    // æ ‘åŒ…å›´ç›’çº¿æ¡†æ•°æ®
 
-	BasicEffect m_BasicEffect;								    // ¶ÔÏóäÖÈ¾ÌØĞ§¹ÜÀí
-	ScreenFadeEffect m_ScreenFadeEffect;						// ÆÁÄ»µ­Èëµ­³öÌØĞ§¹ÜÀí
-	MinimapEffect m_MinimapEffect;							    // Ğ¡µØÍ¼ÌØĞ§¹ÜÀí
+	BasicEffect m_BasicEffect;								    // å¯¹è±¡æ¸²æŸ“ç‰¹æ•ˆç®¡ç†
+	ScreenFadeEffect m_ScreenFadeEffect;						// å±å¹•æ·¡å…¥æ·¡å‡ºç‰¹æ•ˆç®¡ç†
+	MinimapEffect m_MinimapEffect;							    // å°åœ°å›¾ç‰¹æ•ˆç®¡ç†
 
-	std::unique_ptr<TextureRender> m_pMinimapRender;			// Ğ¡µØÍ¼ÎÆÀíÉú³É
-	std::unique_ptr<TextureRender> m_pScreenFadeRender;		    // ½ØÆÁÎÆÀíÉú³É
+	std::unique_ptr<TextureRender> m_pMinimapRender;			// å°åœ°å›¾çº¹ç†ç”Ÿæˆ
+	std::unique_ptr<TextureRender> m_pScreenFadeRender;		    // æˆªå±çº¹ç†ç”Ÿæˆ
 
 
-	ComPtr<ID3D11Texture2D> m_pMinimapTexture;				    // Ğ¡µØÍ¼ÎÆÀí
-	ComPtr<ID3D11ShaderResourceView> m_pMininmapSRV;			// Ğ¡µØÍ¼×ÅÉ«Æ÷×ÊÔ´
-	Model m_Minimap;											// Ğ¡µØÍ¼Íø¸ñÄ£ĞÍ
-	Model m_FullScreenShow;									    // È«ÆÁÏÔÊ¾Íø¸ñÄ£ĞÍ
+	ComPtr<ID3D11Texture2D> m_pMinimapTexture;				    // å°åœ°å›¾çº¹ç†
+	ComPtr<ID3D11ShaderResourceView> m_pMininmapSRV;			// å°åœ°å›¾ç€è‰²å™¨èµ„æº
+	Model m_Minimap;											// å°åœ°å›¾ç½‘æ ¼æ¨¡å‹
+	Model m_FullScreenShow;									    // å…¨å±æ˜¾ç¤ºç½‘æ ¼æ¨¡å‹
 
-	std::shared_ptr<Camera> m_pCamera;						    // ÉãÏñ»ú
-	std::unique_ptr<FirstPersonCamera> m_MinimapCamera;		    // Ğ¡µØÍ¼ËùÓÃÉãÏñ»ú
-	CameraMode m_CameraMode;									// ÉãÏñ»úÄ£Ê½
+	std::shared_ptr<Camera> m_pCamera;						    // æ‘„åƒæœº
+	std::unique_ptr<FirstPersonCamera> m_MinimapCamera;		    // å°åœ°å›¾æ‰€ç”¨æ‘„åƒæœº
+	CameraMode m_CameraMode;									// æ‘„åƒæœºæ¨¡å¼
 
-	ObjReader m_ObjReader;									    // Ä£ĞÍ¶ÁÈ¡¶ÔÏó
+	ObjReader m_ObjReader;									    // æ¨¡å‹è¯»å–å¯¹è±¡
 
-	bool m_PrintScreenStarted;								    // ½ØÆÁµ±Ç°Ö¡
-	bool m_FadeUsed;											// ÊÇ·ñÊ¹ÓÃµ­Èë/µ­³ö
-	float m_FadeAmount;										    // µ­Èë/µ­³öÏµÊı
-	float m_FadeSign;										    // 1.0f±íÊ¾µ­Èë£¬-1.0f±íÊ¾µ­³ö
+	bool m_PrintScreenStarted;								    // æˆªå±å½“å‰å¸§
+	bool m_FadeUsed;											// æ˜¯å¦ä½¿ç”¨æ·¡å…¥/æ·¡å‡º
+	float m_FadeAmount;										    // æ·¡å…¥/æ·¡å‡ºç³»æ•°
+	float m_FadeSign;										    // 1.0fè¡¨ç¤ºæ·¡å…¥ï¼Œ-1.0fè¡¨ç¤ºæ·¡å‡º
 };
 
 

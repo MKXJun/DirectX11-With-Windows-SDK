@@ -66,16 +66,16 @@ std::vector<XMMATRIX> XM_CALLCONV Collision::FrustumCulling(
 	BoundingFrustum frustum;
 	BoundingFrustum::CreateFromMatrix(frustum, Proj);
 	XMMATRIX InvView = XMMatrixInverse(nullptr, View);
-	// ½«ÊÓ×¶Ìå´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÀ½ç×ø±êÏµÖĞ
+	// å°†è§†é”¥ä½“ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°ä¸–ç•Œåæ ‡ç³»ä¸­
 	frustum.Transform(frustum, InvView);
 
 	BoundingOrientedBox localOrientedBox, orientedBox;
 	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
 	for (auto& mat : Matrices)
 	{
-		// ½«ÓĞÏò°üÎ§ºĞ´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÀ½ç×ø±êÏµÖĞ
+		// å°†æœ‰å‘åŒ…å›´ç›’ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°ä¸–ç•Œåæ ‡ç³»ä¸­
 		localOrientedBox.Transform(orientedBox, mat);
-		// Ïà½»¼ì²â
+		// ç›¸äº¤æ£€æµ‹
 		if (frustum.Intersects(orientedBox))
 			acceptedData.push_back(mat);
 	}
@@ -95,9 +95,9 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling2(
 	{
 		XMMATRIX InvWorld = XMMatrixInverse(nullptr, mat);
 
-		// ½«ÊÓ×¶Ìå´Ó¹Û²ì×ø±êÏµ(»ò¾Ö²¿×ø±êÏµ)±ä»»µ½ÎïÌåËùÔÚµÄ¾Ö²¿×ø±êÏµÖĞ
+		// å°†è§†é”¥ä½“ä»è§‚å¯Ÿåæ ‡ç³»(æˆ–å±€éƒ¨åæ ‡ç³»)å˜æ¢åˆ°ç‰©ä½“æ‰€åœ¨çš„å±€éƒ¨åæ ‡ç³»ä¸­
 		frustum.Transform(localFrustum, InvView * InvWorld);
-		// Ïà½»¼ì²â
+		// ç›¸äº¤æ£€æµ‹
 		if (localFrustum.Intersects(localBox))
 			acceptedData.push_back(mat);
 	}
@@ -117,9 +117,9 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
 	for (auto& mat : Matrices)
 	{
-		// ½«ÓĞÏò°üÎ§ºĞ´Ó¾Ö²¿×ø±êÏµ±ä»»µ½ÊÓ×¶ÌåËùÔÚµÄ¾Ö²¿×ø±êÏµ(¹Û²ì×ø±êÏµ)ÖĞ
+		// å°†æœ‰å‘åŒ…å›´ç›’ä»å±€éƒ¨åæ ‡ç³»å˜æ¢åˆ°è§†é”¥ä½“æ‰€åœ¨çš„å±€éƒ¨åæ ‡ç³»(è§‚å¯Ÿåæ ‡ç³»)ä¸­
 		localOrientedBox.Transform(orientedBox, mat * View);
-		// Ïà½»¼ì²â
+		// ç›¸äº¤æ£€æµ‹
 		if (frustum.Intersects(orientedBox))
 			acceptedData.push_back(mat);
 	}
@@ -130,7 +130,7 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4 & color)
 {
 	WireFrameData data;
-	// AABB/OBB¶¥µãË÷ÒıÈçÏÂ    ÊÓ×¶Ìå¶¥µãË÷ÒıÈçÏÂ
+	// AABB/OBBé¡¶ç‚¹ç´¢å¼•å¦‚ä¸‹    è§†é”¥ä½“é¡¶ç‚¹ç´¢å¼•å¦‚ä¸‹
 	//     3_______2             4__________5
 	//    /|      /|             |\        /|
 	//  7/_|____6/ |             | \      / |

@@ -3,6 +3,7 @@
 
 #include "d3dApp.h"
 #include <random>
+#include <algorithm>
 // 编程捕获帧(需支持DirectX 11.2 API)
 //#if defined(DEBUG) | defined(_DEBUG)
 //#include <DXGItype.h>  

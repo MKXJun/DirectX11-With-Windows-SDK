@@ -1,14 +1,13 @@
 #include "ObjReader.h"
 
 using namespace DirectX;
-using namespace std::experimental;
 bool ObjReader::Read(const wchar_t * mboFileName, const wchar_t * objFileName)
 {
-	if (mboFileName && filesystem::exists(mboFileName))
+	if (mboFileName && ReadMbo(mboFileName))
 	{
-		return ReadMbo(mboFileName);
+		return true;
 	}
-	else if (objFileName && filesystem::exists(objFileName))
+	else if (objFileName)
 	{
 		bool status = ReadObj(objFileName);
 		if (status && mboFileName)
@@ -33,6 +32,9 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 	XMVECTOR vecMin = g_XMInfinity, vecMax = g_XMNegInfinity;
 
 	std::wifstream wfin(objFileName);
+	if (!wfin.is_open())
+		return false;
+
 	// 切换中文
 	std::locale china("chs");
 	china = wfin.imbue(china);

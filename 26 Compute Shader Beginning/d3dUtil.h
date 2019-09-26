@@ -15,7 +15,6 @@
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
 #include <wincodec.h>
-#include <filesystem>
 #include <vector>
 #include <string>
 #include "ScreenGrab.h"

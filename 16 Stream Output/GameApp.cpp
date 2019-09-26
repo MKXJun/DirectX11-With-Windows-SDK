@@ -2,7 +2,6 @@
 #include "d3dUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
-using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance),
@@ -413,7 +412,7 @@ void GameApp::ResetSplitedSnow()
 	//
 
 	// 设置三角形顶点
-	float sqrt3 = sqrt(3.0f);
+	float sqrt3 = sqrtf(3.0f);
 	VertexPosColor vertices[] =
 	{
 		{ XMFLOAT3(-3.0f / 4, -sqrt3 / 4, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) },

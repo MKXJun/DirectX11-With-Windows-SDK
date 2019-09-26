@@ -31,7 +31,6 @@
 #include <string>
 #include <algorithm>
 #include <locale>
-#include <filesystem>
 #include "Vertex.h"
 #include "LightHelper.h"
 

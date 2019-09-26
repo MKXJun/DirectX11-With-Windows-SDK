@@ -1,14 +1,13 @@
 #include "ObjReader.h"
 
 using namespace DirectX;
-using namespace std::experimental;
-bool ObjReader::Read(const wchar_t * mboFileName, const wchar_t * objFileName)
+bool ObjReader::Read(const wchar_t* mboFileName, const wchar_t* objFileName)
 {
-	if (mboFileName && filesystem::exists(mboFileName))
+	if (mboFileName && ReadMbo(mboFileName))
 	{
-		return ReadMbo(mboFileName);
+		return true;
 	}
-	else if (objFileName && filesystem::exists(objFileName))
+	else if (objFileName)
 	{
 		bool status = ReadObj(objFileName);
 		if (status && mboFileName)
@@ -19,7 +18,7 @@ bool ObjReader::Read(const wchar_t * mboFileName, const wchar_t * objFileName)
 	return false;
 }
 
-bool ObjReader::ReadObj(const wchar_t * objFileName)
+bool ObjReader::ReadObj(const wchar_t* objFileName)
 {
 	objParts.clear();
 	vertexCache.clear();
@@ -33,6 +32,9 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 	XMVECTOR vecMin = g_XMInfinity, vecMax = g_XMNegInfinity;
 
 	std::wifstream wfin(objFileName);
+	if (!wfin.is_open())
+		return false;
+
 	// 切换中文
 	std::locale china("chs");
 	china = wfin.imbue(china);
@@ -115,7 +117,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			size_t beg = 0, ed = mtlFile.size();
 			while (iswspace(mtlFile[beg]))
 				beg++;
-			while (ed > beg && iswspace(mtlFile[ed - 1]))
+			while (ed > beg&& iswspace(mtlFile[ed - 1]))
 				ed--;
 			mtlFile = mtlFile.substr(beg, ed - beg);
 			// 获取路径
@@ -130,7 +132,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			{
 				pos += 1;
 			}
-				
+
 
 			mtlReader.ReadMtl((dir.erase(pos) + mtlFile).c_str());
 		}
@@ -145,7 +147,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 			size_t beg = 0, ed = mtlName.size();
 			while (iswspace(mtlName[beg]))
 				beg++;
-			while (ed > beg && iswspace(mtlName[ed - 1]))
+			while (ed > beg&& iswspace(mtlName[ed - 1]))
 				ed--;
 			mtlName = mtlName.substr(beg, ed - beg);
 
@@ -176,7 +178,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 				vertex.tex = texCoords[vti[i] - 1];
 				AddVertex(vertex, vpi[i], vti[i], vni[i]);
 			}
-			
+
 
 			while (iswblank(wfin.peek()))
 				wfin.get();
@@ -205,7 +207,7 @@ bool ObjReader::ReadObj(const wchar_t * objFileName)
 	return true;
 }
 
-bool ObjReader::ReadMbo(const wchar_t * mboFileName)
+bool ObjReader::ReadMbo(const wchar_t* mboFileName)
 {
 	// [Part数目] 4字节
 	// [AABB盒顶点vMax] 12字节
@@ -270,7 +272,7 @@ bool ObjReader::ReadMbo(const wchar_t * mboFileName)
 	return true;
 }
 
-bool ObjReader::WriteMbo(const wchar_t * mboFileName)
+bool ObjReader::WriteMbo(const wchar_t* mboFileName)
 {
 	// [Part数目] 4字节
 	// [AABB盒顶点vMax] 12字节
@@ -357,7 +359,7 @@ void ObjReader::AddVertex(const VertexPosNormalTex& vertex, DWORD vpi, DWORD vti
 
 
 
-bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
+bool MtlReader::ReadMtl(const wchar_t* mtlFileName)
 {
 	materials.clear();
 	mapKdStrs.clear();
@@ -397,7 +399,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			size_t beg = 0, ed = currMtl.size();
 			while (iswspace(currMtl[beg]))
 				beg++;
-			while (ed > beg && iswspace(currMtl[ed - 1]))
+			while (ed > beg&& iswspace(currMtl[ed - 1]))
 				ed--;
 			currMtl = currMtl.substr(beg, ed - beg);
 		}
@@ -459,7 +461,7 @@ bool MtlReader::ReadMtl(const wchar_t * mtlFileName)
 			size_t beg = 0, ed = fileName.size();
 			while (iswspace(fileName[beg]))
 				beg++;
-			while (ed > beg && iswspace(fileName[ed - 1]))
+			while (ed > beg&& iswspace(fileName[ed - 1]))
 				ed--;
 			fileName = fileName.substr(beg, ed - beg);
 

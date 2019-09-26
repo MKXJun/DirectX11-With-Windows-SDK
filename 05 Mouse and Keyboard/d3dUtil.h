@@ -14,7 +14,6 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
-#include <filesystem>
 #include <vector>
 #include <string>
 

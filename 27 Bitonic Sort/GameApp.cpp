@@ -3,7 +3,6 @@
 #include "DXTrace.h"
 
 using namespace DirectX;
-using namespace std::experimental;
 
 GameApp::GameApp(HINSTANCE hInstance)
 	: D3DApp(hInstance),

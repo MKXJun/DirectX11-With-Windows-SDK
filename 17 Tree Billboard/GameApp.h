@@ -1,6 +1,7 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
+#include <ctime>
 #include "d3dApp.h"
 #include "Camera.h"
 #include "GameObject.h"

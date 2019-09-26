@@ -4,7 +4,6 @@
 #include "DXTrace.h"
 #include "Vertex.h"
 using namespace DirectX;
-using namespace std::experimental;
 
 
 //

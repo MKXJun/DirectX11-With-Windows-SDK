@@ -9,8 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle(201
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2015 Win7)", "03 Rendering a Cube\03 Rendering a Cube(2015 Win7).vcxproj", "{1493BC5C-6AB9-466D-8420-76251511B2C5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05 Mouse and Keyboard(2015 Win7)", "05 Mouse and Keyboard\05 Mouse and Keyboard(2015 Win7).vcxproj", "{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting(2015 Win7)", "07 Lighting\07 Lighting(2015 Win7).vcxproj", "{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2015 Win7)", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2015 Win7).vcxproj", "{1B15DD73-ADD7-467E-B81E-93B861240277}"
@@ -85,14 +83,6 @@ Global
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x64.Build.0 = Release|x64
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x86.ActiveCfg = Release|Win32
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x86.Build.0 = Release|Win32
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Debug|x64.ActiveCfg = Debug|x64
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Debug|x64.Build.0 = Debug|x64
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Debug|x86.ActiveCfg = Debug|Win32
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Debug|x86.Build.0 = Debug|Win32
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Release|x64.ActiveCfg = Release|x64
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Release|x64.Build.0 = Release|x64
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Release|x86.ActiveCfg = Release|Win32
-		{F47722DA-64EB-4E5A-B3B3-7410C06AAF90}.Release|x86.Build.0 = Release|Win32
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x64.ActiveCfg = Debug|x64
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x64.Build.0 = Debug|x64
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x86.ActiveCfg = Debug|Win32

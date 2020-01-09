@@ -51,6 +51,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(2015 Win7)", "27 Bitonic Sort\27 Bitonic Sort(2015 Win7).vcxproj", "{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06 Mouse and Keyboard(2015 Win7)", "06 Mouse and Keyboard\06 Mouse and Keyboard(2015 Win7).vcxproj", "{9123BC45-1251-4555-A5AE-A87A045B5AA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -251,6 +253,14 @@ Global
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x64.Build.0 = Release|x64
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.ActiveCfg = Release|Win32
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.Build.0 = Release|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.ActiveCfg = Debug|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.Build.0 = Debug|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.ActiveCfg = Debug|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.Build.0 = Debug|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.ActiveCfg = Release|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.Build.0 = Release|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.ActiveCfg = Release|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

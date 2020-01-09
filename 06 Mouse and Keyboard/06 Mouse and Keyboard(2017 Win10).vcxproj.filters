@@ -13,12 +13,61 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="着色器">
-      <UniqueIdentifier>{d52f2eef-4872-4770-b2d9-8c6a0a0de862}</UniqueIdentifier>
-    </Filter>
     <Filter Include="通用文件">
-      <UniqueIdentifier>{96f11c10-048e-42d9-ae3a-e5dd3bb415e5}</UniqueIdentifier>
+      <UniqueIdentifier>{3f548d9d-326d-4c14-9632-c47438b2829d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{8ac4a9d8-2bba-4c5a-ae59-3c7013f111dc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Mouse.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Cube.hlsli">
@@ -32,54 +81,5 @@
     <FxCompile Include="HLSL\Cube_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="d3dApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dUtil.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DXTrace.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="d3dApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DXTrace.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

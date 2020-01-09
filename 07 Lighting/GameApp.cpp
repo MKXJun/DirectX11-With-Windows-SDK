@@ -10,7 +10,8 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_PSConstantBuffer(),
 	m_DirLight(),
 	m_PointLight(),
-	m_SpotLight()
+	m_SpotLight(),
+	m_IsWireframeMode(false)
 {
 }
 
@@ -211,7 +212,7 @@ bool GameApp::InitResource()
 	// 更新PS常量缓冲区资源
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &m_VSConstantBuffer, sizeof(PSConstantBuffer));
+	memcpy_s(mappedData.pData, sizeof(PSConstantBuffer), &m_PSConstantBuffer, sizeof(PSConstantBuffer));
 	m_pd3dImmediateContext->Unmap(m_pConstantBuffers[1].Get(), 0);
 
 	// ******************

@@ -48,6 +48,9 @@ private:
 	GameObject m_CylinderT;									    // 带切线向量的圆柱
 	GroundMode m_GroundMode;									// 地面模式
 
+	float m_SphereRad;											// 球体旋转弧度
+
+
 	ComPtr<ID3D11ShaderResourceView> m_BricksNormalMap;		    // 砖块法线贴图
 	ComPtr<ID3D11ShaderResourceView> m_FloorNormalMap;		    // 地面法线贴图
 	ComPtr<ID3D11ShaderResourceView> m_StonesNormalMap;		    // 石头地面法线贴图

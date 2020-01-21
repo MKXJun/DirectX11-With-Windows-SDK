@@ -5,59 +5,60 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-SkyRender::SkyRender(
-	ID3D11Device* device,
-	ID3D11DeviceContext* deviceContext,
-	const std::wstring& cubemapFilename,
-	float skySphereRadius,
-	bool generateMips)
-	: m_IndexCount()
+#pragma warning(disable: 26812)
+
+HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename, float skySphereRadius, bool generateMips)
 {
+	// 防止重复初始化造成内存泄漏
+	m_pIndexBuffer.Reset();
+	m_pVertexBuffer.Reset();
+	m_pTextureCubeSRV.Reset();
+
+	HRESULT hr;
 	// 天空盒纹理加载
 	if (cubemapFilename.substr(cubemapFilename.size() - 3) == L"dds")
 	{
-		HR(CreateDDSTextureFromFile(
-			device,
+		hr = CreateDDSTextureFromFile(device,
 			generateMips ? deviceContext : nullptr,
 			cubemapFilename.c_str(),
 			nullptr,
-			m_pTextureCubeSRV.GetAddressOf()
-		));
+			m_pTextureCubeSRV.GetAddressOf());
 	}
 	else
 	{
-		HR(CreateWICTexture2DCubeFromFile(
-			device,
+		hr = CreateWICTexture2DCubeFromFile(device,
 			deviceContext,
 			cubemapFilename,
 			nullptr,
 			m_pTextureCubeSRV.GetAddressOf(),
-			generateMips
-		));
+			generateMips);
 	}
 
-	InitResource(device, skySphereRadius);
+	if (hr != S_OK)
+		return hr;
+
+	return InitResource(device, skySphereRadius);
 }
 
-SkyRender::SkyRender(ID3D11Device* device,
-	ID3D11DeviceContext* deviceContext,
-	const std::vector<std::wstring>& cubemapFilenames,
-	float skySphereRadius,
-	bool generateMips)
-	: m_IndexCount()
+HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames, float skySphereRadius, bool generateMips)
 {
-	// 天空盒纹理加载
+	// 防止重复初始化造成内存泄漏
+	m_pIndexBuffer.Reset();
+	m_pVertexBuffer.Reset();
+	m_pTextureCubeSRV.Reset();
 
-	HR(CreateWICTexture2DCubeFromFile(
-		device,
+	HRESULT hr;
+	// 天空盒纹理加载
+	hr = CreateWICTexture2DCubeFromFile(device,
 		deviceContext,
 		cubemapFilenames,
 		nullptr,
 		m_pTextureCubeSRV.GetAddressOf(),
-		generateMips
-	));
+		generateMips);
+	if (hr != S_OK)
+		return hr;
 
-	InitResource(device, skySphereRadius);
+	return InitResource(device, skySphereRadius);
 }
 
 ID3D11ShaderResourceView* SkyRender::GetTextureCube()
@@ -70,7 +71,7 @@ void SkyRender::Draw(ID3D11DeviceContext* deviceContext, SkyEffect& skyEffect, c
 	UINT strides[1] = { sizeof(XMFLOAT3) };
 	UINT offsets[1] = { 0 };
 	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), strides, offsets);
-	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	XMFLOAT3 pos = camera.GetPosition();
 	skyEffect.SetWorldViewProjMatrix(XMMatrixTranslation(pos.x, pos.y, pos.z) * camera.GetViewProjXM());
@@ -82,22 +83,20 @@ void SkyRender::Draw(ID3D11DeviceContext* deviceContext, SkyEffect& skyEffect, c
 void SkyRender::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	std::string texCubeName = name + ".CubeMapSRV";
-	std::string vbName = name + ".VertexBuffer";
-	std::string ibName = name + ".IndexBuffer";
 	// 先清空可能存在的名称
-	m_pTextureCubeSRV->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+	D3D11SetDebugObjectName(m_pTextureCubeSRV.Get(), nullptr);
 
-	m_pTextureCubeSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(texCubeName.length()), texCubeName.c_str());
-	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
-	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+	D3D11SetDebugObjectName(m_pTextureCubeSRV.Get(), name + ".CubeMapSRV");
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), name + ".VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), name + ".IndexBuffer");
 #else
 	UNREFERENCED_PARAMETER(name);
 #endif
 }
 
-void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
+HRESULT SkyRender::InitResource(ID3D11Device* device, float skySphereRadius)
 {
+	HRESULT hr;
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
 
 	// 顶点缓冲区创建
@@ -112,14 +111,16 @@ void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 	D3D11_SUBRESOURCE_DATA InitData;
 	InitData.pSysMem = sphere.vertexVec.data();
 
-	HR(device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer));
+	hr = device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer);
+	if (hr != S_OK)
+		return hr;
 
 	// 索引缓冲区创建
 	m_IndexCount = (UINT)sphere.indexVec.size();
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * m_IndexCount;
+	ibd.ByteWidth = sizeof(DWORD) * m_IndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	ibd.StructureByteStride = 0;
@@ -127,23 +128,50 @@ void SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 
 	InitData.pSysMem = sphere.indexVec.data();
 
-	HR(device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer));
-
+	return device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer);
 }
 
-DynamicSkyRender::DynamicSkyRender(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::wstring & cubemapFilename, float skySphereRadius, int dynamicCubeSize, bool generateMips)
-	: SkyRender(device, deviceContext, cubemapFilename, skySphereRadius, generateMips)
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename,
+	float skySphereRadius, int dynamicCubeSize, bool generateMips)
 {
-	InitResource(device, dynamicCubeSize);
+	// 防止重复初始化造成内存泄漏
+	m_pCacheRTV.Reset();
+	m_pCacheDSV.Reset();
+	m_pDynamicCubeMapDSV.Reset();
+	m_pDynamicCubeMapSRV.Reset();
+	for (auto& ptr : m_pDynamicCubeMapRTVs)
+	{
+		ptr.Reset();
+	}
+
+	HRESULT hr;
+	hr = SkyRender::InitResource(device, deviceContext, cubemapFilename, skySphereRadius, generateMips);
+	if (hr != S_OK)
+		return hr;
+	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
 
-DynamicSkyRender::DynamicSkyRender(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::vector<std::wstring> & cubemapFilenames, float skySphereRadius, int dynamicCubeSize, bool generateMips)
-	: SkyRender(device, deviceContext, cubemapFilenames, skySphereRadius, generateMips)
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames,
+	float skySphereRadius, int dynamicCubeSize, bool generateMips)
 {
-	InitResource(device, dynamicCubeSize);
+	// 防止重复初始化造成内存泄漏
+	m_pCacheRTV.Reset();
+	m_pCacheDSV.Reset();
+	m_pDynamicCubeMapDSV.Reset();
+	m_pDynamicCubeMapSRV.Reset();
+	for (auto& ptr : m_pDynamicCubeMapRTVs)
+	{
+		ptr.Reset();
+	}
+
+	HRESULT hr;
+	hr = SkyRender::InitResource(device, deviceContext, cubemapFilenames, skySphereRadius, generateMips);
+	if (hr != S_OK)
+		return hr;
+	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
 
-void DynamicSkyRender::Cache(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
+void DynamicSkyRender::Cache(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
 {
 	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
 
@@ -152,7 +180,7 @@ void DynamicSkyRender::Cache(ID3D11DeviceContext * deviceContext, BasicEffect & 
 	effect.Apply(deviceContext);
 }
 
-void DynamicSkyRender::BeginCapture(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const XMFLOAT3 & pos,
+void DynamicSkyRender::BeginCapture(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const XMFLOAT3& pos,
 	D3D11_TEXTURECUBE_FACE face, float nearZ, float farZ)
 {
 	static XMVECTORF32 ups[6] = {
@@ -194,7 +222,7 @@ void DynamicSkyRender::BeginCapture(ID3D11DeviceContext * deviceContext, BasicEf
 
 
 
-void DynamicSkyRender::Restore(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const Camera & camera)
+void DynamicSkyRender::Restore(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const Camera& camera)
 {
 	// 恢复默认设定
 	deviceContext->RSSetViewports(1, &camera.GetViewPort());
@@ -223,27 +251,24 @@ const Camera& DynamicSkyRender::GetCamera() const
 	return m_pCamera;
 }
 
-void DynamicSkyRender::SetDebugObjectName(const std::string & name)
+void DynamicSkyRender::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
 	SkyRender::SetDebugObjectName(name);
-	std::string DSVName = name + ".dynamicCubeMapDSV";
-	std::string SRVName = name + ".dynamicCubeMapSRV";
-	m_pDynamicCubeMapSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(SRVName.length()), SRVName.c_str());
-	m_pDynamicCubeMapDSV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(DSVName.length()), DSVName.c_str());
+	D3D11SetDebugObjectName(m_pDynamicCubeMapSRV.Get(), name + ".dynamicCubeMapSRV");
+	D3D11SetDebugObjectName(m_pDynamicCubeMapDSV.Get(), name + ".dynamicCubeMapDSV");
 	for (size_t i = 0; i < 6; ++i)
 	{
-		std::string RTVName = name + ".dynamicCubeMapRTVs[" + std::to_string(i) + "]";
-		m_pDynamicCubeMapRTVs[i]->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(RTVName.length()), RTVName.c_str());
+		D3D11SetDebugObjectName(m_pDynamicCubeMapRTVs[i].Get(), name + ".dynamicCubeMapRTVs[" + std::to_string(i) + "]");
 	}
 #else
 	UNREFERENCED_PARAMETER(name);
 #endif
 }
 
-void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, int dynamicCubeSize)
 {
-
+	HRESULT hr;
 	// ******************
 	// 1. 创建纹理数组
 	//
@@ -264,7 +289,9 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	// 现在texCube用于新建纹理
-	HR(device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf()));
+	hr = device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	// ******************
 	// 2. 创建渲染目标视图
@@ -281,10 +308,10 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 	for (int i = 0; i < 6; ++i)
 	{
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
-		HR(device->CreateRenderTargetView(
-			texCube.Get(),
-			&rtvDesc,
-			m_pDynamicCubeMapRTVs[i].GetAddressOf()));
+		hr = device->CreateRenderTargetView(texCube.Get(), &rtvDesc,
+			m_pDynamicCubeMapRTVs[i].GetAddressOf());
+		if (hr != S_OK)
+			return hr;
 	}
 
 	// ******************
@@ -297,10 +324,10 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 	srvDesc.TextureCube.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = -1;	// 使用所有的mip等级
 
-	HR(device->CreateShaderResourceView(
-		texCube.Get(),
-		&srvDesc,
-		m_pDynamicCubeMapSRV.GetAddressOf()));
+	hr = device->CreateShaderResourceView(texCube.Get(), &srvDesc,
+		m_pDynamicCubeMapSRV.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	// ******************
 	// 4. 创建深度/模板缓冲区与对应的视图
@@ -319,7 +346,9 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 	texDesc.MiscFlags = 0;
 
 	ComPtr<ID3D11Texture2D> depthTex;
-	device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	dsvDesc.Format = texDesc.Format;
@@ -327,10 +356,12 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Texture2D.MipSlice = 0;
 
-	HR(device->CreateDepthStencilView(
+	hr = device->CreateDepthStencilView(
 		depthTex.Get(),
 		&dsvDesc,
-		m_pDynamicCubeMapDSV.GetAddressOf()));
+		m_pDynamicCubeMapDSV.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	// ******************
 	// 5. 初始化视口
@@ -338,4 +369,5 @@ void DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
 
 	m_pCamera.SetViewPort(0.0f, 0.0f, static_cast<float>(dynamicCubeSize), static_cast<float>(dynamicCubeSize));
 
+	return S_OK;
 }

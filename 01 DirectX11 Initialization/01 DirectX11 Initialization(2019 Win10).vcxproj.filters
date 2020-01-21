@@ -24,9 +24,6 @@
     <ClCompile Include="GameApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -34,6 +31,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,13 +44,13 @@
     <ClInclude Include="GameApp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="d3dUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

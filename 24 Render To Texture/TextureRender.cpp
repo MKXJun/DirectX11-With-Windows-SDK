@@ -3,16 +3,26 @@
 #include "DXTrace.h"
 using namespace Microsoft::WRL;
 
-TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight, bool generateMips)
-	: m_GenerateMips(generateMips), m_CacheViewPort()
+#pragma warning(disable: 26812)
+
+HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texHeight, bool generateMips)
 {
+	// 防止重复初始化造成内存泄漏
+	m_pOutputTextureSRV.Reset();
+	m_pOutputTextureRTV.Reset();
+	m_pOutputTextureDSV.Reset();
+	m_pCacheRTV.Reset();
+	m_pCacheDSV.Reset();
+
+	m_GenerateMips = generateMips;
+	HRESULT hr;
 	// ******************
 	// 1. 创建纹理
 	//
 
 	ComPtr<ID3D11Texture2D> texture;
 	D3D11_TEXTURE2D_DESC texDesc;
-	
+
 	texDesc.Width = texWidth;
 	texDesc.Height = texHeight;
 	texDesc.MipLevels = (m_GenerateMips ? 0 : 1);	// 0为完整mipmap链
@@ -26,8 +36,9 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	// 现在texture用于新建纹理
-	HR(device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf()));
-
+	hr = device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf());
+	if (hr != S_OK)
+		return hr;
 	// ******************
 	// 2. 创建纹理对应的渲染目标视图
 	//
@@ -37,11 +48,10 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2D.MipSlice = 0;
 
-	HR(device->CreateRenderTargetView(
-		texture.Get(),
-		&rtvDesc,
-		m_pOutputTextureRTV.GetAddressOf()));
-	
+	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
+
 	// ******************
 	// 3. 创建纹理对应的着色器资源视图
 	//
@@ -52,10 +62,10 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.TextureCube.MipLevels = -1;	// 使用所有的mip等级
 
-	HR(device->CreateShaderResourceView(
-		texture.Get(),
-		&srvDesc,
-		m_pOutputTextureSRV.GetAddressOf()));
+	hr = device->CreateShaderResourceView(texture.Get(), &srvDesc,
+		m_pOutputTextureSRV.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	// ******************
 	// 4. 创建与纹理等宽高的深度/模板缓冲区和对应的视图
@@ -74,7 +84,9 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	texDesc.MiscFlags = 0;
 
 	ComPtr<ID3D11Texture2D> depthTex;
-	device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	dsvDesc.Format = texDesc.Format;
@@ -82,10 +94,10 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Texture2D.MipSlice = 0;
 
-	HR(device->CreateDepthStencilView(
-		depthTex.Get(),
-		&dsvDesc,
-		m_pOutputTextureDSV.GetAddressOf()));
+	hr = device->CreateDepthStencilView(depthTex.Get(), &dsvDesc,
+		m_pOutputTextureDSV.GetAddressOf());
+	if (hr != S_OK)
+		return hr;
 
 	// ******************
 	// 5. 初始化视口
@@ -96,10 +108,8 @@ TextureRender::TextureRender(ID3D11Device * device, int texWidth, int texHeight,
 	m_OutputViewPort.Height = static_cast<float>(texHeight);
 	m_OutputViewPort.MinDepth = 0.0f;
 	m_OutputViewPort.MaxDepth = 1.0f;
-}
 
-TextureRender::~TextureRender()
-{
+	return S_OK;
 }
 
 void TextureRender::Begin(ID3D11DeviceContext * deviceContext)
@@ -146,12 +156,9 @@ ID3D11ShaderResourceView * TextureRender::GetOutputTexture()
 void TextureRender::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	std::string DSVName = name + ".TextureDSV";
-	std::string SRVName = name + ".TextureSRV";
-	std::string RTVName = name + ".TextureRTV";
-	m_pOutputTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(DSVName.length()), DSVName.c_str());
-	m_pOutputTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(SRVName.length()), SRVName.c_str());
-	m_pOutputTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(RTVName.length()), RTVName.c_str());
+	D3D11SetDebugObjectName(m_pOutputTextureDSV.Get(), name + ".TextureDSV");
+	D3D11SetDebugObjectName(m_pOutputTextureSRV.Get(), name + ".TextureSRV");
+	D3D11SetDebugObjectName(m_pOutputTextureRTV.Get(), name + ".TextureRTV");
 #else
 	UNREFERENCED_PARAMETER(name);
 #endif

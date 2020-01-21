@@ -162,10 +162,9 @@ void GameObject::SetDebugObjectName(const std::string& name)
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
 
 	m_Model.SetDebugObjectName(name);
-	std::string instBufferName = name + ".InstancedBuffer";
 	if (m_pInstancedBuffer)
 	{
-		m_pInstancedBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(instBufferName.length()), instBufferName.c_str());
+		D3D11SetDebugObjectName(m_pInstancedBuffer.Get(), name + ".InstancedBuffer");
 	}
 
 #endif

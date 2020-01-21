@@ -104,7 +104,7 @@ void GameApp::UpdateScene(float dt)
 	// ******************
 	// 切换分形
 	//
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q) && m_ShowMode != Mode::SplitedTriangle)
 	{
 		m_ShowMode = Mode::SplitedTriangle;
 		ResetSplitedTriangle();
@@ -114,7 +114,7 @@ void GameApp::UpdateScene(float dt)
 		stride = sizeof(VertexPosColor);
 		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
-	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::W))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::W) && m_ShowMode != Mode::SplitedSnow)
 	{
 		m_ShowMode = Mode::SplitedSnow;
 		ResetSplitedSnow();
@@ -124,7 +124,7 @@ void GameApp::UpdateScene(float dt)
 		stride = sizeof(VertexPosColor);
 		m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[0].GetAddressOf(), &stride, &offset);
 	}
-	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::E))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::E) && m_ShowMode != Mode::SplitedSphere)
 	{
 		m_ShowMode = Mode::SplitedSphere;
 		ResetSplitedSphere();

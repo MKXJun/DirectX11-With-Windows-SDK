@@ -1,5 +1,5 @@
 //***************************************************************************************
-// TextureRender.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// TextureRender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 渲染到纹理类
@@ -19,12 +19,19 @@ public:
 	template<class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
+	TextureRender() = default;
+	~TextureRender() = default;
+	// 不允许拷贝，允许移动
+	TextureRender(const TextureRender&) = delete;
+	TextureRender& operator=(const TextureRender&) = delete;
+	TextureRender(TextureRender&&) = default;
+	TextureRender& operator=(TextureRender&&) = default;
 
-	TextureRender(ID3D11Device * device,
-		int texWidth, 
+
+	HRESULT InitResource(ID3D11Device* device,
+		int texWidth,
 		int texHeight,
 		bool generateMips = false);
-	~TextureRender();
 
 	// 开始对当前纹理进行渲染
 	void Begin(ID3D11DeviceContext * deviceContext);

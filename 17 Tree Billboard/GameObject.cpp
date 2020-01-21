@@ -48,7 +48,7 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
 	UINT strides = m_VertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
-	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 更新数据并应用
 	effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
@@ -62,10 +62,8 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
 void GameObject::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	std::string vbName = name + ".VertexBuffer";
-	std::string ibName = name + ".IndexBuffer";
-	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
-	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), name + ".VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), name + ".IndexBuffer");
 #else
 	UNREFERENCED_PARAMETER(name);
 #endif

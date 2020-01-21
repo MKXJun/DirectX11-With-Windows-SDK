@@ -27,9 +27,6 @@
     <ClCompile Include="GameApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -45,6 +42,9 @@
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="DXTrace.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -54,9 +54,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="GameApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Geometry.h">
@@ -75,6 +72,9 @@
       <Filter>通用文件</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DXTrace.h">

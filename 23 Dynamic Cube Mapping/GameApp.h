@@ -41,6 +41,8 @@ private:
 	GameObject m_Ground;										// 地面
 	GameObject m_Cylinder;									    // 圆柱
 
+	float m_SphereRad;											// 球体旋转弧度
+
 	BasicEffect m_BasicEffect;								    // 对象渲染特效管理
 	SkyEffect m_SkyEffect;									    // 天空盒特效管理
 	

@@ -8,7 +8,8 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_CameraMode(CameraMode::Free),
 	m_Eta(1.0f / 1.51f),
 	m_SkyBoxMode(SkyBoxMode::Daylight),
-	m_SphereMode(SphereMode::Reflection)
+	m_SphereMode(SphereMode::Reflection),
+	m_SphereRad()
 {
 }
 
@@ -170,7 +171,10 @@ void GameApp::UpdateScene(float dt)
 		m_Eta = 0.2f;
 	}
 	m_BasicEffect.SetRefractionEta(m_Eta);
-		
+	
+	// 设置球体动画速度
+	m_SphereRad += 2.0f * dt;
+
 	// 重置滚轮值
 	m_pMouse->ResetScrollWheelValue();
 
@@ -275,23 +279,24 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化天空盒相关
 
-	m_pDaylight = std::make_unique<DynamicSkyRender>(
+	m_pDaylight = std::make_unique<DynamicSkyRender>();
+	HR(m_pDaylight->InitResource(
 		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\daylight.jpg", 
-		5000.0f, 256);
+		5000.0f, 256));
 
-	m_pSunset = std::make_unique<DynamicSkyRender>(
-		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
+	m_pSunset = std::make_unique<DynamicSkyRender>();
+	HR(m_pSunset->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 		L"Texture\\sunset_posX.bmp", L"Texture\\sunset_negX.bmp",
 		L"Texture\\sunset_posY.bmp", L"Texture\\sunset_negY.bmp", 
 		L"Texture\\sunset_posZ.bmp", L"Texture\\sunset_negZ.bmp", },
-		5000.0f, 256);
+		5000.0f, 256));
 
-	m_pDesert = std::make_unique<DynamicSkyRender>(
-		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
+	m_pDesert = std::make_unique<DynamicSkyRender>();
+	HR(m_pDesert->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\desertcube1024.dds",
-		5000.0f, 256);
+		5000.0f, 256));
 
 	m_BasicEffect.SetTextureCube(m_pDaylight->GetDynamicTextureCube());
 
@@ -305,7 +310,7 @@ bool GameApp::InitResource()
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
-	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), 
 		L"Texture\\stone.dds", 
 		nullptr, 
@@ -313,24 +318,24 @@ bool GameApp::InitResource()
 	m_Sphere.SetModel(std::move(model));
 	m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
 	// 地面
-	model.SetMesh(m_pd3dDevice.Get(),
-		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(16.0f, 16.0f), XMFLOAT2(8.0f, 8.0f)));
+	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); 
-	model.modelParts[0].material.Reflect = XMFLOAT4();
+	model.modelParts[0].material.reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\floor.dds",
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Ground.SetModel(std::move(model));
+	m_Ground.SetWorldMatrix(XMMatrixTranslation(0.0f, -3.0f, 0.0f));
 	// 柱体
 	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material.Reflect = XMFLOAT4();
+	model.modelParts[0].material.reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\bricks.dds",
 		nullptr,
@@ -363,7 +368,7 @@ bool GameApp::InitResource()
 	// 方向光
 	DirectionalLight dirLight[4];
 	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];
@@ -433,15 +438,12 @@ void GameApp::DrawScene(bool drawCenterSphere)
 	m_Cylinder.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, cyliderWorlds);
 	
 	// 绘制五个圆球
-	static float rad = 0.0f;
-	rad += 0.001f;
-	// 需要动态位置，不使用static
 	std::vector<XMMATRIX> sphereWorlds = {
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(rad), 4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(rad), 4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(rad), -4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(rad), -4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(2.5f * XMScalarCos(rad), 0.0f, 2.5f * XMScalarSin(rad))
+		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f),
+		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f),
+		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f),
+		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f),
+		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(2.5f * XMScalarCos(m_SphereRad), 0.0f, 2.5f * XMScalarSin(m_SphereRad))
 	};
 	m_Sphere.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, sphereWorlds);
 

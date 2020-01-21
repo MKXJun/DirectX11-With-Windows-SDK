@@ -1,5 +1,5 @@
 //***************************************************************************************
-// RenderStates.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// RenderStates.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 提供一些渲染状态

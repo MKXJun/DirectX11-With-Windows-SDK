@@ -297,7 +297,8 @@ bool GameApp::InitResource()
 
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化地板
-	m_Ground.SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT3(0.0f, -5.0f, 0.0f), XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
+	m_Ground.SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
+	m_Ground.SetWorldMatrix(XMMatrixTranslation(0.0f, -5.0f, 0.0f));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
 	m_Ground.SetTexture(texture.Get());
 	Material material{};

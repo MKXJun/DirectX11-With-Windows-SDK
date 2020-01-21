@@ -319,9 +319,10 @@ bool GameApp::InitResource()
 	// 初始化地板
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\floor.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Floor.SetBuffer(m_pd3dDevice.Get(),
-		Geometry::CreatePlane(XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
+		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
-
+	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	
 	// 初始化墙体
 	m_Walls.resize(4);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\brick.dds", nullptr, texture.ReleaseAndGetAddressOf()));
@@ -329,7 +330,7 @@ bool GameApp::InitResource()
 	for (int i = 0; i < 4; ++i)
 	{
 		m_Walls[i].SetBuffer(m_pd3dDevice.Get(),
-			Geometry::CreatePlane(XMFLOAT3(), XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
+			Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
 		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
 			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		m_Walls[i].SetWorldMatrix(world);
@@ -506,7 +507,7 @@ void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 	UINT strides = m_VertexStride;
 	UINT offsets = 0;
 	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
-	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
@@ -533,10 +534,8 @@ void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 void GameApp::GameObject::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	std::string vbName = name + ".VertexBuffer";
-	std::string ibName = name + ".IndexBuffer";
-	m_pVertexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(vbName.length()), vbName.c_str());
-	m_pIndexBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(ibName.length()), ibName.c_str());
+	D3D11SetDebugObjectName(m_pVertexBuffer.Get(), name + ".VertexBuffer");
+	D3D11SetDebugObjectName(m_pIndexBuffer.Get(), name + ".IndexBuffer");
 #else
 	UNREFERENCED_PARAMETER(name);
 #endif

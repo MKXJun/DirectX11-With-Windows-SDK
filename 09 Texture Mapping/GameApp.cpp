@@ -89,7 +89,7 @@ void GameApp::UpdateScene(float dt)
 	m_KeyboardTracker.Update(state);	
 
 	// 键盘切换模式
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1) && m_CurrMode != ShowMode::WoodCrate)
 	{
 		// 播放木箱动画
 		m_CurrMode = ShowMode::WoodCrate;
@@ -100,7 +100,7 @@ void GameApp::UpdateScene(float dt)
 		m_pd3dImmediateContext->PSSetShader(m_pPixelShader3D.Get(), nullptr, 0);
 		m_pd3dImmediateContext->PSSetShaderResources(0, 1, m_pWoodCrate.GetAddressOf());
 	}
-	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
+	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2) && m_CurrMode != ShowMode::FireAnim)
 	{
 		m_CurrMode = ShowMode::FireAnim;
 		m_CurrFrame = 0;
@@ -270,7 +270,6 @@ bool GameApp::InitResource()
 	m_PSConstantBuffer.numDirLight = 0;
 	m_PSConstantBuffer.numPointLight = 1;
 	m_PSConstantBuffer.numSpotLight = 0;
-	m_PSConstantBuffer.eyePos = XMFLOAT4(0.0f, 0.0f, -5.0f, 0.0f);	// 这里容易遗漏，已补上
 	// 初始化材质
 	m_PSConstantBuffer.material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	m_PSConstantBuffer.material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -350,14 +349,14 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexType>& meshData)
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(WORD) * m_IndexCount;
+	ibd.ByteWidth = sizeof(DWORD) * m_IndexCount;
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	// 新建索引缓冲区
 	InitData.pSysMem = meshData.indexVec.data();
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
 	// 输入装配阶段的索引缓冲区设置
-	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 
 

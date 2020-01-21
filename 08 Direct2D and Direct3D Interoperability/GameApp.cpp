@@ -344,14 +344,14 @@ bool GameApp::ResetMesh(const Geometry::MeshData<VertexPosNormalColor> & meshDat
 	D3D11_BUFFER_DESC ibd;
 	ZeroMemory(&ibd, sizeof(ibd));
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth =  m_IndexCount * sizeof(WORD);
+	ibd.ByteWidth =  m_IndexCount * sizeof(DWORD);
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	// 新建索引缓冲区
 	InitData.pSysMem = meshData.indexVec.data();
 	HR(m_pd3dDevice->CreateBuffer(&ibd, &InitData, m_pIndexBuffer.GetAddressOf()));
 	// 输入装配阶段的索引缓冲区设置
-	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	m_pd3dImmediateContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 
 

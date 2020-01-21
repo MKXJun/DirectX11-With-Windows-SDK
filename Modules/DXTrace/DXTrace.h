@@ -1,5 +1,5 @@
 //***************************************************************************************
-// DXTrace.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// DXTrace.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // DirectX错误追踪 
@@ -29,8 +29,8 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 // ------------------------------
 // Debug模式下的错误提醒与追踪
 #if defined(DEBUG) | defined(_DEBUG)
-	#ifndef HR
-	#define HR(x)												\
+#ifndef HR
+#define HR(x)												\
 	{															\
 		HRESULT hr = (x);										\
 		if(FAILED(hr))											\
@@ -38,11 +38,11 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 			DXTraceW(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
 		}														\
 	}
-	#endif
+#endif
 #else
-	#ifndef HR
-	#define HR(x) (x)
-	#endif 
+#ifndef HR
+#define HR(x) (x)
+#endif 
 #endif
 
 

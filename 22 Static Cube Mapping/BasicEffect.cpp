@@ -227,7 +227,7 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderTy
 	deviceContext->GSSetShader(nullptr, nullptr, 0);
 	deviceContext->RSSetState(nullptr);
 	
-	// 注意这里变为各向异性过滤器
+	// 使用各向异性过滤获取更好的绘制质量
 	deviceContext->PSSetSamplers(0, 1, RenderStates::SSAnistropicWrap.GetAddressOf());
 	deviceContext->OMSetDepthStencilState(nullptr, 0);
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);

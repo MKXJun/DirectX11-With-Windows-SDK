@@ -145,7 +145,7 @@ void GameApp::UpdateScene(float dt)
 		m_SkyBoxMode = SkyBoxMode::Desert;
 		m_BasicEffect.SetTextureCube(m_pDesert->GetTextureCube());
 	}
-		
+	
 	// 退出程序，这里应向窗口发送销毁信息
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
@@ -217,23 +217,23 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化天空盒相关
 
-	m_pDaylight = std::make_unique<SkyRender>(
-		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
+	m_pDaylight = std::make_unique<SkyRender>();
+	HR(m_pDaylight->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\daylight.jpg", 
-		5000.0f);
+		5000.0f));
 
-	m_pSunset = std::make_unique<SkyRender>(
-		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
+	m_pSunset = std::make_unique<SkyRender>();
+	HR(m_pSunset->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 		L"Texture\\sunset_posX.bmp", L"Texture\\sunset_negX.bmp",
-		L"Texture\\sunset_posY.bmp", L"Texture\\sunset_negY.bmp", 
-		L"Texture\\sunset_posZ.bmp", L"Texture\\sunset_negZ.bmp", },
-		5000.0f);
+			L"Texture\\sunset_posY.bmp", L"Texture\\sunset_negY.bmp",
+			L"Texture\\sunset_posZ.bmp", L"Texture\\sunset_negZ.bmp", },
+		5000.0f));
 
-	m_pDesert = std::make_unique<SkyRender>(
-		m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
+	m_pDesert = std::make_unique<SkyRender>();
+	HR(m_pDesert->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		L"Texture\\desertcube1024.dds",
-		5000.0f);
+		5000.0f));
 
 	m_BasicEffect.SetTextureCube(m_pDaylight->GetTextureCube());
 	// ******************
@@ -246,31 +246,31 @@ bool GameApp::InitResource()
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
-	model.modelParts[0].material.Reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), 
 		L"Texture\\stone.dds", 
 		nullptr, 
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Sphere.SetModel(std::move(model));
 	// 地面
-	model.SetMesh(m_pd3dDevice.Get(),
-		Geometry::CreatePlane(XMFLOAT3(0.0f, -3.0f, 0.0f), XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
+	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); 
-	model.modelParts[0].material.Reflect = XMFLOAT4();
+	model.modelParts[0].material.reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\floor.dds",
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Ground.SetModel(std::move(model));
+	m_Ground.SetWorldMatrix(XMMatrixTranslation(0.0f, -3.0f, 0.0f));
 	// 柱体
 	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreateCylinder(0.5f, 2.0f));
 	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material.Reflect = XMFLOAT4();
+	model.modelParts[0].material.reflect = XMFLOAT4();
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
 		L"Texture\\bricks.dds",
 		nullptr,
@@ -302,7 +302,7 @@ bool GameApp::InitResource()
 	// 方向光
 	DirectionalLight dirLight[4];
 	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	dirLight[0].diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	dirLight[0].diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	dirLight[0].direction = XMFLOAT3(-0.577f, -0.577f, 0.577f);
 	dirLight[1] = dirLight[0];

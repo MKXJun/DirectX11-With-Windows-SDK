@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2017 Win10)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2017 Win10).vcxproj", "{15682670-9F8D-436E-BB6C-1FE5D631CB9D}"
 EndProject
@@ -50,6 +50,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(2017 Win10)", "27 Bitonic Sort\27 Bitonic Sort(2017 Win10).vcxproj", "{F8858B93-185B-4A0E-BB98-17F01AA13B2C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06 Mouse and Keyboard(2017 Win10)", "06 Mouse and Keyboard\06 Mouse and Keyboard(2017 Win10).vcxproj", "{725FE6A5-2962-4673-95CE-9ED1C466920C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "28 Waves(2017 Win10)", "28 Waves\28 Waves(2017 Win10).vcxproj", "{D93C6D69-4B76-4399-A476-58F35E11F809}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -251,6 +253,14 @@ Global
 		{725FE6A5-2962-4673-95CE-9ED1C466920C}.Release|x64.Build.0 = Release|x64
 		{725FE6A5-2962-4673-95CE-9ED1C466920C}.Release|x86.ActiveCfg = Release|Win32
 		{725FE6A5-2962-4673-95CE-9ED1C466920C}.Release|x86.Build.0 = Release|Win32
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Debug|x64.ActiveCfg = Debug|x64
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Debug|x64.Build.0 = Debug|x64
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Debug|x86.ActiveCfg = Debug|Win32
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Debug|x86.Build.0 = Debug|Win32
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Release|x64.ActiveCfg = Release|x64
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Release|x64.Build.0 = Release|x64
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Release|x86.ActiveCfg = Release|Win32
+		{D93C6D69-4B76-4399-A476-58F35E11F809}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

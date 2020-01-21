@@ -1,5 +1,5 @@
 //***************************************************************************************
-// DXTrace.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// DXTrace.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // DirectX错误追踪 

@@ -1,5 +1,5 @@
 //***************************************************************************************
-// Collision.h by X_Jun(MKXJun) (C) 2018-2019 All Rights Reserved.
+// Collision.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 提供一些封装好的对象和碰撞检测方法

@@ -1,7 +1,6 @@
 #include "d3dUtil.h"
 
 using namespace DirectX;
-using namespace std::experimental;
 
 
 //
@@ -72,9 +71,9 @@ HRESULT CreateShaderFromFile(
 	HRESULT hr = S_OK;
 
 	// 寻找是否有已经编译好的顶点着色器
-	if (csoFileNameInOut && filesystem::exists(csoFileNameInOut))
+	if (csoFileNameInOut && D3DReadFileToBlob(csoFileNameInOut, ppBlobOut) == S_OK)
 	{
-		return D3DReadFileToBlob(csoFileNameInOut, ppBlobOut);
+		return hr;
 	}
 	else
 	{
@@ -824,6 +823,10 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			cubeMapFileNames[i].c_str(),
 			(ID3D11Resource**)&srcTexVec[i],
 			(generateMips ? &srcTexSRVVec[i] : nullptr));
+
+		// 文件未打开
+		if (hResult != S_OK)
+			return hResult;
 
 		// 读取创建好的纹理信息
 		srcTexVec[i]->GetDesc(&texDescVec[i]);

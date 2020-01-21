@@ -557,6 +557,9 @@ HRESULT CreateWICTexture2DCubeFromFile(
 			(ID3D11Resource**)&srcTexVec[i],
 			(generateMips ? &srcTexSRVVec[i] : nullptr));
 
+		// 文件未打开
+		if (hResult != S_OK)
+			return hResult;
 		// 读取创建好的纹理信息
 		srcTexVec[i]->GetDesc(&texDescVec[i]);
 

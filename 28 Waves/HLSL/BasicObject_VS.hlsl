@@ -1,16 +1,16 @@
 #include "Basic.hlsli"
 
-// ¶¥µã×ÅÉ«Æ÷
+// é¡¶ç‚¹ç€è‰²å™¨
 VertexPosHWNormalTex VS(VertexPosNormalTex vIn)
 {
     VertexPosHWNormalTex vOut;
     
-    // »æÖÆË®²¨Ê±ÓÃµ½
+    // ç»˜åˆ¶æ°´æ³¢æ—¶ç”¨åˆ°
     if (g_WavesEnabled)
     {
-        // Ê¹ÓÃÓ³Éäµ½[0,1]x[0,1]Çø¼äµÄÎÆÀí×ø±ê½øĞĞ²ÉÑù
+        // ä½¿ç”¨æ˜ å°„åˆ°[0,1]x[0,1]åŒºé—´çš„çº¹ç†åæ ‡è¿›è¡Œé‡‡æ ·
         vIn.PosL.y += g_DisplacementMap.SampleLevel(g_SamLinearWrap, vIn.Tex, 0.0f).r;
-        // Ê¹ÓÃÓĞÏŞ²î·Ö·¨¹ÀËã·¨ÏòÁ¿
+        // ä½¿ç”¨æœ‰é™å·®åˆ†æ³•ä¼°ç®—æ³•å‘é‡
         float du = g_DisplacementMapTexelSize.x;
         float dv = g_DisplacementMapTexelSize.y;
         float left = g_DisplacementMap.SampleLevel(g_SamPointClamp, vIn.Tex - float2(du, 0.0f), 0.0f).r;

@@ -8,7 +8,7 @@ void GS(point VertexPosHWNormalColor input[1], inout LineStream<VertexPosHWNorma
 
     VertexPosHWNormalColor v;
 
-    // ·ÀÖ¹×ÊÔ´Õù¶á
+    // é˜²æ­¢èµ„æºäº‰å¤º
     v.PosW = input[0].PosW + input[0].NormalW * 0.01f;
     v.NormalW = input[0].NormalW;
     v.PosH = mul(float4(v.PosW, 1.0f), viewProj);

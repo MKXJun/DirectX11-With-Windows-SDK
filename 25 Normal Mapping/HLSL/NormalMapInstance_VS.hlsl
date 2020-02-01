@@ -1,6 +1,6 @@
 #include "Basic.hlsli"
 
-// ¶¥µã×ÅÉ«Æ÷
+// é¡¶ç‚¹ç€è‰²å™¨
 VertexPosHWNormalTangentTex VS(InstancePosNormalTangentTex vIn)
 {
     VertexPosHWNormalTangentTex vOut;

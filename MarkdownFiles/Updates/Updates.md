@@ -4,13 +4,17 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/2/1 v1.25.1</br>
+-修复Geometry中Terrain创建问题</br>
+-hlsl和hlsli编码也统一使用UTF-8 NO BOM
+
 2020/1/20 v1.25.0</br>
 -**添加项目 Waves**</br>
 -调整图形调试设置对象名的函数</br>
 -默认项目和Geometry索引类型调整为DWORD(即32位无符号整数)</br>
 -部分Geometry取消center参数</br>
 -调整SkyRender、TextureRedner，统一使用InitResource初始化</br>
--更新MIT许可证年份</br>
+-更新MIT许可证年份
 
 2020/1/9 v1.24.20</br>
 -调整项目配置(项目05变为06)

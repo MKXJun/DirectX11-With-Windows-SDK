@@ -3,8 +3,8 @@ Texture2D g_TexB : register(t1);
 
 RWTexture2D<float4> g_Output : register(u0);
 
-// Ò»¸öÏß³Ì×éÖĞµÄÏß³ÌÊıÄ¿¡£Ïß³Ì¿ÉÒÔ1Î¬Õ¹¿ª£¬Ò²¿ÉÒÔ
-// 2Î¬»ò3Î¬ÅÅ²¼
+// ä¸€ä¸ªçº¿ç¨‹ç»„ä¸­çš„çº¿ç¨‹æ•°ç›®ã€‚çº¿ç¨‹å¯ä»¥1ç»´å±•å¼€ï¼Œä¹Ÿå¯ä»¥
+// 2ç»´æˆ–3ç»´æ’å¸ƒ
 [numthreads(16, 16, 1)]
 void CS( uint3 DTid : SV_DispatchThreadID )
 {

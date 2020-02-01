@@ -643,7 +643,7 @@ namespace Geometry
 		UINT iIndex = 0;
 
 		float sliceWidth = width / slicesX;
-		float sliceDepth = width / slicesZ;
+		float sliceDepth = depth / slicesZ;
 		float leftBottomX = -width / 2;
 		float leftBottomZ = -depth / 2;
 		float posX, posZ;

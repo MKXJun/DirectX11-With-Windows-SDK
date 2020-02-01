@@ -3,8 +3,8 @@
 [maxvertexcount(5)]
 void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)
 {
-    // ÒªÇó·ÖĞÎÏß¶Î°´Ë³Ê±ÕëÅÅ²¼
-    // z·ÖÁ¿±ØĞëÏàµÈ£¬ÒòÎª¶¥µãÃ»ÓĞÌá¹©·¨ÏòÁ¿ÎŞ·¨ÅĞ¶Ï´¹Ö±ÉÏ·½Ïò
+    // è¦æ±‚åˆ†å½¢çº¿æ®µæŒ‰é¡ºæ—¶é’ˆæ’å¸ƒ
+    // zåˆ†é‡å¿…é¡»ç›¸ç­‰ï¼Œå› ä¸ºé¡¶ç‚¹æ²¡æœ‰æä¾›æ³•å‘é‡æ— æ³•åˆ¤æ–­å‚ç›´ä¸Šæ–¹å‘
     //                       v1
     //                       /\
     // ____________ =>  ____/  \____
@@ -18,7 +18,7 @@ void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)
     v0.PosL = lerp(input[0].PosL, input[1].PosL, 1.0f / 3.0f);
     v2.PosL = lerp(input[0].PosL, input[1].PosL, 2.0f / 3.0f);
 
-    // xyÆ½ÃæÇó³öËüµÄ´¹Ö±µ¥Î»ÏòÁ¿
+    // xyå¹³é¢æ±‚å‡ºå®ƒçš„å‚ç›´å•ä½å‘é‡
     //     
     //     |
     // ____|_____

@@ -1,6 +1,6 @@
 #include "Basic.hlsli"
 
-// ½ÚÊ¡ÄÚ´æ×ÊÔ´£¬ÏÈÓÃfloat4ÏòÁ¿ÉùÃ÷¡£
+// èŠ‚çœå†…å­˜èµ„æºï¼Œå…ˆç”¨float4å‘é‡å£°æ˜ã€‚
 static const float4 g_Vec[2] = { float4(0.0f, 1.0f, 0.0f, 0.0f), float4(1.0f, 1.0f, 1.0f, 0.0f) };
 static const float2 g_TexCoord[4] = (float2[4])g_Vec;
 
@@ -8,16 +8,16 @@ static const float2 g_TexCoord[4] = (float2[4])g_Vec;
 void GS(point PointSprite input[1], uint primID : SV_PrimitiveID, 
     inout TriangleStream<BillboardVertex> output)
 {
-    // ¼ÆËã¹«¸æ°åËù´¦µÄ¾Ö²¿×ø±êÏµ£¬ÆäÖĞ¹«¸æ°åÏàµ±ÓÚ
-    // ±»Í¶Ó°ÔÚÁË¾Ö²¿×ø±êÏµµÄxyÆ½Ãæ£¬z=0
+    // è®¡ç®—å…¬å‘Šæ¿æ‰€å¤„çš„å±€éƒ¨åæ ‡ç³»ï¼Œå…¶ä¸­å…¬å‘Šæ¿ç›¸å½“äº
+    // è¢«æŠ•å½±åœ¨äº†å±€éƒ¨åæ ‡ç³»çš„xyå¹³é¢ï¼Œz=0
 
     float3 up = float3(0.0f, 1.0f, 0.0f);
     float3 look = g_EyePosW - input[0].PosW;
-    look.y = 0.0f;  // lookÏòÁ¿Ö»È¡Í¶Ó°µ½xzÆ½ÃæµÄÏòÁ¿
+    look.y = 0.0f;  // lookå‘é‡åªå–æŠ•å½±åˆ°xzå¹³é¢çš„å‘é‡
     look = normalize(look);
     float3 right = cross(up, look);
 
-    // ¼ÆËã³ö¹«¸æ°å¾ØĞÎµÄËÄ¸ö¶¥µã
+    // è®¡ç®—å‡ºå…¬å‘Šæ¿çŸ©å½¢çš„å››ä¸ªé¡¶ç‚¹
     //            up
     //      v1 ___|___ v3
     //        |   |   |
@@ -35,7 +35,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     v[2] = float4(center - halfWidth * right - halfHeight * up, 1.0f);
     v[3] = float4(center - halfWidth * right + halfHeight * up, 1.0f);
 
-    // ¶Ô¶¥µãÎ»ÖÃ½øĞĞ¾ØÕó±ä»»£¬²¢ÒÔTriangleStripĞÎÊ½Êä³ö
+    // å¯¹é¡¶ç‚¹ä½ç½®è¿›è¡ŒçŸ©é˜µå˜æ¢ï¼Œå¹¶ä»¥TriangleStripå½¢å¼è¾“å‡º
     BillboardVertex gOut;
     matrix viewProj = mul(g_View, g_Proj);
     [unroll]

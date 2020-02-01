@@ -3,9 +3,9 @@
 [numthreads(16, 16, 1)]
 void CS( uint3 DTid : SV_DispatchThreadID )
 {
-    // ���ǲ���Ҫ���б߽���飬��Ϊ:
-    // --��ȡ�����߽��������Ϊ0�������ǶԱ߽紦��������һ��
-    // --�Գ����߽������д�벢����ִ��
+    // 我们不需要进行边界检验，因为:
+    // --读取超出边界的区域结果为0，和我们对边界处理的需求一致
+    // --对超出边界的区域写入并不会执行
     uint x = DTid.x;
     uint y = DTid.y;
     

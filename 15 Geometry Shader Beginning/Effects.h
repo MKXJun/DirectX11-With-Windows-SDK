@@ -21,8 +21,6 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	IEffect() = default;
-
-	IEffect() = default;
 	virtual ~IEffect() = default;
 	// 不允许拷贝，允许移动
 	IEffect(const IEffect&) = delete;

@@ -297,7 +297,6 @@ HRESULT CreateRawBuffer(
 	UINT byteWidth,
 	ID3D11Buffer ** rawBuffer,
 	/* 可选扩展部分 */
-	/* 可选扩展部分 */
 	bool cpuUpdates = false,
 	bool gpuUpdates = false);
 

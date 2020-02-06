@@ -1,11 +1,11 @@
 #include "SkyRender.h"
 #include "Geometry.h"
 #include "d3dUtil.h"
-#include "DXTrace.h"
-using namespace DirectX;
-using namespace Microsoft::WRL;
 
 #pragma warning(disable: 26812)
+
+using namespace DirectX;
+using namespace Microsoft::WRL;
 
 HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename, float skySphereRadius, bool generateMips)
 {
@@ -34,7 +34,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 			generateMips);
 	}
 
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	return InitResource(device, skySphereRadius);
@@ -55,7 +55,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 		nullptr,
 		m_pTextureCubeSRV.GetAddressOf(),
 		generateMips);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	return InitResource(device, skySphereRadius);
@@ -112,7 +112,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, float skySphereRadius)
 	InitData.pSysMem = sphere.vertexVec.data();
 
 	hr = device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// 索引缓冲区创建

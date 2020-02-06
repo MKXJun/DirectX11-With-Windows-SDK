@@ -63,9 +63,6 @@
     <ClInclude Include="RenderStates.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SkyRender.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
       <Filter>特效文件</Filter>
     </ClInclude>
     <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyRender.h">
       <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,9 +128,6 @@
     <ClCompile Include="RenderStates.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SkyEffect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Vertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -153,6 +150,9 @@
       <Filter>特效文件</Filter>
     </ClCompile>
     <ClCompile Include="SkyRender.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>

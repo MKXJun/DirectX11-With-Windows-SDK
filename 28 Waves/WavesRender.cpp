@@ -77,12 +77,12 @@ HRESULT CpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 	// 创建动态顶点缓冲区
 	hr = CreateVertexBuffer(device, meshData.vertexVec.data(), (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex),
 		m_pVertexBuffer.GetAddressOf(), true);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 	// 创建索引缓冲区
 	hr = CreateIndexBuffer(device, meshData.indexVec.data(), (UINT)meshData.indexVec.size() * sizeof(DWORD),
 		m_pIndexBuffer.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// 取出顶点数据
@@ -270,26 +270,33 @@ HRESULT GpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 	HRESULT hr;
 
 	// 创建顶点缓冲区
-	if ((hr = CreateVertexBuffer(device, meshData.vertexVec.data(), (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex),
-		m_pVertexBuffer.GetAddressOf())) != S_OK)
+	hr = CreateVertexBuffer(device, meshData.vertexVec.data(), (UINT)meshData.vertexVec.size() * sizeof(VertexPosNormalTex),
+		m_pVertexBuffer.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 	// 创建索引缓冲区
-	if ((hr = CreateIndexBuffer(device, meshData.indexVec.data(), (UINT)meshData.indexVec.size() * sizeof(DWORD),
-		m_pIndexBuffer.GetAddressOf())) != S_OK)
+	hr = CreateIndexBuffer(device, meshData.indexVec.data(), (UINT)meshData.indexVec.size() * sizeof(DWORD),
+		m_pIndexBuffer.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 	// 创建常量缓冲区
-	if ((hr = CreateConstantBuffer(device, nullptr, sizeof m_CBUpdateSettings, m_pConstantBuffer.GetAddressOf())) != S_OK)
+	hr = CreateConstantBuffer(device, nullptr, sizeof m_CBUpdateSettings, m_pConstantBuffer.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 
 	// 创建计算着色器
 	ComPtr<ID3DBlob> blob;
-	if ((hr = CreateShaderFromFile(L"HLSL\\WavesUpdate_CS.cso", L"HLSL\\WavesUpdate_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf())) != S_OK)
+	hr = CreateShaderFromFile(L"HLSL\\WavesUpdate_CS.cso", L"HLSL\\WavesUpdate_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesUpdateCS.GetAddressOf())) != S_OK)
+	hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesUpdateCS.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = CreateShaderFromFile(L"HLSL\\WavesDisturb_CS.cso", L"HLSL\\WavesDisturb_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf())) != S_OK)
+	hr = CreateShaderFromFile(L"HLSL\\WavesDisturb_CS.cso", L"HLSL\\WavesDisturb_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesDisturbCS.GetAddressOf())) != S_OK)
+	hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesDisturbCS.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 
 	// 创建缓存计算结果的资源
@@ -309,11 +316,14 @@ HRESULT GpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 
 	// 由于关于位移程度的计算都在GPU中完成，故需要三个GPU资源，其中
 	// 两个用于输入，另一个用于输出结果
-	if ((hr = device->CreateTexture2D(&texDesc, nullptr, m_pPrevSolution.GetAddressOf())) != S_OK)
+	hr = device->CreateTexture2D(&texDesc, nullptr, m_pPrevSolution.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateTexture2D(&texDesc, nullptr, m_pCurrSolution.GetAddressOf())) != S_OK)
+	hr = device->CreateTexture2D(&texDesc, nullptr, m_pCurrSolution.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateTexture2D(&texDesc, nullptr, m_pNextSolution.GetAddressOf())) != S_OK)
+	hr = device->CreateTexture2D(&texDesc, nullptr, m_pNextSolution.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 
 	// 创建着色器资源视图
@@ -322,11 +332,14 @@ HRESULT GpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	if ((hr = device->CreateShaderResourceView(m_pPrevSolution.Get(), &srvDesc, m_pPrevSolutionSRV.GetAddressOf())) != S_OK)
+	hr = device->CreateShaderResourceView(m_pPrevSolution.Get(), &srvDesc, m_pPrevSolutionSRV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateShaderResourceView(m_pCurrSolution.Get(), &srvDesc, m_pCurrSolutionSRV.GetAddressOf())) != S_OK)
+	hr = device->CreateShaderResourceView(m_pCurrSolution.Get(), &srvDesc, m_pCurrSolutionSRV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateShaderResourceView(m_pNextSolution.Get(), &srvDesc, m_pNextSolutionSRV.GetAddressOf())) != S_OK)
+	hr = device->CreateShaderResourceView(m_pNextSolution.Get(), &srvDesc, m_pNextSolutionSRV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 
 	// 创建无序访问视图
@@ -334,11 +347,14 @@ HRESULT GpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 	uavDesc.Texture2D.MipSlice = 0;
-	if ((hr = device->CreateUnorderedAccessView(m_pPrevSolution.Get(), &uavDesc, m_pPrevSolutionUAV.GetAddressOf())) != S_OK)
+	hr = device->CreateUnorderedAccessView(m_pPrevSolution.Get(), &uavDesc, m_pPrevSolutionUAV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateUnorderedAccessView(m_pCurrSolution.Get(), &uavDesc, m_pCurrSolutionUAV.GetAddressOf())) != S_OK)
+	hr = device->CreateUnorderedAccessView(m_pCurrSolution.Get(), &uavDesc, m_pCurrSolutionUAV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
-	if ((hr = device->CreateUnorderedAccessView(m_pNextSolution.Get(), &uavDesc, m_pNextSolutionUAV.GetAddressOf())) != S_OK)
+	hr = device->CreateUnorderedAccessView(m_pNextSolution.Get(), &uavDesc, m_pNextSolutionUAV.GetAddressOf());
+	if (FAILED(hr))
 		return hr;
 
 	// 读取纹理

@@ -53,6 +53,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06 Mouse and Keyboard(2015 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "28 Waves(2015 Win7)", "28 Waves\28 Waves(2015 Win7).vcxproj", "{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2015 Win7)", "29 OIT\29 OIT(2015 Win7).vcxproj", "{B5E44A7F-074C-4332-AA5C-AA958E7018AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -261,6 +263,14 @@ Global
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Release|x64.Build.0 = Release|x64
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Release|x86.ActiveCfg = Release|Win32
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Release|x86.Build.0 = Release|Win32
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Debug|x64.ActiveCfg = Debug|x64
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Debug|x64.Build.0 = Debug|x64
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Debug|x86.ActiveCfg = Debug|Win32
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Debug|x86.Build.0 = Debug|Win32
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x64.ActiveCfg = Release|x64
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x64.Build.0 = Release|x64
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x86.ActiveCfg = Release|Win32
+		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

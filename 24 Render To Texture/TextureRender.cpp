@@ -1,9 +1,10 @@
 #include "TextureRender.h"
 #include "d3dUtil.h"
-#include "DXTrace.h"
-using namespace Microsoft::WRL;
 
 #pragma warning(disable: 26812)
+
+using namespace DirectX;
+using namespace Microsoft::WRL;
 
 HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texHeight, bool generateMips)
 {
@@ -37,7 +38,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 
 	// 现在texture用于新建纹理
 	hr = device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 	// ******************
 	// 2. 创建纹理对应的渲染目标视图
@@ -49,7 +50,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	rtvDesc.Texture2D.MipSlice = 0;
 
 	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************
@@ -64,7 +65,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 
 	hr = device->CreateShaderResourceView(texture.Get(), &srvDesc,
 		m_pOutputTextureSRV.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************
@@ -85,7 +86,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 
 	ComPtr<ID3D11Texture2D> depthTex;
 	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
@@ -96,7 +97,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 
 	hr = device->CreateDepthStencilView(depthTex.Get(), &dsvDesc,
 		m_pOutputTextureDSV.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************
@@ -112,7 +113,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	return S_OK;
 }
 
-void TextureRender::Begin(ID3D11DeviceContext * deviceContext)
+void TextureRender::Begin(ID3D11DeviceContext* deviceContext, const FLOAT backgroundColor[4])
 {
 	// 缓存渲染目标和深度模板视图
 	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
@@ -122,8 +123,7 @@ void TextureRender::Begin(ID3D11DeviceContext * deviceContext)
 
 
 	// 清空缓冲区
-	float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	deviceContext->ClearRenderTargetView(m_pOutputTextureRTV.Get(), black);
+	deviceContext->ClearRenderTargetView(m_pOutputTextureRTV.Get(), backgroundColor);
 	deviceContext->ClearDepthStencilView(m_pOutputTextureDSV.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	// 设置渲染目标和深度模板视图
 	deviceContext->OMSetRenderTargets(1, m_pOutputTextureRTV.GetAddressOf(), m_pOutputTextureDSV.Get());

@@ -21,16 +21,12 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	IEffect() = default;
-
-	// 不支持复制构造
+	virtual ~IEffect() = default;
+	// 不允许拷贝，允许移动
 	IEffect(const IEffect&) = delete;
 	IEffect& operator=(const IEffect&) = delete;
-
-	// 允许转移
-	IEffect(IEffect&& moveFrom) = default;
-	IEffect& operator=(IEffect&& moveFrom) = default;
-
-	virtual ~IEffect() = default;
+	IEffect(IEffect&&) = default;
+	IEffect& operator=(IEffect&&) = default;
 
 	// 更新并绑定常量缓冲区
 	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
@@ -52,7 +48,7 @@ public:
 
 	
 
-	// 初始化Basic.hlsli所需资源并初始化渲染状态
+	// 初始化所需资源
 	bool InitAll(ID3D11Device * device);
 
 

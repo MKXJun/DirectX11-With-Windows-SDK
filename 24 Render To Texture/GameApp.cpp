@@ -189,13 +189,13 @@ void GameApp::DrawScene()
 	//
 
 	// 预先清空后备缓冲区
-	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<const float*>(&Colors::Black));
+	m_pd3dImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), Colors::Black);
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	if (m_FadeUsed)
 	{
 		// 开始淡入/淡出
-		m_pScreenFadeRender->Begin(m_pd3dImmediateContext.Get());
+		m_pScreenFadeRender->Begin(m_pd3dImmediateContext.Get(), Colors::Black);
 	}
 
 
@@ -362,7 +362,7 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetProjMatrix(XMMatrixOrthographicLH(190.0f, 190.0f, 1.0f, 20.0f));	// 使用正交投影矩阵(中心在摄像机位置)
 	// 关闭雾效
 	m_BasicEffect.SetFogState(false);
-	m_pMinimapRender->Begin(m_pd3dImmediateContext.Get());
+	m_pMinimapRender->Begin(m_pd3dImmediateContext.Get(), Colors::Black);
 	DrawScene(true);
 	m_pMinimapRender->End(m_pd3dImmediateContext.Get());
 

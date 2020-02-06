@@ -4,6 +4,11 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/2/6 v1.26.0</br>
+-添加项目 OIT</br>
+-调整`TextureRender::Begin`方法</br>
+-调整项目文件布局
+
 2020/2/1 v1.25.1</br>
 -修复Geometry中Terrain创建问题</br>
 -hlsl和hlsli编码也统一使用UTF-8 NO BOM

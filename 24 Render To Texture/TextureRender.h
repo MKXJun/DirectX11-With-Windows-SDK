@@ -34,7 +34,7 @@ public:
 		bool generateMips = false);
 
 	// 开始对当前纹理进行渲染
-	void Begin(ID3D11DeviceContext * deviceContext);
+	void Begin(ID3D11DeviceContext* deviceContext, const FLOAT backgroundColor[4]);
 	// 结束对当前纹理的渲染，还原状态
 	void End(ID3D11DeviceContext * deviceContext);
 	// 获取渲染好的纹理

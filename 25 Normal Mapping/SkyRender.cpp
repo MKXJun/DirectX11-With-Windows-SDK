@@ -1,11 +1,11 @@
 #include "SkyRender.h"
 #include "Geometry.h"
 #include "d3dUtil.h"
-#include "DXTrace.h"
-using namespace DirectX;
-using namespace Microsoft::WRL;
 
 #pragma warning(disable: 26812)
+
+using namespace DirectX;
+using namespace Microsoft::WRL;
 
 HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename, float skySphereRadius, bool generateMips)
 {
@@ -34,7 +34,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 			generateMips);
 	}
 
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	return InitResource(device, skySphereRadius);
@@ -55,7 +55,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 		nullptr,
 		m_pTextureCubeSRV.GetAddressOf(),
 		generateMips);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	return InitResource(device, skySphereRadius);
@@ -112,7 +112,7 @@ HRESULT SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 	InitData.pSysMem = sphere.vertexVec.data();
 
 	hr = device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// 索引缓冲区创建
@@ -146,7 +146,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContex
 
 	HRESULT hr;
 	hr = SkyRender::InitResource(device, deviceContext, cubemapFilename, skySphereRadius, generateMips);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
@@ -166,7 +166,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContex
 
 	HRESULT hr;
 	hr = SkyRender::InitResource(device, deviceContext, cubemapFilenames, skySphereRadius, generateMips);
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
@@ -290,7 +290,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSiz
 
 	// 现在texCube用于新建纹理
 	hr = device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************
@@ -310,7 +310,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSiz
 		rtvDesc.Texture2DArray.FirstArraySlice = i;
 		hr = device->CreateRenderTargetView(texCube.Get(), &rtvDesc,
 			m_pDynamicCubeMapRTVs[i].GetAddressOf());
-		if (hr != S_OK)
+		if (FAILED(hr))
 			return hr;
 	}
 
@@ -326,7 +326,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSiz
 
 	hr = device->CreateShaderResourceView(texCube.Get(), &srvDesc,
 		m_pDynamicCubeMapSRV.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************
@@ -347,7 +347,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSiz
 
 	ComPtr<ID3D11Texture2D> depthTex;
 	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
@@ -360,7 +360,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSiz
 		depthTex.Get(),
 		&dsvDesc,
 		m_pDynamicCubeMapDSV.GetAddressOf());
-	if (hr != S_OK)
+	if (FAILED(hr))
 		return hr;
 
 	// ******************

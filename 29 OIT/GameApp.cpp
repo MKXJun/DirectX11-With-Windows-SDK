@@ -84,6 +84,19 @@ void GameApp::OnResize()
 		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 		m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 	}
+
+	// 重新调整TextureRender和OITRender缓冲区的大小
+	if (m_pTextureRender)
+	{
+		m_pTextureRender = std::make_unique<TextureRender>();
+		HR(m_pTextureRender->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight));
+	}
+	if (m_pOITRender)
+	{
+		m_pOITRender = std::make_unique<OITRender>();
+		HR(m_pOITRender->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, 4));
+	}
+	
 }
 
 void GameApp::UpdateScene(float dt)

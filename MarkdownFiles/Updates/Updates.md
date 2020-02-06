@@ -4,6 +4,11 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/2/7 v1.26.1</br>
+-项目 OIT防止窗口拉伸出现问题</br>
+-调整`TextureRender::Init`方法</br>
+-调整`CreateWICTexutre2DArrayFromFile`方法
+
 2020/2/6 v1.26.0</br>
 -添加项目 OIT</br>
 -调整`TextureRender::Begin`方法</br>

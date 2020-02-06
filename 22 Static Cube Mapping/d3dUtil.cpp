@@ -314,7 +314,7 @@ HRESULT CreateWICTexture2DArrayFromFile(
 		D3D11_BIND_SHADER_RESOURCE | (generateMips ? D3D11_BIND_RENDER_TARGET : 0),
 		0,
 		(generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0),
-		nullptr,
+		textureArray,
 		textureArrayView);
 
 	for (UINT i = 0; i < arraySize; ++i)

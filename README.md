@@ -1,14 +1,14 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb)[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.26.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb)[![Build status](https://ci.appveyor.com/api/projects/status/9ntk5efu2h7mkbgn?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk) [![Build status](https://ci.appveyor.com/api/projects/status/dpl8y4uea5cv0303?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-s5k2l) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.26.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
 ## 最近更新
 
-Ver 1.26.0</br>
--添加项目 OIT</br>
--调整`TextureRender::Begin`方法</br>
--调整项目文件布局
+Ver 1.26.1</br>
+-项目 OIT防止窗口拉伸出现问题</br>
+-调整`TextureRender::Init`方法</br>
+-调整`CreateWICTexutre2DArrayFromFile`方法
 
 ## 博客教程
 
@@ -26,7 +26,7 @@ QQ群号：727623616
 
 **对于Win10系统，请根据自己当前的Visual Studio版本打开**
 
-**对于Win7和Win8.x的系统，请选择DirectX11 With Windows SDK(VS2015 Win7).sln打开**
+**对于Win7和Win8.x的系统，请选择DirectX11 With Windows SDK(2015 Win7).sln打开**
 
 建议一次性生成所有项目，比单独生成会快很多。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
 

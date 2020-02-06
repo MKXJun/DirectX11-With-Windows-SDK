@@ -49,7 +49,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2D.MipSlice = 0;
 
-	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.GetAddressOf());
+	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -64,7 +64,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	srvDesc.TextureCube.MipLevels = -1;	// 使用所有的mip等级
 
 	hr = device->CreateShaderResourceView(texture.Get(), &srvDesc,
-		m_pOutputTextureSRV.GetAddressOf());
+		m_pOutputTextureSRV.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -85,7 +85,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	texDesc.MiscFlags = 0;
 
 	ComPtr<ID3D11Texture2D> depthTex;
-	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -96,7 +96,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	dsvDesc.Texture2D.MipSlice = 0;
 
 	hr = device->CreateDepthStencilView(depthTex.Get(), &dsvDesc,
-		m_pOutputTextureDSV.GetAddressOf());
+		m_pOutputTextureDSV.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 

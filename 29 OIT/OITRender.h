@@ -30,7 +30,7 @@ public:
 	HRESULT InitResource(ID3D11Device* device, 
 		UINT width,			// 帧宽度
 		UINT height,		// 帧高度
-		UINT multiple = 1); // 用多少倍于帧像素数的缓冲区存储像素片元
+		UINT multiple);		// 用多少倍于帧像素数的缓冲区存储像素片元
 
 	// 开始收集透明物体像素片元
 	void BeginDefaultStore(ID3D11DeviceContext* deviceContext);

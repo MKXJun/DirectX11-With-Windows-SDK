@@ -180,9 +180,8 @@ void GameApp::DrawScene()
 	m_Land.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// ******************
-	// 2. 绘制透明对象
+	// 2. 存放透明物体的像素片元
 	//
-	// 存放波浪的像素片元
 	if (m_EnabledOIT)
 	{
 		m_pOITRender->BeginDefaultStore(m_pd3dImmediateContext.Get());

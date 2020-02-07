@@ -69,8 +69,6 @@ private:
 	ComPtr<ID3D11PixelShader> m_pOITStorePS;					// 用于存储透明像素片元的像素着色器
 	
 	ComPtr<ID3D11PixelShader> m_pCachePS;						// 临时缓存的像素着色器
-	ComPtr<ID3D11RenderTargetView> m_pCacheRTV;					// 临时缓存的渲染目标视图
-	ComPtr<ID3D11DepthStencilView> m_pCacheDSV;					// 临时缓存的深度模板视图
 
 	UINT m_FrameWidth;											// 帧像素宽度
 	UINT m_FrameHeight;											// 帧像素高度

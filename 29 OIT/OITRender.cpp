@@ -125,11 +125,8 @@ void OITRender::BeginDefaultStore(ID3D11DeviceContext* deviceContext)
 	// UAV绑定到像素着色阶段
 	ID3D11UnorderedAccessView* pUAVs[2] = { m_pFLBufferUAV.Get(), m_pStartOffsetBufferUAV.Get() };
 	UINT initCounts[2] = { 0, 0 };
-	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
-	deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.Get(),
-		1, 2, pUAVs, initCounts);
-
-	
+	deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
+		nullptr, nullptr, 1, 2, pUAVs, initCounts);
 
 	// 关闭深度写入
 	deviceContext->OMSetDepthStencilState(RenderStates::DSSNoDepthWrite.Get(), 0);
@@ -141,10 +138,12 @@ void OITRender::EndStore(ID3D11DeviceContext* deviceContext)
 {
 	// 恢复渲染状态
 	deviceContext->PSSetShader(m_pCachePS.Get(), nullptr, 0);
-	deviceContext->OMSetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.Get());
+	ComPtr<ID3D11RenderTargetView> currRTV;
+	ComPtr<ID3D11DepthStencilView> currDSV;
+	ID3D11UnorderedAccessView* pUAVs[2] = { nullptr, nullptr };
+	deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
+		nullptr, nullptr, 1, 2, pUAVs, nullptr);
 	m_pCachePS.Reset();
-	m_pCacheDSV.Reset();
-	m_pCacheRTV.Reset();
 }
 
 void OITRender::Draw(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* background)

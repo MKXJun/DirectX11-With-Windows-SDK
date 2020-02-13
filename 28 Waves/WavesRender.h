@@ -121,7 +121,7 @@ private:
 	ComPtr<ID3D11Buffer> m_pIndexBuffer;				// 当前模拟的索引缓冲区
 
 	ComPtr<ID3D11ShaderResourceView> m_pTextureDiffuse;	// 水面纹理
-	bool m_isUpdated;									// 当前是否有顶点数据更新
+	bool m_isUpdated = false;							// 当前是否有顶点数据更新
 };
 
 class GpuWavesRender : public WavesRender
@@ -164,7 +164,7 @@ private:
 	struct {
 		DirectX::XMFLOAT4 waveInfo;
 		DirectX::XMINT4 index;
-	} m_CBUpdateSettings;									// 对应Waves.hlsli的常量缓冲区
+	} m_CBUpdateSettings = {};								// 对应Waves.hlsli的常量缓冲区
 
 private:
 	ComPtr<ID3D11Texture2D> m_pNextSolution;				// 缓存下一次模拟结果的y值二维数组

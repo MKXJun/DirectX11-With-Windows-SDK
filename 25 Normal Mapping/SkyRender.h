@@ -58,7 +58,7 @@ private:
 	ComPtr<ID3D11Buffer> m_pVertexBuffer;
 	ComPtr<ID3D11Buffer> m_pIndexBuffer;
 
-	UINT m_IndexCount;
+	UINT m_IndexCount = 0;
 
 	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;
 };

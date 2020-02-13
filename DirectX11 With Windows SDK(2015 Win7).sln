@@ -55,6 +55,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "28 Waves(2015 Win7)", "28 W
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2015 Win7)", "29 OIT\29 OIT(2015 Win7).vcxproj", "{B5E44A7F-074C-4332-AA5C-AA958E7018AA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2015 Win7)", "30 Blur and Sobel\30 Blur and Sobel(2015 Win7).vcxproj", "{A19E531A-AB59-4879-889C-5D91D6A6B9DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -271,6 +273,14 @@ Global
 		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x64.Build.0 = Release|x64
 		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x86.ActiveCfg = Release|Win32
 		{B5E44A7F-074C-4332-AA5C-AA958E7018AA}.Release|x86.Build.0 = Release|Win32
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Debug|x64.ActiveCfg = Debug|x64
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Debug|x64.Build.0 = Debug|x64
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Debug|x86.ActiveCfg = Debug|Win32
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Debug|x86.Build.0 = Debug|Win32
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Release|x64.ActiveCfg = Release|x64
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Release|x64.Build.0 = Release|x64
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Release|x86.ActiveCfg = Release|Win32
+		{A19E531A-AB59-4879-889C-5D91D6A6B9DF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

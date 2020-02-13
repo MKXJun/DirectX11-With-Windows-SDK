@@ -37,7 +37,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	// 现在texture用于新建纹理
-	hr = device->CreateTexture2D(&texDesc, nullptr, texture.ReleaseAndGetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, texture.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 	// ******************
@@ -49,7 +49,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	rtvDesc.Texture2D.MipSlice = 0;
 
-	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.ReleaseAndGetAddressOf());
+	hr = device->CreateRenderTargetView(texture.Get(), &rtvDesc, m_pOutputTextureRTV.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -61,10 +61,10 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	srvDesc.Format = texDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.TextureCube.MipLevels = -1;	// 使用所有的mip等级
+	srvDesc.Texture2D.MipLevels = -1;	// 使用所有的mip等级
 
 	hr = device->CreateShaderResourceView(texture.Get(), &srvDesc,
-		m_pOutputTextureSRV.ReleaseAndGetAddressOf());
+		m_pOutputTextureSRV.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -85,7 +85,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	texDesc.MiscFlags = 0;
 
 	ComPtr<ID3D11Texture2D> depthTex;
-	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.ReleaseAndGetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, depthTex.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -96,7 +96,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	dsvDesc.Texture2D.MipSlice = 0;
 
 	hr = device->CreateDepthStencilView(depthTex.Get(), &dsvDesc,
-		m_pOutputTextureDSV.ReleaseAndGetAddressOf());
+		m_pOutputTextureDSV.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 

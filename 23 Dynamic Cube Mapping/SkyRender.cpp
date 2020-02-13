@@ -289,7 +289,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, int dynamicCubeSize
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	// 现在texCube用于新建纹理
-	hr = device->CreateTexture2D(&texDesc, nullptr, texCube.ReleaseAndGetAddressOf());
+	hr = device->CreateTexture2D(&texDesc, nullptr, texCube.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 

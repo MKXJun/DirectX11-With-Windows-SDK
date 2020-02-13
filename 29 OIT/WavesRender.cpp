@@ -2,6 +2,8 @@
 #include "Geometry.h"
 #include "d3dUtil.h"
 
+#pragma warning(disable: 26812)
+
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
@@ -285,18 +287,20 @@ HRESULT GpuWavesRender::InitResource(ID3D11Device* device, const std::wstring& t
 
 	// 创建计算着色器
 	ComPtr<ID3DBlob> blob;
-	hr = CreateShaderFromFile(L"HLSL\\WavesUpdate_CS.cso", L"HLSL\\WavesUpdate_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf());
-	if (FAILED(hr))
-		return hr;
-	hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesUpdateCS.GetAddressOf());
-	if (FAILED(hr))
-		return hr;
 	hr = CreateShaderFromFile(L"HLSL\\WavesDisturb_CS.cso", L"HLSL\\WavesDisturb_CS.hlsl", "CS", "cs_5_0", blob.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
 	hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesDisturbCS.GetAddressOf());
 	if (FAILED(hr))
 		return hr;
+
+	hr = CreateShaderFromFile(L"HLSL\\WavesUpdate_CS.cso", L"HLSL\\WavesUpdate_CS.hlsl", "CS", "cs_5_0", blob.ReleaseAndGetAddressOf());
+	if (FAILED(hr))
+		return hr;
+	hr = device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, m_pWavesUpdateCS.GetAddressOf());
+	if (FAILED(hr))
+		return hr;
+
 
 	// 创建缓存计算结果的资源
 	D3D11_TEXTURE2D_DESC texDesc;

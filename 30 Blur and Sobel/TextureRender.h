@@ -31,7 +31,6 @@ public:
 	HRESULT InitResource(ID3D11Device* device,
 		int texWidth,
 		int texHeight,
-		bool enableUAV = false,
 		bool generateMips = false);
 
 	// 开始对当前纹理进行渲染

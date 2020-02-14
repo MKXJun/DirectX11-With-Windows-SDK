@@ -6,7 +6,7 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texHeight, bool enableUAV, bool generateMips)
+HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texHeight, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
 	m_pOutputTextureSRV.Reset();
@@ -33,10 +33,6 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	texDesc.Usage = D3D11_USAGE_DEFAULT;
 	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	if (enableUAV)
-	{
-		texDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
-	}
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
@@ -73,24 +69,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 		return hr;
 
 	// ******************
-	// 4. 如果需要，则创建纹理对应的无序访问视图
-	//
-
-	if (enableUAV)
-	{
-		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-		uavDesc.Format = texDesc.Format;
-		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-		uavDesc.Texture2D.MipSlice = 0;
-
-		hr = device->CreateUnorderedAccessView(texture.Get(), &uavDesc,
-			m_pOutputTextureUAV.GetAddressOf());
-		if (FAILED(hr))
-			return hr;
-	}
-
-	// ******************
-	// 5. 创建与纹理等宽高的深度/模板缓冲区和对应的视图
+	// 4. 创建与纹理等宽高的深度/模板缓冲区和对应的视图
 	//
 
 	texDesc.Width = texWidth;
@@ -122,7 +101,7 @@ HRESULT TextureRender::InitResource(ID3D11Device* device, int texWidth, int texH
 		return hr;
 
 	// ******************
-	// 6. 初始化视口
+	// 5. 初始化视口
 	//
 	m_OutputViewPort.TopLeftX = 0.0f;
 	m_OutputViewPort.TopLeftY = 0.0f;

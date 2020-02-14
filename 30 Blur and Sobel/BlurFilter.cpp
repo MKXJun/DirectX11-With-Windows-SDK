@@ -174,7 +174,7 @@ void BlurFilter::Execute(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourc
 	deviceContext->Dispatch(m_Width, (UINT)ceilf(m_Height / 256.0f), 1);
 	deviceContext->CSSetUnorderedAccessViews(0, 1, nullUAV, nullptr);
 
-	// 剩余次数模糊
+	// 剩余模糊次数
 	while (--blurTimes)
 	{
 		// 横向模糊

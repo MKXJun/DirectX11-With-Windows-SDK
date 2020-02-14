@@ -268,6 +268,7 @@ void GameApp::DrawScene()
 	// 滤波环节
 	if (m_EnableBlurMode)
 	{
+		// 高斯滤波
 		m_pBlurFilter->Execute(m_pd3dImmediateContext.Get(), m_pTextureRenderFinal->GetOutputTexture(),
 			nullptr, m_BlurTimes);
 		m_BasicEffect.Set2DRenderDefault(m_pd3dImmediateContext.Get());
@@ -278,6 +279,7 @@ void GameApp::DrawScene()
 	}
 	else
 	{
+		// Sobel滤波
 		m_pSobelFilter->Execute(m_pd3dImmediateContext.Get(), m_pTextureRenderFinal->GetOutputTexture());
 		m_BasicEffect.SetRenderComposite(m_pd3dImmediateContext.Get());
 		m_BasicEffect.SetTextureComposite(m_pSobelFilter->GetOutputTexture());
@@ -334,10 +336,10 @@ bool GameApp::InitResource()
 	// 初始化RTT渲染器、OIT渲染器
 	//
 	m_pTextureRenderMiddle = std::make_unique<TextureRender>();
-	HR(m_pTextureRenderMiddle->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, true));
+	HR(m_pTextureRenderMiddle->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight));
 
 	m_pTextureRenderFinal = std::make_unique<TextureRender>();
-	HR(m_pTextureRenderFinal->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, true));
+	HR(m_pTextureRenderFinal->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight));
 
 	m_pOITRender = std::make_unique<OITRender>();
 	HR(m_pOITRender->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, 4));
@@ -347,7 +349,6 @@ bool GameApp::InitResource()
 	//
 	m_pBlurFilter = std::make_unique<BlurFilter>();
 	HR(m_pBlurFilter->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight));
-	m_pBlurFilter->SetGaussianWeights(9, 20.0f);
 
 	m_pSobelFilter = std::make_unique<SobelFilter>();
 	HR(m_pSobelFilter->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight));

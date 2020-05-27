@@ -10,7 +10,7 @@
 #define GAMEOBJECT_H
 
 #include "Model.h"
-
+#include "Transform.h"
 
 class GameObject
 {
@@ -19,10 +19,19 @@ public:
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	GameObject();
+	GameObject() = default;
+	~GameObject() = default;
 
-	// 获取位置
-	DirectX::XMFLOAT3 GetPosition() const;
+	GameObject(const GameObject&) = default;
+	GameObject& operator=(const GameObject&) = default;
+
+	GameObject(GameObject&&) = default;
+	GameObject& operator=(GameObject&&) = default;
+
+	// 获取物体变换
+	Transform& GetTransform();
+	// 获取物体变换
+	const Transform& GetTransform() const;
 	
 	//
 	// 获取包围盒
@@ -40,13 +49,6 @@ public:
 	void SetModel(const Model& model);
 
 	//
-	// 设置矩阵
-	//
-
-	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
-
-	//
 	// 绘制
 	//
 
@@ -62,9 +64,8 @@ public:
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	Model m_Model;												// 模型
-	DirectX::XMFLOAT4X4 m_WorldMatrix;							// 世界矩阵
-
+	Model m_Model = {};												// 模型
+	Transform m_Transform = {};										// 物体变换
 };
 
 

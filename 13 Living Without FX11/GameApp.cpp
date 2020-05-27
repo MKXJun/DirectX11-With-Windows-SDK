@@ -137,8 +137,8 @@ void GameApp::UpdateScene(float dt)
 
 		// 仅在第一人称模式移动箱子
 		if (m_CameraMode == CameraMode::FirstPerson)
-			m_WoodCrate.SetWorldMatrix(XMMatrixTranslation(adjustedPos.x, adjustedPos.y, adjustedPos.z));
-		// 视野旋转，防止开始的差值过大导致的突然旋转
+			m_WoodCrate.GetTransform().SetPosition(adjustedPos);
+		
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 	}
@@ -148,16 +148,18 @@ void GameApp::UpdateScene(float dt)
 		// 第三人称摄像机的操作
 		//
 
-		cam3rd->SetTarget(m_WoodCrate.GetPosition());
+		cam3rd->SetTarget(m_WoodCrate.GetTransform().GetPosition());
 
 		// 绕物体旋转
-		cam3rd->RotateX(mouseState.y * dt * 1.25f);
-		cam3rd->RotateY(mouseState.x * dt * 1.25f);
-		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam3rd->RotateX(mouseState.y * dt * 1.25f);
+			cam3rd->RotateY(mouseState.x * dt * 1.25f);
+			cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+		}
 	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 
@@ -175,7 +177,7 @@ void GameApp::UpdateScene(float dt)
 			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam1st;
 		}
-		XMFLOAT3 pos = m_WoodCrate.GetPosition();
+		XMFLOAT3 pos = m_WoodCrate.GetTransform().GetPosition();
 		XMFLOAT3 target = (!pos.x && !pos.z ? XMFLOAT3{ 0.0f, 0.0f, 1.0f } : XMFLOAT3{});
 		cam1st->LookAt(pos, target, XMFLOAT3(0.0f, 1.0f, 0.0f));
 
@@ -189,10 +191,11 @@ void GameApp::UpdateScene(float dt)
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
-		XMFLOAT3 target = m_WoodCrate.GetPosition();
+		XMFLOAT3 target = m_WoodCrate.GetTransform().GetPosition();
 		cam3rd->SetTarget(target);
-		cam3rd->SetDistance(8.0f);
-		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
+		cam3rd->SetDistance(5.0f);
+		cam3rd->SetDistanceMinMax(2.0f, 14.0f);
+		cam3rd->SetRotationX(XM_PIDIV2);
 
 		m_CameraMode = CameraMode::ThirdPerson;
 	}
@@ -205,7 +208,7 @@ void GameApp::UpdateScene(float dt)
 			m_pCamera = cam1st;
 		}
 		// 从箱子上方开始
-		XMFLOAT3 pos = m_WoodCrate.GetPosition();
+		XMFLOAT3 pos = m_WoodCrate.GetTransform().GetPosition();
 		XMFLOAT3 look{ 0.0f, 0.0f, 1.0f };
 		XMFLOAT3 up{ 0.0f, 1.0f, 0.0f };
 		pos.y += 3;
@@ -343,7 +346,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf()));
 	m_WoodCrate.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateBox());
 	// 抬起高度避免深度缓冲区资源争夺
-	m_WoodCrate.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 5.0f));
+	m_WoodCrate.GetTransform().SetPosition(0.0f, 0.01f, 5.0f);
 	m_WoodCrate.SetTexture(texture.Get());
 	m_WoodCrate.SetMaterial(material);
 	
@@ -355,7 +358,7 @@ bool GameApp::InitResource()
 		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
 	m_Floor.SetMaterial(material);
-	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Floor.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
 
 	// 初始化墙体
 	m_Walls.resize(5);
@@ -379,11 +382,16 @@ bool GameApp::InitResource()
 	m_Walls[3].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	m_Walls[4].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	
-	m_Walls[0].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(-7.0f, 3.0f, 10.0f));
-	m_Walls[1].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(7.0f, 3.0f, 10.0f));
-	m_Walls[2].SetWorldMatrix(XMMatrixRotationY(-XM_PIDIV2) * XMMatrixRotationZ(XM_PIDIV2) * XMMatrixTranslation(10.0f, 3.0f, 0.0f));
-	m_Walls[3].SetWorldMatrix(XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, -10.0f));
-	m_Walls[4].SetWorldMatrix(XMMatrixRotationY(XM_PIDIV2) * XMMatrixRotationZ(-XM_PIDIV2) * XMMatrixTranslation(-10.0f, 3.0f, 0.0f));
+	m_Walls[0].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[0].GetTransform().SetPosition(-7.0f, 3.0f, 10.0f);
+	m_Walls[1].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[1].GetTransform().SetPosition(7.0f, 3.0f, 10.0f);
+	m_Walls[2].GetTransform().SetRotation(-XM_PIDIV2, XM_PIDIV2, 0.0f);
+	m_Walls[2].GetTransform().SetPosition(10.0f, 3.0f, 0.0f);
+	m_Walls[3].GetTransform().SetRotation(-XM_PIDIV2, XM_PI, 0.0f);
+	m_Walls[3].GetTransform().SetPosition(0.0f, 3.0f, -10.0f);
+	m_Walls[4].GetTransform().SetRotation(-XM_PIDIV2, -XM_PIDIV2, 0.0f);
+	m_Walls[4].GetTransform().SetPosition(-10.0f, 3.0f, 0.0f);
 
 	// 初始化镜面
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -392,7 +400,8 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Mirror.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
-	m_Mirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
+	m_Mirror.GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Mirror.GetTransform().SetPosition(0.0f, 3.0f, 10.0f);
 	m_Mirror.SetTexture(texture.Get());
 	m_Mirror.SetMaterial(material);
 
@@ -403,14 +412,15 @@ bool GameApp::InitResource()
 	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
-	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
-	
+	camera->SetRotationX(XM_PIDIV2);
+
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 
 	m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
+
 	m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());
 
 	// ******************

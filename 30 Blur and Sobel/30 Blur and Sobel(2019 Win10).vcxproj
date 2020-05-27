@@ -169,6 +169,7 @@
     <ClInclude Include="ScreenGrab.h" />
     <ClInclude Include="SobelFilter.h" />
     <ClInclude Include="TextureRender.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WavesRender.h" />
     <ClInclude Include="WICTextureLoader.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="ScreenGrab.cpp" />
     <ClCompile Include="SobelFilter.cpp" />
     <ClCompile Include="TextureRender.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WavesRender.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />

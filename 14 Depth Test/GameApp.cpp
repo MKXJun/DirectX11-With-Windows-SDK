@@ -123,9 +123,12 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam1st->Pitch(mouseState.y * dt * 1.25f);
+			cam1st->RotateY(mouseState.x * dt * 1.25f);
+		}
 	}
 	else if (m_CameraMode == CameraMode::ThirdPerson)
 	{
@@ -133,7 +136,7 @@ void GameApp::UpdateScene(float dt)
 		// 第三人称摄像机的操作
 		//
 
-		cam3rd->SetTarget(m_BoltAnim.GetPosition());
+		cam3rd->SetTarget(m_BoltAnim.GetTransform().GetPosition());
 
 		// 绕物体旋转
 		cam3rd->RotateX(mouseState.y * dt * 1.25f);
@@ -141,8 +144,6 @@ void GameApp::UpdateScene(float dt)
 		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
 	// 重置滚轮值
@@ -159,12 +160,11 @@ void GameApp::UpdateScene(float dt)
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
-		XMFLOAT3 target = m_BoltAnim.GetPosition();
+		XMFLOAT3 target = m_BoltAnim.GetTransform().GetPosition();
 		cam3rd->SetTarget(target);
-		cam3rd->SetDistance(8.0f);
-		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
-		// 初始化时朝物体后方看
-		// cam3rd->RotateY(-XM_PIDIV2);
+		cam3rd->SetDistance(5.0f);
+		cam3rd->SetDistanceMinMax(2.0f, 14.0f);
+		cam3rd->SetRotationX(XM_PIDIV2);
 
 		m_CameraMode = CameraMode::ThirdPerson;
 	}
@@ -177,7 +177,7 @@ void GameApp::UpdateScene(float dt)
 			m_pCamera = cam1st;
 		}
 		// 从闪电动画上方开始
-		XMFLOAT3 pos = m_BoltAnim.GetPosition();
+		XMFLOAT3 pos = m_BoltAnim.GetTransform().GetPosition();
 		XMFLOAT3 look{ 0.0f, 0.0f, 1.0f };
 		XMFLOAT3 up{ 0.0f, 1.0f, 0.0f };
 		pos.y += 3;
@@ -340,14 +340,14 @@ bool GameApp::InitResource()
 
 	m_BoltAnim.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateCylinderNoCap(4.0f, 4.0f));
 	// 抬起高度避免深度缓冲区资源争夺
-	m_BoltAnim.SetWorldMatrix(XMMatrixTranslation(0.0f, 2.01f, 0.0f));
+	m_BoltAnim.GetTransform().SetPosition(0.0f, 2.01f, 0.0f);
 	m_BoltAnim.SetMaterial(material);
 	
 	// 初始化木盒
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WoodCrate.dds", nullptr, texture.GetAddressOf()));
 	m_WoodCrate.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateBox());
 	// 抬起高度避免深度缓冲区资源争夺
-	m_WoodCrate.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 0.0f));
+	m_WoodCrate.GetTransform().SetPosition(0.0f, 0.01f, 0.0f);
 	m_WoodCrate.SetTexture(texture.Get());
 	m_WoodCrate.SetMaterial(material);
 	
@@ -358,7 +358,7 @@ bool GameApp::InitResource()
 		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
 	m_Floor.SetMaterial(material);
-	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Floor.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
 
 	// 初始化墙体
 	m_Walls.resize(5);
@@ -382,11 +382,16 @@ bool GameApp::InitResource()
 	m_Walls[3].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	m_Walls[4].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	
-	m_Walls[0].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(-7.0f, 3.0f, 10.0f));
-	m_Walls[1].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(7.0f, 3.0f, 10.0f));
-	m_Walls[2].SetWorldMatrix(XMMatrixRotationY(-XM_PIDIV2) * XMMatrixRotationZ(XM_PIDIV2) * XMMatrixTranslation(10.0f, 3.0f, 0.0f));
-	m_Walls[3].SetWorldMatrix(XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, -10.0f));
-	m_Walls[4].SetWorldMatrix(XMMatrixRotationY(XM_PIDIV2) * XMMatrixRotationZ(-XM_PIDIV2) * XMMatrixTranslation(-10.0f, 3.0f, 0.0f));
+	m_Walls[0].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[0].GetTransform().SetPosition(-7.0f, 3.0f, 10.0f);
+	m_Walls[1].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[1].GetTransform().SetPosition(7.0f, 3.0f, 10.0f);
+	m_Walls[2].GetTransform().SetRotation(-XM_PIDIV2, XM_PIDIV2, 0.0f);
+	m_Walls[2].GetTransform().SetPosition(10.0f, 3.0f, 0.0f);
+	m_Walls[3].GetTransform().SetRotation(-XM_PIDIV2, XM_PI, 0.0f);
+	m_Walls[3].GetTransform().SetPosition(0.0f, 3.0f, -10.0f);
+	m_Walls[4].GetTransform().SetRotation(-XM_PIDIV2, -XM_PIDIV2, 0.0f);
+	m_Walls[4].GetTransform().SetPosition(-10.0f, 3.0f, 0.0f);
 
 	// 初始化镜面
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -395,7 +400,8 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Mirror.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
-	m_Mirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
+	m_Mirror.GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Mirror.GetTransform().SetPosition(0.0f, 3.0f, 10.0f);
 	m_Mirror.SetTexture(texture.Get());
 	m_Mirror.SetMaterial(material);
 
@@ -408,6 +414,8 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
 	camera->SetDistance(5.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
+	camera->SetRotationX(XM_PIDIV2);
+
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 

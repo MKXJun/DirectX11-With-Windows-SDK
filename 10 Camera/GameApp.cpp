@@ -104,7 +104,8 @@ void GameApp::UpdateScene(float dt)
 	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(m_pCamera);
 
-	
+	Transform& woodCrateTransform = m_WoodCrate.GetTransform();
+
 	if (m_CameraMode == CameraMode::FirstPerson || m_CameraMode == CameraMode::Free)
 	{
 		// 第一人称/自由摄像机的操作
@@ -129,33 +130,36 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 将位置限制在[-8.9f, 8.9f]的区域内
+		// 将摄像机位置限制在[-8.9, 8.9]x[-8.9, 8.9]x[0.0, 8.9]的区域内
 		// 不允许穿地
 		XMFLOAT3 adjustedPos;
 		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorSet(-8.9f, 0.0f, -8.9f, 0.0f), XMVectorReplicate(8.9f)));
 		cam1st->SetPosition(adjustedPos);
 
-		// 仅在第一人称模式移动箱子
+		// 仅在第一人称模式移动摄像机的同时移动箱子
 		if (m_CameraMode == CameraMode::FirstPerson)
-			m_WoodCrate.SetWorldMatrix(XMMatrixTranslation(adjustedPos.x, adjustedPos.y, adjustedPos.z));
-		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+			woodCrateTransform.SetPosition(adjustedPos);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam1st->Pitch(mouseState.y * dt * 2.5f);
+			cam1st->RotateY(mouseState.x * dt * 2.5f);
+		}
+		
 	}
 	else if (m_CameraMode == CameraMode::ThirdPerson)
 	{
 		// 第三人称摄像机的操作
 
-		cam3rd->SetTarget(m_WoodCrate.GetPosition());
+		cam3rd->SetTarget(woodCrateTransform.GetPosition());
 
 		// 绕物体旋转
-		cam3rd->RotateX(mouseState.y * dt * 1.25f);
-		cam3rd->RotateY(mouseState.x * dt * 1.25f);
+		cam3rd->RotateX(mouseState.y * dt * 2.5f);
+		cam3rd->RotateY(mouseState.x * dt * 2.5f);
 		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 	}
 
 	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	XMStoreFloat4(&m_CBFrame.eyePos, m_pCamera->GetPositionXM());
 	m_CBFrame.view = XMMatrixTranspose(m_pCamera->GetViewXM());
 
@@ -172,7 +176,7 @@ void GameApp::UpdateScene(float dt)
 			m_pCamera = cam1st;
 		}
 
-		cam1st->LookTo(m_WoodCrate.GetPosition(),
+		cam1st->LookTo(woodCrateTransform.GetPosition(),
 			XMFLOAT3(0.0f, 0.0f, 1.0f),
 			XMFLOAT3(0.0f, 1.0f, 0.0f));
 		
@@ -186,7 +190,7 @@ void GameApp::UpdateScene(float dt)
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
-		XMFLOAT3 target = m_WoodCrate.GetPosition();
+		XMFLOAT3 target = woodCrateTransform.GetPosition();
 		cam3rd->SetTarget(target);
 		cam3rd->SetDistance(8.0f);
 		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
@@ -202,7 +206,7 @@ void GameApp::UpdateScene(float dt)
 			m_pCamera = cam1st;
 		}
 		// 从箱子上方开始
-		XMFLOAT3 pos = m_WoodCrate.GetPosition();
+		XMFLOAT3 pos = woodCrateTransform.GetPosition();
 		XMFLOAT3 to = XMFLOAT3(0.0f, 0.0f, 1.0f);
 		XMFLOAT3 up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		pos.y += 3;
@@ -321,7 +325,8 @@ bool GameApp::InitResource()
 	m_Floor.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
-	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Floor.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
+	
 	
 	// 初始化墙体
 	m_Walls.resize(4);
@@ -331,9 +336,9 @@ bool GameApp::InitResource()
 	{
 		m_Walls[i].SetBuffer(m_pd3dDevice.Get(),
 			Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
-		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
-			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
-		m_Walls[i].SetWorldMatrix(world);
+		Transform& transform = m_Walls[i].GetTransform();
+		transform.SetRotation(-XM_PIDIV2, XM_PIDIV2 * i, 0.0f);
+		transform.SetPosition(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		m_Walls[i].SetTexture(texture.Get());
 	}
 		
@@ -440,12 +445,16 @@ bool GameApp::InitResource()
 GameApp::GameObject::GameObject()
 	: m_IndexCount(), m_VertexStride()
 {
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 }
 
-DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
+Transform& GameApp::GameObject::GetTransform()
 {
-	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
+	return m_Transform;
+}
+
+const Transform& GameApp::GameObject::GetTransform() const
+{
+	return m_Transform;
 }
 
 template<class VertexType, class IndexType>
@@ -491,16 +500,6 @@ void GameApp::GameObject::SetTexture(ID3D11ShaderResourceView * texture)
 	m_pTexture = texture;
 }
 
-void GameApp::GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
-{
-	m_WorldMatrix = world;
-}
-
-void XM_CALLCONV GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
-{
-	XMStoreFloat4x4(&m_WorldMatrix, world);
-}
-
 void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 {
 	// 设置顶点/索引缓冲区
@@ -514,8 +513,8 @@ void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
 	CBChangesEveryDrawing cbDrawing;
 
-	// 内部进行转置，这样外部就不需要提前转置了
-	XMMATRIX W = XMLoadFloat4x4(&m_WorldMatrix);
+	// 内部进行转置
+	XMMATRIX W = m_Transform.GetLocalToWorldMatrixXM();
 	cbDrawing.world = XMMatrixTranspose(W);
 	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 

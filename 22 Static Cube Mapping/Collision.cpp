@@ -86,22 +86,21 @@ bool XM_CALLCONV Ray::Hit(FXMVECTOR V0, FXMVECTOR V1, FXMVECTOR V2, float * pOut
 }
 
 
-
-Collision::WireFrameData Collision::CreateBoundingBox(const DirectX::BoundingBox & box, const DirectX::XMFLOAT4 & color)
+Collision::WireFrameData Collision::CreateBoundingBox(const DirectX::BoundingBox& box, const DirectX::XMFLOAT4& color)
 {
 	XMFLOAT3 corners[8];
 	box.GetCorners(corners);
 	return CreateFromCorners(corners, color);
 }
 
-Collision::WireFrameData Collision::CreateBoundingOrientedBox(const DirectX::BoundingOrientedBox & box, const DirectX::XMFLOAT4 & color)
+Collision::WireFrameData Collision::CreateBoundingOrientedBox(const DirectX::BoundingOrientedBox& box, const DirectX::XMFLOAT4& color)
 {
 	XMFLOAT3 corners[8];
 	box.GetCorners(corners);
 	return CreateFromCorners(corners, color);
 }
 
-Collision::WireFrameData Collision::CreateBoundingSphere(const DirectX::BoundingSphere & sphere, const DirectX::XMFLOAT4 & color, int slices)
+Collision::WireFrameData Collision::CreateBoundingSphere(const DirectX::BoundingSphere& sphere, const DirectX::XMFLOAT4& color, int slices)
 {
 	WireFrameData data;
 	XMVECTOR center = XMLoadFloat3(&sphere.Center), posVec;
@@ -136,7 +135,7 @@ Collision::WireFrameData Collision::CreateBoundingSphere(const DirectX::Bounding
 	return data;
 }
 
-Collision::WireFrameData Collision::CreateBoundingFrustum(const DirectX::BoundingFrustum & frustum, const DirectX::XMFLOAT4 & color)
+Collision::WireFrameData Collision::CreateBoundingFrustum(const DirectX::BoundingFrustum& frustum, const DirectX::XMFLOAT4& color)
 {
 	XMFLOAT3 corners[8];
 	frustum.GetCorners(corners);
@@ -144,7 +143,7 @@ Collision::WireFrameData Collision::CreateBoundingFrustum(const DirectX::Boundin
 }
 
 std::vector<XMMATRIX> XM_CALLCONV Collision::FrustumCulling(
-	const std::vector<XMMATRIX>& Matrices,const BoundingBox& localBox, FXMMATRIX View, CXMMATRIX Proj)
+	const std::vector<XMMATRIX>& Matrices, const BoundingBox& localBox, FXMMATRIX View, CXMMATRIX Proj)
 {
 	std::vector<DirectX::XMMATRIX> acceptedData;
 
@@ -169,7 +168,7 @@ std::vector<XMMATRIX> XM_CALLCONV Collision::FrustumCulling(
 }
 
 std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling2(
-	const std::vector<DirectX::XMMATRIX>& Matrices,const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+	const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
 {
 	std::vector<DirectX::XMMATRIX> acceptedData;
 
@@ -191,7 +190,7 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling2(
 }
 
 std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
-	const std::vector<DirectX::XMMATRIX>& Matrices,const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+	const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
 {
 	std::vector<DirectX::XMMATRIX> acceptedData;
 
@@ -212,7 +211,76 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 	return acceptedData;
 }
 
-Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4 & color)
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+
+	BoundingOrientedBox localOrientedBox, orientedBox;
+	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		// 将有向包围盒从局部坐标系变换到视锥体所在的局部坐标系(观察坐标系)中
+		localOrientedBox.Transform(orientedBox, W * View);
+		// 相交检测
+		if (frustum.Intersects(orientedBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling2(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum, localFrustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+	XMMATRIX InvView = XMMatrixInverse(nullptr, View);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		XMMATRIX InvWorld = XMMatrixInverse(nullptr, W);
+
+		// 将视锥体从观察坐标系(或局部坐标系)变换到物体所在的局部坐标系中
+		frustum.Transform(localFrustum, InvView * InvWorld);
+		// 相交检测
+		if (localFrustum.Intersects(localBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling3(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+
+	BoundingOrientedBox localOrientedBox, orientedBox;
+	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		// 将有向包围盒从局部坐标系变换到视锥体所在的局部坐标系(观察坐标系)中
+		localOrientedBox.Transform(orientedBox, W * View);
+		// 相交检测
+		if (frustum.Intersects(orientedBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
+Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4& color)
 {
 	WireFrameData data;
 	// AABB/OBB顶点索引如下    视锥体顶点索引如下
@@ -227,8 +295,8 @@ Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&c
 		data.vertexVec.push_back({ corners[i], color });
 	for (int i = 0; i < 4; ++i)
 	{
-		data.indexVec.push_back(i + 4);
 		data.indexVec.push_back(i);
+		data.indexVec.push_back(i + 4);
 
 		data.indexVec.push_back(i);
 		data.indexVec.push_back((i + 1) % 4);
@@ -238,4 +306,3 @@ Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&c
 	}
 	return data;
 }
-

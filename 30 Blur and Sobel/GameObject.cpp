@@ -9,25 +9,20 @@ struct InstancedData
 	XMMATRIX worldInvTranspose;
 };
 
-GameObject::GameObject()
-	: m_Capacity(),
-	m_WorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+Transform& GameObject::GetTransform()
 {
+	return m_Transform;
 }
 
-XMFLOAT3 GameObject::GetPosition() const
+const Transform& GameObject::GetTransform() const
 {
-	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
+	return m_Transform;
 }
 
 BoundingBox GameObject::GetBoundingBox() const
 {
 	BoundingBox box;
-	m_Model.boundingBox.Transform(box, XMLoadFloat4x4(&m_WorldMatrix));
+	m_Model.boundingBox.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
 	return box;
 }
 
@@ -35,7 +30,7 @@ BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
 {
 	BoundingOrientedBox box;
 	BoundingOrientedBox::CreateFromBoundingBox(box, m_Model.boundingBox);
-	box.Transform(box, XMLoadFloat4x4(&m_WorldMatrix));
+	box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
 	return box;
 }
 
@@ -50,7 +45,7 @@ size_t GameObject::GetCapacity() const
 	return m_Capacity;
 }
 
-void GameObject::ResizeBuffer(ID3D11Device* device, size_t count)
+void GameObject::ResizeBuffer(ID3D11Device * device, size_t count)
 {
 	// 设置实例缓冲区描述
 	D3D11_BUFFER_DESC vbd;
@@ -69,29 +64,19 @@ void GameObject::ResizeBuffer(ID3D11Device* device, size_t count)
 
 
 
-void GameObject::SetModel(Model&& model)
+void GameObject::SetModel(Model && model)
 {
 	std::swap(m_Model, model);
 	model.modelParts.clear();
 	model.boundingBox = BoundingBox();
 }
 
-void GameObject::SetModel(const Model& model)
+void GameObject::SetModel(const Model & model)
 {
 	m_Model = model;
 }
 
-void GameObject::SetWorldMatrix(const XMFLOAT4X4& world)
-{
-	m_WorldMatrix = world;
-}
-
-void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
-{
-	XMStoreFloat4x4(&m_WorldMatrix, world);
-}
-
-void GameObject::Draw(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
+void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
 {
 	UINT strides = m_Model.vertexStride;
 	UINT offsets = 0;
@@ -103,17 +88,17 @@ void GameObject::Draw(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
-		effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+		effect.SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
 		effect.SetTextureDiffuse(part.texDiffuse.Get());
 		effect.SetMaterial(part.material);
-
+		
 		effect.Apply(deviceContext);
 
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);
 	}
 }
 
-void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const std::vector<DirectX::XMMATRIX>& data)
+void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const std::vector<Transform>& data)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	UINT numInsts = (UINT)data.size();
@@ -128,10 +113,11 @@ void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& 
 	HR(deviceContext->Map(m_pInstancedBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 
 	InstancedData* iter = reinterpret_cast<InstancedData*>(mappedData.pData);
-	for (auto& mat : data)
+	for (auto& t : data)
 	{
-		iter->world = XMMatrixTranspose(mat);
-		iter->worldInvTranspose = XMMatrixInverse(nullptr, mat);	// 两次转置抵消
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		iter->world = XMMatrixTranspose(W);
+		iter->worldInvTranspose = XMMatrixInverse(nullptr, W);	// 两次转置抵消
 		iter++;
 	}
 
@@ -156,6 +142,7 @@ void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& 
 		deviceContext->DrawIndexedInstanced(part.indexCount, numInsts, 0, 0, 0);
 	}
 }
+
 
 void GameObject::SetDebugObjectName(const std::string& name)
 {

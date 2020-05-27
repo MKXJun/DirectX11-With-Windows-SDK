@@ -37,8 +37,7 @@ private:
 
 	GameObject m_Trees;										    // 树
 	GameObject m_Ground;										// 地面
-	std::vector<DirectX::XMMATRIX> m_InstancedData;			    // 树的实例数据
-	Collision::WireFrameData m_TreeBoxData;					    // 树包围盒线框数据
+	std::vector<Transform> m_InstancedData;						// 树的实例数据
 
 	BasicEffect m_BasicEffect;								    // 对象渲染特效管理
 	ScreenFadeEffect m_ScreenFadeEffect;						// 屏幕淡入淡出特效管理

@@ -116,9 +116,12 @@ void GameApp::UpdateScene(float dt)
 	if (keyState.IsKeyDown(Keyboard::D))
 		cam1st->Strafe(dt * 3.0f);
 
-	// 视野旋转，防止开始的差值过大导致的突然旋转
-	cam1st->Pitch(mouseState.y * dt * 1.25f);
-	cam1st->RotateY(mouseState.x * dt * 1.25f);
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam1st->Pitch(mouseState.y * dt * 1.25f);
+		cam1st->RotateY(mouseState.x * dt * 1.25f);
+	}
 
 	// ******************
 	// 更新摄像机相关
@@ -131,9 +134,7 @@ void GameApp::UpdateScene(float dt)
 		XMVectorSet(-119.9f, 0.0f, -119.9f, 0.0f), XMVectorSet(119.9f, 99.9f, 119.9f, 0.0f)));
 	cam1st->SetPosition(adjustedPos);
 
-	// 更新观察矩阵
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
 	// ******************
@@ -169,7 +170,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 统计实际绘制的物体数目
-	std::vector<XMMATRIX> acceptedData;
+	std::vector<Transform> acceptedData;
 	// 是否开启视锥体裁剪
 	if (m_EnableFrustumCulling)
 	{
@@ -177,7 +178,7 @@ void GameApp::DrawScene()
 			m_pCamera->GetViewXM(), m_pCamera->GetProjXM());
 	}
 	// 确定使用的数据集
-	const std::vector<XMMATRIX>& refData = m_EnableFrustumCulling ? acceptedData : m_InstancedData;
+	const std::vector<Transform>& refData = m_EnableFrustumCulling ? acceptedData : m_InstancedData;
 	// 是否开启硬件实例化
 	if (m_EnableInstancing)
 	{
@@ -189,9 +190,9 @@ void GameApp::DrawScene()
 	{
 		// 遍历的形式逐个绘制
 		m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
-		for (FXMMATRIX mat : refData)
+		for (const Transform& t : refData)
 		{
-			m_Trees.SetWorldMatrix(mat);
+			m_Trees.GetTransform() = t;
 			m_Trees.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 		}
 	}
@@ -244,11 +245,7 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(
-		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	camera->UpdateViewMatrix();
+	camera->LookTo(XMFLOAT3(), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 
@@ -290,32 +287,34 @@ void GameApp::CreateRandomTrees()
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 	
 	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();
-	// 获取树包围盒顶点
-	m_TreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+
 	// 让树木底部紧贴地面位于y = -2的平面
 	treeBox.Transform(treeBox, S);
-	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
+	float Ty = -(treeBox.Center.y - treeBox.Extents.y + 2.0f);
 	// 随机生成256颗随机朝向的树
+	m_InstancedData.resize(256);
+	m_Trees.ResizeBuffer(m_pd3dDevice.Get(), 256);
+
 	float theta = 0.0f;
+	int pos = 0;
 	for (int i = 0; i < 16; ++i)
 	{
 		// 取5-125的半径放置随机的树
 		for (int j = 0; j < 4; ++j)
 		{
 			// 距离越远，树木越多
-			for (int k = 0; k < 2 * j + 1; ++k)
+			for (int k = 0; k < 2 * j + 1; ++k, ++pos)
 			{
 				float radius = (float)(rand() % 30 + 30 * j + 5);
 				float randomRad = rand() % 256 / 256.0f * XM_2PI / 16;
-				XMMATRIX T1 = XMMatrixTranslation(radius * cosf(theta + randomRad), 0.0f, radius * sinf(theta + randomRad));
-				XMMATRIX R = XMMatrixRotationY(rand() % 256 / 256.0f * XM_2PI);
-				XMMATRIX World = S * R * T0 * T1;
-				m_InstancedData.push_back(World);
+				m_InstancedData[pos].SetScale(0.015f, 0.015f, 0.015f);
+				m_InstancedData[pos].SetRotation(0.0f, rand() % 256 / 256.0f * XM_2PI, 0.0f);
+				m_InstancedData[pos].SetPosition(radius * cosf(theta + randomRad), Ty, radius * sinf(theta + randomRad));
 			}
 		}
 		theta += XM_2PI / 16;
 	}
 
-	m_Trees.ResizeBuffer(m_pd3dDevice.Get(), 256);
+	
 }
 

@@ -10,9 +10,7 @@
 #define GAMEOBJECT_H
 
 #include "Model.h"
-
-
-
+#include "Transform.h"
 
 class GameObject
 {
@@ -21,10 +19,19 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 
-	GameObject();
+	GameObject() = default;
+	~GameObject() = default;
 
-	// 获取位置
-	DirectX::XMFLOAT3 GetPosition() const;
+	GameObject(const GameObject&) = default;
+	GameObject& operator=(const GameObject&) = default;
+
+	GameObject(GameObject&&) = default;
+	GameObject& operator=(GameObject&&) = default;
+
+	// 获取物体变换
+	Transform& GetTransform();
+	// 获取物体变换
+	const Transform& GetTransform() const;
 
 	//
 	// 获取包围盒
@@ -52,21 +59,14 @@ public:
 	void SetModel(const Model& model);
 
 	//
-	// 设置矩阵
-	//
-
-	void SetWorldMatrix(const DirectX::XMFLOAT4X4& world);
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
-
-	//
 	// 绘制
 	//
 
 	// 绘制对象
 	void Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect);
 	// 绘制实例
-	void DrawInstanced(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const std::vector<DirectX::XMMATRIX>& data);
-	
+	void DrawInstanced(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const std::vector<Transform>& data);
+
 	//
 	// 调试 
 	//
@@ -76,11 +76,11 @@ public:
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	Model m_Model;												    // 模型
-	DirectX::XMFLOAT4X4 m_WorldMatrix;							    // 世界矩阵
+	Model m_Model = {};											    // 模型
+	Transform m_Transform = {};										// 物体变换
 
-	ComPtr<ID3D11Buffer> m_pInstancedBuffer;						// 实例缓冲区
-	size_t m_Capacity;											    // 缓冲区容量
+	ComPtr<ID3D11Buffer> m_pInstancedBuffer = nullptr;				// 实例缓冲区
+	size_t m_Capacity = 0;										    // 缓冲区容量
 };
 
 

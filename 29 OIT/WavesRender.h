@@ -6,13 +6,14 @@
 // waves loader and render class.
 //***************************************************************************************
 
-#ifndef WAVESRENDER_H
-#define WAVESRENDER_H
+#ifndef WAVERENDER_H
+#define WAVERENDER_H
 
 #include <vector>
 #include <string>
 #include "Vertex.h"
 #include "Effects.h"
+#include "Transform.h"
 
 class WavesRender
 {
@@ -21,7 +22,9 @@ public:
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 	void SetMaterial(const Material& material);
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX world);
+
+	Transform& GetTransform();
+	const Transform& GetTransform() const;
 
 	UINT RowCount() const;
 	UINT ColumnCount() const;
@@ -49,31 +52,31 @@ protected:
 		float flowSpeedY);	// 水流Y方向速度
 
 protected:
-	UINT m_NumRows;						// 顶点行数
-	UINT m_NumCols;						// 顶点列数
+	UINT m_NumRows = 0;					// 顶点行数
+	UINT m_NumCols = 0;					// 顶点列数
 
-	UINT m_VertexCount;					// 顶点数目
-	UINT m_IndexCount;					// 索引数目
+	UINT m_VertexCount = 0;				// 顶点数目
+	UINT m_IndexCount = 0;				// 索引数目
 
-	DirectX::XMFLOAT4X4 m_WorldMatrix;	// 世界矩阵
-	DirectX::XMFLOAT2 m_TexOffset;		// 纹理坐标偏移
-	float m_TexU;						// 纹理坐标U方向最大值
-	float m_TexV;						// 纹理坐标V方向最大值
-	Material m_Material;				// 水面材质
+	Transform m_Transform = {};			// 水面变换
+	DirectX::XMFLOAT2 m_TexOffset = {};	// 纹理坐标偏移
+	float m_TexU = 0.0f;				// 纹理坐标U方向最大值
+	float m_TexV = 0.0f;				// 纹理坐标V方向最大值
+	Material m_Material = {};			// 水面材质
 
-	float m_FlowSpeedX;					// 水流X方向速度
-	float m_FlowSpeedY;					// 水流Y方向速度
-	float m_TimeStep;					// 时间步长
-	float m_SpatialStep;				// 空间步长
-	float m_AccumulateTime;				// 累积时间
+	float m_FlowSpeedX = 0.0f;			// 水流X方向速度
+	float m_FlowSpeedY = 0.0f;			// 水流Y方向速度
+	float m_TimeStep = 0.0f;			// 时间步长
+	float m_SpatialStep = 0.0f;			// 空间步长
+	float m_AccumulateTime = 0.0f;		// 累积时间
 
 	//
 	// 我们可以预先计算出来的常量
 	//
 
-	float m_K1;
-	float m_K2;
-	float m_K3;
+	float m_K1 = 0.0f;
+	float m_K2 = 0.0f;
+	float m_K3 = 0.0f;
 
 	
 };

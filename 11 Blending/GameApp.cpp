@@ -110,12 +110,15 @@ void GameApp::UpdateScene(float dt)
 	//
 
 	// 绕原点旋转
-	cam3rd->RotateX(mouseState.y * dt * 1.25f);
-	cam3rd->RotateY(mouseState.x * dt * 1.25f);
-	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam3rd->RotateX(mouseState.y * dt * 1.25f);
+		cam3rd->RotateY(mouseState.x * dt * 1.25f);
+		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	}
 
-	// 更新观察矩阵，并更新每帧缓冲区
-	m_pCamera->UpdateViewMatrix();
+	// 更新每帧缓冲区
 	m_CBFrame.eyePos = m_pCamera->GetPositionXM();
 	m_CBFrame.view = XMMatrixTranspose(m_pCamera->GetViewXM());
 	
@@ -159,9 +162,10 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
 
 	// 篱笆盒稍微抬起一点高度
-	m_WireFence.SetWorldMatrix(XMMatrixTranslation(2.0f, 0.01f, 0.0f));
+	Transform& wireFrameTransform = m_WireFence.GetTransform();
+	wireFrameTransform.SetPosition(2.0f, 0.01f, 0.0f);
 	m_WireFence.Draw(m_pd3dImmediateContext.Get());
-	m_WireFence.SetWorldMatrix(XMMatrixTranslation(-2.0f, 0.01f, 0.0f));
+	wireFrameTransform.SetPosition(-2.0f, 0.01f, 0.0f);
 	m_WireFence.Draw(m_pd3dImmediateContext.Get());
 	// 绘制了篱笆盒后再绘制水面
 	m_Water.Draw(m_pd3dImmediateContext.Get());
@@ -254,7 +258,7 @@ bool GameApp::InitResource()
 	m_Floor.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
-	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Floor.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
 	m_Floor.SetMaterial(material);
 
 	// 初始化墙体
@@ -265,10 +269,10 @@ bool GameApp::InitResource()
 	{
 		m_Walls[i].SetBuffer(m_pd3dDevice.Get(),
 			Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 1.5f)));
-		XMMATRIX world = XMMatrixRotationX(-XM_PIDIV2) * XMMatrixRotationY(XM_PIDIV2 * i)
-			* XMMatrixTranslation(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		m_Walls[i].SetMaterial(material);
-		m_Walls[i].SetWorldMatrix(world);
+		Transform& wallTransform = m_Walls[i].GetTransform();
+		wallTransform.SetRotation(-XM_PIDIV2, XM_PIDIV2 * i, 0.0f);
+		wallTransform.SetPosition(i % 2 ? -10.0f * (i - 2) : 0.0f, 3.0f, i % 2 == 0 ? -10.0f * (i - 1) : 0.0f);
 		m_Walls[i].SetTexture(texture.Get());
 	}
 		
@@ -291,8 +295,9 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
-	camera->SetDistance(5.0f);
+	camera->SetDistance(8.0f);
 	camera->SetDistanceMinMax(2.0f, 14.0f);
+	camera->SetRotationX(XM_PIDIV4);
 
 	// 初始化仅在窗口大小变动时修改的值
 	m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
@@ -383,18 +388,18 @@ bool GameApp::InitResource()
 GameApp::GameObject::GameObject()
 	: m_IndexCount(),
 	m_Material(),
-	m_VertexStride(),
-	m_WorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+	m_VertexStride()
 {
 }
 
-DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
+Transform& GameApp::GameObject::GetTransform()
 {
-	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
+	return m_Transform;
+}
+
+const Transform& GameApp::GameObject::GetTransform() const
+{
+	return m_Transform;
 }
 
 template<class VertexType, class IndexType>
@@ -445,15 +450,6 @@ void GameApp::GameObject::SetMaterial(const Material & material)
 	m_Material = material;
 }
 
-void GameApp::GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
-{
-	m_WorldMatrix = world;
-}
-
-void XM_CALLCONV GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
-{
-	XMStoreFloat4x4(&m_WorldMatrix, world);
-}
 
 void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 {
@@ -466,7 +462,7 @@ void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
-	XMMATRIX W = XMLoadFloat4x4(&m_WorldMatrix);
+	XMMATRIX W = m_Transform.GetLocalToWorldMatrixXM();
 	CBChangesEveryDrawing cbDrawing;
 	cbDrawing.world = XMMatrixTranspose(W);
 	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);

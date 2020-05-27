@@ -120,12 +120,13 @@ void GameApp::UpdateScene(float dt)
 	if (keyState.IsKeyDown(Keyboard::D))
 		cam1st->Strafe(dt * 3.0f);
 
-	// 视野旋转，防止开始的差值过大导致的突然旋转
-	cam1st->Pitch(mouseState.y * dt * 1.25f);
-	cam1st->RotateY(mouseState.x * dt * 1.25f);
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam1st->Pitch(mouseState.y * dt * 1.25f);
+		cam1st->RotateY(mouseState.x * dt * 1.25f);
+	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 
@@ -328,7 +329,7 @@ bool GameApp::InitResource()
 		nullptr,
 		model.modelParts[0].texDiffuse.GetAddressOf()));
 	m_Ground.SetModel(std::move(model));
-	m_Ground.SetWorldMatrix(XMMatrixTranslation(0.0f, -3.0f, 0.0f));
+	m_Ground.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
 	// 柱体
 	model.SetMesh(m_pd3dDevice.Get(),
 		Geometry::CreateCylinder(0.5f, 2.0f));
@@ -351,12 +352,8 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(
-		XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	// 初始化并更新观察矩阵、投影矩阵(摄像机将被固定)
-	camera->UpdateViewMatrix();
+	camera->LookTo(XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 
@@ -428,23 +425,24 @@ void GameApp::DrawScene(bool drawCenterSphere)
 	// 绘制五个圆柱
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
 	// 需要固定位置
-	static std::vector<XMMATRIX> cyliderWorlds = {
-		XMMatrixTranslation(0.0f, -1.99f, 0.0f),
-		XMMatrixTranslation(4.5f, -1.99f, 4.5f),
-		XMMatrixTranslation(-4.5f, -1.99f, 4.5f),
-		XMMatrixTranslation(-4.5f, -1.99f, -4.5f),
-		XMMatrixTranslation(4.5f, -1.99f, -4.5f)
+	static std::vector<Transform> cyliderWorlds = {
+		Transform(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(), XMFLOAT3(0.0f, -1.99f, 0.0f)),
+		Transform(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(), XMFLOAT3(4.5f, -1.99f, 4.5f)),
+		Transform(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(), XMFLOAT3(-4.5f, -1.99f, 4.5f)),
+		Transform(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(), XMFLOAT3(-4.5f, -1.99f, -4.5f)),
+		Transform(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(), XMFLOAT3(4.5f, -1.99f, -4.5f)),
 	};
 	m_Cylinder.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, cyliderWorlds);
 	
 	// 绘制五个圆球
-	std::vector<XMMATRIX> sphereWorlds = {
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f),
-		XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(2.5f * XMScalarCos(m_SphereRad), 0.0f, 2.5f * XMScalarSin(m_SphereRad))
+	std::vector<Transform> sphereWorlds = {
+		Transform(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(), XMFLOAT3(4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f)),
+		Transform(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(), XMFLOAT3(-4.5f, 0.5f * XMScalarSin(m_SphereRad), 4.5f)),
+		Transform(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(), XMFLOAT3(-4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f)),
+		Transform(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(), XMFLOAT3(4.5f, 0.5f * XMScalarSin(m_SphereRad), -4.5f)),
+		Transform(XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(), XMFLOAT3(2.5f * XMScalarCos(m_SphereRad), 0.0f, 2.5f * XMScalarSin(m_SphereRad))),
 	};
+
 	m_Sphere.DrawInstanced(m_pd3dImmediateContext.Get(), m_BasicEffect, sphereWorlds);
 
 	// 绘制天空盒

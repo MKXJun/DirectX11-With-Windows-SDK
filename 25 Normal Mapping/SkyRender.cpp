@@ -94,7 +94,7 @@ void SkyRender::SetDebugObjectName(const std::string& name)
 #endif
 }
 
-HRESULT SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
+HRESULT SkyRender::InitResource(ID3D11Device* device, float skySphereRadius)
 {
 	HRESULT hr;
 	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
@@ -131,7 +131,7 @@ HRESULT SkyRender::InitResource(ID3D11Device * device, float skySphereRadius)
 	return device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer);
 }
 
-HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::wstring & cubemapFilename,
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename,
 	float skySphereRadius, int dynamicCubeSize, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
@@ -151,7 +151,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContex
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
 
-HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContext * deviceContext, const std::vector<std::wstring> & cubemapFilenames,
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames,
 	float skySphereRadius, int dynamicCubeSize, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
@@ -171,7 +171,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, ID3D11DeviceContex
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
 
-void DynamicSkyRender::Cache(ID3D11DeviceContext * deviceContext, BasicEffect & effect)
+void DynamicSkyRender::Cache(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
 {
 	deviceContext->OMGetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.GetAddressOf());
 
@@ -180,30 +180,30 @@ void DynamicSkyRender::Cache(ID3D11DeviceContext * deviceContext, BasicEffect & 
 	effect.Apply(deviceContext);
 }
 
-void DynamicSkyRender::BeginCapture(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const XMFLOAT3 & pos,
+void DynamicSkyRender::BeginCapture(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const XMFLOAT3& pos,
 	D3D11_TEXTURECUBE_FACE face, float nearZ, float farZ)
 {
-	static XMVECTORF32 ups[6] = {
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +X
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// -X
-		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// +Y
-		{{ 0.0f, 0.0f, 1.0f, 0.0f }},	// -Y
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +Z
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }}	// -Z
+	static XMFLOAT3 ups[6] = {
+		{ 0.0f, 1.0f, 0.0f },	// +X
+		{ 0.0f, 1.0f, 0.0f },	// -X
+		{ 0.0f, 0.0f, -1.0f },	// +Y
+		{ 0.0f, 0.0f, 1.0f },	// -Y
+		{ 0.0f, 1.0f, 0.0f },	// +Z
+		{ 0.0f, 1.0f, 0.0f }	// -Z
 	};
 
-	static XMVECTORF32 looks[6] = {
-		{{ 1.0f, 0.0f, 0.0f, 0.0f }},	// +X
-		{{ -1.0f, 0.0f, 0.0f, 0.0f }},	// -X
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +Y
-		{{ 0.0f, -1.0f, 0.0f, 0.0f }},	// -Y
-		{{ 0.0f, 0.0f, 1.0f, 0.0f }},	// +Z
-		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// -Z
+	static XMFLOAT3 looks[6] = {
+		{ 1.0f, 0.0f, 0.0f },	// +X
+		{ -1.0f, 0.0f, 0.0f },	// -X
+		{ 0.0f, 1.0f, 0.0f },	// +Y
+		{ 0.0f, -1.0f, 0.0f },	// -Y
+		{ 0.0f, 0.0f, 1.0f },	// +Z
+		{ 0.0f, 0.0f, -1.0f },	// -Z
 	};
 
 	// 设置天空盒摄像机
-	m_pCamera.LookTo(XMLoadFloat3(&pos), looks[face].v, ups[face].v);
-	m_pCamera.UpdateViewMatrix();
+	m_pCamera.LookTo(pos, looks[face], ups[face]);
+
 	// 这里尽可能捕获近距离物体
 	m_pCamera.SetFrustum(XM_PIDIV2, 1.0f, nearZ, farZ);
 
@@ -222,7 +222,7 @@ void DynamicSkyRender::BeginCapture(ID3D11DeviceContext * deviceContext, BasicEf
 
 
 
-void DynamicSkyRender::Restore(ID3D11DeviceContext * deviceContext, BasicEffect & effect, const Camera & camera)
+void DynamicSkyRender::Restore(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const Camera& camera)
 {
 	// 恢复默认设定
 	deviceContext->RSSetViewports(1, &camera.GetViewPort());
@@ -251,7 +251,7 @@ const Camera& DynamicSkyRender::GetCamera() const
 	return m_pCamera;
 }
 
-void DynamicSkyRender::SetDebugObjectName(const std::string & name)
+void DynamicSkyRender::SetDebugObjectName(const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
 	SkyRender::SetDebugObjectName(name);
@@ -266,7 +266,7 @@ void DynamicSkyRender::SetDebugObjectName(const std::string & name)
 #endif
 }
 
-HRESULT DynamicSkyRender::InitResource(ID3D11Device * device, int dynamicCubeSize)
+HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, int dynamicCubeSize)
 {
 	HRESULT hr;
 	// ******************

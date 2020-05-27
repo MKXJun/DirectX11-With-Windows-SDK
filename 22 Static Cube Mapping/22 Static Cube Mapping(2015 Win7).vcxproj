@@ -165,6 +165,7 @@
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="SkyRender.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WICTextureLoader.h" />
   </ItemGroup>
@@ -187,6 +188,7 @@
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="SkyEffect.cpp" />
     <ClCompile Include="SkyRender.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
   </ItemGroup>

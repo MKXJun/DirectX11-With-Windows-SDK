@@ -147,9 +147,12 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam1st->Pitch(mouseState.y * dt * 1.25f);
+			cam1st->RotateY(mouseState.x * dt * 1.25f);
+		}
 
 		// 限制移动范围
 		XMFLOAT3 adjustedPos;
@@ -157,8 +160,6 @@ void GameApp::UpdateScene(float dt)
 		cam1st->SetPosition(adjustedPos);
 	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 	m_MinimapEffect.SetEyePos(m_pCamera->GetPositionXM());
@@ -241,7 +242,7 @@ void GameApp::DrawScene()
 		// 输出截屏
 		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf()));
 		HR(SaveDDSTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), L"Screenshot\\output.dds"));
-		HR(SaveWICTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatPng, L"Screenshot\\output.png"));
+		HR(SaveWICTextureToFile(m_pd3dImmediateContext.Get(), backBuffer.Get(), GUID_ContainerFormatBmp, L"Screenshot\\output.bmp", &GUID_WICPixelFormat32bppBGRA));
 		// 结束截屏
 		m_PrintScreenStarted = false;
 	}
@@ -308,21 +309,12 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(
-		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	camera->UpdateViewMatrix();
-	
+	camera->LookTo(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// 小地图摄像机
 	m_MinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
 	m_MinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200小地图
-	m_MinimapCamera->LookTo(
-		XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-	m_MinimapCamera->UpdateViewMatrix();
+	m_MinimapCamera->LookTo(XMFLOAT3(0.0f, 10.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f));
 
 	// ******************
 	// 初始化几乎不会变化的值
@@ -406,7 +398,7 @@ void GameApp::DrawScene(bool drawMinimap)
 	else
 	{
 		// 统计实际绘制的物体数目
-		std::vector<XMMATRIX> acceptedData;
+		std::vector<Transform> acceptedData;
 		// 默认视锥体裁剪
 		acceptedData = Collision::FrustumCulling(m_InstancedData, m_Trees.GetLocalBoundingBox(),
 			m_pCamera->GetViewXM(), m_pCamera->GetProjXM());
@@ -429,31 +421,33 @@ void GameApp::CreateRandomTrees()
 	XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 
 	BoundingBox treeBox = m_Trees.GetLocalBoundingBox();
-	// 获取树包围盒顶点
-	m_TreeBoxData = Collision::CreateBoundingBox(treeBox, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+
 	// 让树木底部紧贴地面位于y = -2的平面
 	treeBox.Transform(treeBox, S);
-	XMMATRIX T0 = XMMatrixTranslation(0.0f, -(treeBox.Center.y - treeBox.Extents.y + 2.0f), 0.0f);
+	float Ty = -(treeBox.Center.y - treeBox.Extents.y + 2.0f);
 	// 随机生成144颗随机朝向的树
+	m_InstancedData.resize(144);
+	m_Trees.ResizeBuffer(m_pd3dDevice.Get(), 144);
 	float theta = 0.0f;
+	int pos = 0;
 	for (int i = 0; i < 16; ++i)
 	{
 		// 取5-95的半径放置随机的树
 		for (int j = 0; j < 3; ++j)
 		{
 			// 距离越远，树木越多
-			for (int k = 0; k < 2 * j + 1; ++k)
+			for (int k = 0; k < 2 * j + 1; ++k, ++pos)
 			{
 				float radius = (float)(rand() % 30 + 30 * j + 5);
 				float randomRad = rand() % 256 / 256.0f * XM_2PI / 16;
-				XMMATRIX T1 = XMMatrixTranslation(radius * cosf(theta + randomRad), 0.0f, radius * sinf(theta + randomRad));
-				XMMATRIX R = XMMatrixRotationY(rand() % 256 / 256.0f * XM_2PI);
-				XMMATRIX World = S * R * T0 * T1;
-				m_InstancedData.push_back(World);
+
+				m_InstancedData[pos].SetScale(0.015f, 0.015f, 0.015f);
+				m_InstancedData[pos].SetRotation(0.0f, rand() % 256 / 256.0f * XM_2PI, 0.0f);
+				m_InstancedData[pos].SetPosition(radius * cosf(theta + randomRad), Ty, radius * sinf(theta + randomRad));
 			}
 		}
 		theta += XM_2PI / 16;
 	}
 
-	m_Trees.ResizeBuffer(m_pd3dDevice.Get(), 144);
+	
 }

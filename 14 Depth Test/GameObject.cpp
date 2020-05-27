@@ -5,41 +5,28 @@ using namespace DirectX;
 GameObject::GameObject()
 	: m_IndexCount(),
 	m_Material(),
-	m_VertexStride(),
-	m_WorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+	m_VertexStride()
 {
 }
 
-DirectX::XMFLOAT3 GameObject::GetPosition() const
+Transform& GameObject::GetTransform()
 {
-	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
+	return m_Transform;
 }
 
+const Transform& GameObject::GetTransform() const
+{
+	return m_Transform;
+}
 
-
-
-void GameObject::SetTexture(ID3D11ShaderResourceView * texture)
+void GameObject::SetTexture(ID3D11ShaderResourceView* texture)
 {
 	m_pTexture = texture;
 }
 
-void GameObject::SetMaterial(const Material & material)
+void GameObject::SetMaterial(const Material& material)
 {
 	m_Material = material;
-}
-
-void GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
-{
-	m_WorldMatrix = world;
-}
-
-void XM_CALLCONV GameObject::SetWorldMatrix(FXMMATRIX world)
-{
-	XMStoreFloat4x4(&m_WorldMatrix, world);
 }
 
 void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
@@ -51,7 +38,7 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, BasicEffect& effect)
 	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// 更新数据并应用
-	effect.SetWorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	effect.SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
 	effect.SetTexture(m_pTexture.Get());
 	effect.SetMaterial(m_Material);
 	effect.Apply(deviceContext);

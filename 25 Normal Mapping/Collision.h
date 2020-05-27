@@ -15,6 +15,7 @@
 #include "Vertex.h"
 #include "Camera.h"
 
+
 struct Ray
 {
 	Ray();
@@ -69,6 +70,17 @@ public:
 	// 视锥体裁剪3
 	static std::vector<DirectX::XMMATRIX> XM_CALLCONV FrustumCulling3(
 		const std::vector<DirectX::XMMATRIX>& Matrices, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
+
+	// 视锥体裁剪
+	static std::vector<Transform> XM_CALLCONV FrustumCulling(
+		const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
+	// 视锥体裁剪2
+	static std::vector<Transform> XM_CALLCONV FrustumCulling2(
+		const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
+	// 视锥体裁剪3
+	static std::vector<Transform> XM_CALLCONV FrustumCulling3(
+		const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj);
+
 
 private:
 	static WireFrameData CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4& color);

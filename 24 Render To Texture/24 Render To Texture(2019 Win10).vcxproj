@@ -162,6 +162,7 @@
     <ClCompile Include="ScreenFadeEffect.cpp" />
     <ClCompile Include="ScreenGrab.cpp" />
     <ClCompile Include="TextureRender.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
   </ItemGroup>
@@ -186,6 +187,7 @@
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ScreenGrab.h" />
     <ClInclude Include="TextureRender.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WICTextureLoader.h" />
   </ItemGroup>

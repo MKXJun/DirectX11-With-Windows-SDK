@@ -123,7 +123,6 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 视野旋转，防止开始的差值过大导致的突然旋转
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);
 	}
@@ -133,16 +132,18 @@ void GameApp::UpdateScene(float dt)
 		// 第三人称摄像机的操作
 		//
 
-		cam3rd->SetTarget(m_WireFence.GetPosition());
+		cam3rd->SetTarget(m_WireFence.GetTransform().GetPosition());
 
 		// 绕物体旋转
-		cam3rd->RotateX(mouseState.y * dt * 1.25f);
-		cam3rd->RotateY(mouseState.x * dt * 1.25f);
-		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam3rd->RotateX(mouseState.y * dt * 1.25f);
+			cam3rd->RotateY(mouseState.x * dt * 1.25f);
+			cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+		}
 	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	XMStoreFloat4(&m_CBFrame.eyePos, m_pCamera->GetPositionXM());
 	m_CBFrame.view = XMMatrixTranspose(m_pCamera->GetViewXM());
 
@@ -161,12 +162,11 @@ void GameApp::UpdateScene(float dt)
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
-		XMFLOAT3 target = m_WireFence.GetPosition();
+		XMFLOAT3 target = m_WireFence.GetTransform().GetPosition();
 		cam3rd->SetTarget(target);
 		cam3rd->SetDistance(8.0f);
 		cam3rd->SetDistanceMinMax(3.0f, 20.0f);
-		// 初始化时朝物体后方看
-		// cam3rd->RotateY(-XM_PIDIV2);
+		cam3rd->SetRotationX(XM_PIDIV4);
 
 		m_CameraMode = CameraMode::ThirdPerson;
 	}
@@ -179,7 +179,7 @@ void GameApp::UpdateScene(float dt)
 			m_pCamera = cam1st;
 		}
 		// 从箱子上方开始
-		XMFLOAT3 pos = m_WireFence.GetPosition();
+		XMFLOAT3 pos = m_WireFence.GetTransform().GetPosition();
 		XMFLOAT3 look{ 0.0f, 0.0f, 1.0f };
 		XMFLOAT3 up{ 0.0f, 1.0f, 0.0f };
 		pos.y += 3;
@@ -375,7 +375,7 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\WireFence.dds", nullptr, texture.GetAddressOf()));
 	m_WireFence.SetBuffer(m_pd3dDevice.Get(), Geometry::CreateBox());
 	// 抬起高度避免深度缓冲区资源争夺
-	m_WireFence.SetWorldMatrix(XMMatrixTranslation(0.0f, 0.01f, 7.5f));
+	m_WireFence.GetTransform().SetPosition(0.0f, 0.01f, 7.5f);
 	m_WireFence.SetTexture(texture.Get());
 	m_WireFence.SetMaterial(material);
 	
@@ -387,7 +387,7 @@ bool GameApp::InitResource()
 		Geometry::CreatePlane(XMFLOAT2(20.0f, 20.0f), XMFLOAT2(5.0f, 5.0f)));
 	m_Floor.SetTexture(texture.Get());
 	m_Floor.SetMaterial(material);
-	m_Floor.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Floor.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
 
 	// 初始化墙体
 	m_Walls.resize(5);
@@ -411,12 +411,16 @@ bool GameApp::InitResource()
 	m_Walls[3].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	m_Walls[4].SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 8.0f), XMFLOAT2(5.0f, 2.0f)));
 	
-	m_Walls[0].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(-7.0f, 3.0f, 10.0f));
-	m_Walls[1].SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(7.0f, 3.0f, 10.0f));
-	m_Walls[2].SetWorldMatrix(XMMatrixRotationY(-XM_PIDIV2) * XMMatrixRotationZ(XM_PIDIV2) * XMMatrixTranslation(10.0f, 3.0f, 0.0f));
-	m_Walls[3].SetWorldMatrix(XMMatrixRotationX(XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, -10.0f));
-	m_Walls[4].SetWorldMatrix(XMMatrixRotationY(XM_PIDIV2) * XMMatrixRotationZ(-XM_PIDIV2) * XMMatrixTranslation(-10.0f, 3.0f, 0.0f));
-	
+	m_Walls[0].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[0].GetTransform().SetPosition(-7.0f, 3.0f, 10.0f);
+	m_Walls[1].GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Walls[1].GetTransform().SetPosition(7.0f, 3.0f, 10.0f);
+	m_Walls[2].GetTransform().SetRotation(-XM_PIDIV2, XM_PIDIV2, 0.0f);
+	m_Walls[2].GetTransform().SetPosition(10.0f, 3.0f, 0.0f);
+	m_Walls[3].GetTransform().SetRotation(-XM_PIDIV2, XM_PI, 0.0f);
+	m_Walls[3].GetTransform().SetPosition(0.0f, 3.0f, -10.0f);
+	m_Walls[4].GetTransform().SetRotation(-XM_PIDIV2, -XM_PIDIV2, 0.0f);
+	m_Walls[4].GetTransform().SetPosition(-10.0f, 3.0f, 0.0f);
 		
 	// 初始化水
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -435,7 +439,8 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\ice.dds", nullptr, texture.ReleaseAndGetAddressOf()));
 	m_Mirror.SetBuffer(m_pd3dDevice.Get(),
 		Geometry::CreatePlane(XMFLOAT2(8.0f, 8.0f), XMFLOAT2(1.0f, 1.0f)));
-	m_Mirror.SetWorldMatrix(XMMatrixRotationX(-XM_PIDIV2) * XMMatrixTranslation(0.0f, 3.0f, 10.0f));
+	m_Mirror.GetTransform().SetRotation(-XM_PIDIV2, 0.0f, 0.0f);
+	m_Mirror.GetTransform().SetPosition(0.0f, 3.0f, 10.0f);
 	m_Mirror.SetTexture(texture.Get());
 	m_Mirror.SetMaterial(material);
 
@@ -448,8 +453,10 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
-	camera->SetDistance(5.0f);
-	camera->SetDistanceMinMax(2.0f, 14.0f);
+	camera->SetDistance(8.0f);
+	camera->SetDistanceMinMax(3.0f, 20.0f);
+	camera->SetRotationX(XM_PIDIV4);
+
 	m_CBFrame.view = XMMatrixTranspose(m_pCamera->GetViewXM());
 	XMStoreFloat4(&m_CBFrame.eyePos, m_pCamera->GetPositionXM());
 
@@ -543,23 +550,22 @@ bool GameApp::InitResource()
 GameApp::GameObject::GameObject()
 	: m_IndexCount(),
 	m_Material(),
-	m_VertexStride(),
-	m_WorldMatrix(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f)
+	m_VertexStride()
 {
 }
 
-DirectX::XMFLOAT3 GameApp::GameObject::GetPosition() const
+Transform& GameApp::GameObject::GetTransform()
 {
-	return XMFLOAT3(m_WorldMatrix(3, 0), m_WorldMatrix(3, 1), m_WorldMatrix(3, 2));
+	return m_Transform;
 }
 
+const Transform& GameApp::GameObject::GetTransform() const
+{
+	return m_Transform;
+}
 
 template<class VertexType, class IndexType>
-void GameApp::GameObject::SetBuffer(ID3D11Device * device, const Geometry::MeshData<VertexType, IndexType>& meshData)
+void GameApp::GameObject::SetBuffer(ID3D11Device* device, const Geometry::MeshData<VertexType, IndexType>& meshData)
 {
 	// 释放旧资源
 	m_pVertexBuffer.Reset();
@@ -596,27 +602,18 @@ void GameApp::GameObject::SetBuffer(ID3D11Device * device, const Geometry::MeshD
 
 }
 
-void GameApp::GameObject::SetTexture(ID3D11ShaderResourceView * texture)
+void GameApp::GameObject::SetTexture(ID3D11ShaderResourceView* texture)
 {
 	m_pTexture = texture;
 }
 
-void GameApp::GameObject::SetMaterial(const Material & material)
+void GameApp::GameObject::SetMaterial(const Material& material)
 {
 	m_Material = material;
 }
 
-void GameApp::GameObject::SetWorldMatrix(const XMFLOAT4X4 & world)
-{
-	m_WorldMatrix = world;
-}
 
-void XM_CALLCONV GameApp::GameObject::SetWorldMatrix(FXMMATRIX world)
-{
-	XMStoreFloat4x4(&m_WorldMatrix, world);
-}
-
-void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
+void GameApp::GameObject::Draw(ID3D11DeviceContext* deviceContext)
 {
 	// 设置顶点/索引缓冲区
 	UINT strides = m_VertexStride;
@@ -627,16 +624,18 @@ void GameApp::GameObject::Draw(ID3D11DeviceContext * deviceContext)
 	// 获取之前已经绑定到渲染管线上的常量缓冲区并进行修改
 	ComPtr<ID3D11Buffer> cBuffer = nullptr;
 	deviceContext->VSGetConstantBuffers(0, 1, cBuffer.GetAddressOf());
-	XMMATRIX W = XMLoadFloat4x4(&m_WorldMatrix);
+	XMMATRIX W = m_Transform.GetLocalToWorldMatrixXM();
 	CBChangesEveryDrawing cbDrawing;
 	cbDrawing.world = XMMatrixTranspose(W);
 	cbDrawing.worldInvTranspose = XMMatrixInverse(nullptr, W);
 	cbDrawing.material = m_Material;
 
+	// 更新常量缓冲区
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
 	memcpy_s(mappedData.pData, sizeof(CBChangesEveryDrawing), &cbDrawing, sizeof(CBChangesEveryDrawing));
 	deviceContext->Unmap(cBuffer.Get(), 0);
+
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, m_pTexture.GetAddressOf());
 	// 可以开始绘制

@@ -183,27 +183,27 @@ void DynamicSkyRender::Cache(ID3D11DeviceContext* deviceContext, BasicEffect& ef
 void DynamicSkyRender::BeginCapture(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const XMFLOAT3& pos,
 	D3D11_TEXTURECUBE_FACE face, float nearZ, float farZ)
 {
-	static XMVECTORF32 ups[6] = {
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +X
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// -X
-		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// +Y
-		{{ 0.0f, 0.0f, 1.0f, 0.0f }},	// -Y
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +Z
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }}	// -Z
+	static XMFLOAT3 ups[6] = {
+		{ 0.0f, 1.0f, 0.0f },	// +X
+		{ 0.0f, 1.0f, 0.0f },	// -X
+		{ 0.0f, 0.0f, -1.0f },	// +Y
+		{ 0.0f, 0.0f, 1.0f },	// -Y
+		{ 0.0f, 1.0f, 0.0f },	// +Z
+		{ 0.0f, 1.0f, 0.0f }	// -Z
 	};
 
-	static XMVECTORF32 looks[6] = {
-		{{ 1.0f, 0.0f, 0.0f, 0.0f }},	// +X
-		{{ -1.0f, 0.0f, 0.0f, 0.0f }},	// -X
-		{{ 0.0f, 1.0f, 0.0f, 0.0f }},	// +Y
-		{{ 0.0f, -1.0f, 0.0f, 0.0f }},	// -Y
-		{{ 0.0f, 0.0f, 1.0f, 0.0f }},	// +Z
-		{{ 0.0f, 0.0f, -1.0f, 0.0f }},	// -Z
+	static XMFLOAT3 looks[6] = {
+		{ 1.0f, 0.0f, 0.0f },	// +X
+		{ -1.0f, 0.0f, 0.0f },	// -X
+		{ 0.0f, 1.0f, 0.0f },	// +Y
+		{ 0.0f, -1.0f, 0.0f },	// -Y
+		{ 0.0f, 0.0f, 1.0f },	// +Z
+		{ 0.0f, 0.0f, -1.0f },	// -Z
 	};
 
 	// 设置天空盒摄像机
-	m_pCamera.LookTo(XMLoadFloat3(&pos), looks[face].v, ups[face].v);
-	m_pCamera.UpdateViewMatrix();
+	m_pCamera.LookTo(pos, looks[face], ups[face]);
+
 	// 这里尽可能捕获近距离物体
 	m_pCamera.SetFrustum(XM_PIDIV2, 1.0f, nearZ, farZ);
 

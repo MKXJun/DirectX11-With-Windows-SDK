@@ -125,9 +125,12 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::D))
 			cam1st->Strafe(dt * 3.0f);
 
-		// 视野旋转，防止开始的差值过大导致的突然旋转
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		// 在鼠标没进入窗口前仍为ABSOLUTE模式
+		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+		{
+			cam1st->Pitch(mouseState.y * dt * 1.25f);
+			cam1st->RotateY(mouseState.x * dt * 1.25f);
+		}
 	}
 
 	// ******************
@@ -141,8 +144,6 @@ void GameApp::UpdateScene(float dt)
 		XMVectorSet(-49.9f, 0.0f, -49.9f, 0.0f), XMVectorSet(49.9f, 99.9f, 49.9f, 0.0f)));
 	cam1st->SetPosition(adjustedPos);
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
@@ -298,7 +299,7 @@ bool GameApp::InitResource()
 	ComPtr<ID3D11ShaderResourceView> texture;
 	// 初始化地板
 	m_Ground.SetBuffer(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(100.0f, 100.0f), XMFLOAT2(10.0f, 10.0f)));
-	m_Ground.SetWorldMatrix(XMMatrixTranslation(0.0f, -5.0f, 0.0f));
+	m_Ground.GetTransform().SetPosition(0.0f, -5.0f, 0.0f);
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"Texture\\Grass.dds", nullptr, texture.GetAddressOf()));
 	m_Ground.SetTexture(texture.Get());
 	Material material{};
@@ -334,11 +335,7 @@ bool GameApp::InitResource()
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetPosition(XMFLOAT3());
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(
-		XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	camera->UpdateViewMatrix();
+	camera->LookTo(XMFLOAT3(), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());

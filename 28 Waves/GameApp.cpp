@@ -104,12 +104,14 @@ void GameApp::UpdateScene(float dt)
 	//
 
 	// 绕物体旋转
-	cam3rd->RotateX(mouseState.y * dt * 1.25f);
-	cam3rd->RotateY(mouseState.x * dt * 1.25f);
-	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 10.0f);
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam3rd->RotateX(mouseState.y * dt * 1.25f);
+		cam3rd->RotateY(mouseState.x * dt * 1.25f);
+		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	}
 
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 	// 重置滚轮值
@@ -238,13 +240,13 @@ bool GameApp::InitResource()
 	model.modelParts[0].material = material;
 	model.modelParts[0].texDiffuse = landDiffuse;
 	m_Land.SetModel(std::move(model));
-	m_Land.SetWorldMatrix(XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	m_Land.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
 	// 篱笆盒
 	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateBox(8.0f, 8.0f, 8.0f));
 	model.modelParts[0].material = material;
 	model.modelParts[0].texDiffuse = wireFenceDiffuse;
 	m_WireFence.SetModel(std::move(model));
-	m_WireFence.SetWorldMatrix(XMMatrixTranslation(-2.0f, 2.0f, -4.0f));
+	m_WireFence.GetTransform().SetPosition(-2.0f, 2.0f, -4.0f);
 	
 	// ******************
 	// 初始化水面波浪
@@ -282,10 +284,9 @@ bool GameApp::InitResource()
 	camera->SetTarget(XMFLOAT3(0.0f, 2.5f, 0.0f));
 	camera->SetDistance(20.0f);
 	camera->SetDistanceMinMax(10.0f, 90.0f);
-	camera->UpdateViewMatrix();
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	// 初始化并更新观察矩阵、投影矩阵
-	camera->UpdateViewMatrix();
+	camera->SetRotationX(XM_PIDIV4);
+
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 	

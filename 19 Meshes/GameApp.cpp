@@ -105,12 +105,14 @@ void GameApp::UpdateScene(float dt)
 	//
 
 	// 绕物体旋转
-	cam3rd->RotateX(mouseState.y * dt * 1.25f);
-	cam3rd->RotateY(mouseState.x * dt * 1.25f);
-	cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam3rd->RotateX(mouseState.y * dt * 1.25f);
+		cam3rd->RotateY(mouseState.x * dt * 1.25f);
+		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
+	}
 	
-	// 更新观察矩阵
-	m_pCamera->UpdateViewMatrix();
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
 	// 重置滚轮值
@@ -175,7 +177,9 @@ bool GameApp::InitResource()
 	BoundingBox houseBox = m_House.GetLocalBoundingBox();
 	houseBox.Transform(houseBox, S);
 	// 让房屋底部紧贴地面
-	m_House.SetWorldMatrix(S * XMMatrixTranslation(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 1.0f), 0.0f));
+	Transform& houseTransform = m_House.GetTransform();
+	houseTransform.SetScale(0.015f, 0.015f, 0.015f);
+	houseTransform.SetPosition(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 1.0f), 0.0f);
 	
 	// ******************
 	// 初始化摄像机
@@ -186,9 +190,9 @@ bool GameApp::InitResource()
 	
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));
-	camera->SetDistance(10.0f);
+	camera->SetDistance(15.0f);
 	camera->SetDistanceMinMax(6.0f, 100.0f);
-	camera->UpdateViewMatrix();
+	camera->SetRotationX(XM_PIDIV4);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
 
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());

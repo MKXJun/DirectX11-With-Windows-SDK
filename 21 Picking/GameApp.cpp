@@ -109,11 +109,15 @@ void GameApp::UpdateScene(float dt)
 	theta += dt * 0.5f;
 	phi += dt * 0.3f;
 	// 更新物体运动
-	m_Sphere.SetWorldMatrix(Left);
-	m_Cube.SetWorldMatrix(XMMatrixRotationX(-phi) * XMMatrixRotationY(theta) * Top);
-	m_Cylinder.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta) * Right);
-	m_House.SetWorldMatrix(XMMatrixScaling(0.005f, 0.005f, 0.005f) * XMMatrixRotationY(theta) * Bottom);
-	m_Triangle.SetWorldMatrix(XMMatrixRotationY(theta));
+	m_Sphere.GetTransform().SetPosition(-5.0f, 0.0f, 0.0f);
+	m_Cube.GetTransform().SetPosition(0.0f, 4.0f, 0.0f);
+	m_Cube.GetTransform().SetRotation(-phi, theta, 0.0f);
+	m_Cylinder.GetTransform().SetPosition(5.0f, 0.0f, 0.0f);
+	m_Cylinder.GetTransform().SetRotation(phi, theta, 0.0f);
+	m_House.GetTransform().SetPosition(0.0f, -4.0f, 0.0f);
+	m_House.GetTransform().SetRotation(0.0f, theta, 0.0f);
+	m_House.GetTransform().SetScale(0.005f, 0.005f, 0.005f);
+	m_Triangle.GetTransform().SetRotation(0.0f, theta, 0.0f);
 
 	// ******************
 	// 拾取检测
@@ -243,12 +247,8 @@ bool GameApp::InitResource()
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(
-		XMVectorSet(0.0f, 0.0f, -10.0f, 1.0f),
-		XMVectorSet(0.0f, 0.0f, 1.0f, 1.0f),
-		XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	// 初始化并更新观察矩阵、投影矩阵(摄像机将被固定)
-	camera->UpdateViewMatrix();
+	camera->LookTo(XMFLOAT3(0.0f, 0.0f, -10.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
 	

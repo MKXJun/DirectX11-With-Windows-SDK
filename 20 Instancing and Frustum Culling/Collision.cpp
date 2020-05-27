@@ -127,6 +127,75 @@ std::vector<DirectX::XMMATRIX> XM_CALLCONV Collision::FrustumCulling3(
 	return acceptedData;
 }
 
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+
+	BoundingOrientedBox localOrientedBox, orientedBox;
+	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		// 将有向包围盒从局部坐标系变换到视锥体所在的局部坐标系(观察坐标系)中
+		localOrientedBox.Transform(orientedBox, W * View);
+		// 相交检测
+		if (frustum.Intersects(orientedBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling2(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum, localFrustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+	XMMATRIX InvView = XMMatrixInverse(nullptr, View);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		XMMATRIX InvWorld = XMMatrixInverse(nullptr, W);
+
+		// 将视锥体从观察坐标系(或局部坐标系)变换到物体所在的局部坐标系中
+		frustum.Transform(localFrustum, InvView * InvWorld);
+		// 相交检测
+		if (localFrustum.Intersects(localBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
+std::vector<Transform> XM_CALLCONV Collision::FrustumCulling3(
+	const std::vector<Transform>& transforms, const DirectX::BoundingBox& localBox, DirectX::FXMMATRIX View, DirectX::CXMMATRIX Proj)
+{
+	std::vector<Transform> acceptedData;
+
+	BoundingFrustum frustum;
+	BoundingFrustum::CreateFromMatrix(frustum, Proj);
+
+	BoundingOrientedBox localOrientedBox, orientedBox;
+	BoundingOrientedBox::CreateFromBoundingBox(localOrientedBox, localBox);
+	for (auto& t : transforms)
+	{
+		XMMATRIX W = t.GetLocalToWorldMatrixXM();
+		// 将有向包围盒从局部坐标系变换到视锥体所在的局部坐标系(观察坐标系)中
+		localOrientedBox.Transform(orientedBox, W * View);
+		// 相交检测
+		if (frustum.Intersects(orientedBox))
+			acceptedData.push_back(t);
+	}
+
+	return acceptedData;
+}
+
 Collision::WireFrameData Collision::CreateFromCorners(const DirectX::XMFLOAT3(&corners)[8], const DirectX::XMFLOAT4 & color)
 {
 	WireFrameData data;

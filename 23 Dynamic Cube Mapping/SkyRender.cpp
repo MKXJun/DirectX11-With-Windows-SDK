@@ -315,7 +315,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, int dynamicCubeSize
 	}
 
 	// ******************
-	// 3. 创建着色器目标视图
+	// 3. 创建着色器资源视图
 	//
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;

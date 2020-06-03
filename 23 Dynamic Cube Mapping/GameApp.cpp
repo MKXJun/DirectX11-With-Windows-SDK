@@ -112,13 +112,13 @@ void GameApp::UpdateScene(float dt)
 
 	// 方向移动
 	if (keyState.IsKeyDown(Keyboard::W))
-		cam1st->MoveForward(dt * 3.0f);
+		cam1st->MoveForward(dt * 6.0f);
 	if (keyState.IsKeyDown(Keyboard::S))
-		cam1st->MoveForward(dt * -3.0f);
+		cam1st->MoveForward(dt * -6.0f);
 	if (keyState.IsKeyDown(Keyboard::A))
-		cam1st->Strafe(dt * -3.0f);
+		cam1st->Strafe(dt * -6.0f);
 	if (keyState.IsKeyDown(Keyboard::D))
-		cam1st->Strafe(dt * 3.0f);
+		cam1st->Strafe(dt * 6.0f);
 
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)

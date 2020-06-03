@@ -106,7 +106,7 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class SkyEffect : IEffect
+class SkyEffect : public IEffect
 {
 public:
 	SkyEffect();

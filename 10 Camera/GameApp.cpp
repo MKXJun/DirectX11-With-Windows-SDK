@@ -114,21 +114,21 @@ void GameApp::UpdateScene(float dt)
 		if (keyState.IsKeyDown(Keyboard::W))
 		{
 			if (m_CameraMode == CameraMode::FirstPerson)
-				cam1st->Walk(dt * 3.0f);
+				cam1st->Walk(dt * 6.0f);
 			else
-				cam1st->MoveForward(dt * 3.0f);
+				cam1st->MoveForward(dt * 6.0f);
 		}	
 		if (keyState.IsKeyDown(Keyboard::S))
 		{
 			if (m_CameraMode == CameraMode::FirstPerson)
-				cam1st->Walk(dt * -3.0f);
+				cam1st->Walk(dt * -6.0f);
 			else
-				cam1st->MoveForward(dt * -3.0f);
+				cam1st->MoveForward(dt * -6.0f);
 		}
 		if (keyState.IsKeyDown(Keyboard::A))
-			cam1st->Strafe(dt * -3.0f);
+			cam1st->Strafe(dt * -6.0f);
 		if (keyState.IsKeyDown(Keyboard::D))
-			cam1st->Strafe(dt * 3.0f);
+			cam1st->Strafe(dt * 6.0f);
 
 		// 将摄像机位置限制在[-8.9, 8.9]x[-8.9, 8.9]x[0.0, 8.9]的区域内
 		// 不允许穿地

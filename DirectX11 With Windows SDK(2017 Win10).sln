@@ -57,6 +57,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2017 Win10)", "29 OI
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2017 Win10)", "30 Blur and Sobel\30 Blur and Sobel(2017 Win10).vcxproj", "{7D5C21C3-888F-47C2-ABC7-4E067163F5ED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2017 Win10)", "31 Shadow Mapping\31 Shadow Mapping(2017 Win10).vcxproj", "{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -281,6 +283,14 @@ Global
 		{7D5C21C3-888F-47C2-ABC7-4E067163F5ED}.Release|x64.Build.0 = Release|x64
 		{7D5C21C3-888F-47C2-ABC7-4E067163F5ED}.Release|x86.ActiveCfg = Release|Win32
 		{7D5C21C3-888F-47C2-ABC7-4E067163F5ED}.Release|x86.Build.0 = Release|Win32
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Debug|x64.ActiveCfg = Debug|x64
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Debug|x64.Build.0 = Debug|x64
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Debug|x86.ActiveCfg = Debug|Win32
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Debug|x86.Build.0 = Debug|Win32
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Release|x64.ActiveCfg = Release|x64
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Release|x64.Build.0 = Release|x64
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Release|x86.ActiveCfg = Release|Win32
+		{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

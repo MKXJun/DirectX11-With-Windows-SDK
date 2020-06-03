@@ -115,13 +115,13 @@ void GameApp::UpdateScene(float dt)
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
-			cam1st->MoveForward(dt * 3.0f);
+			cam1st->MoveForward(dt * 6.0f);
 		if (keyState.IsKeyDown(Keyboard::S))
-			cam1st->MoveForward(dt * -3.0f);
+			cam1st->MoveForward(dt * -6.0f);
 		if (keyState.IsKeyDown(Keyboard::A))
-			cam1st->Strafe(dt * -3.0f);
+			cam1st->Strafe(dt * -6.0f);
 		if (keyState.IsKeyDown(Keyboard::D))
-			cam1st->Strafe(dt * 3.0f);
+			cam1st->Strafe(dt * 6.0f);
 
 		cam1st->Pitch(mouseState.y * dt * 1.25f);
 		cam1st->RotateY(mouseState.x * dt * 1.25f);

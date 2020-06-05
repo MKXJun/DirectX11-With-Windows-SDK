@@ -220,14 +220,15 @@ void GameApp::DrawScene()
 	// ******************
 	// 绘制到阴影贴图
 
-	m_pShadowRender->Begin(m_pd3dImmediateContext.Get());
+	m_pShadowMap->Begin(m_pd3dImmediateContext.Get(), nullptr);
 	{
 		DrawScene(true);
 	}
-	m_pShadowRender->End(m_pd3dImmediateContext.Get());
+	m_pShadowMap->End(m_pd3dImmediateContext.Get());
 
+	// ******************
 	// 正常绘制场景
-	m_pBasicEffect->SetTextureShadowMap(m_pShadowRender->GetSRV());
+	m_pBasicEffect->SetTextureShadowMap(m_pShadowMap->GetOutputTexture());
 	DrawScene(false, m_EnableNormalMap);
 
 	// 绘制天空盒
@@ -250,7 +251,7 @@ void GameApp::DrawScene()
 			m_pDebugEffect->SetRenderOneComponent(m_pd3dImmediateContext.Get(), 0);
 		}
 		
-		m_pDebugEffect->SetTexture(m_pShadowRender->GetSRV());
+		m_pDebugEffect->SetTexture(m_pShadowMap->GetOutputTexture());
 		m_DebugQuad.Draw(m_pd3dImmediateContext.Get(), m_pDebugEffect.get());
 	}
 	
@@ -351,8 +352,8 @@ bool GameApp::InitResource()
 {
 	// ******************
 	// 初始化阴影贴图和特效
-	m_pShadowRender = std::make_unique<ShadowRender>();
-	HR(m_pShadowRender->InitResource(m_pd3dDevice.Get(), 2048, 2048));
+	m_pShadowMap = std::make_unique<TextureRender>();
+	HR(m_pShadowMap->InitResource(m_pd3dDevice.Get(), 2048, 2048, true));
 
 	m_pShadowEffect->SetProjMatrix(XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 60.0f));
 
@@ -528,7 +529,7 @@ bool GameApp::InitResource()
 	m_SphereT.SetDebugObjectName("SphereT");
 	m_House.SetDebugObjectName("House");
 	m_DebugQuad.SetDebugObjectName("DebugQuad");
-	m_pShadowRender->SetDebugObjectName("ShadowRender");
+	m_pShadowMap->SetDebugObjectName("ShadowMap");
 	m_pDesert->SetDebugObjectName("Desert");
 
 	return true;

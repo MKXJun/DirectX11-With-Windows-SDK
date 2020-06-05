@@ -93,7 +93,7 @@
     <ClInclude Include="SkyRender.h">
       <Filter>特效文件</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowRender.h">
+    <ClInclude Include="TextureRender.h">
       <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -170,10 +170,10 @@
     <ClCompile Include="ShadowEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowRender.cpp">
+    <ClCompile Include="DebugEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
-    <ClCompile Include="DebugEffect.cpp">
+    <ClCompile Include="TextureRender.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>

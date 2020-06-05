@@ -8,7 +8,7 @@
 #include "ObjReader.h"
 #include "Collision.h"
 #include "SkyRender.h"
-#include "ShadowRender.h"
+#include "TextureRender.h"
 
 class GameApp : public D3DApp
 {
@@ -61,7 +61,7 @@ private:
 	std::unique_ptr<SkyEffect> m_pSkyEffect;					// 天空盒特效
 	std::unique_ptr<DebugEffect> m_pDebugEffect;				// 调试用显示纹理的特效
 
-	std::unique_ptr<ShadowRender> m_pShadowRender;				// 阴影渲染器
+	std::unique_ptr<TextureRender> m_pShadowMap;				// 阴影贴图
 	std::unique_ptr<SkyRender> m_pDesert;						// 天空盒(沙漠)
 	
 	std::shared_ptr<Camera> m_pCamera;						    // 摄像机

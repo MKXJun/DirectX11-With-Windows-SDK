@@ -87,9 +87,6 @@
     <ClCompile Include="ShadowEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowRender.cpp">
-      <Filter>特效文件</Filter>
-    </ClCompile>
     <ClCompile Include="SkyEffect.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
@@ -100,6 +97,9 @@
       <Filter>特效文件</Filter>
     </ClCompile>
     <ClCompile Include="DebugEffect.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureRender.cpp">
       <Filter>特效文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,7 +173,7 @@
     <ClInclude Include="SkyRender.h">
       <Filter>特效文件</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowRender.h">
+    <ClInclude Include="TextureRender.h">
       <Filter>特效文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -171,9 +171,9 @@
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="ScreenGrab.cpp" />
     <ClCompile Include="ShadowEffect.cpp" />
-    <ClCompile Include="ShadowRender.cpp" />
     <ClCompile Include="SkyEffect.cpp" />
     <ClCompile Include="SkyRender.cpp" />
+    <ClCompile Include="TextureRender.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
@@ -198,8 +198,8 @@
     <ClInclude Include="ObjReader.h" />
     <ClInclude Include="RenderStates.h" />
     <ClInclude Include="ScreenGrab.h" />
-    <ClInclude Include="ShadowRender.h" />
     <ClInclude Include="SkyRender.h" />
+    <ClInclude Include="TextureRender.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WICTextureLoader.h" />

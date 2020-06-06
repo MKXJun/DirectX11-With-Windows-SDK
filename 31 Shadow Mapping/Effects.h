@@ -181,6 +181,11 @@ public:
 	// 默认状态来绘制
 	void SetRenderDefault(ID3D11DeviceContext* deviceContext, RenderType type);
 
+	// Alpha裁剪绘制(处理具有透明度的物体)
+	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type);
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse);
 
 	//
 	// 矩阵设置

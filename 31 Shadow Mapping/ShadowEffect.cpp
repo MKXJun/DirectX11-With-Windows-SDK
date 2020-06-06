@@ -110,7 +110,7 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	// ******************
-	// 创建像素着色器(但暂不使用)
+	// 创建像素着色器
 	//
 	HR(CreateShaderFromFile(L"HLSL\\Shadow_PS.cso", L"HLSL\\Shadow_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(pImpl->m_pEffectHelper->AddShader("Shadow_PS", device, blob.Get()));
@@ -126,6 +126,18 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	passDesc.nameVS = "ShadowObject_VS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObject", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowObject")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowInstance_VS";
+	passDesc.namePS = "Shadow_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowInstanceAlphaClip", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowObject_VS";
+	passDesc.namePS = "Shadow_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectAlphaClip", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "ShadowEffect.InstancePosNormalTexLayout");
@@ -149,6 +161,27 @@ void ShadowEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext, RenderTy
 	}
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pImpl->m_RenderType = type;
+}
+
+void ShadowEffect::SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type)
+{
+	if (type == RenderInstance)
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceAlphaClip");
+	}
+	else
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectAlphaClip");
+	}
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pImpl->m_RenderType = type;
+}
+
+void ShadowEffect::SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse)
+{
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", textureDiffuse);
 }
 
 void XM_CALLCONV ShadowEffect::SetWorldMatrix(DirectX::FXMMATRIX W)

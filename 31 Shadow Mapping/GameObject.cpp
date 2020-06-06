@@ -102,6 +102,12 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
 			pBasicEffect->SetMaterial(part.material);
 		}
 		
+		ShadowEffect* pShadowEffect = dynamic_cast<ShadowEffect*>(effect);
+		if (pShadowEffect)
+		{
+			pShadowEffect->SetTextureDiffuse(part.texDiffuse.Get());
+		}
+		
 		effect->Apply(deviceContext);
 
 		deviceContext->DrawIndexed(part.indexCount, 0, 0);

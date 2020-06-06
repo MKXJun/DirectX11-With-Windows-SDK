@@ -15,5 +15,5 @@ void PS(VertexPosHTex pIn)
     float4 diffuse = g_DiffuseMap.Sample(g_Sam, pIn.Tex);
     
     // 不要将透明像素写入深度贴图
-    clip(diffuse.a - 0.15f);
+    clip(diffuse.a - 0.1f);
 }

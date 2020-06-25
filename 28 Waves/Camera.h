@@ -105,8 +105,8 @@ public:
 	// 负rad值向下观察
 	void Pitch(float rad);
 	// 左右观察
-	// 正rad值向左观察
-	// 负rad值向右观察
+	// 正rad值向右观察
+	// 负rad值向左观察
 	void RotateY(float rad);
 };
 

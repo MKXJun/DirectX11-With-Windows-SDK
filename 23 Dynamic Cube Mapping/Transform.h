@@ -26,18 +26,35 @@ public:
 
 	// 获取对象缩放比例
 	DirectX::XMFLOAT3 GetScale() const;
+	// 获取对象缩放比例
+	DirectX::XMVECTOR GetScaleXM() const;
+
 	// 获取对象欧拉角(弧度制)
 	// 对象以Z-X-Y轴顺序旋转
 	DirectX::XMFLOAT3 GetRotation() const;
+	// 获取对象欧拉角(弧度制)
+	// 对象以Z-X-Y轴顺序旋转
+	DirectX::XMVECTOR GetRotationXM() const;
+
 	// 获取对象位置
 	DirectX::XMFLOAT3 GetPosition() const;
+	// 获取对象位置
+	DirectX::XMVECTOR GetPositionXM() const;
 
 	// 获取右方向轴
 	DirectX::XMFLOAT3 GetRightAxis() const;
+	// 获取右方向轴
+	DirectX::XMVECTOR GetRightAxisXM() const;
+
 	// 获取上方向轴
 	DirectX::XMFLOAT3 GetUpAxis() const;
+	// 获取上方向轴
+	DirectX::XMVECTOR GetUpAxisXM() const;
+
 	// 获取前方向轴
 	DirectX::XMFLOAT3 GetForwardAxis() const;
+	// 获取前方向轴
+	DirectX::XMVECTOR GetForwardAxisXM() const;
 
 	// 获取世界变换矩阵
 	DirectX::XMFLOAT4X4 GetLocalToWorldMatrix() const;

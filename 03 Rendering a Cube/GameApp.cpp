@@ -166,7 +166,9 @@ bool GameApp::InitResource()
 	// 新建常量缓冲区，不使用初始数据
 	HR(m_pd3dDevice->CreateBuffer(&cbd, nullptr, m_pConstantBuffer.GetAddressOf()));
 
+
 	// 初始化常量缓冲区的值
+	// 如果你不熟悉这些矩阵，可以先忽略，待读完第四章后再回头尝试修改
 	m_CBuffer.world = XMMatrixIdentity();	// 单位矩阵的转置是它本身
 	m_CBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(
 		XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f),

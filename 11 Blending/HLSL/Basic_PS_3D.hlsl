@@ -22,10 +22,6 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
     float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f);
     int i;
 
-	
-
-	// 强制展开循环以减少指令数
-	[unroll]
     for (i = 0; i < g_NumDirLight; ++i)
     {
         ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.NormalW, toEyeW, A, D, S);
@@ -34,7 +30,6 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
         spec += S;
     }
     
-	[unroll]
     for (i = 0; i < g_NumPointLight; ++i)
     {
         ComputePointLight(g_Material, g_PointLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
@@ -43,7 +38,6 @@ float4 PS_3D(VertexPosHWNormalTex pIn) : SV_Target
         spec += S;
     }
     
-	[unroll]
     for (i = 0; i < g_NumSpotLight; ++i)
     {
         ComputeSpotLight(g_Material, g_SpotLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);

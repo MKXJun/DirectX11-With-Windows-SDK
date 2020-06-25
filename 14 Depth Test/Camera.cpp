@@ -7,7 +7,7 @@ Camera::~Camera()
 
 XMVECTOR Camera::GetPositionXM() const
 {
-	return XMLoadFloat3(&m_Transform.GetPosition());
+	return m_Transform.GetPositionXM();
 }
 
 XMFLOAT3 Camera::GetPosition() const
@@ -28,7 +28,7 @@ float Camera::GetRotationY() const
 
 XMVECTOR Camera::GetRightAxisXM() const
 {
-	return XMLoadFloat3(&m_Transform.GetRightAxis());
+	return m_Transform.GetRightAxisXM();
 }
 
 XMFLOAT3 Camera::GetRightAxis() const
@@ -38,7 +38,7 @@ XMFLOAT3 Camera::GetRightAxis() const
 
 XMVECTOR Camera::GetUpAxisXM() const
 {
-	return XMLoadFloat3(&m_Transform.GetUpAxis());
+	return m_Transform.GetUpAxisXM();
 }
 
 XMFLOAT3 Camera::GetUpAxis() const
@@ -48,7 +48,7 @@ XMFLOAT3 Camera::GetUpAxis() const
 
 XMVECTOR Camera::GetLookAxisXM() const
 {
-	return XMLoadFloat3(&m_Transform.GetForwardAxis());
+	return m_Transform.GetForwardAxisXM();
 }
 
 XMFLOAT3 Camera::GetLookAxis() const
@@ -137,7 +137,7 @@ void FirstPersonCamera::Strafe(float d)
 
 void FirstPersonCamera::Walk(float d)
 {
-	XMVECTOR rightVec = XMLoadFloat3(&m_Transform.GetRightAxis());
+	XMVECTOR rightVec = m_Transform.GetRightAxisXM();
 	XMVECTOR frontVec = XMVector3Normalize(XMVector3Cross(rightVec, g_XMIdentityR1));
 	XMFLOAT3 front;
 	XMStoreFloat3(&front, frontVec);

@@ -12,14 +12,29 @@ XMFLOAT3 Transform::GetScale() const
 	return m_Scale;
 }
 
+DirectX::XMVECTOR Transform::GetScaleXM() const
+{
+	return XMLoadFloat3(&m_Scale);
+}
+
 XMFLOAT3 Transform::GetRotation() const
 {
 	return m_Rotation;
 }
 
+DirectX::XMVECTOR Transform::GetRotationXM() const
+{
+	return XMLoadFloat3(&m_Rotation);
+}
+
 XMFLOAT3 Transform::GetPosition() const
 {
 	return m_Position;
+}
+
+DirectX::XMVECTOR Transform::GetPositionXM() const
+{
+	return XMLoadFloat3(&m_Position);
 }
 
 XMFLOAT3 Transform::GetRightAxis() const
@@ -30,6 +45,12 @@ XMFLOAT3 Transform::GetRightAxis() const
 	return right;
 }
 
+DirectX::XMVECTOR Transform::GetRightAxisXM() const
+{
+	XMFLOAT3 right = GetRightAxis();
+	return XMLoadFloat3(&right);
+}
+
 XMFLOAT3 Transform::GetUpAxis() const
 {
 	XMMATRIX R = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_Rotation));
@@ -38,12 +59,24 @@ XMFLOAT3 Transform::GetUpAxis() const
 	return up;
 }
 
+DirectX::XMVECTOR Transform::GetUpAxisXM() const
+{
+	XMFLOAT3 up = GetRightAxis();
+	return XMLoadFloat3(&up);
+}
+
 XMFLOAT3 Transform::GetForwardAxis() const
 {
 	XMMATRIX R = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&m_Rotation));
 	XMFLOAT3 forward;
 	XMStoreFloat3(&forward, R.r[2]);
 	return forward;
+}
+
+DirectX::XMVECTOR Transform::GetForwardAxisXM() const
+{
+	XMFLOAT3 forward = GetRightAxis();
+	return XMLoadFloat3(&forward);
 }
 
 XMFLOAT4X4 Transform::GetLocalToWorldMatrix() const
@@ -115,7 +148,7 @@ void Transform::RotateAxis(const XMFLOAT3& axis, float radian)
 {
 	XMVECTOR rotationVec = XMLoadFloat3(&m_Rotation);
 	XMMATRIX R = XMMatrixRotationRollPitchYawFromVector(rotationVec) * 
-		XMMatrixRotationAxis(XMLoadFloat3(&axis), XMConvertToRadians(radian));
+		XMMatrixRotationAxis(XMLoadFloat3(&axis), radian);
 	XMFLOAT4X4 rotMatrix;
 	XMStoreFloat4x4(&rotMatrix, R);
 	m_Rotation = GetEulerAnglesFromRotationMatrix(rotMatrix);
@@ -129,7 +162,7 @@ void Transform::RotateAround(const XMFLOAT3& point, const XMFLOAT3& axis, float 
 
 	// 以point作为原点进行旋转
 	XMMATRIX RT = XMMatrixRotationRollPitchYawFromVector(rotationVec) * XMMatrixTranslationFromVector(positionVec - centerVec);
-	RT *= XMMatrixRotationAxis(XMLoadFloat3(&axis), XMConvertToRadians(radian));
+	RT *= XMMatrixRotationAxis(XMLoadFloat3(&axis), radian);
 	RT *= XMMatrixTranslationFromVector(centerVec);
 	XMFLOAT4X4 rotMatrix;
 	XMStoreFloat4x4(&rotMatrix, RT);

@@ -4,6 +4,13 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/4 v1.29.0</br>
+-添加项目 SSAO</br>
+-修正Transform的RotateAround</br>
+-整合项目以减少重复资源</br>
+-EffectHelper添加对cbuffer默认值的支持</br>
+-修改项目31
+
 2020/6/25 v1.28.3</br>
 -修正Transform类，调整Transform和Camera的一些函数</br>
 -调整项目09-11关于`Basic_PS_3D`的HLSL代码

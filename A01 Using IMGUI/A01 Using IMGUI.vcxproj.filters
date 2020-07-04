@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="通用文件">
+      <UniqueIdentifier>{f22fe39a-f594-4f45-8766-6bec87be399a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="ImGui文件">
+      <UniqueIdentifier>{5971c9e1-64cf-4011-a8c0-2dc5b4ac8d6c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="d3dApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_demo.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_draw.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_impl_dx11.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_impl_win32.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\IMGUI\imgui_widgets.cpp">
+      <Filter>ImGui文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d3dApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imconfig.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_impl_dx11.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_impl_win32.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imgui_internal.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_rectpack.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_textedit.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\IMGUI\imstb_truetype.h">
+      <Filter>ImGui文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

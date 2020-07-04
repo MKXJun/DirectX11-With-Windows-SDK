@@ -3,61 +3,63 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2015 Win7)", "01 DirectX11 Initialization\01 DirectX11 Initialization(2015 Win7).vcxproj", "{8AB11115-A1BE-4438-93F6-09B3233242E8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01 DirectX11 Initialization(2015 Win7)", "Project 01-09\01 DirectX11 Initialization\01 DirectX11 Initialization(2015 Win7).vcxproj", "{8AB11115-A1BE-4438-93F6-09B3233242E8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle(2015 Win7)", "02 Rendering a Triangle\02 Rendering a Triangle(2015 Win7).vcxproj", "{7AE3B393-2015-4657-A0DE-77D9C30C2F99}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02 Rendering a Triangle(2015 Win7)", "Project 01-09\02 Rendering a Triangle\02 Rendering a Triangle(2015 Win7).vcxproj", "{7AE3B393-2015-4657-A0DE-77D9C30C2F99}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2015 Win7)", "03 Rendering a Cube\03 Rendering a Cube(2015 Win7).vcxproj", "{1493BC5C-6AB9-466D-8420-76251511B2C5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03 Rendering a Cube(2015 Win7)", "Project 01-09\03 Rendering a Cube\03 Rendering a Cube(2015 Win7).vcxproj", "{1493BC5C-6AB9-466D-8420-76251511B2C5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting(2015 Win7)", "07 Lighting\07 Lighting(2015 Win7).vcxproj", "{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06 Mouse and Keyboard(2015 Win7)", "Project 01-09\06 Mouse and Keyboard\06 Mouse and Keyboard(2015 Win7).vcxproj", "{9123BC45-1251-4555-A5AE-A87A045B5AA3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2015 Win7)", "08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2015 Win7).vcxproj", "{1B15DD73-ADD7-467E-B81E-93B861240277}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07 Lighting(2015 Win7)", "Project 01-09\07 Lighting\07 Lighting(2015 Win7).vcxproj", "{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09 Texture Mapping(2015 Win7)", "09 Texture Mapping\09 Texture Mapping(2015 Win7).vcxproj", "{EC86BBCF-01A3-4C9E-9A8F-B5D23F717C0C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08 Direct2D and Direct3D Interoperability(2015 Win7)", "Project 01-09\08 Direct2D and Direct3D Interoperability\08 Direct2D and Direct3D Interoperability(2015 Win7).vcxproj", "{1B15DD73-ADD7-467E-B81E-93B861240277}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10 Camera(2015 Win7)", "10 Camera\10 Camera(2015 Win7).vcxproj", "{B6A89A86-288B-4E16-8099-9A095744DDF6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "09 Texture Mapping(2015 Win7)", "Project 01-09\09 Texture Mapping\09 Texture Mapping(2015 Win7).vcxproj", "{EC86BBCF-01A3-4C9E-9A8F-B5D23F717C0C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11 Blending(2015 Win7)", "11 Blending\11 Blending(2015 Win7).vcxproj", "{B071DBC4-023C-4972-9D7B-388DCCBE44D8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "10 Camera(2015 Win7)", "Project 10-16\10 Camera\10 Camera(2015 Win7).vcxproj", "{B6A89A86-288B-4E16-8099-9A095744DDF6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12 Depth and Stenciling(2015 Win7)", "12 Depth and Stenciling\12 Depth and Stenciling(2015 Win7).vcxproj", "{19926BEF-14E9-4E20-BAAD-18B3D145A646}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11 Blending(2015 Win7)", "Project 10-16\11 Blending\11 Blending(2015 Win7).vcxproj", "{B071DBC4-023C-4972-9D7B-388DCCBE44D8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13 Living Without FX11(2015 Win7)", "13 Living Without FX11\13 Living Without FX11(2015 Win7).vcxproj", "{A7474380-0768-4EC2-A34A-AD4BE693B746}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12 Depth and Stenciling(2015 Win7)", "Project 10-16\12 Depth and Stenciling\12 Depth and Stenciling(2015 Win7).vcxproj", "{19926BEF-14E9-4E20-BAAD-18B3D145A646}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14 Depth Test(2015 Win7)", "14 Depth Test\14 Depth Test(2015 Win7).vcxproj", "{020E2EDE-0925-435A-A3CF-DC802BDA4163}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13 Living Without FX11(2015 Win7)", "Project 10-16\13 Living Without FX11\13 Living Without FX11(2015 Win7).vcxproj", "{A7474380-0768-4EC2-A34A-AD4BE693B746}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginning(2015 Win7)", "15 Geometry Shader Beginning\15 Geometry Shader Beginning(2015 Win7).vcxproj", "{DE165325-35F5-4DB9-898C-8039B6C54919}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14 Depth Test(2015 Win7)", "Project 10-16\14 Depth Test\14 Depth Test(2015 Win7).vcxproj", "{020E2EDE-0925-435A-A3CF-DC802BDA4163}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16 Stream Output(2015 Win7)", "16 Stream Output\16 Stream Output(2015 Win7).vcxproj", "{A1645125-87CA-47A2-AA7E-90F119AB07BB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15 Geometry Shader Beginning(2015 Win7)", "Project 10-16\15 Geometry Shader Beginning\15 Geometry Shader Beginning(2015 Win7).vcxproj", "{DE165325-35F5-4DB9-898C-8039B6C54919}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17 Tree Billboard(2015 Win7)", "17 Tree Billboard\17 Tree Billboard(2015 Win7).vcxproj", "{A014E38B-43B0-4549-B9FD-948CD018ACB6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16 Stream Output(2015 Win7)", "Project 10-16\16 Stream Output\16 Stream Output(2015 Win7).vcxproj", "{A1645125-87CA-47A2-AA7E-90F119AB07BB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "19 Meshes(2015 Win7)", "19 Meshes\19 Meshes(2015 Win7).vcxproj", "{07CD1F52-1855-4C3E-AFD1-B50211CC4BF7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "17 Tree Billboard(2015 Win7)", "Project 17-25\17 Tree Billboard\17 Tree Billboard(2015 Win7).vcxproj", "{A014E38B-43B0-4549-B9FD-948CD018ACB6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "20 Instancing and Frustum Culling(2015 Win7)", "20 Instancing and Frustum Culling\20 Instancing and Frustum Culling(2015 Win7).vcxproj", "{732E8500-14A0-42DF-97F1-BE00E20AB2DF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "19 Meshes(2015 Win7)", "Project 17-25\19 Meshes\19 Meshes(2015 Win7).vcxproj", "{07CD1F52-1855-4C3E-AFD1-B50211CC4BF7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21 Picking(2015 Win7)", "21 Picking\21 Picking(2015 Win7).vcxproj", "{6880B8C5-BA35-434B-8B40-D8C8B339FEAD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "20 Instancing and Frustum Culling(2015 Win7)", "Project 17-25\20 Instancing and Frustum Culling\20 Instancing and Frustum Culling(2015 Win7).vcxproj", "{732E8500-14A0-42DF-97F1-BE00E20AB2DF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "22 Static Cube Mapping(2015 Win7)", "22 Static Cube Mapping\22 Static Cube Mapping(2015 Win7).vcxproj", "{46978589-687F-43D3-8234-180E5B508E48}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21 Picking(2015 Win7)", "Project 17-25\21 Picking\21 Picking(2015 Win7).vcxproj", "{6880B8C5-BA35-434B-8B40-D8C8B339FEAD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23 Dynamic Cube Mapping(2015 Win7)", "23 Dynamic Cube Mapping\23 Dynamic Cube Mapping(2015 Win7).vcxproj", "{432D1B19-7AE9-4162-A674-316A9AE26FE0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "22 Static Cube Mapping(2015 Win7)", "Project 17-25\22 Static Cube Mapping\22 Static Cube Mapping(2015 Win7).vcxproj", "{46978589-687F-43D3-8234-180E5B508E48}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "24 Render To Texture(2015 Win7)", "24 Render To Texture\24 Render To Texture(2015 Win7).vcxproj", "{289E4313-AA2C-482F-8BE5-7A71158BEF4A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23 Dynamic Cube Mapping(2015 Win7)", "Project 17-25\23 Dynamic Cube Mapping\23 Dynamic Cube Mapping(2015 Win7).vcxproj", "{432D1B19-7AE9-4162-A674-316A9AE26FE0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25 Normal Mapping(2015 Win7)", "25 Normal Mapping\25 Normal Mapping(2015 Win7).vcxproj", "{8B530EC3-C203-443D-8C6A-0C3449A7B77A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "24 Render To Texture(2015 Win7)", "Project 17-25\24 Render To Texture\24 Render To Texture(2015 Win7).vcxproj", "{289E4313-AA2C-482F-8BE5-7A71158BEF4A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning(2015 Win7)", "26 Compute Shader Beginning\26 Compute Shader Beginning(2015 Win7).vcxproj", "{8E432F8C-E8E8-4BA0-B512-131DE7018070}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "25 Normal Mapping(2015 Win7)", "Project 17-25\25 Normal Mapping\25 Normal Mapping(2015 Win7).vcxproj", "{8B530EC3-C203-443D-8C6A-0C3449A7B77A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(2015 Win7)", "27 Bitonic Sort\27 Bitonic Sort(2015 Win7).vcxproj", "{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26 Compute Shader Beginning(2015 Win7)", "Project 26-30\26 Compute Shader Beginning\26 Compute Shader Beginning(2015 Win7).vcxproj", "{8E432F8C-E8E8-4BA0-B512-131DE7018070}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "06 Mouse and Keyboard(2015 Win7)", "06 Mouse and Keyboard\06 Mouse and Keyboard(2015 Win7).vcxproj", "{9123BC45-1251-4555-A5AE-A87A045B5AA3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27 Bitonic Sort(2015 Win7)", "Project 26-30\27 Bitonic Sort\27 Bitonic Sort(2015 Win7).vcxproj", "{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "28 Waves(2015 Win7)", "28 Waves\28 Waves(2015 Win7).vcxproj", "{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "28 Waves(2015 Win7)", "Project 26-30\28 Waves\28 Waves(2015 Win7).vcxproj", "{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2015 Win7)", "29 OIT\29 OIT(2015 Win7).vcxproj", "{B5E44A7F-074C-4332-AA5C-AA958E7018AA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2015 Win7)", "Project 26-30\29 OIT\29 OIT(2015 Win7).vcxproj", "{B5E44A7F-074C-4332-AA5C-AA958E7018AA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2015 Win7)", "30 Blur and Sobel\30 Blur and Sobel(2015 Win7).vcxproj", "{A19E531A-AB59-4879-889C-5D91D6A6B9DF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2015 Win7)", "Project 26-30\30 Blur and Sobel\30 Blur and Sobel(2015 Win7).vcxproj", "{A19E531A-AB59-4879-889C-5D91D6A6B9DF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2015 Win7)", "31 Shadow Mapping\31 Shadow Mapping(2015 Win7).vcxproj", "{7428D045-8716-4592-ACF0-16E359F16B1C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2015 Win7)", "Project 31-32\31 Shadow Mapping\31 Shadow Mapping(2015 Win7).vcxproj", "{7428D045-8716-4592-ACF0-16E359F16B1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2015 Win7)", "Project 31-32\32 SSAO\32 SSAO(2015 Win7).vcxproj", "{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,14 @@ Global
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x64.Build.0 = Release|x64
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x86.ActiveCfg = Release|Win32
 		{1493BC5C-6AB9-466D-8420-76251511B2C5}.Release|x86.Build.0 = Release|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.ActiveCfg = Debug|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.Build.0 = Debug|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.ActiveCfg = Debug|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.Build.0 = Debug|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.ActiveCfg = Release|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.Build.0 = Release|x64
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.ActiveCfg = Release|Win32
+		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.Build.0 = Release|Win32
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x64.ActiveCfg = Debug|x64
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x64.Build.0 = Debug|x64
 		{A8E2E1D6-9872-4411-9DBE-50C1C4D0D1E1}.Debug|x86.ActiveCfg = Debug|Win32
@@ -251,14 +261,6 @@ Global
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x64.Build.0 = Release|x64
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.ActiveCfg = Release|Win32
 		{7B7E6A70-784A-48E9-8BEE-8E8BECBACCB8}.Release|x86.Build.0 = Release|Win32
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.ActiveCfg = Debug|x64
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x64.Build.0 = Debug|x64
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.ActiveCfg = Debug|Win32
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Debug|x86.Build.0 = Debug|Win32
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.ActiveCfg = Release|x64
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x64.Build.0 = Release|x64
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.ActiveCfg = Release|Win32
-		{9123BC45-1251-4555-A5AE-A87A045B5AA3}.Release|x86.Build.0 = Release|Win32
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Debug|x64.ActiveCfg = Debug|x64
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Debug|x64.Build.0 = Debug|x64
 		{F2514EEF-0746-4D24-AE9C-FDC2BF74DC9A}.Debug|x86.ActiveCfg = Debug|Win32
@@ -291,6 +293,14 @@ Global
 		{7428D045-8716-4592-ACF0-16E359F16B1C}.Release|x64.Build.0 = Release|x64
 		{7428D045-8716-4592-ACF0-16E359F16B1C}.Release|x86.ActiveCfg = Release|Win32
 		{7428D045-8716-4592-ACF0-16E359F16B1C}.Release|x86.Build.0 = Release|Win32
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Debug|x64.ActiveCfg = Debug|x64
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Debug|x64.Build.0 = Debug|x64
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Debug|x86.ActiveCfg = Debug|Win32
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Debug|x86.Build.0 = Debug|Win32
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x64.ActiveCfg = Release|x64
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x64.Build.0 = Release|x64
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x86.ActiveCfg = Release|Win32
+		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

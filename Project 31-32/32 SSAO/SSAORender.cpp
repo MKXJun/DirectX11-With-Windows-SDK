@@ -197,7 +197,7 @@ void SSAORender::BuildOffsetVectors()
 	std::uniform_real_distribution<float> randF(0.25f, 1.0f);
 	for (int i = 0; i < 14; ++i)
 	{
-		// Create random lengths in [0.25, 1.0].
+		// 创建长度范围在[0.25, 1.0]内的随机长度的向量
 		float s = randF(randEngine);
 
 		XMVECTOR v = s * XMVector4Normalize(XMLoadFloat4(&m_Offsets[i]));

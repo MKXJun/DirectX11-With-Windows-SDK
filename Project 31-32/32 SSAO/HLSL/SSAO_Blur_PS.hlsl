@@ -1,12 +1,5 @@
 #include "SSAO.hlsli"
 
-float NdcDepthToViewDepth(float z_ndc)
-{
-    // z_ndc = A + B / viewZ, g_Proj(2, 2) = A, g_Proj(3, 2) = B
-    float viewZ = g_Proj[3][2] / (z_ndc - g_Proj[2][2]);
-    return viewZ;
-}
-
 // 双边滤波
 float4 PS(VertexPosHTex pIn, uniform bool horizontalBlur) : SV_Target
 {
@@ -28,9 +21,9 @@ float4 PS(VertexPosHTex pIn, uniform bool horizontalBlur) : SV_Target
     float totalWeight = blurWeights[g_BlurRadius];
     
     float4 centerNormalDepth = g_NormalDepthMap.SampleLevel(g_SamBlur, pIn.Tex, 0.0f);
-    // 分拆出法向量，并计算在观察空间的深度
+    // 分拆出观察空间的法向量和深度
     float3 centerNormal = centerNormalDepth.xyz;
-    float centerDepth = NdcDepthToViewDepth(centerNormalDepth.w);
+    float centerDepth = centerNormalDepth.w;
     
     for (float i = -g_BlurRadius; i <= g_BlurRadius; ++i)
     {
@@ -41,9 +34,9 @@ float4 PS(VertexPosHTex pIn, uniform bool horizontalBlur) : SV_Target
         float2 tex = pIn.Tex + i * texOffset;
         
         float4 neighborNormalDepth = g_NormalDepthMap.SampleLevel(g_SamBlur, tex, 0.0f);
-        // 分拆出法向量，并计算在观察空间的深度
+        // 分拆出法向量和深度
         float3 neighborNormal = neighborNormalDepth.xyz;
-        float neighborDepth = NdcDepthToViewDepth(neighborNormalDepth.w);
+        float neighborDepth = neighborNormalDepth.w;
         
         //
         // 如果中心值和相邻值的深度或法向量相差太大，我们就认为当前采样点处于边缘区域，

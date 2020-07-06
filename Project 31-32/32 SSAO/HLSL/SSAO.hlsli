@@ -12,7 +12,7 @@ SamplerState g_SamBlur : register(s3); // MIG_MAG_LINEAR_MIP_POINT CLAMP
 cbuffer CBChangesEveryObjectDrawing : register(b0)
 {
     //
-    // 用于SSAO_NormalDepth_VS
+    // 用于SSAO_NormalDepth
     //
     matrix g_WorldView;
     matrix g_WorldViewProj;
@@ -21,20 +21,30 @@ cbuffer CBChangesEveryObjectDrawing : register(b0)
 
 cbuffer CBChangesEveryFrame : register(b1)
 {
+    matrix g_View;
+}
+
+cbuffer CBChangesOnResize : register(b2)
+{
+    matrix g_Proj;
+    
     //
     // 用于SSAO
     //
-    matrix g_View;
-    matrix g_Proj;
-    matrix g_ViewToTexSpace;            // Proj * Texture
-    float4 g_OffsetVectors[14];         // 14个方向均匀分布但长度随机的向量
-    float4 g_FrustumCorners[4];         // 视锥体远平面的4个端点
+    matrix g_ViewToTexSpace;    // Proj * Texture
+    float4 g_FrustumCorners[4]; // 视锥体远平面的4个端点
+}
+
+cbuffer CBChangesRarely : register(b3)
+{
+    // 14个方向均匀分布但长度随机的向量
+    float4 g_OffsetVectors[14]; 
     
     // 观察空间下的坐标
-    float g_OcclusionRadius    = 0.5f;
+    float g_OcclusionRadius = 0.5f;
     float g_OcclusionFadeStart = 0.2f;
-    float g_OcclusionFadeEnd   = 2.0f;
-    float g_SurfaceEpsilon     = 0.05f;
+    float g_OcclusionFadeEnd = 2.0f;
+    float g_SurfaceEpsilon = 0.05f;
     
     //
     // 用于SSAO_Blur
@@ -48,7 +58,7 @@ cbuffer CBChangesEveryFrame : register(b1)
     
     int g_BlurRadius = 5;
     int3 g_Pad;
-}
+};
 
 //
 // 用于SSAO_NormalDepth和SSAO_Blur

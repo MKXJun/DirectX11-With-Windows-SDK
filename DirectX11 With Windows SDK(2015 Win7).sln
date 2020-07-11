@@ -57,9 +57,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2015 Win7)", "Projec
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2015 Win7)", "Project 26-30\30 Blur and Sobel\30 Blur and Sobel(2015 Win7).vcxproj", "{A19E531A-AB59-4879-889C-5D91D6A6B9DF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2015 Win7)", "Project 31-32\31 Shadow Mapping\31 Shadow Mapping(2015 Win7).vcxproj", "{7428D045-8716-4592-ACF0-16E359F16B1C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2015 Win7)", "Project 31-\31 Shadow Mapping\31 Shadow Mapping(2015 Win7).vcxproj", "{7428D045-8716-4592-ACF0-16E359F16B1C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2015 Win7)", "Project 31-32\32 SSAO\32 SSAO(2015 Win7).vcxproj", "{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2015 Win7)", "Project 31-\32 SSAO\32 SSAO(2015 Win7).vcxproj", "{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "33 Tessellation(2015 Win7)", "Project 31-\33 Tessellation\33 Tessellation(2015 Win7).vcxproj", "{EC50409E-CC29-44B4-8B48-326370767CAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -301,6 +303,14 @@ Global
 		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x64.Build.0 = Release|x64
 		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x86.ActiveCfg = Release|Win32
 		{17075BE2-3FE4-44C8-BDE8-7A90A03E6407}.Release|x86.Build.0 = Release|Win32
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Debug|x64.ActiveCfg = Debug|x64
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Debug|x64.Build.0 = Debug|x64
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Debug|x86.Build.0 = Debug|Win32
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Release|x64.ActiveCfg = Release|x64
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Release|x64.Build.0 = Release|x64
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Release|x86.ActiveCfg = Release|Win32
+		{EC50409E-CC29-44B4-8B48-326370767CAF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

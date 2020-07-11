@@ -4,11 +4,14 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/11 v1.30.0</br>
+-**添加项目 Tessellation**
+
 2020/7/6 v1.29.1</br>
 -调整项目 SSAO
 
 2020/7/4 v1.29.0</br>
--添加项目 SSAO</br>
+-**添加项目 SSAO**</br>
 -修正Transform的RotateAround</br>
 -整合项目以减少重复资源</br>
 -EffectHelper添加对cbuffer默认值的支持</br>
@@ -27,7 +30,7 @@
 -VS 2017安装器只有10.0.17763.0的最新SDK，故还是下降至该版本
 
 2020/6/3 v1.28.0</br>
--添加项目 Shadow Mapping</br>
+-**添加项目 Shadow Mapping**</br>
 -Windows SDK版本提升至10.0.19041.0</br>
 -摄像机移动速度提升100%
 
@@ -41,7 +44,7 @@
 -少量代码调整
 
 2020/2/14 v1.27.0</br>
--添加项目 Blur and Sobel
+-**添加项目 Blur and Sobel**
 
 2020/2/7 v1.26.1</br>
 -项目 OIT防止窗口拉伸出现问题</br>
@@ -49,7 +52,7 @@
 -调整`CreateWICTexutre2DArrayFromFile`方法
 
 2020/2/6 v1.26.0</br>
--添加项目 OIT</br>
+-**添加项目 OIT**</br>
 -调整`TextureRender::Begin`方法</br>
 -调整项目文件布局
 

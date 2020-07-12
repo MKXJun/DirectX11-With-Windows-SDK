@@ -1,10 +1,5 @@
 #include "Tessellation.hlsli"
 
-// 0  1
-// .__.
-//   /
-// ./_.
-// 2  3 
 [domain("quad")]
 [partitioning("integer")]
 [outputtopology("triangle_cw")]

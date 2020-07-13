@@ -143,6 +143,24 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	HR(device->CreateInputLayout(VertexPosNormalTangentTex::inputLayout, ARRAYSIZE(VertexPosNormalTangentTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTangentTexLayout.GetAddressOf()));
 
+	HR(CreateShaderFromFile(L"HLSL\\DisplacementMapObject_VS.cso", L"HLSL\\DisplacementMapObject_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("DisplacementMapObject_VS", device, blob.Get()));
+
+	HR(CreateShaderFromFile(L"HLSL\\DisplacementMapInstance_VS.cso", L"HLSL\\DisplacementMapInstance_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("DisplacementMapInstance_VS", device, blob.Get()));
+
+	// ******************
+	// 创建外壳着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\DisplacementMap_HS.cso", L"HLSL\\DisplacementMap_HS.hlsl", "HS", "hs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("DisplacementMap_HS", device, blob.Get()));
+
+	// ******************
+	// 创建域着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\DisplacementMap_DS.cso", L"HLSL\\DisplacementMap_DS.hlsl", "DS", "ds_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("DisplacementMap_DS", device, blob.Get()));
+
 	// ******************
 	// 创建像素着色器
 	//
@@ -169,6 +187,16 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	passDesc.nameVS = "NormalMapInstance_VS";
 	passDesc.namePS = "NormalMap_PS";
 	pImpl->m_pEffectHelper->AddEffectPass("NormalMapInstance", device, &passDesc);
+	passDesc.nameVS = "DisplacementMapObject_VS";
+	passDesc.nameHS = "DisplacementMap_HS";
+	passDesc.nameDS = "DisplacementMap_DS";
+	passDesc.namePS = "NormalMap_PS";
+	pImpl->m_pEffectHelper->AddEffectPass("DisplacementMapObject", device, &passDesc);
+	passDesc.nameVS = "NormalMapInstance_VS";
+	passDesc.nameHS = "DisplacementMap_HS";
+	passDesc.nameDS = "DisplacementMap_DS";
+	passDesc.namePS = "NormalMap_PS";
+	pImpl->m_pEffectHelper->AddEffectPass("DisplacementMapInstance", device, &passDesc);
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "BasicEffect.InstancePosNormalTexLayout");
@@ -302,9 +330,22 @@ void BasicEffect::SetTextureCube(ID3D11ShaderResourceView* textureCube)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TexCube", textureCube);
 }
 
-void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
+void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, (FLOAT*)&eyePos);
+}
+
+void BasicEffect::SetHeightScale(float scale)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_HeightScale")->SetFloat(scale);
+}
+
+void BasicEffect::SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessDistance")->SetFloat(maxTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessDistance")->SetFloat(minTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessFactor")->SetFloat(minTessFactor);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessFactor")->SetFloat(maxTessFactor);
 }
 
 void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)

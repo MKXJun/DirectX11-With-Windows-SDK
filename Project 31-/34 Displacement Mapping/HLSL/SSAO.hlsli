@@ -1,8 +1,9 @@
 
 Texture2D g_DiffuseMap : register(t0);
-Texture2D g_NormalDepthMap : register(t1);
-Texture2D g_RandomVecMap : register(t2);
-Texture2D g_InputImage : register(t3);
+Texture2D g_NormalMap : register(t1);
+Texture2D g_NormalDepthMap : register(t2);
+Texture2D g_RandomVecMap : register(t3);
+Texture2D g_InputImage : register(t4);
 
 SamplerState g_SamLinearWrap : register(s0);
 SamplerState g_SamNormalDepth : register(s1);
@@ -14,6 +15,8 @@ cbuffer CBChangesEveryObjectDrawing : register(b0)
     //
     // 用于SSAO_NormalDepth
     //
+    matrix g_World;
+    matrix g_WorldInvTranspose;
     matrix g_WorldView;
     matrix g_WorldViewProj;
     matrix g_WorldInvTransposeView;
@@ -22,6 +25,13 @@ cbuffer CBChangesEveryObjectDrawing : register(b0)
 cbuffer CBChangesEveryFrame : register(b1)
 {
     matrix g_View;
+    matrix g_ViewProj;
+    float3 g_EyePosW;
+    float g_HeightScale;
+    float g_MaxTessDistance;
+    float g_MinTessDistance;
+    float g_MinTessFactor;
+    float g_MaxTessFactor;
 }
 
 cbuffer CBChangesOnResize : register(b2)
@@ -90,6 +100,35 @@ struct VertexPosHVNormalVTex
 struct VertexPosHTex
 {
     float4 PosH : SV_POSITION;
+    float2 Tex : TEXCOORD;
+};
+
+struct TessVertexOut
+{
+    float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
+    float2 Tex : TEXCOORD;
+    float TessFactor : TESS;
+};
+
+struct PatchTess
+{
+    float EdgeTess[3] : SV_TessFactor;
+    float InsideTess : SV_InsideTessFactor;
+};
+
+struct HullOut
+{
+    float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
+    float2 Tex : TEXCOORD;
+};
+
+struct DomainOut
+{
+    float4 PosH : SV_POSITION;
+    float3 PosW : POSITION;
+    float3 NormalW : NORMAL;
     float2 Tex : TEXCOORD;
 };
 

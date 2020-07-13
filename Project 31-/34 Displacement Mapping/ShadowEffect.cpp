@@ -109,6 +109,24 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
+	HR(CreateShaderFromFile(L"HLSL\\ShadowInstanceTess_VS.cso", L"HLSL\\ShadowInstanceTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("ShadowInstance_VS", device, blob.Get()));
+
+	HR(CreateShaderFromFile(L"HLSL\\ShadowObjectTess_VS.cso", L"HLSL\\ShadowObjectTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("ShadowObjectTess_VS", device, blob.Get()));
+
+	// ******************
+	// 创建外壳着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\Shadow_HS.cso", L"HLSL\\Shadow_HS.hlsl", "HS", "hs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("Shadow_HS", device, blob.Get()));
+
+	// ******************
+	// 创建域着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\Shadow_DS.cso", L"HLSL\\Shadow_DS.hlsl", "DS", "ds_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("Shadow_DS", device, blob.Get()));
+
 	// ******************
 	// 创建像素着色器
 	//
@@ -136,6 +154,32 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	passDesc.namePS = "Shadow_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectAlphaClip", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowInstanceTess_VS";
+	passDesc.nameHS = "Shadow_HS";
+	passDesc.nameHS = "Shadow_DS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowInstanceTess", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTess")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowObjectTess_VS";
+	passDesc.nameHS = "Shadow_HS";
+	passDesc.nameHS = "Shadow_DS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectTess", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTess")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowInstanceTess_VS";
+	passDesc.nameHS = "Shadow_HS";
+	passDesc.nameHS = "Shadow_DS";
+	passDesc.namePS = "Shadow_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowInstanceTessAlphaClip", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTessAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
+
+	passDesc.nameVS = "ShadowObjectTess_VS";
+	passDesc.nameHS = "Shadow_HS";
+	passDesc.nameHS = "Shadow_DS";
+	passDesc.namePS = "Shadow_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectTessAlphaClip", device, &passDesc));
+	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTessAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
 
 	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
@@ -182,6 +226,29 @@ void ShadowEffect::SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, Render
 void ShadowEffect::SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse)
 {
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", textureDiffuse);
+}
+
+void ShadowEffect::SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap)
+{
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", textureNormalMap);
+}
+
+void ShadowEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, (FLOAT*)&eyePos);
+}
+
+void ShadowEffect::SetHeightScale(float scale)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_HeightScale")->SetFloat(scale);
+}
+
+void ShadowEffect::SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessDistance")->SetFloat(maxTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessDistance")->SetFloat(minTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessFactor")->SetFloat(minTessFactor);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessFactor")->SetFloat(maxTessFactor);
 }
 
 void XM_CALLCONV ShadowEffect::SetWorldMatrix(DirectX::FXMMATRIX W)

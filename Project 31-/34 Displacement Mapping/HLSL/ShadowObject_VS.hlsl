@@ -1,22 +1,4 @@
-
-cbuffer CB : register(b0)
-{
-    matrix g_WorldViewProj;
-    matrix g_ViewProj;
-}
-
-struct VertexPosNormalTex
-{
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
-};
-
-struct VertexPosHTex
-{
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
-};
+#include "Shadow.hlsli"
 
 VertexPosHTex VS(VertexPosNormalTex vIn)
 {

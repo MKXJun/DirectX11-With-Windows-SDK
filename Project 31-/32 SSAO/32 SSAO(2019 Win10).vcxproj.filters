@@ -22,6 +22,21 @@
     <Filter Include="着色器">
       <UniqueIdentifier>{9f26b720-97f6-4d33-a511-6e05e5daf743}</UniqueIdentifier>
     </Filter>
+    <Filter Include="着色器\BasicEffect">
+      <UniqueIdentifier>{ff21cd0a-8764-4a04-a39c-85e0fecaa88b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\DebugEffect">
+      <UniqueIdentifier>{9f9e35b5-f319-41c6-bee6-6627f9280a3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\ShadowEffect">
+      <UniqueIdentifier>{ea347026-3f88-42ad-b7db-3c0b59ac6a86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\SSAOEffect">
+      <UniqueIdentifier>{fd665fda-085b-4c5e-8f0e-af0caf992398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\SkyEffect">
+      <UniqueIdentifier>{711c4cb8-63ed-4c23-95c1-0d74372c1db9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -188,87 +203,87 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Basic.hlsli">
-      <Filter>着色器</Filter>
-    </None>
-    <None Include="HLSL\DebugTexture.hlsli">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </None>
     <None Include="HLSL\LightHelper.hlsli">
-      <Filter>着色器</Filter>
-    </None>
-    <None Include="HLSL\Sky.hlsli">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </None>
     <None Include="HLSL\SSAO.hlsli">
-      <Filter>着色器</Filter>
+      <Filter>着色器\SSAOEffect</Filter>
+    </None>
+    <None Include="HLSL\Sky.hlsli">
+      <Filter>着色器\SkyEffect</Filter>
+    </None>
+    <None Include="HLSL\DebugTexture.hlsli">
+      <Filter>着色器\DebugEffect</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Basic_PS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\BasicInstance_VS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\BasicObject_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\DebugTexture_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\DebugTextureOneComp_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\DebugTextureOneCompGray_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\DebugTextureRGBA_PS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\NormalMap_PS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\NormalMapInstance_VS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\NormalMapObject_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Shadow_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\ShadowInstance_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\ShadowObject_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Sky_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Sky_VS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\BasicEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SSAO_Blur_PS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\SSAOEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SSAO_Blur_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\SSAO_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\SSAO_NormalDepth_PS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\SSAO_VS.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\SSAO_NormalDepth_Object_VS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\SSAOEffect</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\SSAO_NormalDepth_Instance_VS.hlsl">
-      <Filter>着色器</Filter>
+      <Filter>着色器\SSAOEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_NormalDepth_Object_VS.hlsl">
+      <Filter>着色器\SSAOEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_NormalDepth_PS.hlsl">
+      <Filter>着色器\SSAOEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_PS.hlsl">
+      <Filter>着色器\SSAOEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\SSAO_VS.hlsl">
+      <Filter>着色器\SSAOEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sky_PS.hlsl">
+      <Filter>着色器\SkyEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sky_VS.hlsl">
+      <Filter>着色器\SkyEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTexture_VS.hlsl">
+      <Filter>着色器\DebugEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTextureOneComp_PS.hlsl">
+      <Filter>着色器\DebugEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTextureOneCompGray_PS.hlsl">
+      <Filter>着色器\DebugEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DebugTextureRGBA_PS.hlsl">
+      <Filter>着色器\DebugEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Shadow_PS.hlsl">
+      <Filter>着色器\ShadowEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowInstance_VS.hlsl">
+      <Filter>着色器\ShadowEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowObject_VS.hlsl">
+      <Filter>着色器\ShadowEffect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

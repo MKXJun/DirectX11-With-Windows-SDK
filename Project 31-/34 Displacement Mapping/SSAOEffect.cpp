@@ -118,11 +118,29 @@ bool SSAOEffect::InitAll(ID3D11Device* device)
 	HR(device->CreateInputLayout(instLayout, ARRAYSIZE(instLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pInstancePosNormalTexLayout.GetAddressOf()));
 
+	HR(CreateShaderFromFile(L"HLSL\\SSAO_NormalDepth_ObjectTess_VS.cso", L"HLSL\\SSAO_NormalDepth_ObjectTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("SSAO_NormalDepth_ObjectTess_VS", device, blob.Get()));
+
+	HR(CreateShaderFromFile(L"HLSL\\SSAO_NormalDepth_InstanceTess_VS.cso", L"HLSL\\SSAO_NormalDepth_InstanceTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("SSAO_NormalDepth_InstanceTess_VS", device, blob.Get()));
+
 	HR(CreateShaderFromFile(L"HLSL\\SSAO_VS.cso", L"HLSL\\SSAO_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(pImpl->m_pEffectHelper->AddShader("SSAO_VS", device, blob.Get()));
 
 	HR(CreateShaderFromFile(L"HLSL\\SSAO_Blur_VS.cso", L"HLSL\\SSAO_Blur_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(pImpl->m_pEffectHelper->AddShader("SSAO_Blur_VS", device, blob.Get()));
+
+	// ******************
+	// 创建外壳着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\SSAO_NormalDepth_HS.cso", L"HLSL\\SSAO_NormalDepth_HS.hlsl", "HS", "hs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("SSAO_NormalDepth_HS", device, blob.Get()));
+
+	// ******************
+	// 创建域着色器
+	//
+	HR(CreateShaderFromFile(L"HLSL\\Shadow_DS.cso", L"HLSL\\Shadow_DS.hlsl", "DS", "ds_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(pImpl->m_pEffectHelper->AddShader("Shadow_DS", device, blob.Get()));
 
 	// ******************
 	// 创建像素着色器
@@ -145,7 +163,18 @@ bool SSAOEffect::InitAll(ID3D11Device* device)
 	passDesc.namePS = "SSAO_NormalDepth_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_Object", device, &passDesc));
 	passDesc.nameVS = "SSAO_NormalDepth_Instance_VS";
+	passDesc.namePS = "SSAO_NormalDepth_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_Instance", device, &passDesc));
+	passDesc.nameVS = "SSAO_NormalDepth_Object_VS";
+	passDesc.nameHS = "SSAO_NormalDepth_HS";
+	passDesc.nameDS = "SSAO_NormalDepth_DS";
+	passDesc.namePS = "SSAO_NormalDepth_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_ObjectTess", device, &passDesc));
+	passDesc.nameVS = "SSAO_NormalDepth_Instance_VS";
+	passDesc.nameHS = "SSAO_NormalDepth_HS";
+	passDesc.nameDS = "SSAO_NormalDepth_DS";
+	passDesc.namePS = "SSAO_NormalDepth_PS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_InstanceTess", device, &passDesc));
 	passDesc.nameVS = "SSAO_VS";
 	passDesc.namePS = "SSAO_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO", device, &passDesc));
@@ -246,6 +275,29 @@ void XM_CALLCONV SSAOEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 void SSAOEffect::SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse)
 {
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", textureDiffuse);
+}
+
+void SSAOEffect::SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap)
+{
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", textureNormalMap);
+}
+
+void SSAOEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, (FLOAT*)&eyePos);
+}
+
+void SSAOEffect::SetHeightScale(float scale)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_HeightScale")->SetFloat(scale);
+}
+
+void SSAOEffect::SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessDistance")->SetFloat(maxTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessDistance")->SetFloat(minTessDistance);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinTessFactor")->SetFloat(minTessFactor);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxTessFactor")->SetFloat(maxTessFactor);
 }
 
 void SSAOEffect::SetTextureNormalDepth(ID3D11ShaderResourceView* textureNormalDepth)

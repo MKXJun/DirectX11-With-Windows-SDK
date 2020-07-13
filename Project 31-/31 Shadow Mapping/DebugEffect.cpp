@@ -111,8 +111,10 @@ bool DebugEffect::InitAll(ID3D11Device* device)
 	passDesc.nameVS = "DebugTexture_VS";
 	passDesc.namePS = "DebugTextureRGBA_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("DebugTextureRGBA", device, &passDesc));
+	passDesc.nameVS = "DebugTexture_VS";
 	passDesc.namePS = "DebugTextureOneComp_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("DebugTextureOneComp", device, &passDesc));
+	passDesc.nameVS = "DebugTexture_VS";
 	passDesc.namePS = "DebugTextureOneCompGray_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("DebugTextureOneCompGray", device, &passDesc));
 

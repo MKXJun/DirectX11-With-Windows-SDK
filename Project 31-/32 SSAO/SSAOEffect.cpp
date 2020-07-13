@@ -145,6 +145,7 @@ bool SSAOEffect::InitAll(ID3D11Device* device)
 	passDesc.namePS = "SSAO_NormalDepth_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_Object", device, &passDesc));
 	passDesc.nameVS = "SSAO_NormalDepth_Instance_VS";
+	passDesc.namePS = "SSAO_NormalDepth_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("SSAO_NormalDepth_Instance", device, &passDesc));
 	passDesc.nameVS = "SSAO_VS";
 	passDesc.namePS = "SSAO_PS";

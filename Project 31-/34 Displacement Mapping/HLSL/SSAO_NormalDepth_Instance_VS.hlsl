@@ -6,7 +6,6 @@ VertexPosHVNormalVTex VS(InstancePosNormalTex vIn)
     VertexPosHVNormalVTex vOut;
     
     vector posW = mul(float4(vIn.PosL, 1.0f), vIn.World);
-    matrix viewProj = mul(g_View, g_Proj);
     matrix worldView = mul(vIn.World, g_View);
     matrix worldInvTransposeView = mul(vIn.WorldInvTranspose, g_View);
     
@@ -15,7 +14,7 @@ VertexPosHVNormalVTex VS(InstancePosNormalTex vIn)
     vOut.NormalV = mul(vIn.NormalL, (float3x3) worldInvTransposeView);
     
     // 变换到裁剪空间
-    vOut.PosH = mul(posW, viewProj);
+    vOut.PosH = mul(posW, g_ViewProj);
     
     vOut.Tex = vIn.Tex;
     

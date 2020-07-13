@@ -49,7 +49,21 @@ public:
 	virtual void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) = 0;
 };
 
-class BasicEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
+class IEffectTextureNormalMap
+{
+public:
+	virtual void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormal) = 0;
+};
+
+class IEffectDisplacementMap : public IEffectTextureNormalMap
+{
+public:
+	virtual void SetEyePos(const DirectX::XMFLOAT3& eyePos) = 0;
+	virtual void SetHeightScale(float scale) = 0;
+	virtual void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) = 0;
+};
+
+class BasicEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse, public IEffectDisplacementMap
 {
 public:
 
@@ -100,18 +114,28 @@ public:
 
 	void SetMaterial(const Material& material);
 
+	// 是否使用纹理
 	void SetTextureUsed(bool isUsed);
+	// 是否使用SSAO
 	void SetSSAOEnabled(bool enabled);
 
-	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse) override;
-
-	void SetTextureNormalMap(ID3D11ShaderResourceView * textureNormalMap);
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置阴影贴图
 	void SetTextureShadowMap(ID3D11ShaderResourceView * textureShadowMap);
+	// 设置SSAO图
 	void SetTextureSSAOMap(ID3D11ShaderResourceView* textureSSAOMap);
+	// 设置天空盒
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
-	
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext * deviceContext);
@@ -166,7 +190,7 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class ShadowEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
+class ShadowEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse, public IEffectDisplacementMap
 {
 public:
 
@@ -192,8 +216,18 @@ public:
 	// Alpha裁剪绘制(处理具有透明度的物体)
 	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type);
 
+
+
 	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse);
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
 
 	//
 	// 矩阵设置
@@ -262,7 +296,7 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class SSAOEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
+class SSAOEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse, public IEffectDisplacementMap
 {
 public:
 
@@ -304,6 +338,15 @@ public:
 
 	// 设置漫反射纹理
 	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
+
 
 	// 设置观察空间的深度/法向量贴图
 	void SetTextureNormalDepth(ID3D11ShaderResourceView* textureNormalDepth);

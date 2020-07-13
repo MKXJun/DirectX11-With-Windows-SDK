@@ -602,31 +602,45 @@ bool GameApp::InitResource()
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_Point2Square", m_pd3dDevice.Get(), &passDesc));
 	passDesc.nameGS = nullptr;
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_Isoline_HS";
 	passDesc.nameDS = "Tessellation_BezierCurve_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_BezierCurve", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_BezierCurve")->SetRasterizerState(m_pRSWireFrame.Get());
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_Triangle_HS";
 	passDesc.nameDS = "Tessellation_Triangle_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_Triangle", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_Triangle")->SetRasterizerState(m_pRSWireFrame.Get());
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_Quad_Integer_HS";
 	passDesc.nameDS = "Tessellation_Quad_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_Quad_Integer", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_Quad_Integer")->SetRasterizerState(m_pRSWireFrame.Get());
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_Quad_Odd_HS";
+	passDesc.nameDS = "Tessellation_Quad_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_Quad_Odd", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_Quad_Odd")->SetRasterizerState(m_pRSWireFrame.Get());
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_Quad_Even_HS";
+	passDesc.nameDS = "Tessellation_Quad_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_Quad_Even", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_Quad_Even")->SetRasterizerState(m_pRSWireFrame.Get());
 
+	passDesc.nameVS = "Tessellation_VS";
 	passDesc.nameHS = "Tessellation_BezierSurface_HS";
 	passDesc.nameDS = "Tessellation_BezierSurface_DS";
+	passDesc.namePS = "Tessellation_PS";
 	HR(m_pEffectHelper->AddEffectPass("Tessellation_BezierSurface", m_pd3dDevice.Get(), &passDesc));
 	m_pEffectHelper->GetEffectPass("Tessellation_BezierSurface")->SetRasterizerState(m_pRSWireFrame.Get());
 

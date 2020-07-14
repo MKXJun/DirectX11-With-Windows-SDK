@@ -44,13 +44,13 @@ namespace Geometry
 
 	// 创建圆柱体网格数据，slices越大，精度越高。
 	template<class VertexType = VertexPosNormalTex, class IndexType = DWORD>
-	MeshData<VertexType, IndexType> CreateCylinder(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
-		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	MeshData<VertexType, IndexType> CreateCylinder(float radius = 1.0f, float height = 2.0f, UINT slices = 20, UINT stacks = 10,
+		float texU = 1.0f, float texV = 1.0f, const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// 创建只有圆柱体侧面的网格数据，slices越大，精度越高
 	template<class VertexType = VertexPosNormalTex, class IndexType = DWORD>
-	MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, UINT slices = 20,
-		const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
+	MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, UINT slices = 20, UINT stacks = 10,
+		float texU = 1.0f, float texV = 1.0f, const DirectX::XMFLOAT4& color = { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// 创建圆锥体网格数据，slices越大，精度越高。
 	template<class VertexType = VertexPosNormalTex, class IndexType = DWORD>
@@ -327,13 +327,14 @@ namespace Geometry
 	}
 
 	template<class VertexType, class IndexType>
-	inline MeshData<VertexType, IndexType> CreateCylinder(float radius, float height, UINT slices, const DirectX::XMFLOAT4 & color)
+	inline MeshData<VertexType, IndexType> CreateCylinder(float radius, float height, UINT slices, UINT stacks,
+		float texU, float texV, const DirectX::XMFLOAT4 & color)
 	{
 		using namespace DirectX;
 
-		auto meshData = CreateCylinderNoCap<VertexType, IndexType>(radius, height, slices, color);
-		UINT vertexCount = 4 * (slices + 1) + 2;
-		UINT indexCount = 12 * slices;
+		auto meshData = CreateCylinderNoCap<VertexType, IndexType>(radius, height, slices, stacks, texU, texV, color);
+		UINT vertexCount = (slices + 1) * (stacks + 3) + 2;
+		UINT indexCount = 6 * slices * (stacks + 1);
 		meshData.vertexVec.resize(vertexCount);
 		meshData.indexVec.resize(indexCount);
 
@@ -341,8 +342,8 @@ namespace Geometry
 		float theta = 0.0f;
 		float per_theta = XM_2PI / slices;
 
-		IndexType vIndex = 2 * (slices + 1), iIndex = 6 * slices;
-		IndexType offset = 2 * (slices + 1);
+		IndexType vIndex = (slices + 1) * (stacks + 1), iIndex = 6 * slices * stacks;
+		IndexType offset = vIndex;
 		Internal::VertexData vertexData;
 
 		// 放入顶端圆心
@@ -354,8 +355,10 @@ namespace Geometry
 		for (UINT i = 0; i <= slices; ++i)
 		{
 			theta = i * per_theta;
+			float u = cosf(theta) * radius / height + 0.5f;
+			float v = sinf(theta) * radius / height + 0.5f;
 			vertexData = { XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(0.0f, 1.0f, 0.0f),
-				XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
+				XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(u, v)  };
 			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 		}
 
@@ -368,8 +371,10 @@ namespace Geometry
 		for (UINT i = 0; i <= slices; ++i)
 		{
 			theta = i * per_theta;
+			float u = cosf(theta) * radius / height + 0.5f;
+			float v = sinf(theta) * radius / height + 0.5f;
 			vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(0.0f, -1.0f, 0.0f),
-				XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f) };
+				XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f), color, XMFLOAT2(u, v) };
 			Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
 		}
 
@@ -396,54 +401,57 @@ namespace Geometry
 	}
 
 	template<class VertexType, class IndexType>
-	inline MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius, float height, UINT slices, const DirectX::XMFLOAT4 & color)
+	inline MeshData<VertexType, IndexType> CreateCylinderNoCap(float radius, float height, UINT slices, UINT stacks,
+		float texU, float texV, const DirectX::XMFLOAT4 & color)
 	{
 		using namespace DirectX;
 
 		MeshData<VertexType, IndexType> meshData;
-		UINT vertexCount = 2 * (slices + 1);
-		UINT indexCount = 6 * slices;
+		UINT vertexCount = (slices + 1) * (stacks + 1);
+		UINT indexCount = 6 * slices * stacks;
 		meshData.vertexVec.resize(vertexCount);
 		meshData.indexVec.resize(indexCount);
 
 		float h2 = height / 2;
 		float theta = 0.0f;
 		float per_theta = XM_2PI / slices;
+		float stackHeight = height / stacks;
 
 		Internal::VertexData vertexData;
 
-		// 放入侧面顶端点
-		for (UINT i = 0; i <= slices; ++i)
+		// 自底向上铺设侧面端点
+		UINT vIndex = 0;
+		for (UINT i = 0; i < stacks + 1; ++i)
 		{
-			theta = i * per_theta;
-			vertexData = { XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
-				XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, 0.0f) };
-			Internal::InsertVertexElement(meshData.vertexVec[i], vertexData);
-		}
-
-		// 放入侧面底端点
-		for (UINT i = 0; i <= slices; ++i)
-		{
-			theta = i * per_theta;
-			vertexData = { XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
-				XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(theta / XM_2PI, 1.0f) };
-			UINT vIndex = (slices + 1) + i;
-			Internal::InsertVertexElement(meshData.vertexVec[vIndex], vertexData);
+			float y = -h2 + i * stackHeight;
+			// 当前层顶点
+			for (UINT j = 0; j <= slices; ++j)
+			{
+				theta = j * per_theta;
+				float u = theta / XM_2PI;
+				float v = 1.0f - (float)i / stacks;
+				vertexData = { XMFLOAT3(radius * cosf(theta), y, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta)),
+					XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f), color, XMFLOAT2(u * texU, v * texV) };
+				Internal::InsertVertexElement(meshData.vertexVec[vIndex++], vertexData);
+			}
 		}
 
 		// 放入索引
 		UINT iIndex = 0;
-
-		for (UINT i = 0; i < slices; ++i)
+		for (UINT i = 0; i < stacks; ++i)
 		{
-			meshData.indexVec[iIndex++] = i;
-			meshData.indexVec[iIndex++] = i + 1;
-			meshData.indexVec[iIndex++] = (slices + 1) + i + 1;
+			for (UINT j = 0; j < slices; ++j)
+			{
+				meshData.indexVec[iIndex++] = i * (slices + 1) + j;
+				meshData.indexVec[iIndex++] = (i + 1) * (slices + 1) + j;
+				meshData.indexVec[iIndex++] = (i + 1) * (slices + 1) + j + 1;
 
-			meshData.indexVec[iIndex++] = (slices + 1) + i + 1;
-			meshData.indexVec[iIndex++] = (slices + 1) + i;
-			meshData.indexVec[iIndex++] = i;
+				meshData.indexVec[iIndex++] = i * (slices + 1) + j;
+				meshData.indexVec[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+				meshData.indexVec[iIndex++] = i * (slices + 1) + j + 1;
+			}
 		}
+		
 
 
 		return meshData;

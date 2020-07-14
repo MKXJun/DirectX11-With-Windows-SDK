@@ -222,7 +222,7 @@ void GameApp::DrawScene()
 	
 	// ******************
 	// 绘制到阴影贴图
-
+	//
 	m_pShadowMap->Begin(m_pd3dImmediateContext.Get(), nullptr);
 	{
 		DrawScene(m_pShadowEffect.get());
@@ -231,6 +231,7 @@ void GameApp::DrawScene()
 
 	// ******************
 	// 正常绘制场景
+	//
 	m_pBasicEffect->SetTextureShadowMap(m_pShadowMap->GetOutputTexture());
 	DrawScene(m_pBasicEffect.get(), m_EnableNormalMap);
 
@@ -243,6 +244,7 @@ void GameApp::DrawScene()
 
 	// ******************
 	// 调试绘制阴影贴图
+	//
 	if (m_EnableDebug)
 	{
 		if (m_GrayMode)

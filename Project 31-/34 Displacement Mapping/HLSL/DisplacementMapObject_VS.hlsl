@@ -4,11 +4,8 @@
 TessVertexOut VS(VertexPosNormalTangentTex vIn)
 {
     TessVertexOut vOut;
-    
-    vector posW = mul(float4(vIn.PosL, 1.0f), g_World);
 
-    vOut.PosW = posW.xyz;
-    vOut.PosH = mul(float4(vIn.PosL, 1.0f), g_WorldViewProj);
+    vOut.PosW = mul(float4(vIn.PosL, 1.0f), g_World).xyz;
     vOut.NormalW = mul(vIn.NormalL, (float3x3) g_WorldInvTranspose);
     vOut.TangentW = mul(vIn.TangentL, g_World);
     vOut.Tex = vIn.Tex;

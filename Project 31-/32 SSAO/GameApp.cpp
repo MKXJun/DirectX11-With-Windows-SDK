@@ -220,6 +220,7 @@ void GameApp::DrawScene()
 	
 	// ******************
 	// 绘制到SSAO图
+	//
 	if (m_EnableSSAO)
 	{
 		m_pSSAOMap->Begin(m_pd3dImmediateContext.Get(), m_pDepthStencilView.Get());
@@ -238,6 +239,7 @@ void GameApp::DrawScene()
 	
 	// ******************
 	// 绘制到阴影贴图
+	//
 	m_pShadowMap->Begin(m_pd3dImmediateContext.Get(), nullptr);
 	{
 		DrawScene(m_pShadowEffect.get());
@@ -246,7 +248,7 @@ void GameApp::DrawScene()
 
 	// ******************
 	// 正常绘制场景
-	
+	//
 	m_pBasicEffect->SetTextureShadowMap(m_pShadowMap->GetOutputTexture());
 	m_pBasicEffect->SetTextureSSAOMap(m_pSSAOMap->GetAmbientTexture());
 	DrawScene(m_pBasicEffect.get(), m_EnableNormalMap);
@@ -261,6 +263,7 @@ void GameApp::DrawScene()
 
 	// ******************
 	// 调试绘制SSAO图
+	//
 	if (m_EnableSSAO && m_EnableDebug)
 	{
 		if (m_GrayMode)

@@ -100,10 +100,15 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
 			pEffectTextureDiffuse->SetTextureDiffuse(part.texDiffuse.Get());
 		}
 
+		IEffectTextureNormalMap* pEffectTextureNormalMap = dynamic_cast<IEffectTextureNormalMap*>(effect);
+		if (pEffectTextureNormalMap)
+		{
+			pEffectTextureNormalMap->SetTextureNormalMap(part.texNormalMap.Get());
+		}
+
 		BasicEffect* pBasicEffect = dynamic_cast<BasicEffect*>(effect);
 		if (pBasicEffect)
 		{
-			pBasicEffect->SetTextureNormalMap(part.texNormalMap.Get());
 			pBasicEffect->SetMaterial(part.material);
 		}
 		
@@ -132,7 +137,7 @@ void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, IEffect * eff
 	{
 		XMMATRIX W = t.GetLocalToWorldMatrixXM();
 		iter->world = XMMatrixTranspose(W);
-		iter->worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
+		iter->worldInvTranspose = InverseTranspose(W);
 		iter++;
 	}
 
@@ -150,16 +155,27 @@ void GameObject::DrawInstanced(ID3D11DeviceContext* deviceContext, IEffect * eff
 		deviceContext->IASetIndexBuffer(part.indexBuffer.Get(), part.indexFormat, 0);
 
 		// 更新数据并应用
+		IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(effect);
+		if (pEffectTransform)
+		{
+			pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
+		}
+
 		IEffectTextureDiffuse* pEffectTextureDiffuse = dynamic_cast<IEffectTextureDiffuse*>(effect);
 		if (pEffectTextureDiffuse)
 		{
 			pEffectTextureDiffuse->SetTextureDiffuse(part.texDiffuse.Get());
 		}
 
+		IEffectTextureNormalMap* pEffectTextureNormalMap = dynamic_cast<IEffectTextureNormalMap*>(effect);
+		if (pEffectTextureNormalMap)
+		{
+			pEffectTextureNormalMap->SetTextureNormalMap(part.texNormalMap.Get());
+		}
+
 		BasicEffect* pBasicEffect = dynamic_cast<BasicEffect*>(effect);
 		if (pBasicEffect)
 		{
-			pBasicEffect->SetTextureNormalMap(part.texNormalMap.Get());
 			pBasicEffect->SetMaterial(part.material);
 		}
 

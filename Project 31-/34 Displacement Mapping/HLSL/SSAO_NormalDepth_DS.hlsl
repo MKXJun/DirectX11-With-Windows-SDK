@@ -8,9 +8,9 @@ VertexPosHVNormalVTex DS(PatchTess patchTess,
     VertexPosHVNormalVTex dOut;
     
     // 对面片属性进行插值以生成顶点
-    float3 posW    = bary.x * tri[0].PosW + bary.y * tri[1].PosW + bary.z * tri[2].PosW;
+    float3 posW    = bary.x * tri[0].PosW    + bary.y * tri[1].PosW    + bary.z * tri[2].PosW;
     float3 normalW = bary.x * tri[0].NormalW + bary.y * tri[1].NormalW + bary.z * tri[2].NormalW;
-    dOut.Tex       = bary.x * tri[0].Tex + bary.y * tri[1].Tex + bary.z * tri[2].Tex;
+    dOut.Tex       = bary.x * tri[0].Tex     + bary.y * tri[1].Tex     + bary.z * tri[2].Tex;
     
     // 对插值后的法向量进行标准化
     normalW = normalize(normalW);

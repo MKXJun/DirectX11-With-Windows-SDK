@@ -303,11 +303,9 @@ void SSAOEffect::Apply(ID3D11DeviceContext* deviceContext)
 		XMMATRIX W = XMLoadFloat4x4(&pImpl->m_World);
 		XMMATRIX WV = W * V;
 		XMMATRIX WVP = WV * P;
-		// 世界矩阵的逆的转置仅针对法向量，我们也不需要世界矩阵的平移分量
-		// 而且不去掉的话乘上后续的观察矩阵会造成影响
-		W.r[3] = g_XMIdentityR3;
-		XMMATRIX WInvT = XMMatrixTranspose(XMMatrixInverse(nullptr, W));
+		XMMATRIX WInvT = InverseTranspose(W);
 		XMMATRIX WInvTV = WInvT * V;
+
 		WV = XMMatrixTranspose(WV);
 		WInvTV = XMMatrixTranspose(WInvTV);
 		WVP = XMMatrixTranspose(WVP);

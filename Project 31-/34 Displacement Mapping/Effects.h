@@ -18,6 +18,7 @@ class IEffect
 {
 public:
 	enum RenderType { RenderObject, RenderInstance };
+	enum RSFillMode { Solid, WireFrame };
 
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
@@ -87,9 +88,11 @@ public:
 	//
 
 	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type);
+	void SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type, RSFillMode fillMode = RSFillMode::Solid);
 	// 带法线贴图的绘制
-	void SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type);
+	void SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type, RSFillMode fillMode = RSFillMode::Solid);
+	// 带位移映射的绘制
+	void SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type, RSFillMode fillMode = RSFillMode::Solid);
 
 	//
 	// 矩阵设置
@@ -216,7 +219,11 @@ public:
 	// Alpha裁剪绘制(处理具有透明度的物体)
 	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type);
 
+	// 带位移贴图的绘制
+	void SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type);
 
+	// 带位移映射的Alpha裁剪绘制(处理具有透明度的物体)
+	void SetRenderAlphaClipWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type);
 
 	// 设置漫反射纹理
 	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
@@ -318,6 +325,9 @@ public:
 
 	// 绘制法向量和深度贴图
 	void SetRenderNormalDepth(ID3D11DeviceContext* deviceContext, RenderType type, bool enableAlphaClip = false);
+
+	// 绘制带位移映射的法向量和深度贴图
+	void SetRenderNormalDepthWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type, bool enableAlphaClip = false);
 
 	// 绘制SSAO图
 	void SetRenderSSAOMap(ID3D11DeviceContext* deviceContext, int sampleCount);

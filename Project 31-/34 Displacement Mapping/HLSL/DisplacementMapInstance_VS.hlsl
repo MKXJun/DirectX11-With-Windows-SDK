@@ -5,10 +5,7 @@ TessVertexOut VS(InstancePosNormalTangentTex vIn)
 {
     TessVertexOut vOut;
     
-    vector posW = mul(float4(vIn.PosL, 1.0f), vIn.World);
-    
-    vOut.PosW = posW.xyz;
-    vOut.PosH = mul(posW, g_ViewProj);
+    vOut.PosW = mul(float4(vIn.PosL, 1.0f), vIn.World).xyz;
     vOut.NormalW = mul(vIn.NormalL, (float3x3) vIn.WorldInvTranspose);
     vOut.TangentW = mul(vIn.TangentL, vIn.World);
     vOut.Tex = vIn.Tex;
@@ -24,6 +21,7 @@ TessVertexOut VS(InstancePosNormalTangentTex vIn)
     
     // [0, 1] --> [g_MinTessFactor, g_MaxTessFactor]
     vOut.TessFactor = g_MinTessFactor + tess * (g_MaxTessFactor - g_MinTessFactor);
+    
     return vOut;
 }
 

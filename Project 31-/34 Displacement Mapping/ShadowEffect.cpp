@@ -90,7 +90,11 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 		{ "World", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{ "World", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{ "World", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{ "World", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1}
+		{ "World", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{ "WorldInvTranspose", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{ "WorldInvTranspose", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{ "WorldInvTranspose", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{ "WorldInvTranspose", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_PER_INSTANCE_DATA, 1}
 	};
 
 	// ******************
@@ -110,7 +114,7 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\ShadowInstanceTess_VS.cso", L"HLSL\\ShadowInstanceTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("ShadowInstance_VS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->AddShader("ShadowInstanceTess_VS", device, blob.Get()));
 
 	HR(CreateShaderFromFile(L"HLSL\\ShadowObjectTess_VS.cso", L"HLSL\\ShadowObjectTess_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(pImpl->m_pEffectHelper->AddShader("ShadowObjectTess_VS", device, blob.Get()));
@@ -157,26 +161,28 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 
 	passDesc.nameVS = "ShadowInstanceTess_VS";
 	passDesc.nameHS = "Shadow_HS";
-	passDesc.nameHS = "Shadow_DS";
+	passDesc.nameDS = "Shadow_DS";
+	passDesc.namePS = nullptr;
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowInstanceTess", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTess")->SetRasterizerState(RenderStates::RSDepth.Get());
 
 	passDesc.nameVS = "ShadowObjectTess_VS";
 	passDesc.nameHS = "Shadow_HS";
-	passDesc.nameHS = "Shadow_DS";
+	passDesc.nameDS = "Shadow_DS";
+	passDesc.namePS = nullptr;
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectTess", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTess")->SetRasterizerState(RenderStates::RSDepth.Get());
 
 	passDesc.nameVS = "ShadowInstanceTess_VS";
 	passDesc.nameHS = "Shadow_HS";
-	passDesc.nameHS = "Shadow_DS";
+	passDesc.nameDS = "Shadow_DS";
 	passDesc.namePS = "Shadow_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowInstanceTessAlphaClip", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTessAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
 
 	passDesc.nameVS = "ShadowObjectTess_VS";
 	passDesc.nameHS = "Shadow_HS";
-	passDesc.nameHS = "Shadow_DS";
+	passDesc.nameDS = "Shadow_DS";
 	passDesc.namePS = "Shadow_PS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowObjectTessAlphaClip", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTessAlphaClip")->SetRasterizerState(RenderStates::RSDepth.Get());
@@ -220,6 +226,38 @@ void ShadowEffect::SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, Render
 		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectAlphaClip");
 	}
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pImpl->m_RenderType = type;
+}
+
+void ShadowEffect::SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type)
+{
+	if (type == RenderInstance)
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTess");
+	}
+	else
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTess");
+	}
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+	pImpl->m_RenderType = type;
+}
+
+void ShadowEffect::SetRenderAlphaClipWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type)
+{
+	if (type == RenderInstance)
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowInstanceTessAlphaClip");
+	}
+	else
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowObjectTessAlphaClip");
+	}
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 	pImpl->m_RenderType = type;
 }
 

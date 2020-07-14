@@ -192,11 +192,14 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	passDesc.nameDS = "DisplacementMap_DS";
 	passDesc.namePS = "NormalMap_PS";
 	pImpl->m_pEffectHelper->AddEffectPass("DisplacementMapObject", device, &passDesc);
-	passDesc.nameVS = "NormalMapInstance_VS";
+	passDesc.nameVS = "DisplacementMapInstance_VS";
 	passDesc.nameHS = "DisplacementMap_HS";
 	passDesc.nameDS = "DisplacementMap_DS";
 	passDesc.namePS = "NormalMap_PS";
 	pImpl->m_pEffectHelper->AddEffectPass("DisplacementMapInstance", device, &passDesc);
+
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "BasicEffect.InstancePosNormalTexLayout");
@@ -209,7 +212,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 }
 
 
-void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type)
+void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type, RSFillMode fillMode)
 {
 	if (type == RenderInstance)
 	{
@@ -222,13 +225,15 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderTy
 		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("BasicObject");
 	}
 
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	if (fillMode == Solid)
+		pImpl->m_pCurrEffectPass->SetRasterizerState(nullptr);
+	else
+		pImpl->m_pCurrEffectPass->SetRasterizerState(RenderStates::RSWireframe.Get());
 
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type)
+void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type, RSFillMode fillMode)
 {
 	if (type == RenderInstance)
 	{
@@ -241,10 +246,33 @@ void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, Ren
 		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("NormalMapObject");
 	}
 
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	if (fillMode == Solid)
+		pImpl->m_pCurrEffectPass->SetRasterizerState(nullptr);
+	else
+		pImpl->m_pCurrEffectPass->SetRasterizerState(RenderStates::RSWireframe.Get());
 
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void BasicEffect::SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type, RSFillMode fillMode)
+{
+	if (type == RenderInstance)
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTangentTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("DisplacementMapInstance");
+	}
+	else
+	{
+		deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTangentTexLayout.Get());
+		pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("DisplacementMapObject");
+	}
+
+	if (fillMode == Solid)
+		pImpl->m_pCurrEffectPass->SetRasterizerState(nullptr);
+	else
+		pImpl->m_pCurrEffectPass->SetRasterizerState(RenderStates::RSWireframe.Get());
+
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 }
 
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
@@ -303,6 +331,8 @@ void BasicEffect::SetSSAOEnabled(bool enabled)
 	pImpl->m_pEffectHelper->GetEffectPass("BasicInstance")->SetDepthStencilState((enabled ? RenderStates::DSSEqual.Get() : nullptr), 0);
 	pImpl->m_pEffectHelper->GetEffectPass("NormalMapObject")->SetDepthStencilState((enabled ? RenderStates::DSSEqual.Get() : nullptr), 0);
 	pImpl->m_pEffectHelper->GetEffectPass("NormalMapInstance")->SetDepthStencilState((enabled ? RenderStates::DSSEqual.Get() : nullptr), 0);
+	pImpl->m_pEffectHelper->GetEffectPass("DisplacementMapObject")->SetDepthStencilState((enabled ? RenderStates::DSSEqual.Get() : nullptr), 0);
+	pImpl->m_pEffectHelper->GetEffectPass("DisplacementMapInstance")->SetDepthStencilState((enabled ? RenderStates::DSSEqual.Get() : nullptr), 0);
 }
 
 void BasicEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
@@ -356,16 +386,15 @@ void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 
 	XMMATRIX WVP = W * V * P;
 	XMMATRIX WInvT = InverseTranspose(W);
+	XMMATRIX VP = V * P;
 
 	WVP = XMMatrixTranspose(WVP);
 	WInvT = XMMatrixTranspose(WInvT);
 	W = XMMatrixTranspose(W);
-	V = XMMatrixTranspose(V);
-	P = XMMatrixTranspose(P);
+	VP = XMMatrixTranspose(VP);
 
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_World")->SetFloatMatrix(4, 4, (FLOAT*)&W);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_View")->SetFloatMatrix(4, 4, (FLOAT*)&V);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Proj")->SetFloatMatrix(4, 4, (FLOAT*)&P);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&VP);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&WVP);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldInvTranspose")->SetFloatMatrix(4, 4, (FLOAT*)&WInvT);
 

@@ -63,6 +63,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2017 Win10)", "Proj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "33 Tessellation(2017 Win10)", "Project 31-\33 Tessellation\33 Tessellation(2017 Win10).vcxproj", "{080296F4-7A82-4ABE-9288-6DC24F1B791F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "34 Displacement Mapping(2017 Win10)", "Project 31-\34 Displacement Mapping\34 Displacement Mapping(2017 Win10).vcxproj", "{394825E6-B2D2-4E65-A986-B2BE4AC690DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -311,6 +313,14 @@ Global
 		{080296F4-7A82-4ABE-9288-6DC24F1B791F}.Release|x64.Build.0 = Release|x64
 		{080296F4-7A82-4ABE-9288-6DC24F1B791F}.Release|x86.ActiveCfg = Release|Win32
 		{080296F4-7A82-4ABE-9288-6DC24F1B791F}.Release|x86.Build.0 = Release|Win32
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Debug|x64.ActiveCfg = Debug|x64
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Debug|x64.Build.0 = Debug|x64
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Debug|x86.Build.0 = Debug|Win32
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Release|x64.ActiveCfg = Release|x64
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Release|x64.Build.0 = Release|x64
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Release|x86.ActiveCfg = Release|Win32
+		{394825E6-B2D2-4E65-A986-B2BE4AC690DB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

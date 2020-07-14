@@ -73,8 +73,10 @@ void SkyRender::Draw(ID3D11DeviceContext* deviceContext, SkyEffect& skyEffect, c
 	deviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), strides, offsets);
 	deviceContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	XMFLOAT3 pos = camera.GetPosition();
-	skyEffect.SetWorldViewProjMatrix(XMMatrixTranslation(pos.x, pos.y, pos.z) * camera.GetViewProjXM());
+	// 抹除平移分量，避免摄像机移动带来天空盒抖动
+	XMMATRIX V = camera.GetViewXM();
+	V.r[3] = g_XMIdentityR3;
+	skyEffect.SetWorldViewProjMatrix(V * camera.GetProjXM());
 	skyEffect.SetTextureCube(m_pTextureCubeSRV.Get());
 	skyEffect.Apply(deviceContext);
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);

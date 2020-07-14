@@ -170,6 +170,9 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	passDesc.namePS = "NormalMap_PS";
 	pImpl->m_pEffectHelper->AddEffectPass("NormalMapInstance", device, &passDesc);
 
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
+
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pInstancePosNormalTexLayout.Get(), "BasicEffect.InstancePosNormalTexLayout");
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "BasicEffect.VertexPosNormalTexLayout");
@@ -195,9 +198,6 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderTy
 	}
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
 }
 
 void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type)
@@ -214,9 +214,6 @@ void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, Ren
 	}
 
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadow.Get());
 }
 
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)

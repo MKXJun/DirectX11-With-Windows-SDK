@@ -4,6 +4,11 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/14 v1.31.0</br>
+-**添加项目 Displacement Mapping**</br>
+-修改Geometry的Cylinder以支持该项目的曲面细分实例</br>
+-调整项目属性配置
+
 2020/7/11 v1.30.0</br>
 -**添加项目 Tessellation**
 

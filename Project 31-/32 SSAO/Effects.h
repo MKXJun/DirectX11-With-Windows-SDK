@@ -62,14 +62,12 @@ public:
 	// 获取单例
 	static BasicEffect& Get();
 
-	
-
 	// 初始化所需资源
 	bool InitAll(ID3D11Device * device);
 
 
 	// 
-	// 渲染模式的变更
+	// IEffectTextureDiffuse
 	//
 
 	// 默认状态来绘制
@@ -78,7 +76,7 @@ public:
 	void SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext, RenderType type);
 
 	//
-	// 矩阵设置
+	// IEffectTransform
 	//
 
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
@@ -88,7 +86,13 @@ public:
 	void XM_CALLCONV SetShadowTransformMatrix(DirectX::FXMMATRIX S);
 
 	//
-	// 光照、材质和纹理相关设置
+	// IEffectTextureDiffuse 
+	//
+
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
+	//
+	// BasicEffect
 	//
 
 	// 各种类型灯光允许的最大数目
@@ -103,18 +107,19 @@ public:
 	void SetTextureUsed(bool isUsed);
 	void SetSSAOEnabled(bool enabled);
 
-	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse) override;
-
 	void SetTextureNormalMap(ID3D11ShaderResourceView * textureNormalMap);
 	void SetTextureShadowMap(ID3D11ShaderResourceView * textureShadowMap);
 	void SetTextureSSAOMap(ID3D11ShaderResourceView* textureSSAOMap);
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
 
 	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
-	
+
+	//
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext * deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 	
 private:
 	class Impl;
@@ -136,27 +141,28 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
-	// 
-	// 渲染模式的变更
-	//
-
-	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
 	//
-	// 矩阵设置
+	// IEffectTransform
 	//
 
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
 	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
-	//
-	// 纹理立方体映射设置
+	// 
+	// SkyEffect
 	//
 
+	// 默认状态来绘制
+	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+
+	// 设置天空盒
 	void SetTextureCube(ID3D11ShaderResourceView* textureCube);
 
+	//
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -169,7 +175,6 @@ private:
 class ShadowEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
 {
 public:
-
 	ShadowEffect();
 	virtual ~ShadowEffect() override;
 
@@ -182,8 +187,23 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTextureDiffuse
+	//
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
 	// 
-	// 渲染模式的变更
+	// ShadowEffect
 	//
 
 	// 默认状态来绘制
@@ -192,16 +212,9 @@ public:
 	// Alpha裁剪绘制(处理具有透明度的物体)
 	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type);
 
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse);
-
 	//
-	// 矩阵设置
+	// IEffect
 	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -214,7 +227,6 @@ private:
 class DebugEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
 {
 public:
-
 	DebugEffect();
 	virtual ~DebugEffect() override;
 
@@ -227,8 +239,22 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTextureDiffuse
+	//
+
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
 	// 
-	// 渲染模式的变更
+	// DebugEffect
 	//
 
 	// 默认状态来绘制
@@ -240,19 +266,9 @@ public:
 	// 绘制单通道，但以灰度的形式呈现(0-R, 1-G, 2-B, 3-A)
 	void SetRenderOneComponentGray(ID3D11DeviceContext* deviceContext, int index);
 
-
 	//
-	// 矩阵设置
+	// IEffect
 	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
-
-
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -278,8 +294,23 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTextureDiffuse
+	//
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
 	// 
-	// 渲染模式的变更
+	// SSAOEffect
 	//
 
 	// 绘制法向量和深度贴图
@@ -291,19 +322,6 @@ public:
 	// 对SSAO图进行双边滤波
 	void SetRenderBilateralBlur(ID3D11DeviceContext* deviceContext, bool horizontalBlur);
 
-
-	//
-	// 矩阵设置
-	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
-
-
-
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
 
 	// 设置观察空间的深度/法向量贴图
 	void SetTextureNormalDepth(ID3D11ShaderResourceView* textureNormalDepth);
@@ -321,6 +339,10 @@ public:
 	void SetBlurWeights(const float weights[11]);
 	// 设置模糊半径
 	void SetBlurRadius(int radius);
+
+	//
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);

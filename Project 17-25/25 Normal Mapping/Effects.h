@@ -102,7 +102,7 @@ public:
 	void SetRefractionEnabled(bool isEnable);
 	void SetRefractionEta(float eta);	// 空气/介质折射比
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext * deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 	
 private:
 	class Impl;
@@ -146,7 +146,7 @@ public:
 
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext * deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 private:
 	class Impl;

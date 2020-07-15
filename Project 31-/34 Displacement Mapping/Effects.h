@@ -82,9 +82,36 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device * device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTextureDiffuse
+	//
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
+	//
+	// IEffectDisplacementMap
+	//
+
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
 
 	// 
-	// 渲染模式的变更
+	// BasicEffect
 	//
 
 	// 默认状态来绘制
@@ -94,19 +121,8 @@ public:
 	// 带位移映射的绘制
 	void SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type, RSFillMode fillMode = RSFillMode::Solid);
 
-	//
-	// 矩阵设置
-	//
 
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
-	
 	void XM_CALLCONV SetShadowTransformMatrix(DirectX::FXMMATRIX S);
-
-	//
-	// 光照、材质和纹理相关设置
-	//
 
 	// 各种类型灯光允许的最大数目
 	static const int maxLights = 5;
@@ -114,7 +130,6 @@ public:
 	void SetDirLight(size_t pos, const DirectionalLight& dirLight);
 	void SetPointLight(size_t pos, const PointLight& pointLight);
 	void SetSpotLight(size_t pos, const SpotLight& spotLight);
-
 	void SetMaterial(const Material& material);
 
 	// 是否使用纹理
@@ -122,26 +137,19 @@ public:
 	// 是否使用SSAO
 	void SetSSAOEnabled(bool enabled);
 
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-	// 设置法线/位移贴图
-	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
 	// 设置阴影贴图
-	void SetTextureShadowMap(ID3D11ShaderResourceView * textureShadowMap);
+	void SetTextureShadowMap(ID3D11ShaderResourceView* textureShadowMap);
 	// 设置SSAO图
 	void SetTextureSSAOMap(ID3D11ShaderResourceView* textureSSAOMap);
 	// 设置天空盒
-	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
+	void SetTextureCube(ID3D11ShaderResourceView* textureCube);
 
-	// 设置摄像机位置
-	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
-	// 设置位移幅度
-	void SetHeightScale(float scale) override;
-	// 设置曲面细分信息
-	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
+	//
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext * deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 	
 private:
 	class Impl;
@@ -163,27 +171,28 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
-	// 
-	// 渲染模式的变更
-	//
-
-	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
 	//
-	// 矩阵设置
+	// IEffectTransform
 	//
 
 	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
 	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
-	//
-	// 纹理立方体映射设置
+	// 
+	// SkyEffect
 	//
 
+	// 默认状态来绘制
+	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+
+	// 设置天空盒
 	void SetTextureCube(ID3D11ShaderResourceView* textureCube);
 
+	//
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -209,8 +218,36 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
 	// 
-	// 渲染模式的变更
+	// IEffectTextureDiffuse
+	//
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
+	// 
+	// IEffectDisplacementMap
+	//
+
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
+
+	// 
+	// ShadowEffect
 	//
 
 	// 默认状态来绘制
@@ -225,24 +262,9 @@ public:
 	// 带位移映射的Alpha裁剪绘制(处理具有透明度的物体)
 	void SetRenderAlphaClipWithDisplacementMap(ID3D11DeviceContext* deviceContext, RenderType type);
 
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-	// 设置法线/位移贴图
-	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
-	// 设置摄像机位置
-	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
-	// 设置位移幅度
-	void SetHeightScale(float scale) override;
-	// 设置曲面细分信息
-	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
-
 	//
-	// 矩阵设置
+	// IEffect
 	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -255,7 +277,6 @@ private:
 class DebugEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
 {
 public:
-
 	DebugEffect();
 	virtual ~DebugEffect() override;
 
@@ -268,8 +289,22 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTransform
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTextureDiffuse
+	//
+
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
 	// 
-	// 渲染模式的变更
+	// DebugEffect
 	//
 
 	// 默认状态来绘制
@@ -281,19 +316,9 @@ public:
 	// 绘制单通道，但以灰度的形式呈现(0-R, 1-G, 2-B, 3-A)
 	void SetRenderOneComponentGray(ID3D11DeviceContext* deviceContext, int index);
 
-
 	//
-	// 矩阵设置
+	// IEffect
 	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
-
-
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);
@@ -319,8 +344,36 @@ public:
 	// 初始化所需资源
 	bool InitAll(ID3D11Device* device);
 
+	//
+	// IEffectTextureDiffuse
+	//
+
+	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+
+	//
+	// IEffectTransform
+	//
+
+	// 设置漫反射纹理
+	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+
+	//
+	// IEffectDisplacementMap
+	//
+
+	// 设置法线/位移贴图
+	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
+	// 设置摄像机位置
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
+	// 设置位移幅度
+	void SetHeightScale(float scale) override;
+	// 设置曲面细分信息
+	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
+
 	// 
-	// 渲染模式的变更
+	// SSAOEffect
 	//
 
 	// 绘制法向量和深度贴图
@@ -334,29 +387,6 @@ public:
 
 	// 对SSAO图进行双边滤波
 	void SetRenderBilateralBlur(ID3D11DeviceContext* deviceContext, bool horizontalBlur);
-
-
-	//
-	// 矩阵设置
-	//
-
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
-
-
-
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-	// 设置法线/位移贴图
-	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap) override;
-	// 设置摄像机位置
-	void SetEyePos(const DirectX::XMFLOAT3& eyePos) override;
-	// 设置位移幅度
-	void SetHeightScale(float scale) override;
-	// 设置曲面细分信息
-	void SetTessInfo(float maxTessDistance, float minTessDistance, float minTessFactor, float maxTessFactor) override;
-
 
 	// 设置观察空间的深度/法向量贴图
 	void SetTextureNormalDepth(ID3D11ShaderResourceView* textureNormalDepth);
@@ -374,6 +404,10 @@ public:
 	void SetBlurWeights(const float weights[11]);
 	// 设置模糊半径
 	void SetBlurRadius(int radius);
+
+	// 
+	// IEffect
+	//
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext);

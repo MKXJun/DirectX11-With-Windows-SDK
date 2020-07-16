@@ -4,6 +4,9 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/16 v1.31.2</br>
+-修正Transform的GetUpAxisXM和GetForwardAxisXM
+
 2020/7/15 v1.31.1</br>
 -调整Effects.h
 

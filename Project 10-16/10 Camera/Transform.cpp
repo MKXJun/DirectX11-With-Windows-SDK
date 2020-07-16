@@ -61,7 +61,7 @@ XMFLOAT3 Transform::GetUpAxis() const
 
 DirectX::XMVECTOR Transform::GetUpAxisXM() const
 {
-	XMFLOAT3 up = GetRightAxis();
+	XMFLOAT3 up = GetUpAxis();
 	return XMLoadFloat3(&up);
 }
 
@@ -75,7 +75,7 @@ XMFLOAT3 Transform::GetForwardAxis() const
 
 DirectX::XMVECTOR Transform::GetForwardAxisXM() const
 {
-	XMFLOAT3 forward = GetRightAxis();
+	XMFLOAT3 forward = GetForwardAxis();
 	return XMLoadFloat3(&forward);
 }
 

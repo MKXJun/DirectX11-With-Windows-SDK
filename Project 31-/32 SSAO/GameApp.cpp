@@ -256,7 +256,7 @@ void GameApp::DrawScene()
 	// 绘制天空盒
 	m_pDesert->Draw(m_pd3dImmediateContext.Get(), *m_pSkyEffect, *m_pCamera);
 
-	// 解除深度缓冲区绑定
+	// 解除绑定
 	m_pBasicEffect->SetTextureShadowMap(nullptr);
 	m_pBasicEffect->SetTextureSSAOMap(nullptr);
 	m_pBasicEffect->Apply(m_pd3dImmediateContext.Get());
@@ -390,8 +390,9 @@ bool GameApp::InitResource()
 	m_pShadowMap = std::make_unique<TextureRender>();
 	HR(m_pShadowMap->InitResource(m_pd3dDevice.Get(), 2048, 2048, true));
 
-	// 开启纹理、SSAO
+	// 开启纹理、阴影、SSAO
 	m_pBasicEffect->SetTextureUsed(true);
+	m_pBasicEffect->SetShadowEnabled(true);
 	m_pBasicEffect->SetSSAOEnabled(m_EnableSSAO);
 	m_pBasicEffect->SetViewMatrix(camera->GetViewXM());
 	m_pBasicEffect->SetProjMatrix(camera->GetProjXM());

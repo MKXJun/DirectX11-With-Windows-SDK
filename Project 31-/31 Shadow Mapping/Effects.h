@@ -99,6 +99,7 @@ public:
 	void SetMaterial(const Material& material);
 
 	void SetTextureUsed(bool isUsed);
+	void SetShadowEnabled(bool enabled);
 	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap);
 	void SetTextureShadowMap(ID3D11ShaderResourceView* textureShadowMap);
 	void SetTextureCube(ID3D11ShaderResourceView* textureCube);
@@ -202,6 +203,8 @@ public:
 
 	// Alpha裁剪绘制(处理具有透明度的物体)
 	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, RenderType type);
+
+	//
 
 	//
 	// IEffect

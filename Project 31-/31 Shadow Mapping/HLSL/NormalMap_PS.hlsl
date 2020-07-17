@@ -35,7 +35,10 @@ float4 PS(VertexOutNormalMap pIn) : SV_Target
 
     float shadow[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
     // 仅第一个方向光用于计算阴影
-    shadow[0] = CalcShadowFactor(g_SamShadow, g_ShadowMap, pIn.ShadowPosH);
+    if (g_EnableShadow)
+    {
+        shadow[0] = CalcShadowFactor(g_SamShadow, g_ShadowMap, pIn.ShadowPosH);
+    }
     
     [unroll]
     for (i = 0; i < 5; ++i)

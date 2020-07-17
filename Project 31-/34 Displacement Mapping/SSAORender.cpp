@@ -124,6 +124,9 @@ void SSAORender::BlurAmbientMap(ID3D11DeviceContext* deviceContext, SSAOEffect& 
 		BlurAmbientMap(deviceContext, ssaoEffect, m_pAmbientSRV0.Get(), m_pAmbientRTV1.Get(), true);
 		BlurAmbientMap(deviceContext, ssaoEffect, m_pAmbientSRV1.Get(), m_pAmbientRTV0.Get(), false);
 	}
+	// 撤除绑定在管线上的SRV
+	ssaoEffect.SetTextureNormalDepth(nullptr);
+	ssaoEffect.Apply(deviceContext);
 }
 
 ID3D11ShaderResourceView* SSAORender::GetAmbientTexture()

@@ -262,6 +262,11 @@ void BasicEffect::SetTextureUsed(bool isUsed)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_TextureUsed")->SetSInt(isUsed);
 }
 
+void BasicEffect::SetShadowEnabled(bool enabled)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EnableShadow")->SetSInt(enabled);
+}
+
 void BasicEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
 {
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", textureDiffuse);

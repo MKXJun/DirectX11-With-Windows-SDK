@@ -31,21 +31,24 @@ float4 PS(VertexOutBasic pIn) : SV_Target
 
     float shadow[5] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
     // 仅第一个方向光用于计算阴影
-    shadow[0] = CalcShadowFactor(g_SamShadow, g_ShadowMap, pIn.ShadowPosH);
+    if (g_EnableShadow)
+    {
+        shadow[0] = CalcShadowFactor(g_SamShadow, g_ShadowMap, pIn.ShadowPosH);
+    }
     
     // 完成纹理投影变换并对SSAO图采样
-    pIn.SSAOPosH /= pIn.SSAOPosH.w;
-    float ambientAccess = g_SSAOMap.SampleLevel(g_Sam, pIn.SSAOPosH.xy, 0.0f).r;
+    float ambientAccess = 1.0f;
+    if (g_EnableSSAO)
+    {
+        pIn.SSAOPosH /= pIn.SSAOPosH.w;
+        ambientAccess = g_SSAOMap.SampleLevel(g_Sam, pIn.SSAOPosH.xy, 0.0f).r;
+    }
     
     [unroll]
     for (i = 0; i < 5; ++i)
     {
         ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.NormalW, toEyeW, A, D, S);
-        [flatten]
-        if (g_EnableSSAO)
-            ambient += ambientAccess * A;
-        else
-            ambient += A;
+        ambient += ambientAccess * A;
         diffuse += shadow[i] * D;
         spec += shadow[i] * S;
     }

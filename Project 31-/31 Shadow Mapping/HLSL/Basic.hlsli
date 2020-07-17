@@ -22,7 +22,8 @@ cbuffer CBChangesEveryObjectDrawing : register(b1)
 cbuffer CBDrawingStates : register(b2)
 {
     int g_TextureUsed;
-    float3 g_Pad;
+    int g_EnableShadow;
+    float2 g_Pad;
 }
 
 cbuffer CBChangesEveryFrame : register(b3)

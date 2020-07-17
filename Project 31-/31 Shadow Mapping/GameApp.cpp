@@ -350,8 +350,9 @@ bool GameApp::InitResource()
 	m_pShadowMap = std::make_unique<TextureRender>();
 	HR(m_pShadowMap->InitResource(m_pd3dDevice.Get(), 2048, 2048, true));
 
-	// 开启纹理
+	// 开启纹理、阴影
 	m_pBasicEffect->SetTextureUsed(true);
+	m_pBasicEffect->SetShadowEnabled(true);
 	m_pBasicEffect->SetViewMatrix(camera->GetViewXM());
 	m_pBasicEffect->SetProjMatrix(camera->GetProjXM());
 

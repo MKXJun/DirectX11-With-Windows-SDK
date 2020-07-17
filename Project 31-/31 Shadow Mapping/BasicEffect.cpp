@@ -287,7 +287,7 @@ void BasicEffect::SetTextureCube(ID3D11ShaderResourceView* textureCube)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TexCube", textureCube);
 }
 
-void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
+void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, (FLOAT*)&eyePos);
 }

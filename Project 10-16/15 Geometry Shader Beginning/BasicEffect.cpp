@@ -279,10 +279,10 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
+void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	auto& cBuffer = pImpl->m_CBRarely;
-	XMStoreFloat3(&cBuffer.data.eyePos, eyePos);
+	cBuffer.data.eyePos = eyePos;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 

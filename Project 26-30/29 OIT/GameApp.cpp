@@ -127,7 +127,7 @@ void GameApp::UpdateScene(float dt)
 
 	// 更新观察矩阵
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
-	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 	// 重置滚轮值
 	m_pMouse->ResetScrollWheelValue();
 	

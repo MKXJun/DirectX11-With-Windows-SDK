@@ -113,7 +113,7 @@ public:
 	void SetTextureSSAOMap(ID3D11ShaderResourceView* textureSSAOMap);
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 
 	//
 	// IEffect

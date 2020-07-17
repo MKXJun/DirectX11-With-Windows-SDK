@@ -88,7 +88,7 @@ public:
 
 	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	
 	//
 	// 雾效设置
@@ -184,7 +184,7 @@ public:
 
 	void SetFogState(bool isOn);
 	void SetVisibleRange(float range);
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	void XM_CALLCONV SetMinimapRect(DirectX::FXMVECTOR rect); // (Left, Front, Right, Back)
 	void XM_CALLCONV SetInvisibleColor(DirectX::FXMVECTOR color);
 	

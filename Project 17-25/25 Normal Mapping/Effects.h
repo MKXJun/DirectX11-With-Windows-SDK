@@ -92,7 +92,7 @@ public:
 	void SetTextureNormalMap(ID3D11ShaderResourceView * textureNormalMap);
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	
 	//
 	// 状态开关设置，反射与折射不会共存

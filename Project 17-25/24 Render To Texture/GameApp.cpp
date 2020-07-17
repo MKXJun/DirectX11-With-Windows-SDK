@@ -161,8 +161,8 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
-	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
-	m_MinimapEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+	m_MinimapEffect.SetEyePos(m_pCamera->GetPosition());
 	
 	// 截屏
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))

@@ -128,7 +128,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
-	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 
 	// 选择天空盒
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))

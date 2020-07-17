@@ -20,7 +20,8 @@ public:
 
 	struct CBChangesEveryFrame
 	{
-		XMVECTOR eyePos;
+		XMFLOAT3 eyePos;
+		float pad;
 	};
 
 	struct CBDrawingStates
@@ -178,7 +179,7 @@ void MinimapEffect::SetVisibleRange(float range)
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
-void XM_CALLCONV MinimapEffect::SetEyePos(DirectX::FXMVECTOR eyePos)
+void MinimapEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.eyePos = eyePos;

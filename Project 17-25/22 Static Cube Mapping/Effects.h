@@ -89,7 +89,7 @@ public:
 	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	
 	//
 	// 状态开关设置

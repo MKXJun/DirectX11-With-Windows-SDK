@@ -97,7 +97,7 @@ public:
 
 
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 
 	//
 	// 设置球体

@@ -97,7 +97,7 @@ public:
 	void SetWavesStates(bool enabled, float texelSizeU = 0.0f, float texelSizeV = 0.0f, float gridSpatialStep = 0.0f);
 
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	
 
 	//

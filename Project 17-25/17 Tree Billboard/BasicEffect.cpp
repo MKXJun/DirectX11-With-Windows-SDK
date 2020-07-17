@@ -27,7 +27,8 @@ public:
 	struct CBChangesEveryFrame
 	{
 		DirectX::XMMATRIX view;
-		DirectX::XMVECTOR eyePos;
+		DirectX::XMFLOAT3 eyePos;
+		float pad;
 	};
 
 	struct CBDrawingStates
@@ -282,7 +283,7 @@ void BasicEffect::SetTextureArray(ID3D11ShaderResourceView * textures)
 	pImpl->m_pTextures = textures;
 }
 
-void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
+void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.eyePos = eyePos;

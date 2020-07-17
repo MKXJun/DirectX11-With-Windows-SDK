@@ -417,7 +417,7 @@ bool GameApp::InitResource()
 	camera->SetRotationX(XM_PIDIV2);
 
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
-	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 
 	m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 	m_BasicEffect.SetProjMatrix(m_pCamera->GetProjXM());

@@ -88,7 +88,7 @@ public:
 
 
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 
 	// 设置圆柱体侧面高度
 	void SetCylinderHeight(float height);

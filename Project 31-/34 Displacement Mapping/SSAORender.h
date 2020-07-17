@@ -1,9 +1,9 @@
 //***************************************************************************************
-// TextureRender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// SSAORender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// 渲染到纹理类
-// Render-To-Texture class.
+// SSAO渲染类
+// SSAO Render class.
 //***************************************************************************************
 #ifndef SSAORENDER_H
 #define SSAORENDER_H

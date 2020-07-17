@@ -111,7 +111,7 @@ public:
 
 	void SetTexture(ID3D11ShaderResourceView * texture);
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 
 
 

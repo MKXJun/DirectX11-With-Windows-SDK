@@ -39,7 +39,8 @@ public:
 	struct CBChangesEveryFrame
 	{
 		DirectX::XMMATRIX view;
-		DirectX::XMVECTOR eyePos;
+		DirectX::XMFLOAT3 eyePos;
+		float pad;
 	};
 
 	struct CBChangesOnResize
@@ -300,7 +301,7 @@ void BasicEffect::SetTextureCube(ID3D11ShaderResourceView * textureCube)
 	pImpl->m_pTextureCube = textureCube;
 }
 
-void XM_CALLCONV BasicEffect::SetEyePos(FXMVECTOR eyePos)
+void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
 	cBuffer.data.eyePos = eyePos;

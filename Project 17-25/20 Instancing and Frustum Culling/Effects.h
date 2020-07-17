@@ -85,7 +85,7 @@ public:
 	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 	
 
-	void XM_CALLCONV SetEyePos(DirectX::FXMVECTOR eyePos);
+	void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 	
 
 	// 应用常量缓冲区和纹理资源的变更

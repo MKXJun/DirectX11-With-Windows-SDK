@@ -144,7 +144,7 @@ void GameApp::UpdateScene(float dt)
 		XMVectorSet(-49.9f, 0.0f, -49.9f, 0.0f), XMVectorSet(49.9f, 99.9f, 49.9f, 0.0f)));
 	cam1st->SetPosition(adjustedPos);
 
-	m_BasicEffect.SetEyePos(m_pCamera->GetPositionXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
 
 	// ******************

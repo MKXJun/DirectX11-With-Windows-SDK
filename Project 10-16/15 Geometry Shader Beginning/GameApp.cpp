@@ -212,7 +212,7 @@ bool GameApp::InitResource()
 	material.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 5.0f);
 	m_BasicEffect.SetMaterial(material);
 	// 摄像机位置
-	m_BasicEffect.SetEyePos(XMVectorSet(0.0f, 0.0f, -5.0f, 1.0f));
+	m_BasicEffect.SetEyePos(XMFLOAT3(0.0f, 0.0f, -5.0f));
 	// 矩阵
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	m_BasicEffect.SetViewMatrix(XMMatrixLookAtLH(

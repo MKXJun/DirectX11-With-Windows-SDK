@@ -173,7 +173,7 @@ void GameApp::UpdateScene(float dt)
 	m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	// 为SSAO图也设置观察矩阵
 	m_pSSAOEffect->SetViewMatrix(m_pCamera->GetViewXM());
-	m_pBasicEffect->SetEyePos(m_pCamera->GetPositionXM());
+	m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
 
 	
 
@@ -254,6 +254,7 @@ void GameApp::DrawScene()
 	DrawScene(m_pBasicEffect.get(), m_EnableNormalMap);
 
 	// 绘制天空盒
+	m_pSkyEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
 	m_pDesert->Draw(m_pd3dImmediateContext.Get(), *m_pSkyEffect, *m_pCamera);
 
 	// 解除绑定

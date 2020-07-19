@@ -420,7 +420,7 @@ struct EffectPass : public IEffectPass
 	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(LPCSTR paramName) override;
 	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(LPCSTR paramName) override;
 	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(LPCSTR paramName) override;
-	void Apply(ID3D11DeviceContext* deviceContext) override;
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 	// 渲染状态
 	ComPtr<ID3D11BlendState> pBlendState = nullptr;
@@ -761,6 +761,35 @@ HRESULT EffectHelper::AddShader(LPCSTR name, ID3D11Device* device, ID3DBlob* blo
 	hr = pImpl->CreateShaderFromBlob(name, device, shaderFlag, blob);
 	if (FAILED(hr))
 		return hr;
+
+	// 建立着色器反射
+	return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
+}
+
+HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(LPCSTR name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
+{
+	if (!name || !gsWithSO)
+		return E_INVALIDARG;
+
+	HRESULT hr;
+
+	// 着色器反射
+	ComPtr<ID3D11ShaderReflection> pShaderReflection;
+	hr = D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), __uuidof(ID3D11ShaderReflection),
+		reinterpret_cast<void**>(pShaderReflection.GetAddressOf()));
+	if (FAILED(hr))
+		return hr;
+
+	// 获取着色器类型并核验
+	D3D11_SHADER_DESC sd;
+	pShaderReflection->GetDesc(&sd);
+	UINT shaderFlag = static_cast<ShaderFlag>(1 << D3D11_SHVER_GET_TYPE(sd.Version));
+
+	if (shaderFlag != GeometryShader)
+		return E_INVALIDARG;
+
+	pImpl->m_GeometryShaders[name] = std::make_shared<GeometryShaderInfo>();
+	pImpl->m_GeometryShaders[name]->pGS = gsWithSO;
 
 	// 建立着色器反射
 	return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);

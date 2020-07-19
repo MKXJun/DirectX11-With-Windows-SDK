@@ -4,6 +4,12 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/19 v1.32.0</br>
+-**添加项目 Particle System**</br>
+-创建纹理数组的函数统一为`CreateTexture2DArrayFromFile`</br>
+-调整特效的SetEyePos函数</br>
+-为EffectHelper添加对流输出的支持
+
 2020/7/16 v1.31.2</br>
 -修正Transform的GetUpAxisXM和GetForwardAxisXM
 

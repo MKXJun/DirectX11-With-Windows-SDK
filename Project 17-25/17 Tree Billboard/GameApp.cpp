@@ -276,7 +276,7 @@ bool GameApp::InitResource()
 	//
 
 	// 初始化树纹理资源
-	HR(CreateDDSTexture2DArrayFromFile(
+	HR(CreateTexture2DArrayFromFile(
 		m_pd3dDevice.Get(),
 		m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
@@ -340,7 +340,7 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
-	m_BasicEffect.SetEyePos(camera->GetPositionXM());
+	m_BasicEffect.SetEyePos(camera->GetPosition());
 
 	// ******************
 	// 初始化雾效和天气等

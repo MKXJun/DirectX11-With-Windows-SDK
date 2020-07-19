@@ -197,7 +197,7 @@ public:
 	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 private:
 	class Impl;
@@ -269,7 +269,7 @@ public:
 	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 private:
 	class Impl;
@@ -323,7 +323,7 @@ public:
 	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 private:
 	class Impl;
@@ -412,7 +412,7 @@ public:
 	//
 
 	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext);
+	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 private:
 	class Impl;

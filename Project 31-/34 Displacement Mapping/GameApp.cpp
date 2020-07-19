@@ -276,6 +276,7 @@ void GameApp::DrawScene()
 	DrawScene(m_pBasicEffect.get(), m_RenderMode);
 
 	// 绘制天空盒
+	m_pSkyEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
 	m_pDesert->Draw(m_pd3dImmediateContext.Get(), *m_pSkyEffect, *m_pCamera);
 
 	// 解除深度缓冲区绑定

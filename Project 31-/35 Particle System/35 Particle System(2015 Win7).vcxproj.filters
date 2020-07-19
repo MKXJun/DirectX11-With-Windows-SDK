@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="通用文件">
+      <UniqueIdentifier>{6de20295-efc1-4674-b9f3-e515c2bea2f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="特效文件">
+      <UniqueIdentifier>{f5bef8ad-f5a8-491d-90a6-368f7021d2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{59b5179b-a0d4-4409-aa6b-6fd8176bd815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\BasicEffect">
+      <UniqueIdentifier>{29ad1ef3-14ae-4c00-9369-7f1160f109a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\FireEffect">
+      <UniqueIdentifier>{852f7a1d-8bf2-4227-a18d-41679e8e9a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\RainEffect">
+      <UniqueIdentifier>{3181aba6-02df-4221-94ad-971f5e7dc764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="着色器\SkyEffect">
+      <UniqueIdentifier>{f6bd50d6-17ea-444d-8ff6-e27eeafb4eb3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DXTrace.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LightHelper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenGrab.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectHelper.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleRender.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyRender.h">
+      <Filter>特效文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DXTrace.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjReader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenGrab.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicEffect.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectHelper.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleRender.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyEffect.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyRender.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEffect.cpp">
+      <Filter>特效文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\Basic_PS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicInstance_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\BasicObject_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DisplacementMap_DS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DisplacementMap_HS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DisplacementMapInstance_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\DisplacementMapObject_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMapObject_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMapInstance_VS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\NormalMap_PS.hlsl">
+      <Filter>着色器\BasicEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Fire_GS.hlsl">
+      <Filter>着色器\FireEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Fire_PS.hlsl">
+      <Filter>着色器\FireEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Fire_SO_GS.hlsl">
+      <Filter>着色器\FireEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Fire_SO_VS.hlsl">
+      <Filter>着色器\FireEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Fire_VS.hlsl">
+      <Filter>着色器\FireEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Rain_GS.hlsl">
+      <Filter>着色器\RainEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Rain_PS.hlsl">
+      <Filter>着色器\RainEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Rain_SO_GS.hlsl">
+      <Filter>着色器\RainEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Rain_SO_VS.hlsl">
+      <Filter>着色器\RainEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Rain_VS.hlsl">
+      <Filter>着色器\RainEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sky_PS.hlsl">
+      <Filter>着色器\SkyEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sky_VS.hlsl">
+      <Filter>着色器\SkyEffect</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Basic.hlsli">
+      <Filter>着色器\BasicEffect</Filter>
+    </None>
+    <None Include="HLSL\LightHelper.hlsli">
+      <Filter>着色器\BasicEffect</Filter>
+    </None>
+    <None Include="HLSL\Fire.hlsli">
+      <Filter>着色器\FireEffect</Filter>
+    </None>
+    <None Include="HLSL\Rain.hlsli">
+      <Filter>着色器\RainEffect</Filter>
+    </None>
+    <None Include="HLSL\Sky.hlsli">
+      <Filter>着色器\SkyEffect</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -14,9 +14,10 @@
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
-#include <wincodec.h>
+#include <wincodec.h>			// 使用ScreenGrab需要包含
 #include <vector>
 #include <string>
+#include <random>
 #include "ScreenGrab.h"
 #include "DDSTextureLoader.h"	
 #include "WICTextureLoader.h"
@@ -33,6 +34,8 @@
 
 // 安全COM组件释放宏
 #define SAFE_RELEASE(p) { if ((p)) { (p)->Release(); (p) = nullptr; } }
+
+
 
 //
 // 辅助调试相关函数
@@ -305,25 +308,24 @@ HRESULT CreateRawBuffer(
 //
 
 // ------------------------------
-// CreateDDSTexture2DArrayFromFile函数
+// CreateRandomTexture1D函数
 // ------------------------------
-// 该函数要求所有的dds纹理的宽高、数据格式、mip等级一致
-// [In]d3dDevice			D3D设备
-// [In]d3dDeviceContext		D3D设备上下文
-// [In]fileNames			dds文件名数组
-// [OutOpt]textureArray		输出的纹理数组资源
-// [OutOpt]textureArrayView 输出的纹理数组资源视图
-// [In]generateMips			是否生成mipmaps
-HRESULT CreateDDSTexture2DArrayFromFile(
-	ID3D11Device * d3dDevice,
-	ID3D11DeviceContext * d3dDeviceContext,
-	const std::vector<std::wstring>& fileNames,
-	ID3D11Texture2D** textureArray,
-	ID3D11ShaderResourceView** textureArrayView,
-	bool generateMips = false);
+// 创建1D随机值向量纹理，范围在[-1.0f, 1.0f]
+// [In]d3dDevice            D3D设备
+// [OutOpt]texture		    输出的纹理资源
+// [OutOpt]textureView      输出的纹理资源视图
+HRESULT CreateRandomTexture1D(
+	ID3D11Device* d3dDevice,
+	ID3D11Texture1D** texture,
+	ID3D11ShaderResourceView** textureView);
+
+
+//
+// 纹理数组相关函数
+//
 
 // ------------------------------
-// CreateWICTexture2DArrayFromFile函数
+// CreateTexture2DArrayFromFile函数
 // ------------------------------
 // 该函数要求所有纹理的宽高、数据格式、mip等级一致
 // [In]d3dDevice			D3D设备
@@ -332,14 +334,13 @@ HRESULT CreateDDSTexture2DArrayFromFile(
 // [OutOpt]textureArray		输出的纹理数组资源
 // [OutOpt]textureArrayView 输出的纹理数组资源视图
 // [In]generateMips			是否生成mipmaps
-HRESULT CreateWICTexture2DArrayFromFile(
-	ID3D11Device * d3dDevice,
-	ID3D11DeviceContext * d3dDeviceContext,
+HRESULT CreateTexture2DArrayFromFile(
+	ID3D11Device* d3dDevice,
+	ID3D11DeviceContext* d3dDeviceContext,
 	const std::vector<std::wstring>& fileNames,
 	ID3D11Texture2D** textureArray,
 	ID3D11ShaderResourceView** textureArrayView,
 	bool generateMips = false);
-
 
 //
 // 纹理立方体相关函数

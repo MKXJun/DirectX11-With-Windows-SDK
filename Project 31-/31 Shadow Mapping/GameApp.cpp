@@ -177,7 +177,7 @@ void GameApp::UpdateScene(float dt)
 	}
 
 	m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewXM());
-	m_pBasicEffect->SetEyePos(m_pCamera->GetPositionXM());
+	m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
 
 	// 更新光照
 	static float theta = 0;
@@ -236,6 +236,7 @@ void GameApp::DrawScene()
 	DrawScene(m_pBasicEffect.get(), m_EnableNormalMap);
 
 	// 绘制天空盒
+	m_pSkyEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
 	m_pDesert->Draw(m_pd3dImmediateContext.Get(), *m_pSkyEffect, *m_pCamera);
 
 	// 解除深度缓冲区绑定

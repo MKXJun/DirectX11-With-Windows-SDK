@@ -198,7 +198,7 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetWorldMatrix(XMMatrixIdentity());
 	m_BasicEffect.SetViewMatrix(camera->GetViewXM());
 	m_BasicEffect.SetProjMatrix(camera->GetProjXM());
-	m_BasicEffect.SetEyePos(camera->GetPositionXM());
+	m_BasicEffect.SetEyePos(camera->GetPosition());
 	
 	// ******************
 	// 初始化不会变化的值

@@ -243,6 +243,14 @@ public:
 	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
 	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
 	HRESULT AddShader(LPCSTR name, ID3D11Device* device, ID3DBlob* blob);
+
+	// 添加带流输出的几何着色器并为其设置标识名
+	// 注意：
+	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
+	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
+	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置 
+	HRESULT AddGeometryShaderWithStreamOutput(LPCSTR name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob);
+
 	// 清空所有内容
 	void Clear();
 

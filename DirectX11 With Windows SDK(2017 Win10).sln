@@ -57,15 +57,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "29 OIT(2017 Win10)", "Proje
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30 Blur and Sobel(2017 Win10)", "Project 26-30\30 Blur and Sobel\30 Blur and Sobel(2017 Win10).vcxproj", "{7D5C21C3-888F-47C2-ABC7-4E067163F5ED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2017 Win10)", "Project 31-\31 Shadow Mapping\31 Shadow Mapping(2017 Win10).vcxproj", "{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "31 Shadow Mapping(2017 Win10)", "Project 31-35\31 Shadow Mapping\31 Shadow Mapping(2017 Win10).vcxproj", "{B9398C7F-0ADA-49BE-A050-E53CAD7C4C07}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2017 Win10)", "Project 31-\32 SSAO\32 SSAO(2017 Win10).vcxproj", "{EDEE918B-D4B1-4F03-B1C7-9D2E0669AC02}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "32 SSAO(2017 Win10)", "Project 31-35\32 SSAO\32 SSAO(2017 Win10).vcxproj", "{EDEE918B-D4B1-4F03-B1C7-9D2E0669AC02}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "33 Tessellation(2017 Win10)", "Project 31-\33 Tessellation\33 Tessellation(2017 Win10).vcxproj", "{080296F4-7A82-4ABE-9288-6DC24F1B791F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "33 Tessellation(2017 Win10)", "Project 31-35\33 Tessellation\33 Tessellation(2017 Win10).vcxproj", "{080296F4-7A82-4ABE-9288-6DC24F1B791F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "34 Displacement Mapping(2017 Win10)", "Project 31-\34 Displacement Mapping\34 Displacement Mapping(2017 Win10).vcxproj", "{394825E6-B2D2-4E65-A986-B2BE4AC690DB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "34 Displacement Mapping(2017 Win10)", "Project 31-35\34 Displacement Mapping\34 Displacement Mapping(2017 Win10).vcxproj", "{394825E6-B2D2-4E65-A986-B2BE4AC690DB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "35 Particle System(2017 Win10)", "Project 31-\35 Particle System\35 Particle System(2017 Win10).vcxproj", "{AB391E36-FA65-45D6-8898-AE7CEF0E8607}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "35 Particle System(2017 Win10)", "Project 31-35\35 Particle System\35 Particle System(2017 Win10).vcxproj", "{AB391E36-FA65-45D6-8898-AE7CEF0E8607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

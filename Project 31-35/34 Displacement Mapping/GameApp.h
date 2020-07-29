@@ -46,8 +46,7 @@ private:
 	bool m_EnableNormalMap;										// 开启法线贴图
 	bool m_EnableDebug;											// 开启调试模式
 	bool m_GrayMode;											// 深度值以灰度形式显示
-	size_t m_SlopeIndex;										// 斜率索引
-
+	
 	GameObject m_Ground;										// 地面
 	GameObject m_GroundT;										// 带切线向量的地面
 

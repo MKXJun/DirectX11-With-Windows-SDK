@@ -874,21 +874,28 @@ void EffectHelper::SetShaderResourceByName(LPCSTR name, ID3D11ShaderResourceView
 		it->second.pSRV = srv;
 }
 
-void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT* pUAVInitialCount)
+void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount)
 {
 	auto it = pImpl->m_RWResources.find(slot);
 	if (it != pImpl->m_RWResources.end())
+	{
 		it->second.pUAV = uav;
+		it->second.initialCount = initialCount;
+	}
+		
 }
 
-void EffectHelper::SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT* pUAVInitialCount)
+void EffectHelper::SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT initialCount)
 {
 	auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
 		[name](const std::pair<UINT, RWResource>& p) {
 			return p.second.name == name;
 		});
 	if (it != pImpl->m_RWResources.end())
+	{
 		it->second.pUAV = uav;
+		it->second.initialCount = initialCount;
+	}
 }
 
 void EffectHelper::SetDebugObjectName(const std::string& name)

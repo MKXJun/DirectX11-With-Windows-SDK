@@ -4,6 +4,9 @@
 中版本号 项目添加</br>
 小版本号 项目调整(随中版本号添加归零)
 
+2020/7/19 v1.32.1</br>
+-EffectHelper相关函数调整</br>
+
 2020/7/19 v1.32.0</br>
 -**添加项目 Particle System**</br>
 -创建纹理数组的函数统一为`CreateTexture2DArrayFromFile`</br>

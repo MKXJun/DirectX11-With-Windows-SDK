@@ -273,9 +273,9 @@ public:
 	void SetShaderResourceByName(LPCSTR name, ID3D11ShaderResourceView* srv);
 
 	// 按槽设置可读写资源
-	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT* pUAVInitialCount);
+	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);
 	// 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
-	void SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT* pUAVInitialCount);
+	void SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT initialCount);
 
 	// 设置调试对象名
 	void SetDebugObjectName(const std::string& name);

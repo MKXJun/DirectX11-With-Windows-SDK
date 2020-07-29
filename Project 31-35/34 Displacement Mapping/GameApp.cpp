@@ -17,8 +17,7 @@ GameApp::GameApp(HINSTANCE hInstance)
 	m_EnableSSAO(true),
 	m_EnableDebug(true),
 	m_GrayMode(true),
-	m_HeightScale(7),
-	m_SlopeIndex()
+	m_HeightScale(7)
 {
 }
 
@@ -286,7 +285,7 @@ void GameApp::DrawScene()
 
 	// ******************
 	// 调试绘制SSAO图
-	if (m_EnableSSAO && m_EnableDebug)
+	if (m_EnableSSAO && m_EnableDebug && m_FillMode == IEffect::Solid)
 	{
 		if (m_GrayMode)
 		{

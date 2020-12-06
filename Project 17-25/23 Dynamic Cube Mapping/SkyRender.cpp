@@ -219,7 +219,8 @@ void DynamicSkyRender::BeginCapture(ID3D11DeviceContext* deviceContext, BasicEff
 	// 设置渲染目标和深度模板视图
 	deviceContext->OMSetRenderTargets(1, m_pDynamicCubeMapRTVs[face].GetAddressOf(), m_pDynamicCubeMapDSV.Get());
 	// 设置视口
-	deviceContext->RSSetViewports(1, &m_pCamera.GetViewPort());
+	D3D11_VIEWPORT viewPort = m_pCamera.GetViewPort();
+	deviceContext->RSSetViewports(1, &viewPort);
 }
 
 
@@ -227,7 +228,8 @@ void DynamicSkyRender::BeginCapture(ID3D11DeviceContext* deviceContext, BasicEff
 void DynamicSkyRender::Restore(ID3D11DeviceContext* deviceContext, BasicEffect& effect, const Camera& camera)
 {
 	// 恢复默认设定
-	deviceContext->RSSetViewports(1, &camera.GetViewPort());
+	D3D11_VIEWPORT viewPort = camera.GetViewPort();
+	deviceContext->RSSetViewports(1, &viewPort);
 	deviceContext->OMSetRenderTargets(1, m_pCacheRTV.GetAddressOf(), m_pCacheDSV.Get());
 
 	// 生成动态天空盒后必须要生成mipmap链

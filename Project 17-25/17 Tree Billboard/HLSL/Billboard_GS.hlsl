@@ -1,8 +1,6 @@
 #include "Basic.hlsli"
 
-// 节省内存资源，先用float4向量声明。
-static const float4 g_Vec[2] = { float4(0.0f, 1.0f, 0.0f, 0.0f), float4(1.0f, 1.0f, 1.0f, 0.0f) };
-static const float2 g_TexCoord[4] = (float2[4])g_Vec;
+static const float2 g_TexCoord[4] = { float2(0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
 
 [maxvertexcount(4)]
 void GS(point PointSprite input[1], uint primID : SV_PrimitiveID, 

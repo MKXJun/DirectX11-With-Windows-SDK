@@ -469,13 +469,13 @@ HRESULT CreateTexture2DArrayFromFile(
 	for (UINT i = 1; i < texArrayDesc.ArraySize; ++i)
 	{
 		hr = CreateDDSTextureFromFileEx(d3dDevice,
-			fileNames[0].c_str(), 0, D3D11_USAGE_STAGING, 0,
+			fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 			D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 			0, false, reinterpret_cast<ID3D11Resource**>(&pTexture), nullptr);
 		if (FAILED(hr))
 		{
 			hr = CreateWICTextureFromFileEx(d3dDevice,
-				fileNames[0].c_str(), 0, D3D11_USAGE_STAGING, 0,
+				fileNames[i].c_str(), 0, D3D11_USAGE_STAGING, 0,
 				D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ,
 				0, WIC_LOADER_DEFAULT, reinterpret_cast<ID3D11Resource**>(&pTexture), nullptr);
 		}

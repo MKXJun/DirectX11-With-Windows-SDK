@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.12)
 
 add_subdirectory("01 DirectX11 Initialization")
 add_subdirectory("02 Rendering a Triangle")

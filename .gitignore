@@ -3,6 +3,7 @@ Release/
 x64/
 .git/
 .vs/
+build/
 *.vcxproj.user
 *.cso
 *.dso

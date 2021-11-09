@@ -184,7 +184,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
-	HR(CreateShaderFromFile(L"HLSL\\Basic_VS_2D.cso", L"HLSL\\Basic_VS_2D.hlsl", "VS_2D", "vs_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Basic_2D_VS.cso", L"HLSL\\Basic_2D_VS.hlsl", "VS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreateVertexShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicVS2D.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosTex::inputLayout, ARRAYSIZE(VertexPosTex::inputLayout),
@@ -198,7 +198,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicPS.GetAddressOf()));
 
 
-	HR(CreateShaderFromFile(L"HLSL\\Basic_PS_2D.cso", L"HLSL\\Basic_PS_2D.hlsl", "PS_2D", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+	HR(CreateShaderFromFile(L"HLSL\\Basic_2D_PS.cso", L"HLSL\\Basic_2D_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 	HR(device->CreatePixelShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, pImpl->m_pBasicPS2D.GetAddressOf()));
 
 	HR(CreateShaderFromFile(L"HLSL\\Composite_PS.cso", L"HLSL\\Composite_PS.hlsl", "PS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -231,8 +231,8 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	D3D11SetDebugObjectName(pImpl->m_pBasicObjectVS.Get(), "BasicEffect.BasicObject_VS");
 	D3D11SetDebugObjectName(pImpl->m_pBasicInstanceVS.Get(), "BasicEffect.BasicInstance_VS");
 	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "BasicEffect.Basic_PS");
-	D3D11SetDebugObjectName(pImpl->m_pBasicVS2D.Get(), "BasicEffect.Basic_VS_2D");
-	D3D11SetDebugObjectName(pImpl->m_pBasicPS2D.Get(), "BasicEffect.Basic_PS_2D");
+	D3D11SetDebugObjectName(pImpl->m_pBasicVS2D.Get(), "BasicEffect.Basic_2D_VS");
+	D3D11SetDebugObjectName(pImpl->m_pBasicPS2D.Get(), "BasicEffect.Basic_2D_PS");
 	D3D11SetDebugObjectName(pImpl->m_pCompositePS.Get(), "BasicEffect.Composite_PS");
 	
 	return true;

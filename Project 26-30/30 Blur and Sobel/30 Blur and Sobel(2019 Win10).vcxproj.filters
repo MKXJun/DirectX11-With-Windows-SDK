@@ -205,12 +205,6 @@
     <FxCompile Include="HLSL\Blur_Vert_CS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\Basic_PS_2D.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL\Basic_VS_2D.hlsl">
-      <Filter>着色器</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\Sobel_CS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
@@ -224,6 +218,12 @@
       <Filter>着色器</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\OIT_Render_VS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic_2D_PS.hlsl">
+      <Filter>着色器</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\Basic_2D_VS.hlsl">
       <Filter>着色器</Filter>
     </FxCompile>
   </ItemGroup>

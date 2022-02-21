@@ -7,7 +7,7 @@ ComPtr<ID3D11RasterizerState> RenderStates::RSNoCull		= nullptr;
 ComPtr<ID3D11RasterizerState> RenderStates::RSWireframe		= nullptr;
 
 ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap		= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap	= nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnisotropicWrap	= nullptr;
 
 ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage	= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSNoColorWrite		= nullptr;
@@ -69,7 +69,7 @@ void RenderStates::InitAll(ID3D11Device * device)
 	sampDesc.MaxAnisotropy = 4;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
+	HR(device->CreateSamplerState(&sampDesc, SSAnisotropicWrap.GetAddressOf()));
 	
 	// ******************
 	// 初始化混合状态
@@ -116,7 +116,7 @@ void RenderStates::InitAll(ID3D11Device * device)
 	D3D11SetDebugObjectName(RSNoCull.Get(), "RSNoCull");
 	D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
 
-	D3D11SetDebugObjectName(SSAnistropicWrap.Get(), "SSAnistropicWrap");
+	D3D11SetDebugObjectName(SSAnisotropicWrap.Get(), "SSAnisotropicWrap");
 	D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
 
 	D3D11SetDebugObjectName(BSAlphaToCoverage.Get(), "BSAlphaToCoverage");

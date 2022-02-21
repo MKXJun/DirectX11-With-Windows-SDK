@@ -10,7 +10,7 @@ ComPtr<ID3D11RasterizerState> RenderStates::RSCullClockWise		= nullptr;
 ComPtr<ID3D11RasterizerState> RenderStates::RSDepth				= nullptr;
 
 ComPtr<ID3D11SamplerState> RenderStates::SSPointClamp			= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap		= nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnisotropicWrap		= nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap			= nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSShadow				= nullptr;
 
@@ -112,7 +112,7 @@ void RenderStates::InitAll(ID3D11Device * device)
 	sampDesc.MaxAnisotropy = 4;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap.GetAddressOf()));
+	HR(device->CreateSamplerState(&sampDesc, SSAnisotropicWrap.GetAddressOf()));
 
 	// 采样器状态：深度比较与Border模式
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -333,7 +333,7 @@ void RenderStates::InitAll(ID3D11Device * device)
 	D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
 	D3D11SetDebugObjectName(RSDepth.Get(), "RSDepth");
 
-	D3D11SetDebugObjectName(SSAnistropicWrap.Get(), "SSAnistropicWrap");
+	D3D11SetDebugObjectName(SSAnisotropicWrap.Get(), "SSAnisotropicWrap");
 	D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
 	D3D11SetDebugObjectName(SSShadow.Get(), "SSShadow");
 

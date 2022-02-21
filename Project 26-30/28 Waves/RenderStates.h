@@ -31,7 +31,7 @@ public:
 
 	static ComPtr<ID3D11SamplerState> SSPointClamp;						// 采样器状态：点过滤与Clamp模式
 	static ComPtr<ID3D11SamplerState> SSLinearWrap;			            // 采样器状态：线性过滤与Wrap模式
-	static ComPtr<ID3D11SamplerState> SSAnistropicWrap;		            // 采样器状态：各向异性过滤与Wrap模式
+	static ComPtr<ID3D11SamplerState> SSAnisotropicWrap;		            // 采样器状态：各向异性过滤与Wrap模式
 
 	static ComPtr<ID3D11BlendState> BSNoColorWrite;		                // 混合状态：不写入颜色
 	static ComPtr<ID3D11BlendState> BSTransparent;		                // 混合状态：透明混合

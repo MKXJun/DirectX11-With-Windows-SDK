@@ -28,23 +28,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -77,7 +78,8 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
-	
+#endif
+
 	// 更新投影矩阵
 	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
 	
@@ -85,15 +87,6 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-
-	// 更新鼠标事件，获取相对偏移量
-	Mouse::State mouseState = m_pMouse->GetState();
-	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
-	m_MouseTracker.Update(mouseState);
-
-	Keyboard::State keyState = m_pKeyboard->GetState();
-	m_KeyboardTracker.Update(keyState);
-
 	// 更新每帧变化的值
 	if (m_ShowMode == Mode::SplitedTriangle)
 	{
@@ -105,6 +98,55 @@ void GameApp::UpdateScene(float dt)
 		phi += 0.2f * dt, theta += 0.3f * dt;
 		m_BasicEffect.SetWorldMatrix(XMMatrixRotationX(phi) * XMMatrixRotationY(theta));
 	}
+
+#ifdef USE_IMGUI
+	if (ImGui::Begin("Geometry Shader Beginning"))
+	{
+		static int curr_item = 0;
+		static const char* modes[] = {
+			"Splited Triangle",
+			"Cylinder w/o Cap"
+		};
+		if (ImGui::Combo("Mode", &curr_item, modes, ARRAYSIZE(modes)))
+		{
+			m_ShowMode = static_cast<Mode>(curr_item);
+			if (curr_item == 0)
+			{
+				ResetTriangle();
+				m_BasicEffect.SetRenderSplitedTriangle(m_pd3dImmediateContext.Get());
+			}
+			else
+			{
+				ResetRoundWire();
+				m_BasicEffect.SetRenderCylinderNoCap(m_pd3dImmediateContext.Get());
+			}
+
+			// 输入装配阶段的顶点缓冲区设置
+			UINT stride = curr_item ? sizeof(VertexPosNormalColor) : sizeof(VertexPosColor);		// 跨越字节数
+			UINT offset = 0;																		// 起始偏移量
+			m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+		}
+
+		if (curr_item == 1)
+		{
+			static bool show_normal = false;
+			if (ImGui::Checkbox("Show Normal", &show_normal))
+			{
+				m_ShowMode = show_normal ? Mode::CylinderNoCapWithNormal : Mode::CylinderNoCap;
+			}
+		}
+	}
+	ImGui::End();
+	ImGui::Render();
+#else
+	// 更新鼠标事件，获取相对偏移量
+	Mouse::State mouseState = m_pMouse->GetState();
+	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	m_MouseTracker.Update(mouseState);
+
+	Keyboard::State keyState = m_pKeyboard->GetState();
+	m_KeyboardTracker.Update(keyState);
 
 	// 切换显示模式
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
@@ -136,7 +178,7 @@ void GameApp::UpdateScene(float dt)
 		else if (m_ShowMode == Mode::CylinderNoCapWithNormal)
 			m_ShowMode = Mode::CylinderNoCap;
 	}
-
+#endif
 }
 
 void GameApp::DrawScene()
@@ -161,6 +203,9 @@ void GameApp::DrawScene()
 	}
 
 
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -179,6 +224,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }

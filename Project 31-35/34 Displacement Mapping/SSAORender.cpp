@@ -51,6 +51,8 @@ HRESULT SSAORender::OnResize(ID3D11Device* device, int width, int height, float 
 	m_pAmbientRTV1.Reset();
 	m_pAmbientSRV0.Reset();
 	m_pAmbientSRV1.Reset();
+	m_pNormalDepthRTV.Reset();
+	m_pNormalDepthSRV.Reset();
 
 	m_Width = width;
 	m_Height = height;

@@ -11,6 +11,12 @@
 #include "Keyboard.h"
 #include "GameTimer.h"
 
+#ifdef USE_IMGUI
+#include <imgui.h>
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+#endif
+
 class D3DApp
 {
 public:
@@ -34,7 +40,9 @@ protected:
 	bool InitMainWindow();      // 窗口初始化
 	bool InitDirect2D();		// Direct2D初始化
 	bool InitDirect3D();        // Direct3D初始化
-
+#ifdef USE_IMGUI
+	bool InitImGui();            // ImGui初始化
+#endif
 
 	void CalculateFrameStats(); // 计算每秒帧数并在窗口显示
 

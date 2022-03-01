@@ -47,6 +47,16 @@ endforeach()
 add_executable(07_Lighting WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
 target_link_libraries(07_Lighting d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
+if (USE_IMGUI MATCHES ON)
+	add_definitions(-DUSE_IMGUI)
+	include_directories(../../ImGui)
+	aux_source_directory(../../ImGui IMGUI_SRCS)
+	file(GLOB IMGUI_HEADER_FILES ../../ImGui/*.h)
+	file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	target_sources(07_Lighting PRIVATE ${IMGUI_SRCS} ${IMGUI_HEADER_FILES})
+	source_group("ImGui" FILES ${IMGUI_SRCS} ${IMGUI_HEADER_FILES})
+endif()
+
 source_group("HLSL Files" FILES ${HLSL_FILES})
 set_target_properties(07_Lighting PROPERTIES OUTPUT_NAME "07 Lighting")
 

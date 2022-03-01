@@ -28,23 +28,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -77,6 +78,7 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 	// 摄像机变更显示
 	if (m_pCamera != nullptr)
@@ -121,7 +123,46 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
+	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(m_pCamera);
+#ifdef USE_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
 
+	// ******************
+	// 第三人称摄像机的操作
+	//
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+	{
+		cam3rd->RotateX(io.MouseDelta.y * 0.01f);
+		cam3rd->RotateY(io.MouseDelta.x * 0.01f);
+	}
+	cam3rd->Approach(-io.MouseWheel * 1.0f);
+
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+
+	if (ImGui::Begin("Blur and Sobel"))
+	{
+		ImGui::Checkbox("Enable OIT", &m_EnabledOIT);
+		if (!m_EnabledOIT)
+		{
+			ImGui::Checkbox("Enable no Depth Write", &m_EnabledNoDepthWrite);
+		}
+		if (ImGui::Checkbox("Enable Fog", &m_EnabledFog))
+		{
+			m_BasicEffect.SetFogState(m_EnabledFog);
+		}
+		ImGui::Checkbox("Enable Blur Mode", &m_EnableBlurMode);
+		if (m_EnableBlurMode)
+		{
+			ImGui::SliderInt("Blur Radius", &m_BlurRadius, 1, 9);
+			ImGui::SliderFloat("Blur Sigma", &m_BlurSigma, 1.0f, 20.0f);
+			ImGui::SliderInt("Blur Times", &m_BlurTimes, 1, 5);
+		}
+	}
+
+	ImGui::End();
+	ImGui::Render();
+#else
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -130,7 +171,6 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
 
-	auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(m_pCamera);
 
 	// ******************
 	// 第三人称摄像机的操作
@@ -140,8 +180,8 @@ void GameApp::UpdateScene(float dt)
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 	{
-		cam3rd->RotateX(mouseState.y * dt * 1.25f);
-		cam3rd->RotateY(mouseState.x * dt * 1.25f);
+		cam3rd->RotateX(mouseState.y * 0.002f);
+		cam3rd->RotateY(mouseState.x * 0.002f);
 		cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 	}
 
@@ -171,6 +211,11 @@ void GameApp::UpdateScene(float dt)
 		m_EnableBlurMode = !m_EnableBlurMode;
 	}
 
+
+	// 退出程序，这里应向窗口发送销毁信息
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
+		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
+
 	if (m_EnableBlurMode)
 	{
 		// 控制模糊半径
@@ -190,6 +235,7 @@ void GameApp::UpdateScene(float dt)
 		if (m_KeyboardTracker.IsKeyPressed(Keyboard::X) && m_BlurTimes < 5)
 			++m_BlurTimes;
 	}
+#endif
 
 	m_pBlurFilter->SetGaussianWeights(m_BlurRadius, m_BlurSigma);
 
@@ -205,9 +251,6 @@ void GameApp::UpdateScene(float dt)
 	// 更新波浪
 	m_pGpuWavesRender->Update(m_pd3dImmediateContext.Get(), dt);
 
-	// 退出程序，这里应向窗口发送销毁信息
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
-		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
 void GameApp::DrawScene()
@@ -293,6 +336,9 @@ void GameApp::DrawScene()
 	}
 
 
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -326,6 +372,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }

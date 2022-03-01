@@ -27,6 +27,7 @@ endif()
 
 project("DirectX11 With Windows SDK")
 
+option(USE_IMGUI "Replace Direct2D UI with ImGui" ON)
 option(WIN7_SYSTEM_SUPPORT "Windows7 users need to select this option!" OFF)
 
 add_subdirectory("Project 01-09")

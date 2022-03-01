@@ -61,6 +61,7 @@ private:
 	GameObject m_House;											// 房屋
 
 	GameObject m_DebugQuad;										// 调试用四边形
+	GameObject m_FullScreenDebugQuad;							// 调试用全屏四边形
 
 	DirectionalLight m_DirLights[3] = {};						// 方向光
 	DirectX::XMFLOAT3 m_OriginalLightDirs[3] = {};				// 初始光方向
@@ -74,6 +75,7 @@ private:
 	std::unique_ptr<TextureRender> m_pShadowMap;				// 阴影贴图
 	std::unique_ptr<SkyRender> m_pDesert;						// 天空盒(沙漠)
 	std::unique_ptr<SSAORender> m_pSSAOMap;						// SSAO贴图
+	std::unique_ptr<TextureRender> m_pDebugSSAOMap;				// 调试用SSAO贴图
 
 	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
 };

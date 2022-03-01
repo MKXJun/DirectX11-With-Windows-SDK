@@ -48,23 +48,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -97,6 +98,7 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 	// 摄像机变更显示
 	if (m_pCamera != nullptr)
@@ -111,18 +113,65 @@ void GameApp::OnResize()
 	if (m_pSSAOMap)
 	{
 		m_pSSAOMap->OnResize(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, 1000.0f);
+		m_pDebugSSAOMap = std::make_unique<TextureRender>();
+		HR(m_pDebugSSAOMap->InitResource(m_pd3dDevice.Get(), m_ClientWidth / 2, m_ClientHeight / 2));
 
 		Model quadModel;
-		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.5f, -0.5f), XMFLOAT2(0.5f, 0.5f)));
+		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.666666f, 0.666666f), XMFLOAT2(0.333333f, 0.333333f)));
 		quadModel.modelParts[0].texDiffuse = m_pSSAOMap->GetAmbientTexture();
 		m_DebugQuad.SetModel(std::move(quadModel));
+
+		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>());
+		quadModel.modelParts[0].texDiffuse = m_pSSAOMap->GetAmbientTexture();
+		m_FullScreenDebugQuad.SetModel(std::move(quadModel));
 	}
 
 }
 
 void GameApp::UpdateScene(float dt)
 {
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
+#ifdef USE_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
+	// ******************
+	// 自由摄像机的操作
+	//
+	float d1 = 0.0f, d2 = 0.0f;
+	if (ImGui::IsKeyDown('W'))
+		d1 += dt;
+	if (ImGui::IsKeyDown('S'))
+		d1 -= dt;
+	if (ImGui::IsKeyDown('A'))
+		d2 -= dt;
+	if (ImGui::IsKeyDown('D'))
+		d2 += dt;
+
+	cam1st->MoveForward(d1 * 6.0f);
+	cam1st->Strafe(d2 * 6.0f);
+
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+	{
+		cam1st->Pitch(io.MouseDelta.y * 0.01f);
+		cam1st->RotateY(io.MouseDelta.x * 0.01f);
+	}
+
+	if (ImGui::Begin("SSAO"))
+	{
+		ImGui::Checkbox("Enable Normal map", &m_EnableNormalMap);
+		if (ImGui::Checkbox("Enable SSAO", &m_EnableSSAO))
+		{
+			if (!m_EnableSSAO)
+				m_EnableDebug = false;
+			m_pBasicEffect->SetSSAOEnabled(m_EnableSSAO);
+		}
+		if (m_EnableSSAO)
+		{
+			ImGui::Checkbox("Enable Debug", &m_EnableDebug);
+		}
+	}
+	ImGui::End();
+#else
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -130,8 +179,6 @@ void GameApp::UpdateScene(float dt)
 
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
-
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
 	// 法线贴图开关
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
@@ -166,16 +213,19 @@ void GameApp::UpdateScene(float dt)
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 	{
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		cam1st->Pitch(mouseState.y * 0.002f);
+		cam1st->RotateY(mouseState.x * 0.002f);
 	}
+
+	// 退出程序，这里应向窗口发送销毁信息
+	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
+		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
+#endif
 
 	m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	// 为SSAO图也设置观察矩阵
 	m_pSSAOEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
-
-	
 
 	// 更新光照
 	static float theta = 0;	
@@ -205,9 +255,6 @@ void GameApp::UpdateScene(float dt)
 	// S = V * P * T
 	m_pBasicEffect->SetShadowTransformMatrix(LightView * XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 60.0f) * T);
 
-	// 退出程序，这里应向窗口发送销毁信息
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
-		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
 }
 
 void GameApp::DrawScene()
@@ -262,6 +309,29 @@ void GameApp::DrawScene()
 	m_pBasicEffect->SetTextureSSAOMap(nullptr);
 	m_pBasicEffect->Apply(m_pd3dImmediateContext.Get());
 
+#if USE_IMGUI
+	if (m_EnableDebug)
+	{
+		if (ImGui::Begin("SSAO Buffer", &m_EnableDebug))
+		{
+			m_pDebugEffect->SetRenderOneComponentGray(m_pd3dImmediateContext.Get(), 0);
+			m_pDebugSSAOMap->Begin(m_pd3dImmediateContext.Get(), Colors::Black);
+			{
+				m_FullScreenDebugQuad.Draw(m_pd3dImmediateContext.Get(), m_pDebugEffect.get());
+			}
+			m_pDebugSSAOMap->End(m_pd3dImmediateContext.Get());
+			// 解除绑定
+			m_pDebugEffect->SetTextureDiffuse(nullptr);
+			m_pDebugEffect->Apply(m_pd3dImmediateContext.Get());
+			ImVec2 winSize = ImGui::GetWindowSize();
+			float smaller = (std::min)((winSize.x - 20) / 16.0f * 9.0f, winSize.y - 36);
+			ImGui::Image(m_pDebugSSAOMap->GetOutputTexture(), ImVec2(smaller * 16.0f / 9.0f, smaller));
+		}
+		ImGui::End();
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 调试绘制SSAO图
 	//
@@ -282,7 +352,6 @@ void GameApp::DrawScene()
 		m_pDebugEffect->Apply(m_pd3dImmediateContext.Get());
 	}
 
-
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -302,6 +371,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }
@@ -413,6 +483,8 @@ bool GameApp::InitResource()
 
 	m_pSSAOMap = std::make_unique<SSAORender>();
 	HR(m_pSSAOMap->InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, XM_PI / 3, 1000.0f));
+	m_pDebugSSAOMap = std::make_unique<TextureRender>();
+	HR(m_pDebugSSAOMap->InitResource(m_pd3dDevice.Get(), m_ClientWidth / 2, m_ClientHeight / 2));
 
 	// ******************
 	// 初始化对象
@@ -511,9 +583,13 @@ bool GameApp::InitResource()
 
 	// 调试用矩形
 	Model quadModel;
-	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.5f, -0.5f), XMFLOAT2(0.5f, 0.5f)));
+	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.666666f, 0.666666f), XMFLOAT2(0.333333f, 0.333333f)));
 	quadModel.modelParts[0].texDiffuse = m_pSSAOMap->GetAmbientTexture();
 	m_DebugQuad.SetModel(std::move(quadModel));
+
+	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>());
+	quadModel.modelParts[0].texDiffuse = m_pSSAOMap->GetAmbientTexture();
+	m_FullScreenDebugQuad.SetModel(std::move(quadModel));
 
 	// ******************
 	// 初始化天空盒相关

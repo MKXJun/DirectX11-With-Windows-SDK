@@ -32,23 +32,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -81,6 +82,7 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 	if (m_pCamera != nullptr)
 	{
@@ -93,7 +95,85 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
+	// 获取子类
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
+#ifdef USE_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
+	// ******************
+	// 自由摄像机的操作
+	// 
+	float d1 = 0.0f, d2 = 0.0f;
+	if (ImGui::IsKeyDown('W'))
+		d1 += dt;
+	if (ImGui::IsKeyDown('S'))
+		d1 -= dt;
+	if (ImGui::IsKeyDown('A'))
+		d2 -= dt;
+	if (ImGui::IsKeyDown('D'))
+		d2 += dt;
+
+	cam1st->MoveForward(d1 * 6.0f);
+	cam1st->Strafe(d2 * 6.0f);
+
+	// 将位置限制在[-49.9f, 49.9f]的区域内
+	// 不允许穿地
+	XMFLOAT3 adjustedPos;
+	XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(),
+		XMVectorSet(-49.9f, 0.0f, -49.9f, 0.0f), XMVectorSet(49.9f, 99.9f, 49.9f, 0.0f)));
+	cam1st->SetPosition(adjustedPos);
+
+	m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
+
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+	{
+		cam1st->Pitch(io.MouseDelta.y * 0.01f);
+		cam1st->RotateY(io.MouseDelta.x * 0.01f);
+	}
+
+	if (ImGui::Begin("Tree Billboard"))
+	{
+		static int curr_item = 0;
+		static const char* modes[] = {
+			"Daytime",
+			"Dark Night",
+		};
+		ImGui::Checkbox("Enable Alpha-To-Coverage", &m_EnableAlphaToCoverage);
+		if (ImGui::Checkbox("Enable Fog", &m_FogEnabled))
+		{
+			m_BasicEffect.SetFogState(m_FogEnabled);
+		}
+
+		if (m_FogEnabled)
+		{
+			if (ImGui::Combo("Fog Mode", &curr_item, modes, ARRAYSIZE(modes)))
+			{
+				m_IsNight = (curr_item == 1);
+				if (m_IsNight)
+				{
+					// 黑夜模式下变为逐渐黑暗
+					m_BasicEffect.SetFogColor(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f));
+					m_BasicEffect.SetFogStart(5.0f);
+				}
+				else
+				{
+					// 白天模式则对应雾效
+					m_BasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
+					m_BasicEffect.SetFogStart(15.0f);
+				}
+			}
+			if (ImGui::SliderFloat("Fog Range", &m_FogRange, 15.0f, 175.0f, "%.0f"))
+			{
+				m_BasicEffect.SetFogRange(m_FogRange);
+			}
+			float fog_start = m_IsNight ? 5.0f : 15.0f;
+			ImGui::Text("Fog: %.0f-%.0f", fog_start, m_FogRange + fog_start);
+		}
+	}
+	ImGui::End();
+	ImGui::Render();
+#else
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -102,35 +182,29 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
 
-	// 获取子类
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
+	// ******************
+	// 自由摄像机的操作
+	//
 
-	if (m_CameraMode == CameraMode::Free)
+	// 方向移动
+	if (keyState.IsKeyDown(Keyboard::W))
 	{
-		// ******************
-		// 自由摄像机的操作
-		//
+		cam1st->MoveForward(dt * 6.0f);
+	}
+	if (keyState.IsKeyDown(Keyboard::S))
+	{
+		cam1st->MoveForward(dt * -6.0f);
+	}
+	if (keyState.IsKeyDown(Keyboard::A))
+		cam1st->Strafe(dt * -6.0f);
+	if (keyState.IsKeyDown(Keyboard::D))
+		cam1st->Strafe(dt * 6.0f);
 
-		// 方向移动
-		if (keyState.IsKeyDown(Keyboard::W))
-		{
-			cam1st->MoveForward(dt * 6.0f);
-		}
-		if (keyState.IsKeyDown(Keyboard::S))
-		{
-			cam1st->MoveForward(dt * -6.0f);
-		}
-		if (keyState.IsKeyDown(Keyboard::A))
-			cam1st->Strafe(dt * -6.0f);
-		if (keyState.IsKeyDown(Keyboard::D))
-			cam1st->Strafe(dt * 6.0f);
-
-		// 在鼠标没进入窗口前仍为ABSOLUTE模式
-		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
-		{
-			cam1st->Pitch(mouseState.y * dt * 1.25f);
-			cam1st->RotateY(mouseState.x * dt * 1.25f);
-		}
+	// 在鼠标没进入窗口前仍为ABSOLUTE模式
+	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
+	{
+		cam1st->Pitch(mouseState.y * 0.002f);
+		cam1st->RotateY(mouseState.x * 0.002f);
 	}
 
 	// ******************
@@ -203,7 +277,7 @@ void GameApp::UpdateScene(float dt)
 	// 退出程序，这里应向窗口发送销毁信息
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Escape))
 		SendMessage(MainWnd(), WM_DESTROY, 0, 0);
-
+#endif
 }
 
 void GameApp::DrawScene()
@@ -239,6 +313,9 @@ void GameApp::DrawScene()
 	m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->Draw(16, 0);
 
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -262,6 +339,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 

@@ -31,23 +31,23 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-
+#endif
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -80,6 +80,7 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 	// 更新投影矩阵
 	m_BasicEffect.SetProjMatrix(XMMatrixPerspectiveFovLH(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f));
@@ -88,7 +89,57 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
+	UINT stride = (m_ShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
+	UINT offset = 0;
 
+#ifdef USE_IMGUI
+	if (ImGui::Begin("Stream Output"))
+	{
+		static int curr_item = 0;
+		static const char* modes[] = {
+			"Splited Triangle",
+			"Splited Snow",
+			"Splited Sphere"
+		};
+		if (ImGui::Combo("Mode", &curr_item, modes, ARRAYSIZE(modes)))
+		{
+			m_ShowMode = static_cast<Mode>(curr_item);
+			m_IsWireFrame = false;
+			m_ShowNormal = false;
+			m_CurrIndex = 0;
+			switch (m_ShowMode)
+			{
+			case GameApp::Mode::SplitedTriangle:
+				ResetSplitedTriangle();
+				stride = sizeof(VertexPosColor);
+				break;
+			case GameApp::Mode::SplitedSnow:
+				ResetSplitedSnow();
+				m_IsWireFrame = true;
+				stride = sizeof(VertexPosColor);
+				break;
+			case GameApp::Mode::SplitedSphere:
+				ResetSplitedSphere();
+				stride = sizeof(VertexPosNormalColor);
+				break;
+			default:
+				break;
+			}
+			m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[m_CurrIndex].GetAddressOf(), &stride, &offset);
+		}
+
+		if (ImGui::SliderInt("Level", &m_CurrIndex, 0, 6))
+			m_pd3dImmediateContext->IASetVertexBuffers(0, 1, m_pVertexBuffers[m_CurrIndex].GetAddressOf(), &stride, &offset);
+
+		if (m_ShowMode != Mode::SplitedSnow)
+			ImGui::Checkbox("Show Wireframe", &m_IsWireFrame);
+
+		if (m_ShowMode == Mode::SplitedSphere)
+			ImGui::Checkbox("Show Normal", &m_ShowNormal);
+	}
+	ImGui::End();
+	ImGui::Render();
+#else
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -96,10 +147,6 @@ void GameApp::UpdateScene(float dt)
 
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
-
-	UINT stride = (m_ShowMode != Mode::SplitedSphere ? sizeof(VertexPosColor) : sizeof(VertexPosNormalColor));
-	UINT offset = 0;
-
 
 	// ******************
 	// 切换分形
@@ -168,6 +215,7 @@ void GameApp::UpdateScene(float dt)
 			m_ShowNormal = !m_ShowNormal;
 		}
 	}
+#endif
 
 	// ******************
 	// 更新每帧变化的值
@@ -248,7 +296,9 @@ void GameApp::DrawScene()
 		}
 	}
 
-
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -286,6 +336,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 

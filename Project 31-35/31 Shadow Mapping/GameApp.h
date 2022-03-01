@@ -38,7 +38,7 @@ private:
 	bool m_EnableNormalMap;										// 开启法线贴图
 	bool m_EnableDebug;											// 开启调试模式
 	bool m_GrayMode;											// 深度值以灰度形式显示
-	size_t m_SlopeIndex;										// 斜率索引
+	int m_SlopeIndex;			     							// 斜率索引
 
 	GameObject m_Ground;										// 地面
 	GameObject m_GroundT;										// 带切线向量的地面
@@ -54,6 +54,7 @@ private:
 	GameObject m_House;											// 房屋
 
 	GameObject m_DebugQuad;										// 调试用四边形
+	GameObject m_FullScreenDebugQuad;							// 全屏调试用四边形
 
 	DirectionalLight m_DirLights[3] = {};						// 方向光
 	DirectX::XMFLOAT3 m_OriginalLightDirs[3] = {};				// 初始光方向
@@ -64,6 +65,7 @@ private:
 	std::unique_ptr<DebugEffect> m_pDebugEffect;				// 调试用显示纹理的特效
 
 	std::unique_ptr<TextureRender> m_pShadowMap;				// 阴影贴图
+	std::unique_ptr<TextureRender> m_pGrayShadowMap;			// 用于调试的RGB阴影贴图
 	std::unique_ptr<SkyRender> m_pDesert;						// 天空盒(沙漠)
 	
 	std::shared_ptr<Camera> m_pCamera;						    // 摄像机

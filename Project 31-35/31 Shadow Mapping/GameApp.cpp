@@ -43,23 +43,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -92,6 +93,7 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 	// 摄像机变更显示
 	if (m_pCamera != nullptr)
@@ -106,7 +108,52 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
+	static const DirectX::XMFLOAT3 lightDirs[] = {
+		XMFLOAT3(1.0f / sqrtf(2.0f), -1.0f / sqrtf(2.0f), 0.0f),
+		XMFLOAT3(3.0f / sqrtf(13.0f), -2.0f / sqrtf(13.0f), 0.0f),
+		XMFLOAT3(2.0f / sqrtf(5.0f), -1.0f / sqrtf(5.0f), 0.0f),
+		XMFLOAT3(3.0f / sqrtf(10.0f), -1.0f / sqrtf(10.0f), 0.0f),
+		XMFLOAT3(4.0f / sqrtf(17.0f), -1.0f / sqrtf(17.0f), 0.0f)
+	};
 
+	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
+
+#ifdef USE_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
+	// ******************
+	// 自由摄像机的操作
+	//
+	float d1 = 0.0f, d2 = 0.0f;
+	if (ImGui::IsKeyDown('W'))
+		d1 += dt;
+	if (ImGui::IsKeyDown('S'))
+		d1 -= dt;
+	if (ImGui::IsKeyDown('A'))
+		d2 -= dt;
+	if (ImGui::IsKeyDown('D'))
+		d2 += dt;
+
+	cam1st->MoveForward(d1 * 6.0f);
+	cam1st->Strafe(d2 * 6.0f);
+
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+	{
+		cam1st->Pitch(io.MouseDelta.y * 0.01f);
+		cam1st->RotateY(io.MouseDelta.x * 0.01f);
+	}
+
+	if (ImGui::Begin("Shadow Mapping"))
+	{
+		ImGui::Checkbox("Enable Normal map", &m_EnableNormalMap);
+		if (ImGui::SliderInt("Light Slope Level", &m_SlopeIndex, 0, 4))
+		{
+			m_OriginalLightDirs[0] = lightDirs[m_SlopeIndex];
+		}
+		ImGui::Checkbox("Enable Debug", &m_EnableDebug);
+	}
+	ImGui::End();
+
+#else
 	// 更新鼠标事件，获取相对偏移量
 	Mouse::State mouseState = m_pMouse->GetState();
 	Mouse::State lastMouseState = m_MouseTracker.GetLastState();
@@ -114,8 +161,6 @@ void GameApp::UpdateScene(float dt)
 
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
-
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
 
 	// 法线贴图开关
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
@@ -129,30 +174,13 @@ void GameApp::UpdateScene(float dt)
 
 	// 调整光线倾斜
 	// 当我们增加光线的倾斜程度时，阴影粉刺会出现得愈发严重
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
+	for (int i = 0; i < 5; ++i)
 	{
-		m_OriginalLightDirs[0] = XMFLOAT3(1.0f / sqrtf(2.0f), -1.0f / sqrtf(2.0f), 0.0f);
-		m_SlopeIndex = 0;
-	}
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
-	{
-		m_OriginalLightDirs[0] = XMFLOAT3(3.0f / sqrtf(13.0f), -2.0f / sqrtf(13.0f), 0.0f);
-		m_SlopeIndex = 1;
-	}
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D3))
-	{
-		m_OriginalLightDirs[0] = XMFLOAT3(2.0f / sqrtf(5.0f), -1.0f / sqrtf(5.0f), 0.0f);
-		m_SlopeIndex = 2;
-	}
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D4))
-	{
-		m_OriginalLightDirs[0] = XMFLOAT3(3.0f / sqrtf(10.0f), -1.0f / sqrtf(10.0f), 0.0f);
-		m_SlopeIndex = 3;
-	}
-	if (m_KeyboardTracker.IsKeyPressed(Keyboard::D5))
-	{
-		m_OriginalLightDirs[0] = XMFLOAT3(4.0f / sqrtf(17.0f), -1.0f / sqrtf(17.0f), 0.0f);
-		m_SlopeIndex = 4;
+		if (m_KeyboardTracker.IsKeyPressed(static_cast<Keyboard::Keys>(Keyboard::D1 + i)))
+		{
+			m_OriginalLightDirs[0] = lightDirs[i];
+			m_SlopeIndex = i;
+		}
 	}
 		
 	// ******************
@@ -172,10 +200,10 @@ void GameApp::UpdateScene(float dt)
 	// 在鼠标没进入窗口前仍为ABSOLUTE模式
 	if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 	{
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		cam1st->Pitch(mouseState.y * 0.002f);
+		cam1st->RotateY(mouseState.x * 0.002f);
 	}
-
+#endif
 	m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewXM());
 	m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
 
@@ -243,6 +271,30 @@ void GameApp::DrawScene()
 	m_pBasicEffect->SetTextureShadowMap(nullptr);
 	m_pBasicEffect->Apply(m_pd3dImmediateContext.Get());
 
+#if USE_IMGUI
+	if (m_EnableDebug)
+	{
+		if (ImGui::Begin("Depth Buffer", &m_EnableDebug))
+		{
+			m_pDebugEffect->SetRenderOneComponentGray(m_pd3dImmediateContext.Get(), 0);
+			m_pGrayShadowMap->Begin(m_pd3dImmediateContext.Get(), Colors::Black);
+			{
+				m_FullScreenDebugQuad.Draw(m_pd3dImmediateContext.Get(), m_pDebugEffect.get());
+			}
+			m_pGrayShadowMap->End(m_pd3dImmediateContext.Get());
+			// 解除绑定
+			m_pDebugEffect->SetTextureDiffuse(nullptr);
+			m_pDebugEffect->Apply(m_pd3dImmediateContext.Get());
+			ImVec2 winSize = ImGui::GetWindowSize();
+			float smaller = (std::min)(winSize.x - 20, winSize.y - 36);
+			ImGui::Image(m_pGrayShadowMap->GetOutputTexture(), ImVec2(smaller, smaller));
+		}
+		ImGui::End();
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
+
 	// ******************
 	// 调试绘制阴影贴图
 	//
@@ -256,7 +308,7 @@ void GameApp::DrawScene()
 		{
 			m_pDebugEffect->SetRenderOneComponent(m_pd3dImmediateContext.Get(), 0);
 		}
-		
+
 		m_DebugQuad.Draw(m_pd3dImmediateContext.Get(), m_pDebugEffect.get());
 		// 解除绑定
 		m_pDebugEffect->SetTextureDiffuse(nullptr);
@@ -281,6 +333,7 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }
@@ -350,6 +403,8 @@ bool GameApp::InitResource()
 	// 初始化阴影贴图和特效
 	m_pShadowMap = std::make_unique<TextureRender>();
 	HR(m_pShadowMap->InitResource(m_pd3dDevice.Get(), 2048, 2048, true));
+	m_pGrayShadowMap = std::make_unique<TextureRender>();
+	HR(m_pGrayShadowMap->InitResource(m_pd3dDevice.Get(), 512, 512));
 
 	// 开启纹理、阴影
 	m_pBasicEffect->SetTextureUsed(true);
@@ -462,9 +517,13 @@ bool GameApp::InitResource()
 
 	// 调试用矩形
 	Model quadModel;
-	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.6f, -0.6f), XMFLOAT2(0.4f, 0.4f)));
+	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.8125f, 0.6666666f), XMFLOAT2(0.1875f, 0.3333333f)));
 	quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
 	m_DebugQuad.SetModel(std::move(quadModel));
+
+	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>());
+	quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
+	m_FullScreenDebugQuad.SetModel(std::move(quadModel));
 
 	// ******************
 	// 初始化天空盒相关

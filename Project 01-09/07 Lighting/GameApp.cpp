@@ -30,9 +30,11 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+#endif
 
 	return true;
 }
@@ -50,6 +52,89 @@ void GameApp::UpdateScene(float dt)
 	m_VSConstantBuffer.world = XMMatrixTranspose(W);
 	m_VSConstantBuffer.worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
 
+#ifdef USE_IMGUI
+		ImGuiIO& io = ImGui::GetIO();
+	if (ImGui::Begin("Lighting"))
+	{
+		static int curr_mesh_item = 0;
+		const char* mesh_lists[] = {
+			"Box",
+			"Sphere",
+			"Cylinder",
+			"Cone"
+		};
+		if (ImGui::Combo("Mesh", &curr_mesh_item, mesh_lists, ARRAYSIZE(mesh_lists)))
+		{
+			Geometry::MeshData<VertexPosNormalColor> meshData;
+			switch (curr_mesh_item)
+			{
+			case 0: meshData = Geometry::CreateBox<VertexPosNormalColor>(); break;
+			case 1: meshData = Geometry::CreateSphere<VertexPosNormalColor>(); break;
+			case 2: meshData = Geometry::CreateCylinder<VertexPosNormalColor>(); break;
+			case 3: meshData = Geometry::CreateCone<VertexPosNormalColor>(); break;
+			}
+			ResetMesh(meshData);
+		}
+		bool mat_changed = false;
+		ImGui::Text("Material");
+		ImGui::PushID(3);
+		ImGui::ColorEdit3("Ambient", &m_PSConstantBuffer.material.ambient.x);
+		ImGui::ColorEdit3("Diffuse", &m_PSConstantBuffer.material.diffuse.x);
+		ImGui::ColorEdit3("Specular", &m_PSConstantBuffer.material.specular.x);
+		ImGui::PopID();
+
+		static int curr_light_item = 0;
+		static const char* light_modes[] = {
+			"Directional Light",
+			"Point Light",
+			"Spot Light"
+		};
+		ImGui::Text("Light");
+		if (ImGui::Combo("Light Type", &curr_light_item, light_modes, ARRAYSIZE(light_modes)))
+		{
+			m_PSConstantBuffer.dirLight = (curr_light_item == 0 ? m_DirLight : DirectionalLight());
+			m_PSConstantBuffer.pointLight = (curr_light_item == 1 ? m_PointLight : PointLight());
+			m_PSConstantBuffer.spotLight = (curr_light_item == 2 ? m_SpotLight : SpotLight());
+		}
+
+		bool light_changed = false;
+		// 添加ID区分同名控件
+		ImGui::PushID(curr_light_item);
+		if (curr_light_item == 0)
+		{
+			ImGui::ColorEdit3("Ambient", &m_PSConstantBuffer.dirLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse", &m_PSConstantBuffer.dirLight.diffuse.x);
+			ImGui::ColorEdit3("Specular", &m_PSConstantBuffer.dirLight.specular.x);
+		}
+		else if (curr_light_item == 1)
+		{
+			ImGui::ColorEdit3("Ambient", &m_PSConstantBuffer.pointLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse", &m_PSConstantBuffer.pointLight.diffuse.x);
+			ImGui::ColorEdit3("Specular", &m_PSConstantBuffer.pointLight.specular.x);
+			ImGui::InputFloat("Range", &m_PSConstantBuffer.pointLight.range);
+			ImGui::InputFloat3("Attenutation", &m_PSConstantBuffer.pointLight.att.x);
+		}
+		else
+		{
+			ImGui::ColorEdit3("Ambient", &m_SpotLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse", &m_SpotLight.diffuse.x);
+			ImGui::ColorEdit3("Specular", &m_SpotLight.specular.x);
+			ImGui::InputFloat("Spot", &m_SpotLight.spot);
+			ImGui::InputFloat("Range", &m_SpotLight.range);
+			ImGui::InputFloat3("Attenutation", &m_SpotLight.att.x);
+		}
+		ImGui::PopID();
+
+
+		if (ImGui::Checkbox("WireFrame Mode", &m_IsWireframeMode))
+		{
+			m_pd3dImmediateContext->RSSetState(m_IsWireframeMode ? m_pRSWireframe.Get() : nullptr);
+		}
+	}
+	ImGui::End();
+	ImGui::Render();
+
+#else
 	// 键盘切换灯光类型
 	Keyboard::State state = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(state);	
@@ -99,7 +184,7 @@ void GameApp::UpdateScene(float dt)
 		m_IsWireframeMode = !m_IsWireframeMode;
 		m_pd3dImmediateContext->RSSetState(m_IsWireframeMode ? m_pRSWireframe.Get() : nullptr);
 	}
-
+#endif
 	// 更新常量缓冲区，让立方体转起来
 	D3D11_MAPPED_SUBRESOURCE mappedData;
 	HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
@@ -121,6 +206,10 @@ void GameApp::DrawScene()
 	
 	// 绘制几何模型
 	m_pd3dImmediateContext->DrawIndexed(m_IndexCount, 0, 0);
+
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }

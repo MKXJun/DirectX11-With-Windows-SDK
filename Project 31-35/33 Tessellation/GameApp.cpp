@@ -21,23 +21,24 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
+#ifndef USE_IMGUI
 	// 初始化鼠标，键盘不需要
 	m_pMouse->SetWindow(m_hMainWnd);
 	m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+#endif
 
 	return true;
 }
 
 void GameApp::OnResize()
 {
-	assert(m_pd2dFactory);
-	assert(m_pdwriteFactory);
 	// 释放D2D的相关资源
 	m_pColorBrush.Reset();
 	m_pd2dRenderTarget.Reset();
 
 	D3DApp::OnResize();
 
+#ifndef USE_IMGUI
 	// 为D2D创建DXGI表面渲染目标
 	ComPtr<IDXGISurface> surface;
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface), reinterpret_cast<void**>(surface.GetAddressOf())));
@@ -70,11 +71,29 @@ void GameApp::OnResize()
 		// 报告异常问题
 		assert(m_pd2dRenderTarget);
 	}
+#endif
 
 }
 
 void GameApp::UpdateScene(float dt)
 {
+#ifdef USE_IMGUI
+	if (ImGui::Begin("Tessellation"))
+	{
+
+		static int curr_item = 0;
+		static const char* modes[] = {
+			"Triangle",
+			"Quad",
+			"BezierCurve",
+			"BezierSurface"
+		};
+		if (ImGui::Combo("Mode", &curr_item, modes, ARRAYSIZE(modes)))
+		{
+			m_TessellationMode = static_cast<TessellationMode>(curr_item);
+		}
+	}
+#else
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
 
@@ -86,14 +105,20 @@ void GameApp::UpdateScene(float dt)
 		m_TessellationMode = TessellationMode::BezierCurve;
 	else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D4))
 		m_TessellationMode = TessellationMode::BezierSurface;
+#endif
 
 	switch (m_TessellationMode)
 	{
 	case GameApp::TessellationMode::Triangle: UpdateTriangle(); break;
 	case GameApp::TessellationMode::Quad: UpdateQuad(); break;
 	case GameApp::TessellationMode::BezierCurve: UpdateBezierCurve(); break;
-	case GameApp::TessellationMode::BezierSurface: UpdateBezierSurface(); break;	
+	case GameApp::TessellationMode::BezierSurface: UpdateBezierSurface(); break;
 	}
+
+#ifdef USE_IMGUI
+	ImGui::End();
+	ImGui::Render();
+#endif
 }
 
 void GameApp::DrawScene()
@@ -112,6 +137,9 @@ void GameApp::DrawScene()
 	case GameApp::TessellationMode::BezierSurface: DrawBezierSurface(); break;
 	}
 
+#ifdef USE_IMGUI
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#else
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -124,12 +152,17 @@ void GameApp::DrawScene()
 			D2D1_RECT_F{ 0.0f, 0.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 		HR(m_pd2dRenderTarget->EndDraw());
 	}
+#endif
 
 	HR(m_pSwapChain->Present(0, 0));
 }
 
 void GameApp::UpdateTriangle()
 {
+#ifdef USE_IMGUI
+	ImGui::SliderFloat3("TriEdgeTess", m_TriEdgeTess, 1.0f, 10.0f, "%.1f");
+	ImGui::SliderFloat("TriInsideTess", &m_TriInsideTess, 1.0f, 10.0f, "%.1f");
+#else
 	// *****************
 	// 键盘操作
 	//
@@ -152,6 +185,7 @@ void GameApp::UpdateTriangle()
 		m_TriInsideTess -= 1.0f;
 	if (m_TriInsideTess < 10.0f && m_KeyboardTracker.IsKeyPressed(Keyboard::R))
 		m_TriInsideTess += 1.0f;
+#endif
 
 	// *****************
 	// 更新数据并应用
@@ -162,6 +196,20 @@ void GameApp::UpdateTriangle()
 
 void GameApp::UpdateQuad()
 {
+#ifdef USE_IMGUI
+	static int part_item = 0;
+	static const char* part_modes[] = {
+		"Integer",
+		"Odd",
+		"Even"
+	};
+	if (ImGui::Combo("Partition Mode", &part_item, part_modes, ARRAYSIZE(part_modes)))
+		m_PartitionMode = static_cast<PartitionMode>(part_item);
+	ImGui::SliderFloat4("QuadEdgeTess", m_QuadEdgeTess, 1.0f, 10.0f, "%.1f");
+	ImGui::SliderFloat2("QuadInsideTess", m_QuadInsideTess, 1.0f, 10.0f, "%.1f");
+	m_pEffectHelper->GetConstantBufferVariable("g_QuadEdgeTess")->SetFloatVector(4, m_QuadEdgeTess);
+	m_pEffectHelper->GetConstantBufferVariable("g_QuadInsideTess")->SetFloatVector(2, m_QuadInsideTess);
+#else
 	// *****************
 	// 键盘操作
 	//
@@ -202,6 +250,7 @@ void GameApp::UpdateQuad()
 		m_QuadInsideTess[1] -= 0.25f;
 	if (m_QuadInsideTess[1] < 10.0f && m_KeyboardTracker.IsKeyPressed(Keyboard::V))
 		m_QuadInsideTess[1] += 0.25f;
+#endif
 
 	// *****************
 	// 更新数据并应用
@@ -212,6 +261,35 @@ void GameApp::UpdateQuad()
 
 void GameApp::UpdateBezierCurve()
 {
+	bool c1_continuity = false;
+#ifdef USE_IMGUI
+	ImGui::SliderFloat("IsolineEdgeTess", &m_IsolineEdgeTess[1], 1.0f, 64.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
+	if (ImGui::Button("C1 Continuity"))
+		c1_continuity = true;
+	ImGuiIO& io = ImGui::GetIO();
+
+	XMFLOAT3 worldPos = XMFLOAT3(
+		(2.0f * io.MousePos.x / m_ClientWidth - 1.0f) * AspectRatio(),
+		-2.0f * io.MousePos.y / m_ClientHeight + 1.0f,
+		0.0f);
+	float dy = 12.0f / m_ClientHeight;	// 稍微大一点方便点到
+	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+	{
+		for (int i = 0; i < 10; ++i)
+		{
+			if (fabs(worldPos.x - m_BezPoints[i].x) <= dy && fabs(worldPos.y - m_BezPoints[i].y) <= dy)
+			{
+				m_ChosenBezPoint = i;
+				break;
+			}
+		}
+	}
+	else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		m_ChosenBezPoint = -1;
+	else if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && m_ChosenBezPoint >= 0)
+		m_BezPoints[m_ChosenBezPoint] = worldPos;
+
+#else
 	// *****************
 	// 键盘操作
 	//
@@ -223,14 +301,7 @@ void GameApp::UpdateBezierCurve()
 		m_IsolineEdgeTess[1] *= 2;
 	// 端点连接处一阶连续
 	if (m_KeyboardTracker.IsKeyPressed(Keyboard::E))
-	{
-		XMVECTOR posVec2 = XMLoadFloat3(&m_BezPoints[2]);
-		XMVECTOR posVec3 = XMLoadFloat3(&m_BezPoints[3]);
-		XMVECTOR posVec5 = XMLoadFloat3(&m_BezPoints[5]);
-		XMVECTOR posVec6 = XMLoadFloat3(&m_BezPoints[6]);
-		XMStoreFloat3(m_BezPoints + 4, posVec2 + 2 * (posVec3 - posVec2));
-		XMStoreFloat3(m_BezPoints + 7, posVec5 + 2 * (posVec6 - posVec5));
-	}
+		c1_continuity = true;
 
 	// *****************
 	// 检验是否有控制点被点击，并实现拖控
@@ -245,7 +316,7 @@ void GameApp::UpdateBezierCurve()
 		-2.0f * mouseState.y / m_ClientHeight + 1.0f,
 		0.0f);
 	float dy = 12.0f / m_ClientHeight;	// 稍微大一点方便点到
-	
+
 	switch (m_MouseTracker.leftButton)
 	{
 	case Mouse::ButtonStateTracker::UP: m_ChosenBezPoint = -1; break;
@@ -264,15 +335,25 @@ void GameApp::UpdateBezierCurve()
 	case Mouse::ButtonStateTracker::HELD: if (m_ChosenBezPoint >= 0) m_BezPoints[m_ChosenBezPoint] = worldPos;
 		break;
 	}
-
+#endif
 
 	// *****************
 	// 更新数据并应用
 	//
-	XMMATRIX WVP = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), g_XMZero, g_XMIdentityR1) * 
+	if (c1_continuity)
+	{
+		XMVECTOR posVec2 = XMLoadFloat3(&m_BezPoints[2]);
+		XMVECTOR posVec3 = XMLoadFloat3(&m_BezPoints[3]);
+		XMVECTOR posVec5 = XMLoadFloat3(&m_BezPoints[5]);
+		XMVECTOR posVec6 = XMLoadFloat3(&m_BezPoints[6]);
+		XMStoreFloat3(m_BezPoints + 4, posVec2 + 2 * (posVec3 - posVec2));
+		XMStoreFloat3(m_BezPoints + 7, posVec5 + 2 * (posVec6 - posVec5));
+	}
+
+	XMMATRIX WVP = XMMatrixLookAtLH(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), g_XMZero, g_XMIdentityR1) *
 		XMMatrixPerspectiveFovLH(XM_PIDIV2, AspectRatio(), 0.1f, 1000.0f);
 	WVP = XMMatrixTranspose(WVP);
-	m_pEffectHelper->GetConstantBufferVariable("g_WorldViewProj")->SetFloatMatrix(4, 4, (const FLOAT *)&WVP);
+	m_pEffectHelper->GetConstantBufferVariable("g_WorldViewProj")->SetFloatMatrix(4, 4, (const FLOAT*)&WVP);
 	m_pEffectHelper->GetConstantBufferVariable("g_IsolineEdgeTess")->SetFloatVector(2, m_IsolineEdgeTess);
 	m_pEffectHelper->GetConstantBufferVariable("g_InvScreenHeight")->SetFloat(1.0f / m_ClientHeight);
 
@@ -288,6 +369,15 @@ void GameApp::UpdateBezierCurve()
 
 void GameApp::UpdateBezierSurface()
 {
+#ifdef USE_IMGUI
+	ImGuiIO& io = ImGui::GetIO();
+	if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+	{
+		m_Theta = XMScalarModAngle(m_Theta + io.MouseDelta.x * 0.01f);
+		m_Phi += -io.MouseDelta.y * 0.01f;
+	}
+	m_Radius -= io.MouseWheel;
+#else
 	// ******************
 	// 更新摄像机位置
 	//
@@ -299,20 +389,23 @@ void GameApp::UpdateBezierSurface()
 	{
 		m_Theta = XMScalarModAngle(m_Theta + (mouseState.x - lastMouseState.x) * 0.01f);
 		m_Phi += -(mouseState.y - lastMouseState.y) * 0.01f;
-		// 限制Phi
-		if (m_Phi < XM_PI / 18)
-			m_Phi = XM_PI / 18;
-		else if (m_Phi > XM_PI * 17 / 18)
-			m_Phi = XM_PI * 17 / 18;
 	}
 
 	m_Radius += (lastMouseState.scrollWheelValue - mouseState.scrollWheelValue) / 120 * 1.0f;
+#endif	
+
+	// 限制Phi
+	if (m_Phi < XM_PI / 18)
+		m_Phi = XM_PI / 18;
+	else if (m_Phi > XM_PI * 17 / 18)
+		m_Phi = XM_PI * 17 / 18;
+
 	// 限制半径
 	if (m_Radius < 1.0f)
 		m_Radius = 1.0f;
 	else if (m_Radius > 100.0f)
 		m_Radius = 100.0f;
-	
+
 	XMVECTOR posVec = XMVectorSet(
 		m_Radius * sinf(m_Phi) * cosf(m_Theta),
 		m_Radius * cosf(m_Phi),
@@ -343,9 +436,11 @@ void GameApp::DrawTriangle()
 
 	m_pEffectHelper->GetConstantBufferVariable("g_Color")->SetFloatVector(4, Colors::White);
 	m_pEffectHelper->GetEffectPass("Tessellation_Triangle")->Apply(m_pd3dImmediateContext.Get());
-	
+
 	m_pd3dImmediateContext->Draw(3, 0);
 
+
+#ifndef USE_IMGUI
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -360,6 +455,7 @@ void GameApp::DrawTriangle()
 			D2D1_RECT_F{ 0.0f, m_ClientHeight * 0.2f, 300.0f, m_ClientHeight * 1.0f }, m_pColorBrush.Get());
 	}
 	HR(m_pd2dRenderTarget->EndDraw());
+#endif
 }
 
 void GameApp::DrawQuad()
@@ -383,22 +479,23 @@ void GameApp::DrawQuad()
 
 	m_pd3dImmediateContext->Draw(4, 0);
 
+#ifndef USE_IMGUI
 	// ******************
 	// 绘制Direct2D部分
 	//
 	m_pd2dRenderTarget->BeginDraw();
 	{
-		std::wstring wstr = 
+		std::wstring wstr =
 			L"EdgeTess[0] = " + std::to_wstring(m_QuadEdgeTess[0]) + L"\n(-A/S+)\n"
 			L"EdgeTess[1] = " + std::to_wstring(m_QuadEdgeTess[1]) + L"\n(-Q/W+)\n"
 			L"EdgeTess[2] = " + std::to_wstring(m_QuadEdgeTess[2]) + L"\n(-E/R+)\n"
 			L"EdgeTess[3] = " + std::to_wstring(m_QuadEdgeTess[3]) + L"\n(-D/F+)\n"
 			L"InsideTess[0] = " + std::to_wstring(m_QuadInsideTess[0]) + L"\n(-Z/X+)\n"
 			L"InsideTess[1] = " + std::to_wstring(m_QuadInsideTess[1]) + L"\n(-C/V+)\n";
-			
+
 		m_pd2dRenderTarget->DrawTextW(wstr.c_str(), (UINT)wstr.length(), m_pTextFormat.Get(),
 			D2D1_RECT_F{ 0.0f, m_ClientHeight * 0.2f, 200.0f, m_ClientHeight * 1.0f }, m_pColorBrush.Get());
-	
+
 		wstr = L"T-Integer Y-Odd U-Even 当前划分: ";
 		switch (m_PartitionMode)
 		{
@@ -411,6 +508,7 @@ void GameApp::DrawQuad()
 
 	}
 	HR(m_pd2dRenderTarget->EndDraw());
+#endif
 }
 
 void GameApp::DrawBezierCurve()
@@ -438,6 +536,7 @@ void GameApp::DrawBezierCurve()
 	m_pEffectHelper->GetEffectPass("Tessellation_NoTess")->Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->Draw(12, 0);
 
+#ifndef USE_IMGUI
 	// ******************
 	// 绘制Direct2D部分
 	//
@@ -450,6 +549,7 @@ void GameApp::DrawBezierCurve()
 			D2D1_RECT_F{ 0.0f, 15.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 	}
 	HR(m_pd2dRenderTarget->EndDraw());
+#endif
 }
 
 void GameApp::DrawBezierSurface()
@@ -465,6 +565,7 @@ void GameApp::DrawBezierSurface()
 
 	m_pd3dImmediateContext->Draw(16, 0);
 
+#ifndef USE_IMGUI
 	m_pd2dRenderTarget->BeginDraw();
 	{
 		std::wstring wstr = L"鼠标拖动控制视野 滚轮控制距离";
@@ -472,6 +573,7 @@ void GameApp::DrawBezierSurface()
 			D2D1_RECT_F{ 0.0f, 15.0f, 600.0f, 200.0f }, m_pColorBrush.Get());
 	}
 	HR(m_pd2dRenderTarget->EndDraw());
+#endif
 }
 
 bool GameApp::InitResource()
@@ -480,17 +582,17 @@ bool GameApp::InitResource()
 	// 创建缓冲区
 	//
 	XMFLOAT3 triVertices[3] = {
-		XMFLOAT3(-0.8f, -0.8f, 0.0f),
+		XMFLOAT3(-0.6f, -0.8f, 0.0f),
 		XMFLOAT3(0.0f, 0.8f, 0.0f),
-		XMFLOAT3(0.8f, -0.8f, 0.0f)
+		XMFLOAT3(0.6f, -0.8f, 0.0f)
 	};
 	HR(CreateVertexBuffer(m_pd3dDevice.Get(), triVertices, sizeof triVertices, m_pTriangleVB.GetAddressOf()));
 
 	XMFLOAT3 quadVertices[4] = {
-		XMFLOAT3(-0.54f, 0.72f, 0.0f),
-		XMFLOAT3(0.54f, 0.72f, 0.0f),
-		XMFLOAT3(-0.54f, -0.72f, 0.0f),
-		XMFLOAT3(0.54f, -0.72f, 0.0f)
+		XMFLOAT3(-0.4f, 0.72f, 0.0f),
+		XMFLOAT3(0.4f, 0.72f, 0.0f),
+		XMFLOAT3(-0.4f, -0.72f, 0.0f),
+		XMFLOAT3(0.4f, -0.72f, 0.0f)
 	};
 	HR(CreateVertexBuffer(m_pd3dDevice.Get(), quadVertices, sizeof quadVertices, m_pQuadVB.GetAddressOf()));
 

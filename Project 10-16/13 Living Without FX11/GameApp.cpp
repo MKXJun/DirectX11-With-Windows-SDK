@@ -139,8 +139,8 @@ void GameApp::UpdateScene(float dt)
 		if (m_CameraMode == CameraMode::FirstPerson)
 			m_WoodCrate.GetTransform().SetPosition(adjustedPos);
 		
-		cam1st->Pitch(mouseState.y * dt * 1.25f);
-		cam1st->RotateY(mouseState.x * dt * 1.25f);
+		cam1st->Pitch(mouseState.y * 0.002f);
+		cam1st->RotateY(mouseState.x * 0.002f);
 	}
 	else if (m_CameraMode == CameraMode::ThirdPerson)
 	{
@@ -154,8 +154,8 @@ void GameApp::UpdateScene(float dt)
 		// 在鼠标没进入窗口前仍为ABSOLUTE模式
 		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 		{
-			cam3rd->RotateX(mouseState.y * dt * 1.25f);
-			cam3rd->RotateY(mouseState.x * dt * 1.25f);
+			cam3rd->RotateX(mouseState.y * 0.002f);
+			cam3rd->RotateY(mouseState.x * 0.002f);
 			cam3rd->Approach(-mouseState.scrollWheelValue / 120 * 1.0f);
 		}
 	}

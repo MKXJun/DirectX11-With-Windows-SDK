@@ -1,16 +1,15 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.32.5-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.33.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
 ## 最近更新
 
-2022/3/1 Ver1.32.5
+2022/3/4 Ver1.33.0
 
-- 部分项目添加ImGui：7/10/15/16/17/20/23/30/31/32/33/34/35，默认开启
-- 所有项目的分辨率从800x600调整为1280x720
-- 调整摄像机速度
-- 调整cmake
+- 添加项目 Deferred Shading Beginning
+- 添加Common文件夹存放公共部分代码，但目前仅限36章项目使用
+- 添加stb、tiny_obj_loader到Common文件夹中
 
 ## 博客教程
 
@@ -26,9 +25,12 @@ QQ群号：727623616
 
 欢迎大家来交流，以及项目有什么问题也可以在这里提出。
 
-## ImGui支持
+## 使用第三方库
 
-当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30、31、32、33、34、35章。
+- **[ocornut/imgui](https://github.com/ocornut/imgui)：**当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-36章。
+- **[nothings/stb](https://github.com/nothings/stb)**
+- **[tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)**
+
 
 ## 如何运行项目
 

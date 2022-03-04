@@ -351,8 +351,8 @@ void GameApp::DrawScene()
 			m_pDebugEffect->SetTextureDiffuse(nullptr);
 			m_pDebugEffect->Apply(m_pd3dImmediateContext.Get());
 			ImVec2 winSize = ImGui::GetWindowSize();
-			float smaller = (std::min)((winSize.x - 20) / 16.0f * 9.0f, winSize.y - 36);
-			ImGui::Image(m_pDebugSSAOMap->GetOutputTexture(), ImVec2(smaller * 16.0f / 9.0f, smaller));
+			float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
+			ImGui::Image(m_pDebugSSAOMap->GetOutputTexture(), ImVec2(smaller * AspectRatio(), smaller));
 		}
 		ImGui::End();
 	}

@@ -1,15 +1,13 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.33.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.33.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
 ## 最近更新
 
-2022/3/4 Ver1.33.0
+2022/3/4 Ver1.33.1
 
-- 添加项目 Deferred Shading Beginning
-- 添加Common文件夹存放公共部分代码，但目前仅限36章项目使用
-- 添加stb、tiny_obj_loader到Common文件夹中
+- 修正项目36 法线图显示错误的问题
 
 ## 博客教程
 

@@ -153,10 +153,11 @@ void GBufferPS(VertexPosHVNormalVTex input, out GBuffer outputGBuffer)
 //--------------------------------------------------------------------------------------
 float4 DebugNormalPS(float4 posViewport : SV_Position) : SV_Target
 {
-    float4 normal_specular = g_GBufferTextures[1].Load(posViewport.xy, 0).xyzw;
+    float4 normal_specular = g_GBufferTextures[0].Load(posViewport.xy, 0).xyzw;
     float3 normalV = DecodeSphereMap(normal_specular.xy);
+    float3 normalW = mul(float4(normalV, 0.0f), g_InvView).xyz;
     // [-1, 1] => [0, 1]
-    return float4((normalV + 1.0f) / 2.0f, 1.0f);
+    return float4((normalW + 1.0f) / 2.0f, 1.0f);
 }
 
 #endif // GBUFFER_HLSL

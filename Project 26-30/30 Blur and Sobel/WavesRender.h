@@ -1,5 +1,5 @@
 //***************************************************************************************
-// WavesRender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// WavesRender.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 水波加载和绘制类

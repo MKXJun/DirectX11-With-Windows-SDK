@@ -6,6 +6,7 @@ cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {
     matrix g_WorldInvTransposeView;
     matrix g_WorldView;
+    matrix g_InvView;
     matrix g_ViewProj;
     matrix g_Proj;
     matrix g_WorldViewProj;

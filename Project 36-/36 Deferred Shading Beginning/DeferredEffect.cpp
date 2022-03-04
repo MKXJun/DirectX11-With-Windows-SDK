@@ -277,14 +277,14 @@ void DeferredEffect::DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
 	deviceContext->RSSetViewports(1, &viewport);
 	std::string passStr = "DebugNormal_" + std::to_string(pImpl->m_MsaaSamples) + "xMSAA";
 	pImpl->m_pEffectHelper->GetEffectPass(passStr.c_str())->Apply(deviceContext);
-	deviceContext->PSSetShaderResources(2, 1, &normalGBuffer);
+	deviceContext->PSSetShaderResources(1, 1, &normalGBuffer);
 	deviceContext->OMSetRenderTargets(1, &rtv, nullptr);
 	deviceContext->Draw(3, 0);
 	
 	// 清空
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 	normalGBuffer = nullptr;
-	deviceContext->PSSetShaderResources(2, 1, &normalGBuffer);
+	deviceContext->PSSetShaderResources(1, 1, &normalGBuffer);
 }
 
 void DeferredEffect::ComputeLightingDefault(
@@ -372,11 +372,13 @@ void DeferredEffect::Apply(ID3D11DeviceContext * deviceContext)
 
 	XMMATRIX WV = W * V;
 	XMMATRIX WVP = WV * P;
+	XMMATRIX InvV = XMMatrixInverse(nullptr, V);
 	XMMATRIX WInvTV = XMath::InverseTranspose(W) * V;
 	XMMATRIX VP = V * P;
 
 	WV = XMMatrixTranspose(WV);
 	WVP = XMMatrixTranspose(WVP);
+	InvV = XMMatrixTranspose(InvV);
 	WInvTV = XMMatrixTranspose(WInvTV);
 	P = XMMatrixTranspose(P);
 	VP = XMMatrixTranspose(VP);
@@ -384,6 +386,7 @@ void DeferredEffect::Apply(ID3D11DeviceContext * deviceContext)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldInvTransposeView")->SetFloatMatrix(4, 4, (FLOAT*)&WInvTV);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&WVP);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldView")->SetFloatMatrix(4, 4, (FLOAT*)&WV);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_InvView")->SetFloatMatrix(4, 4, (FLOAT*)&InvV);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&VP);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Proj")->SetFloatMatrix(4, 4, (FLOAT*)&P);
 

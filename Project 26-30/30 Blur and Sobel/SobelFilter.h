@@ -1,5 +1,5 @@
 //***************************************************************************************
-// SobelFilter.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// SobelFilter.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 图像索贝尔滤波器类

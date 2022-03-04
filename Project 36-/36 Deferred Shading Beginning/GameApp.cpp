@@ -9,9 +9,7 @@ GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWi
 	: D3DApp(hInstance, windowName, initWidth, initHeight),
 	m_pSkyboxEffect(std::make_unique<SkyboxToneMapEffect>()),
 	m_pForwardEffect(std::make_unique<ForwardEffect>()),
-	m_pDeferredEffect(std::make_unique<DeferredEffect>()),
-	m_LightCullTechnique(LightCullTechnique::CULL_DEFERRED_NONE),
-	m_FillMode(IEffect::Solid)
+	m_pDeferredEffect(std::make_unique<DeferredEffect>())
 {
 }
 
@@ -98,7 +96,7 @@ void GameApp::UpdateScene(float dt)
 			"Forward Pre-Z No Culling",
 			"Deferred No Culling"
 		};
-		static int curr_light_culliing_item = 2;
+		static int curr_light_culliing_item = static_cast<int>(m_LightCullTechnique);
 		if (ImGui::Combo("Light Culling", &curr_light_culliing_item, light_culliing_modes, ARRAYSIZE(light_culliing_modes)))
 		{
 			m_LightCullTechnique = static_cast<LightCullTechnique>(curr_light_culliing_item);
@@ -189,7 +187,7 @@ void GameApp::DrawScene()
 	if (ImGui::Begin("Normal"))
 	{
 		m_pDeferredEffect->DebugNormalGBuffer(m_pd3dImmediateContext.Get(), m_pDebugNormalGBuffer->GetRenderTarget(), 
-			m_pGBufferSRVs[1], m_pCamera->GetViewPort());
+			m_pGBufferSRVs[0], m_pCamera->GetViewPort());
 		ImVec2 winSize = ImGui::GetWindowSize();
 		float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
 		ImGui::Image(m_pDebugNormalGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
@@ -447,7 +445,7 @@ void GameApp::RenderForward(bool doPreZ)
 	assert(m_pSwapChain);
 
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), reinterpret_cast<const float*>(&Colors::Black));
-	// 注意：反转Z的缓冲区，远平面为0
+	// 注意：反向Z的缓冲区，远平面为0
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
 	D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();

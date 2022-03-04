@@ -72,13 +72,8 @@ private:
 
 private:
 	
-	TextureManager m_TextureManager;                                // 纹理读取管理
-
-	IEffect::RSFillMode m_FillMode;									// 光栅化填充模式
-
-	LightCullTechnique m_LightCullTechnique;
-
 	// 设置
+	LightCullTechnique m_LightCullTechnique = LightCullTechnique::CULL_DEFERRED_NONE;
 	bool m_AnimateLights = false;
 	bool m_LightingOnly = false;
 	bool m_FaceNormals = false;
@@ -87,7 +82,9 @@ private:
 	bool m_ClearGBuffers = false;
 	float m_LightHeightScale = 0.25f;
 
-	// 各种缓冲区
+
+	// 各种资源
+	TextureManager m_TextureManager;                                // 纹理读取管理
 	UINT m_MsaaSamples = 1;
 	bool m_MsaaSamplesChanged = false;
 	std::unique_ptr<Texture2D> m_pLitBuffer;                        // 场景渲染缓冲区
@@ -119,6 +116,7 @@ private:
 	std::unique_ptr<SkyboxToneMapEffect> m_pSkyboxEffect;			// 天空盒特效
 	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;				// 天空盒纹理
 
+	// 摄像机
 	std::shared_ptr<Camera> m_pCamera;								// 摄像机
 	FirstPersonCameraController m_FPSCameraController;				// 摄像机控制器
 

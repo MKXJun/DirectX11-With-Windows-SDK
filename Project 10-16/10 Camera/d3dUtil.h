@@ -1,5 +1,5 @@
 //***************************************************************************************
-// d3dUtil.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// d3dUtil.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // D3D实用工具集

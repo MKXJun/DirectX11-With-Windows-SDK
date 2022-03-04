@@ -1,5 +1,5 @@
 //***************************************************************************************
-// BlurFilter.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// BlurFilter.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 图像模糊滤波器类

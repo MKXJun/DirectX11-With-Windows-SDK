@@ -1,5 +1,5 @@
 //***************************************************************************************
-// ObjReader.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// ObjReader.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // - 修正了加载出来的模型是镜像的问题(右手坐标系变换为左手坐标系)

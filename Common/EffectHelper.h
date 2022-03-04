@@ -1,5 +1,5 @@
 //***************************************************************************************
-// EffectsHelper.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// EffectsHelper.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 定义一些实用的特效助手类
@@ -208,17 +208,17 @@ struct IEffectPass
 	// 设置深度混合状态
 	virtual void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilValue) = 0;
 	// 获取顶点着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(const std::string& paramName) = 0;
 	// 获取域着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(const std::string& paramName) = 0;
 	// 获取外壳着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(const std::string& paramName) = 0;
 	// 获取几何着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(const std::string& paramName) = 0;
 	// 获取像素着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) = 0;
 	// 获取计算着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(LPCSTR paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) = 0;
 	// 应用着色器、常量缓冲区(包括函数形参)、采样器、着色器资源和可读写资源到渲染管线
 	virtual void Apply(ID3D11DeviceContext* deviceContext) = 0;
 };
@@ -242,40 +242,40 @@ public:
 	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
 	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
 	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
-	HRESULT AddShader(LPCSTR name, ID3D11Device* device, ID3DBlob* blob);
+	HRESULT AddShader(const std::string& name, ID3D11Device* device, ID3DBlob* blob);
 
 	// 添加带流输出的几何着色器并为其设置标识名
 	// 注意：
 	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
 	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
 	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置 
-	HRESULT AddGeometryShaderWithStreamOutput(LPCSTR name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob);
+	HRESULT AddGeometryShaderWithStreamOutput(const std::string& name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob);
 
 	// 清空所有内容
 	void Clear();
 
 	// 创建渲染通道
-	HRESULT AddEffectPass(LPCSTR effectPassName, ID3D11Device* device, EffectPassDesc* pDesc);
+	HRESULT AddEffectPass(const std::string& effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc);
 	// 获取特定渲染通道
-	std::shared_ptr<IEffectPass> GetEffectPass(LPCSTR effectPassName);
+	std::shared_ptr<IEffectPass> GetEffectPass(const std::string& effectPassName);
 
 	// 获取常量缓冲区的变量用于设置值
-	std::shared_ptr<IEffectConstantBufferVariable> GetConstantBufferVariable(LPCSTR name);
+	std::shared_ptr<IEffectConstantBufferVariable> GetConstantBufferVariable(const std::string& name);
 
 	// 按槽设置采样器状态
 	void SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerState);
 	// 按名设置采样器状态(若存在同槽多名称则只能使用按槽设置)
-	void SetSamplerStateByName(LPCSTR name, ID3D11SamplerState* samplerState);
+	void SetSamplerStateByName(const std::string& name, ID3D11SamplerState* samplerState);
 	
 	// 按槽设置着色器资源
 	void SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv);
 	// 按名设置着色器资源(若存在同槽多名称则只能使用按槽设置)
-	void SetShaderResourceByName(LPCSTR name, ID3D11ShaderResourceView* srv);
+	void SetShaderResourceByName(const std::string& name, ID3D11ShaderResourceView* srv);
 
 	// 按槽设置可读写资源
 	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);
 	// 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
-	void SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT initialCount);
+	void SetUnorderedAccessByName(const std::string& name, ID3D11UnorderedAccessView* uav, UINT initialCount);
 
 	// 设置调试对象名
 	void SetDebugObjectName(const std::string& name);

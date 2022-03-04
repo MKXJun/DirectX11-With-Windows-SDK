@@ -1,5 +1,5 @@
 //***************************************************************************************
-// GameObject.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// GameObject.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 简易游戏对象

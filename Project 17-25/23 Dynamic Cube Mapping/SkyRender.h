@@ -1,5 +1,5 @@
 //***************************************************************************************
-// SkyRender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// SkyRender.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 天空盒加载与渲染类

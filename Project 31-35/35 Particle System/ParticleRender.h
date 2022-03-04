@@ -1,5 +1,5 @@
 //***************************************************************************************
-// ParticleRender.h by X_Jun(MKXJun) (C) 2018-2020 All Rights Reserved.
+// ParticleRender.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
 // 粒子渲染类

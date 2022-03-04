@@ -147,7 +147,7 @@ struct CBufferData : CBufferBase
 	UINT byteWidth;
 
 	CBufferData() : CBufferBase(), startSlot(), byteWidth() {}
-	CBufferData(LPCSTR name, UINT startSlot, UINT byteWidth, BYTE* initData = nullptr) :
+	CBufferData(const std::string& name, UINT startSlot, UINT byteWidth, BYTE* initData = nullptr) :
 		CBufferBase(), cbufferName(name), pData(new BYTE[byteWidth]{}), startSlot(startSlot),
 		byteWidth(byteWidth)
 	{
@@ -414,12 +414,12 @@ struct EffectPass : public IEffectPass
 	void SetRasterizerState(ID3D11RasterizerState* pRS)  override;
 	void SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask) override;
 	void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilRef)  override;
-	std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(LPCSTR paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(LPCSTR paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(LPCSTR paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(LPCSTR paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(LPCSTR paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(LPCSTR paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) override;
 	void Apply(ID3D11DeviceContext * deviceContext) override;
 
 	// 渲染状态
@@ -738,9 +738,9 @@ EffectHelper::~EffectHelper()
 {
 }
 
-HRESULT EffectHelper::AddShader(LPCSTR name, ID3D11Device* device, ID3DBlob* blob)
+HRESULT EffectHelper::AddShader(const std::string& name, ID3D11Device* device, ID3DBlob* blob)
 {
-	if (!name)
+	if (name.empty())
 		return E_INVALIDARG;
 	
 	HRESULT hr;
@@ -766,9 +766,9 @@ HRESULT EffectHelper::AddShader(LPCSTR name, ID3D11Device* device, ID3DBlob* blo
 	return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
 }
 
-HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(LPCSTR name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
+HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(const std::string& name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
 {
-	if (!name || !gsWithSO)
+	if (name.empty() || !gsWithSO)
 		return E_INVALIDARG;
 
 	HRESULT hr;
@@ -800,9 +800,9 @@ void EffectHelper::Clear()
 	pImpl->Clear();
 }
 
-HRESULT EffectHelper::AddEffectPass(LPCSTR effectPassName, ID3D11Device* device, EffectPassDesc* pDesc)
+HRESULT EffectHelper::AddEffectPass(const std::string& effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc)
 {
-	if (!pDesc || !effectPassName)
+	if (!pDesc || effectPassName.empty())
 		return E_INVALIDARG;
 
 	// 不允许重复添加
@@ -823,7 +823,7 @@ HRESULT EffectHelper::AddEffectPass(LPCSTR effectPassName, ID3D11Device* device,
 	return S_OK;
 }
 
-std::shared_ptr<IEffectPass> EffectHelper::GetEffectPass(LPCSTR effectPassName)
+std::shared_ptr<IEffectPass> EffectHelper::GetEffectPass(const std::string& effectPassName)
 {
 	auto it = pImpl->m_EffectPasses.find(effectPassName);
 	if (it != pImpl->m_EffectPasses.end())
@@ -831,7 +831,7 @@ std::shared_ptr<IEffectPass> EffectHelper::GetEffectPass(LPCSTR effectPassName)
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectHelper::GetConstantBufferVariable(LPCSTR name)
+std::shared_ptr<IEffectConstantBufferVariable> EffectHelper::GetConstantBufferVariable(const std::string& name)
 {
 	auto it = pImpl->m_ConstantBufferVariables.find(name);
 	if (it != pImpl->m_ConstantBufferVariables.end())
@@ -847,7 +847,7 @@ void EffectHelper::SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerS
 		it->second.pSS = samplerState;
 }
 
-void EffectHelper::SetSamplerStateByName(LPCSTR name, ID3D11SamplerState* samplerState)
+void EffectHelper::SetSamplerStateByName(const std::string& name, ID3D11SamplerState* samplerState)
 {
 	auto it = std::find_if(pImpl->m_Samplers.begin(), pImpl->m_Samplers.end(),
 		[name](const std::pair<UINT, SamplerState>& p) {
@@ -864,7 +864,7 @@ void EffectHelper::SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* 
 		it->second.pSRV = srv;
 }
 
-void EffectHelper::SetShaderResourceByName(LPCSTR name, ID3D11ShaderResourceView* srv)
+void EffectHelper::SetShaderResourceByName(const std::string& name, ID3D11ShaderResourceView* srv)
 {
 	auto it = std::find_if(pImpl->m_ShaderResources.begin(), pImpl->m_ShaderResources.end(),
 		[name](const std::pair<UINT, ShaderResource>& p) {
@@ -885,7 +885,7 @@ void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView
 		
 }
 
-void EffectHelper::SetUnorderedAccessByName(LPCSTR name, ID3D11UnorderedAccessView* uav, UINT initialCount)
+void EffectHelper::SetUnorderedAccessByName(const std::string& name, ID3D11UnorderedAccessView* uav, UINT initialCount)
 {
 	auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
 		[name](const std::pair<UINT, RWResource>& p) {
@@ -942,7 +942,7 @@ void EffectPass::SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stenci
 	this->stencilRef = stencilRef;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::VSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::VSGetParamByName(const std::string& paramName)
 {
 	if (pVSInfo)
 	{
@@ -953,7 +953,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::VSGetParamByName(LPCS
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::DSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::DSGetParamByName(const std::string& paramName)
 {
 	if (pDSInfo)
 	{
@@ -964,7 +964,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::DSGetParamByName(LPCS
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::HSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::HSGetParamByName(const std::string& paramName)
 {
 	if (pHSInfo)
 	{
@@ -975,7 +975,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::HSGetParamByName(LPCS
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::GSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::GSGetParamByName(const std::string& paramName)
 {
 	if (pGSInfo)
 	{
@@ -986,7 +986,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::GSGetParamByName(LPCS
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::PSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::PSGetParamByName(const std::string& paramName)
 {
 	if (pPSInfo)
 	{
@@ -997,7 +997,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::PSGetParamByName(LPCS
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::CSGetParamByName(LPCSTR paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::CSGetParamByName(const std::string& paramName)
 {
 	if (pCSInfo)
 	{

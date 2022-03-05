@@ -172,6 +172,9 @@ void GameApp::DrawScene()
 	assert(m_pd3dImmediateContext);
 	assert(m_pSwapChain);
 
+	//
+	// 场景渲染部分
+	//
 	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_NONE)
 		RenderForward(false);
 	else if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_PREZ_NONE)
@@ -184,6 +187,9 @@ void GameApp::DrawScene()
 	}
 	RenderSkyboxAndToneMap();
 
+	//
+	// ImGui部分
+	//
 	if (ImGui::Begin("Normal"))
 	{
 		m_pDeferredEffect->DebugNormalGBuffer(m_pd3dImmediateContext.Get(), m_pDebugNormalGBuffer->GetRenderTarget(), 
@@ -441,9 +447,6 @@ void GameApp::ResizeBuffers(UINT width, UINT height, UINT msaaSamples)
 
 void GameApp::RenderForward(bool doPreZ)
 {
-	assert(m_pd3dImmediateContext);
-	assert(m_pSwapChain);
-
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), reinterpret_cast<const float*>(&Colors::Black));
 	// 注意：反向Z的缓冲区，远平面为0
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
@@ -451,6 +454,7 @@ void GameApp::RenderForward(bool doPreZ)
 	D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
 	m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
+	// PreZ Pass
 	if (doPreZ)
 	{
 		m_pd3dImmediateContext->OMSetRenderTargets(0, 0, m_pDepthBuffer->GetDepthStencil());
@@ -458,6 +462,7 @@ void GameApp::RenderForward(bool doPreZ)
 		m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
 	}
 
+	// 正常绘制
 	ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
 	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
 

@@ -90,7 +90,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	//
 
 	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", nullptr, "GeometryVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("Forward_VS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->AddShader("GeometryVS", device, blob.Get()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
@@ -100,14 +100,14 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	//
 
 	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", nullptr, "ForwardPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("Forward_PS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->AddShader("ForwardPS", device, blob.Get()));
 
 	// ******************
 	// 创建通道
 	//
 	EffectPassDesc passDesc;
-	passDesc.nameVS = "Forward_VS";
-	passDesc.namePS = "Forward_PS";
+	passDesc.nameVS = "GeometryVS";
+	passDesc.namePS = "ForwardPS";
 	pImpl->m_pEffectHelper->AddEffectPass("Forward", device, &passDesc);
 	{
 		auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Forward");
@@ -123,7 +123,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 		pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
 	}
 
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap.Get());
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "ForwardEffect.VertexPosNormalTexLayout");

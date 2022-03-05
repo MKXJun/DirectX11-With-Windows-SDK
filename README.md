@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.33.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.33.2-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -7,9 +7,9 @@
 
 ## 最近更新
 
-2022/3/4 Ver1.33.1
+2022/3/6 Ver1.33.2
 
-- 修正项目36 法线图显示错误的问题
+- 调整项目36代码
 
 ## 博客教程
 

@@ -29,9 +29,6 @@ public:
 
 	ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
-	ComPtr<ID3D11DepthStencilState> m_pWriteStencilState;
-	ComPtr<ID3D11DepthStencilState> m_pEqualStencilState;
-
 	XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
 	UINT m_MsaaSamples = 1;
 };
@@ -95,23 +92,6 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		{"MSAA_SAMPLES", "1"},
 		{nullptr, nullptr}
 	};
-
-	// ******************
-	// 用于MSAA的模板状态
-	//
-	CD3D11_DEPTH_STENCIL_DESC writeDesc(
-		FALSE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_GREATER_EQUAL, // 深度
-		TRUE, 0xFF, 0xFF,                                                   // 模板
-		D3D11_STENCIL_OP_REPLACE, D3D11_STENCIL_OP_REPLACE, D3D11_STENCIL_OP_REPLACE, D3D11_COMPARISON_ALWAYS,  // 正面模板
-		D3D11_STENCIL_OP_REPLACE, D3D11_STENCIL_OP_REPLACE, D3D11_STENCIL_OP_REPLACE, D3D11_COMPARISON_ALWAYS); // 背面模板
-	device->CreateDepthStencilState(&writeDesc, pImpl->m_pWriteStencilState.ReleaseAndGetAddressOf());
-	pImpl->m_pWriteStencilState->GetDesc(&writeDesc);
-	CD3D11_DEPTH_STENCIL_DESC equalDesc(
-		TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_GREATER_EQUAL, // 深度
-		TRUE, 0xFF, 0xFF,                                                  // 模板
-		D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_COMPARISON_EQUAL,  // 正面模板
-		D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_COMPARISON_EQUAL); // 背面模板
-	device->CreateDepthStencilState(&equalDesc, pImpl->m_pEqualStencilState.ReleaseAndGetAddressOf());
 
 	// ******************
 	// 创建顶点着色器
@@ -184,8 +164,7 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[1].c_str(), device, &passDesc));
 		{
 			auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passNames[1].c_str());
-			pPass->SetDepthStencilState(pImpl->m_pWriteStencilState.Get(), 1);
-			pPass->SetBlendState(RenderStates::BSAdditive.Get(), nullptr, 0xFFFFFFFF);
+			pPass->SetDepthStencilState(RenderStates::DSSWriteStencil.Get(), 1);
 		}
 
 
@@ -194,7 +173,7 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[2].c_str(), device, &passDesc));
 		{
 			auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passNames[2].c_str());
-			pPass->SetDepthStencilState(pImpl->m_pEqualStencilState.Get(), 0);
+			pPass->SetDepthStencilState(RenderStates::DSSEqualStencil.Get(), 0);
 			pPass->SetBlendState(RenderStates::BSAdditive.Get(), nullptr, 0xFFFFFFFF);
 		}
 
@@ -203,7 +182,7 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[3].c_str(), device, &passDesc));
 		{
 			auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passNames[3].c_str());
-			pPass->SetDepthStencilState(pImpl->m_pEqualStencilState.Get(), 1);
+			pPass->SetDepthStencilState(RenderStates::DSSEqualStencil.Get(), 1);
 			pPass->SetBlendState(RenderStates::BSAdditive.Get(), nullptr, 0xFFFFFFFF);
 		}
 
@@ -214,12 +193,10 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		msaaSamples <<= 1;
 	}
 	
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap.Get());
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "DeferredEffect.VertexPosNormalTexLayout");
-	D3D11SetDebugObjectName(pImpl->m_pEqualStencilState.Get(), "DeferredEffect.EqualStencilState");
-	D3D11SetDebugObjectName(pImpl->m_pWriteStencilState.Get(), "DeferredEffect.WriteStencilState");
 	pImpl->m_pEffectHelper->SetDebugObjectName("DeferredEffect");
 
 	return true;

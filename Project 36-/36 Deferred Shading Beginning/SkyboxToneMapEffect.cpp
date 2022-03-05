@@ -129,7 +129,7 @@ bool SkyboxToneMapEffect::InitAll(ID3D11Device * device)
 		msaaSamples <<= 1;
 	}
 	
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap.Get());
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
 
 	// 设置调试对象名
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "SkyEffect.VertexPosNormalTexLayout");

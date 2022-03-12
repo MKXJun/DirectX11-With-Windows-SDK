@@ -119,7 +119,8 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 			"RequiresPerSampleShading_" + msaaSamplesStr + "xMSAA_PS",
 			"BasicDeferred_" + msaaSamplesStr + "xMSAA_PS",
 			"BasicDeferredPerSample_" + msaaSamplesStr + "xMSAA_PS",
-			"DebugNormal" + msaaSamplesStr + "xMSAA_PS"
+			"DebugNormal" + msaaSamplesStr + "xMSAA_PS",
+			"DebugPosZGrad" + msaaSamplesStr + "xMSAA_PS",
 		};
 
 		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "GBufferPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
@@ -137,6 +138,9 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "DebugNormalPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
 		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[4].c_str(), device, blob.Get()));
 
+		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "DebugPosZGradPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
+		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[5].c_str(), device, blob.Get()));
+
 		// ******************
 		// 创建通道
 		//
@@ -149,7 +153,8 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 			"Lighting_Basic_MaskStencil_" + msaaSamplesStr + "xMSAA",
 			"Lighting_Basic_Deferred_PerPixel_" + msaaSamplesStr + "xMSAA",
 			"Lighting_Basic_Deferred_PerSample_" + msaaSamplesStr + "xMSAA",
-			"DebugNormal_" + msaaSamplesStr + "xMSAA"
+			"DebugNormal_" + msaaSamplesStr + "xMSAA",
+			"DebugPosZGrad_" + msaaSamplesStr + "xMSAA"
 		}; 
 
 		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[0].c_str(), device, &passDesc));
@@ -189,6 +194,10 @@ bool DeferredEffect::InitAll(ID3D11Device * device, UINT msaaSamples)
 		passDesc.nameVS = "FullScreenTriangleVS";
 		passDesc.namePS = shaderNames[4].c_str();
 		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[4].c_str(), device, &passDesc));
+
+		passDesc.nameVS = "FullScreenTriangleVS";
+		passDesc.namePS = shaderNames[5].c_str();
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passNames[5].c_str(), device, &passDesc));
 
 		msaaSamples <<= 1;
 	}
@@ -262,6 +271,28 @@ void DeferredEffect::DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 	normalGBuffer = nullptr;
 	deviceContext->PSSetShaderResources(1, 1, &normalGBuffer);
+}
+
+void DeferredEffect::DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext, 
+	ID3D11RenderTargetView* rtv, 
+	ID3D11ShaderResourceView* posZGradGBuffer, 
+	D3D11_VIEWPORT viewport)
+{
+	// 设置全屏三角形
+	deviceContext->IASetInputLayout(nullptr);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+	deviceContext->RSSetViewports(1, &viewport);
+	std::string passStr = "DebugPosZGrad_" + std::to_string(pImpl->m_MsaaSamples) + "xMSAA";
+	pImpl->m_pEffectHelper->GetEffectPass(passStr.c_str())->Apply(deviceContext);
+	deviceContext->PSSetShaderResources(3, 1, &posZGradGBuffer);
+	deviceContext->OMSetRenderTargets(1, &rtv, nullptr);
+	deviceContext->Draw(3, 0);
+
+	// 清空
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+	posZGradGBuffer = nullptr;
+	deviceContext->PSSetShaderResources(3, 1, &posZGradGBuffer);
 }
 
 void DeferredEffect::ComputeLightingDefault(

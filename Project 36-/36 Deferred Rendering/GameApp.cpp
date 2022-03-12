@@ -187,34 +187,39 @@ void GameApp::DrawScene()
 	//
 	// ImGui部分
 	//
-	if (ImGui::Begin("Normal"))
+	if (static_cast<uint32_t>(m_LightCullTechnique) >= 2)
 	{
-		m_pDeferredEffect->DebugNormalGBuffer(m_pd3dImmediateContext.Get(), m_pDebugNormalGBuffer->GetRenderTarget(), 
-			m_pGBufferSRVs[0], m_pCamera->GetViewPort());
-		ImVec2 winSize = ImGui::GetWindowSize();
-		float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
-		ImGui::Image(m_pDebugNormalGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
-	}
-	ImGui::End();
+		if (ImGui::Begin("Normal"))
+		{
+			m_pDeferredEffect->DebugNormalGBuffer(m_pd3dImmediateContext.Get(), m_pDebugNormalGBuffer->GetRenderTarget(),
+				m_pGBufferSRVs[0], m_pCamera->GetViewPort());
+			ImVec2 winSize = ImGui::GetWindowSize();
+			float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
+			ImGui::Image(m_pDebugNormalGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
+		}
+		ImGui::End();
 
-	if (ImGui::Begin("Albedo"))
-	{
-		m_pd3dImmediateContext->ResolveSubresource(m_pDebugAlbedoGBuffer->GetTexture(), 0, m_pGBuffers[1]->GetTexture(), 0, DXGI_FORMAT_R8G8B8A8_UNORM);
-		ImVec2 winSize = ImGui::GetWindowSize();
-		float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
-		ImGui::Image(m_pDebugAlbedoGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
-	}
-	ImGui::End();
+		if (ImGui::Begin("Albedo"))
+		{
+			m_pd3dImmediateContext->ResolveSubresource(m_pDebugAlbedoGBuffer->GetTexture(), 0, m_pGBuffers[1]->GetTexture(), 0, DXGI_FORMAT_R8G8B8A8_UNORM);
+			ImVec2 winSize = ImGui::GetWindowSize();
+			float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
+			ImGui::Image(m_pDebugAlbedoGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
+		}
+		ImGui::End();
 
-	if (ImGui::Begin("PosZGrad"))
-	{
-		m_pd3dImmediateContext->ResolveSubresource(m_pDebugPosZGradGBuffer->GetTexture(), 0, m_pGBuffers[2]->GetTexture(), 0, DXGI_FORMAT_R16G16_FLOAT);
-		ImVec2 winSize = ImGui::GetWindowSize();
-		float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
-		ImGui::Image(m_pDebugPosZGradGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
-	}
-	ImGui::End();
+		if (ImGui::Begin("PosZGrad"))
+		{
 
+			m_pDeferredEffect->DebugPosZGradGBuffer(m_pd3dImmediateContext.Get(), m_pDebugPosZGradGBuffer->GetRenderTarget(),
+				m_pGBufferSRVs[2], m_pCamera->GetViewPort());
+			ImVec2 winSize = ImGui::GetWindowSize();
+			float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
+			ImGui::Image(m_pDebugPosZGradGBuffer->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
+		}
+		ImGui::End();
+	}
+	
 	ImGui::Render();
 
 	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);

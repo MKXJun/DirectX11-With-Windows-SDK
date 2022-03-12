@@ -178,6 +178,12 @@ public:
 		ID3D11ShaderResourceView* normalGBuffer,
 		D3D11_VIEWPORT viewport);
 
+	// 将深度值梯度的G-Buffer渲染到到目标纹理
+	void DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
+		ID3D11RenderTargetView* rtv,
+		ID3D11ShaderResourceView* posZGradGBuffer,
+		D3D11_VIEWPORT viewport);
+
 	// 传统延迟渲染
 	void ComputeLightingDefault(ID3D11DeviceContext* deviceContext,
 		ID3D11RenderTargetView* litBufferRTV,

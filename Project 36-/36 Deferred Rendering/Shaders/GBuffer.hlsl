@@ -156,8 +156,19 @@ float4 DebugNormalPS(float4 posViewport : SV_Position) : SV_Target
     float4 normal_specular = g_GBufferTextures[0].Load(posViewport.xy, 0).xyzw;
     float3 normalV = DecodeSphereMap(normal_specular.xy);
     float3 normalW = mul(float4(normalV, 0.0f), g_InvView).xyz;
+    // 由于渲染目标为sRGB，这里去除伽马校正来观察原始法线贴图
     // [-1, 1] => [0, 1]
-    return float4((normalW + 1.0f) / 2.0f, 1.0f);
+    return pow(float4((normalW + 1.0f) / 2.0f, 1.0f), 2.2f);
+}
+
+//--------------------------------------------------------------------------------------
+// 调试深度值梯度贴图
+//--------------------------------------------------------------------------------------
+float4 DebugPosZGradPS(float4 posViewport : SV_Position) : SV_Target
+{
+    float2 posZGrad = g_GBufferTextures[2].Load(posViewport.xy, 0).xy;
+    // 由于渲染目标为sRGB，这里去除伽马校正来观察深度值梯度贴图
+    return pow(float4(posZGrad, 0.0f, 1.0f), 2.2f);
 }
 
 #endif // GBUFFER_HLSL

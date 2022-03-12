@@ -44,8 +44,7 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(const std::wstring& file
 	if (FAILED(DirectX::CreateDDSTextureFromFileEx(m_pDevice.Get(),
 		enableMips ? m_pDeviceContext.Get() : nullptr,
 		filename.c_str(), 0, D3D11_USAGE_DEFAULT,
-		D3D11_BIND_SHADER_RESOURCE | (enableMips ? D3D11_BIND_RENDER_TARGET : 0), 0,
-		(enableMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0), 
+		D3D11_BIND_SHADER_RESOURCE, 0, 0, 
 		forceSRGB, nullptr, res.GetAddressOf())))
 	{
 		int width, height, comp;

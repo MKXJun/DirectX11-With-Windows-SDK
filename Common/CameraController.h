@@ -6,6 +6,8 @@
 // Provide 1st person(free view) camera controller. ImGui is required.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef CAMERACONTROLLER_H
 #define CAMERACONTROLLER_H
 

@@ -6,6 +6,8 @@
 // Generate common geometry meshes.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef GEOMETRY_H_
 #define GEOMETRY_H_
 

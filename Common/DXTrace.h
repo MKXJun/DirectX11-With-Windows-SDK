@@ -6,10 +6,12 @@
 // DirectX Error Tracing. 
 //***************************************************************************************
 
+#pragma once
+
 #ifndef DXTRACE_H
 #define DXTRACE_H
 
-#include <Windows.h>
+#include "WinMin.h"
 
 // ------------------------------
 // DXTraceW函数

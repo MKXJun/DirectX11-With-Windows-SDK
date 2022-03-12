@@ -6,9 +6,12 @@
 // Provide some render states.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef RENDERSTATES_H
 #define RENDERSTATES_H
 
+#include "WinMin.h"
 #include <wrl/client.h>
 #include <d3d11_1.h>
 

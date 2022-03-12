@@ -191,7 +191,6 @@ void RenderStates::InitAll(ID3D11Device* device)
 	D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
 	D3D11SetDebugObjectName(RSDepthBias.Get(), "RSDepthBias");
 
-	D3D11SetDebugObjectName(SSAnistropicWrap16x.Get(), "SSAnistropicWrap");
 	D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
 	D3D11SetDebugObjectName(SSAnistropicWrap16x.Get(), "SSAnistropicWrap16x");
 	D3D11SetDebugObjectName(SSShadow.Get(), "SSShadow");

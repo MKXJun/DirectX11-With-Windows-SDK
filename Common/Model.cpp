@@ -149,7 +149,7 @@ void Model::SetModel(ID3D11Device* device, const std::string& obj_path)
 		
 		// 漫反射贴图
 		auto diffuse_texpath = UTF8ToWString(parent_path + materials[shapes[i].mesh.material_ids[0]].diffuse_texname);
-		modelParts[i].texDiffuse = TextureManager::Get().CreateTexture(diffuse_texpath.c_str());
+		modelParts[i].texDiffuse = TextureManager::Get().CreateTexture(diffuse_texpath.c_str(), true, true);
 
 		// 法线贴图
 		auto normal_texpath = UTF8ToWString(parent_path + materials[shapes[i].mesh.material_ids[0]].diffuse_texname);

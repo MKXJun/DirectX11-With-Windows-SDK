@@ -6,6 +6,8 @@
 // Describe object scale, rotation(quaternion-based) and translation
 //***************************************************************************************
 
+#pragma once
+
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 

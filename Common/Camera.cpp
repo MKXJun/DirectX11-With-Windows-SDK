@@ -66,14 +66,17 @@ XMMATRIX Camera::GetViewMatrixXM() const
 	return m_Transform.GetWorldToLocalMatrixXM();
 }
 
-XMMATRIX Camera::GetProjMatrixXM() const
+XMMATRIX Camera::GetProjMatrixXM(bool reversedZ) const
 {
-	return XMMatrixPerspectiveFovLH(m_FovY, m_Aspect, m_NearZ, m_FarZ);
+	if (reversedZ)
+		return XMMatrixPerspectiveFovLH(m_FovY, m_Aspect, m_FarZ, m_NearZ);
+	else
+		return XMMatrixPerspectiveFovLH(m_FovY, m_Aspect, m_NearZ, m_FarZ);
 }
 
-XMMATRIX Camera::GetViewProjMatrixXM() const
+XMMATRIX Camera::GetViewProjMatrixXM(bool reversedZ) const
 {
-	return GetViewMatrixXM() * GetProjMatrixXM();
+	return GetViewMatrixXM() * GetProjMatrixXM(reversedZ);
 }
 
 D3D11_VIEWPORT Camera::GetViewPort() const

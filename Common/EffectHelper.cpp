@@ -56,16 +56,33 @@ using namespace Microsoft::WRL;
 
 #define EFFECTPASS_SET_CONSTANTBUFFER(ShaderType)\
 {\
-	for (UINT slot = 0, mask = p##ShaderType##Info->cbUseMask; mask; ++slot, mask >>= 1)\
-	{\
-		if (mask & 1)\
-		{\
+	UINT slot = 0, mask = p##ShaderType##Info->cbUseMask;\
+	while (mask) {\
+		if ((mask & 1) == 0) {\
+			++slot, mask >>= 1;\
+			continue;\
+		}\
+		UINT zero_bit = ((mask + 1) | mask) ^ mask;\
+		UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));\
+		if (count == 1) {\
 			CBufferData& cbData = cBuffers.at(slot);\
 			cbData.UpdateBuffer(deviceContext);\
-			deviceContext->##ShaderType##SetConstantBuffers(slot, 1, cBuffers.at(slot).cBuffer.GetAddressOf());\
+			deviceContext->##ShaderType##SetConstantBuffers(slot, 1, cbData.cBuffer.GetAddressOf());\
+			++slot, mask >>= 1;\
+		}\
+		else {\
+			std::vector<ID3D11Buffer*> constantBuffers(count);\
+			for (UINT i = 0; i < count; ++i) {\
+				CBufferData& cbData = cBuffers.at(slot + i);\
+				cbData.UpdateBuffer(deviceContext);\
+				constantBuffers[i] = cbData.cBuffer.Get();\
+			}\
+			deviceContext->##ShaderType##SetConstantBuffers(slot, count, constantBuffers.data());\
+			slot += count + 1, mask >>= (count + 1);\
 		}\
 	}\
-}
+}\
+
 
 #define EFFECTPASS_SET_PARAM(ShaderType)\
 {\
@@ -86,18 +103,54 @@ using namespace Microsoft::WRL;
 
 #define EFFECTPASS_SET_SAMPLER(ShaderType)\
 {\
-	for (UINT slot = 0, mask = p##ShaderType##Info->ssUseMask; mask; ++slot, mask >>= 1)\
-		if (mask & 1)\
+	UINT slot = 0, mask = p##ShaderType##Info->ssUseMask;\
+	while (mask) {\
+		if ((mask & 1) == 0) {\
+			++slot, mask >>= 1;\
+			continue;\
+		}\
+		UINT zero_bit = ((mask + 1) | mask) ^ mask;\
+		UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));\
+		if (count == 1) {\
 			deviceContext->##ShaderType##SetSamplers(slot, 1, samplers.at(slot).pSS.GetAddressOf());\
-}
+			++slot, mask >>= 1;\
+		}\
+		else {\
+			std::vector<ID3D11SamplerState*> samplerStates(count);\
+			for (UINT i = 0; i < count; ++i)\
+				samplerStates[i] = samplers.at(slot + i).pSS.Get();\
+			deviceContext->##ShaderType##SetSamplers(slot, count, samplerStates.data()); \
+			slot += count + 1, mask >>= (count + 1);\
+		}\
+	}\
+}\
 
 #define EFFECTPASS_SET_SHADERRESOURCE(ShaderType)\
 {\
-	for (UINT i = 0, slot = i * 32; i < 4; ++i, slot = i * 32)\
-		for (UINT mask = p##ShaderType##Info->srUseMasks[i]; mask; ++slot, mask >>= 1)\
-			if (mask & 1)\
-				deviceContext->##ShaderType##SetShaderResources(slot, 1, shaderResources.at(slot).pSRV.GetAddressOf());\
-}
+	UINT slot = 0;\
+	for (UINT i = 0; i < 4; ++i, slot = i * 32){\
+		UINT mask = p##ShaderType##Info->srUseMasks[i];\
+		while (mask) {\
+			if ((mask & 1) == 0) {\
+				++slot, mask >>= 1; \
+				continue; \
+			}\
+			UINT zero_bit = ((mask + 1) | mask) ^ mask; \
+			UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit)); \
+			if (count == 1) {\
+				deviceContext->##ShaderType##SetShaderResources(slot, 1, shaderResources.at(slot).pSRV.GetAddressOf()); \
+				++slot, mask >>= 1; \
+			}\
+			else {\
+				std::vector<ID3D11ShaderResourceView*> srvs(count); \
+				for (UINT i = 0; i < count; ++i)\
+					srvs[i] = shaderResources.at(slot + i).pSRV.Get(); \
+				deviceContext->##ShaderType##SetShaderResources(slot, count, srvs.data()); \
+				slot += count + 1, mask >>= (count + 1); \
+			}\
+		}\
+	}\
+}\
 
 //
 // 枚举与类声明
@@ -402,11 +455,14 @@ struct ComputeShaderInfo
 
 struct EffectPass : public IEffectPass
 {
-	EffectPass(std::unordered_map<UINT, CBufferData>& _cBuffers,
+	EffectPass(
+		EffectHelper* _pEffectHelper,
+		const std::string& _passName,
+		std::unordered_map<UINT, CBufferData>& _cBuffers,
 		std::unordered_map<UINT, ShaderResource>& _shaderResources,
 		std::unordered_map<UINT, SamplerState>& _samplers,
 		std::unordered_map<UINT, RWResource>& _rwResources)
-		: cBuffers(_cBuffers), shaderResources(_shaderResources),
+		: passName(_passName), pEffectHelper(_pEffectHelper), cBuffers(_cBuffers), shaderResources(_shaderResources),
 		samplers(_samplers), rwResources(_rwResources)
 	{
 	}
@@ -420,7 +476,13 @@ struct EffectPass : public IEffectPass
 	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(const std::string& paramName) override;
 	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) override;
 	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) override;
+	EffectHelper* GetEffectHelper() override;
+	const std::string& GetPassName() override;
+
 	void Apply(ID3D11DeviceContext * deviceContext) override;
+
+	EffectHelper* pEffectHelper = nullptr;
+	std::string passName;
 
 	// 渲染状态
 	ComPtr<ID3D11BlendState> pBlendState = nullptr;
@@ -811,7 +873,7 @@ HRESULT EffectHelper::AddEffectPass(const std::string& effectPassName, ID3D11Dev
 		return ERROR_OBJECT_NAME_EXISTS;
 
 	auto pEffectPass = pImpl->m_EffectPasses[effectPassName] = 
-		std::make_shared<EffectPass>(pImpl->m_CBuffers, pImpl->m_ShaderResources, pImpl->m_Samplers, pImpl->m_RWResources);
+		std::make_shared<EffectPass>(this, effectPassName, pImpl->m_CBuffers, pImpl->m_ShaderResources, pImpl->m_Samplers, pImpl->m_RWResources);
 
 	EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(VertexShader, VS);
 	EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(DomainShader, DS);
@@ -1008,6 +1070,16 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectPass::CSGetParamByName(cons
 	return nullptr;
 }
 
+EffectHelper* EffectPass::GetEffectHelper()
+{
+	return pEffectHelper;
+}
+
+const std::string& EffectPass::GetPassName()
+{
+	return passName;
+}
+
 void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 {
 	//
@@ -1072,14 +1144,33 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 		EFFECTPASS_SET_PARAM(PS);
 		EFFECTPASS_SET_SAMPLER(PS);
 		EFFECTPASS_SET_SHADERRESOURCE(PS);
-		for (UINT slot = 0, mask = pPSInfo->rwUseMask; mask; ++slot, mask >>= 1)
-		{
-			if (mask & 1)
-			{
+		UINT slot = 0, mask = pPSInfo->rwUseMask;
+		while (mask) {
+			if ((mask & 1) == 0) {
+				++slot, mask >>= 1;
+				continue;
+			}
+			UINT zero_bit = ((mask + 1) | mask) ^ mask;
+			UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));
+			if (count == 1) {
 				auto& res = rwResources.at(slot);
 				deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
 					nullptr, nullptr, slot, 1, res.pUAV.GetAddressOf(),
 					(res.enableCounter ? &res.initialCount : nullptr));
+				++slot, mask >>= 1;\
+			}
+			else {
+				std::vector<ID3D11UnorderedAccessView*> uavs(count);
+				std::vector<UINT> initCounts(count);
+				for (UINT i = 0; i < count; ++i)
+				{
+					auto& res = rwResources.at(slot + i);
+					uavs[i] = res.pUAV.Get();
+					initCounts[i] = (res.enableCounter ? res.initialCount : 0);
+				}
+				deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
+					nullptr, nullptr, slot, count, uavs.data(), initCounts.data());
+				slot += count + 1, mask >>= (count + 1);
 			}
 		}
 	}
@@ -1104,13 +1195,41 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 					(res.enableCounter ? &res.initialCount : nullptr));
 			}
 		}
+
+		UINT slot = 0, mask = pCSInfo->rwUseMask;
+		while (mask) {
+			if ((mask & 1) == 0) {
+				++slot, mask >>= 1;
+				continue;
+			}
+			UINT zero_bit = ((mask + 1) | mask) ^ mask;
+			UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));
+			if (count == 1) {
+				auto& res = rwResources.at(slot);
+				deviceContext->CSSetUnorderedAccessViews(slot, 1, res.pUAV.GetAddressOf(),
+					(res.enableCounter ? &res.initialCount : nullptr));
+				++slot, mask >>= 1; \
+			}
+			else {
+				std::vector<ID3D11UnorderedAccessView*> uavs(count);
+				std::vector<UINT> initCounts(count);
+				for (UINT i = 0; i < count; ++i)
+				{
+					auto& res = rwResources.at(slot + i);
+					uavs[i] = res.pUAV.Get();
+					initCounts[i] = (res.enableCounter ? res.initialCount : 0);
+				}
+				deviceContext->CSSetUnorderedAccessViews(slot, count, uavs.data(), initCounts.data());
+				slot += count + 1, mask >>= (count + 1);
+			}
+		}
 	}
 	else
 	{
 		deviceContext->CSSetShader(nullptr, nullptr, 0);
 	}
 
-	// 设置渲染状态
+	// 设置渲染状态	
 	deviceContext->RSSetState(pRasterizerState.Get());
 	deviceContext->OMSetBlendState(pBlendState.Get(), blendFactor, sampleMask);
 	deviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), stencilRef);

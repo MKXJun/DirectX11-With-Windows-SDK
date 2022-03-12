@@ -7,6 +7,8 @@
 // Provide encapsulated collision classes and detection method.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef COLLISION_H
 #define COLLISION_H
 

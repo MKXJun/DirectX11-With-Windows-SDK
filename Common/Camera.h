@@ -6,9 +6,12 @@
 // Provide 1st person(free view) and 3rd person cameras.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <DirectXMath.h>
 #include "Transform.h"
@@ -53,8 +56,8 @@ public:
 
 	DirectX::XMMATRIX GetLocalToWorldMatrixXM() const;
 	DirectX::XMMATRIX GetViewMatrixXM() const;
-	DirectX::XMMATRIX GetProjMatrixXM() const;
-	DirectX::XMMATRIX GetViewProjMatrixXM() const;
+	DirectX::XMMATRIX GetProjMatrixXM(bool reversedZ = false) const;
+	DirectX::XMMATRIX GetViewProjMatrixXM(bool reversedZ = false) const;
 
 	// 获取视口
 	D3D11_VIEWPORT GetViewPort() const;
@@ -70,7 +73,7 @@ public:
 	// 设置视口
 	void SetViewPort(const D3D11_VIEWPORT& viewPort);
 	void SetViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth = 0.0f, float maxDepth = 1.0f);
-
+	
 protected:
 
 	// 摄像机的变换

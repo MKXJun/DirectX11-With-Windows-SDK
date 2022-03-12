@@ -6,11 +6,14 @@
 // Simple game object.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
 #include "Model.h"
 #include "Transform.h"
+#include "IEffect.h"
 
 class GameObject
 {

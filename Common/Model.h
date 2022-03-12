@@ -6,12 +6,13 @@
 // model data storage.
 //***************************************************************************************
 
+#pragma once
+
 #ifndef MODEL_H
 #define MODEL_H
 
 #include <wrl/client.h>
 #include <DirectXCollision.h>
-#include "IEffect.h"
 #include "Geometry.h"
 
 

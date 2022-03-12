@@ -1,7 +1,10 @@
 
+#pragma once
+
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <wrl/client.h>
 #include <vector>

@@ -1,6 +1,9 @@
+#pragma once
+
 #ifndef TEXTURE2D_H
 #define TEXTURE2D_H
 
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <wrl/client.h>
 #include <vector>

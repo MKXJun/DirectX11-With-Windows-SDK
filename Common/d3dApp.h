@@ -1,3 +1,6 @@
+
+#pragma once
+
 #ifndef D3DAPP_H
 #define D3DAPP_H
 
@@ -6,15 +9,6 @@
 #include <d3d11_1.h>
 #include <DirectXMath.h>
 #include "GameTimer.h"
-
-// 添加所有要引用的库
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dwrite.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "D3DCompiler.lib")
-#pragma comment(lib, "winmm.lib")
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>

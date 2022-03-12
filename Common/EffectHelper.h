@@ -4,11 +4,9 @@
 //
 // 定义一些实用的特效助手类
 // Define utility effect helper classes.
-//***************************************************************************************
+//*************************************************************************************** 
 
-//
-// 将EffectHelper.h和EffectHelper.cpp包含进项目即可使用
-// 
+#pragma once
 
 #ifndef EFFECTHELPER_H
 #define EFFECTHELPER_H
@@ -25,6 +23,7 @@
 	#endif
 #endif
 
+#include "WinMin.h"
 #include <string>
 #include <memory>
 #include <d3d11_1.h>
@@ -199,6 +198,7 @@ struct IEffectConstantBufferVariable
 
 // 渲染通道
 // 非COM组件
+class EffectHelper;
 struct IEffectPass
 {
 	// 设置光栅化状态
@@ -207,6 +207,7 @@ struct IEffectPass
 	virtual void SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask) = 0;
 	// 设置深度混合状态
 	virtual void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilValue) = 0;
+
 	// 获取顶点着色器的uniform形参用于设置值
 	virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(const std::string& paramName) = 0;
 	// 获取域着色器的uniform形参用于设置值
@@ -219,6 +220,11 @@ struct IEffectPass
 	virtual std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) = 0;
 	// 获取计算着色器的uniform形参用于设置值
 	virtual std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) = 0;
+	// 获取所属特效助理
+	virtual EffectHelper* GetEffectHelper() = 0;
+	// 获取特效名
+	virtual const std::string& GetPassName() = 0;
+	
 	// 应用着色器、常量缓冲区(包括函数形参)、采样器、着色器资源和可读写资源到渲染管线
 	virtual void Apply(ID3D11DeviceContext* deviceContext) = 0;
 };
@@ -271,6 +277,7 @@ public:
 	void SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv);
 	// 按名设置着色器资源(若存在同槽多名称则只能使用按槽设置)
 	void SetShaderResourceByName(const std::string& name, ID3D11ShaderResourceView* srv);
+	
 
 	// 按槽设置可读写资源
 	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);

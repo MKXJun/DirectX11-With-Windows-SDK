@@ -9,6 +9,7 @@
 #ifndef IEFFECT_H
 #define IEFFECT_H
 
+#include "WinMin.h"
 #include <memory>
 #include <d3d11_1.h>
 #include <DirectXMath.h>

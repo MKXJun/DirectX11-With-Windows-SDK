@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
 
@@ -19,7 +21,8 @@ public:
 
 	static TextureManager& Get();
 	void Init(ID3D11Device* device);
-	ID3D11ShaderResourceView* CreateTexture(const std::wstring& filename, bool enableMips = false);
+	ID3D11ShaderResourceView* CreateTexture(const std::wstring& filename, bool enableMips = false, bool forceSRGB = false);
+
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;

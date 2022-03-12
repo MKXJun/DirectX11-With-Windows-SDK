@@ -52,8 +52,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (m_pCamera != nullptr)
 	{
-		// 注意：反转Z时需要将近/远平面对调
-		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 300.0f, 0.5f);
+		m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 300.0f);
 		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 		m_pForwardEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
 		m_pDeferredEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));

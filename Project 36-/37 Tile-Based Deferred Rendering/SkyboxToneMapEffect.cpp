@@ -1,4 +1,3 @@
-#include "..\37 Tile-Based Deferred Rendering\Effects.h"
 #include "Effects.h"
 #include "d3dUtil.h"
 #include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
@@ -111,7 +110,7 @@ bool SkyboxToneMapEffect::InitAll(ID3D11Device * device)
 		defines[0].Definition = msaaSamplesStr.c_str();
 		std::string shaderName = "Skybox_" + msaaSamplesStr + "xMSAA_PS";
 		HR(CreateShaderFromFile(nullptr, L"Shaders\\SkyboxToneMap.hlsl", defines, "SkyboxPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderName, device, blob.Get()));
+		HR(pImpl->m_pEffectHelper->AddShader(shaderName.c_str(), device, blob.Get()));
 
 		// ******************
 		// 创建通道
@@ -120,9 +119,9 @@ bool SkyboxToneMapEffect::InitAll(ID3D11Device * device)
 		EffectPassDesc passDesc;
 		passDesc.nameVS = "SkyboxVS";
 		passDesc.namePS = shaderName.c_str();
-		HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passName.c_str(), device, &passDesc));
 		{
-			auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+			auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName.c_str());
 			pPass->SetRasterizerState(RenderStates::RSNoCull.Get());
 		}
 		
@@ -143,7 +142,7 @@ void SkyboxToneMapEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
 	std::string passName = "Skybox_" + std::to_string(pImpl->m_MsaaLevels) + "xMSAA";
-	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName.c_str());
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
@@ -175,6 +174,13 @@ void SkyboxToneMapEffect::SetDepthTexture(ID3D11ShaderResourceView* depthTexture
 void SkyboxToneMapEffect::SetLitTexture(ID3D11ShaderResourceView* litTexture)
 {
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_LitTexture", litTexture);
+}
+
+void SkyboxToneMapEffect::SetFlatLitTexture(ID3D11ShaderResourceView* flatLitTexture, UINT width, UINT height)
+{
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_FlatLitTexture", flatLitTexture);
+	UINT wh[2] = { width, height };
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_FramebufferDimensions")->SetUIntVector(2, wh);
 }
 
 void SkyboxToneMapEffect::SetMsaaSamples(UINT msaaSamples)

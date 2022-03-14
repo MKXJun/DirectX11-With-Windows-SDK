@@ -56,6 +56,7 @@ void GameApp::OnResize()
 		m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 		m_pForwardEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
 		m_pDeferredEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
+		m_pForwardEffect->SetCameraNearFar(0.5f, 300.0f);
 		m_pDeferredEffect->SetCameraNearFar(0.5f, 300.0f);
 	}
 
@@ -67,7 +68,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新摄像机
 	m_FPSCameraController.Update(dt);
 
-	if (ImGui::Begin("Deferred Rendering"))
+	if (ImGui::Begin("Tile-Based Deferred Rendering"))
 	{
 		static const char* msaa_modes[] = {
 			"None",
@@ -86,14 +87,17 @@ void GameApp::UpdateScene(float dt)
 			case 3: m_MsaaSamples = 8; break;
 			}
 			ResizeBuffers(m_ClientWidth, m_ClientHeight, m_MsaaSamples);
+			m_pForwardEffect->SetMsaaSamples(m_MsaaSamples);
 			m_pSkyboxEffect->SetMsaaSamples(m_MsaaSamples);
 			m_pDeferredEffect->SetMsaaSamples(m_MsaaSamples);
 		}
 
 		static const char* light_culliing_modes[] = {
-			"Forward No Culling",
-			"Forward Pre-Z No Culling",
-			"Deferred No Culling"
+			"Forward: No Culling",
+			"Forward: Pre-Z No Culling",
+			"Forward+: Compute Shader Tile",
+			"Deferred: No Culling",
+			"Deferred: Compute Shader Tile"
 		};
 		static int curr_light_culliing_item = static_cast<int>(m_LightCullTechnique);
 		if (ImGui::Combo("Light Culling", &curr_light_culliing_item, light_culliing_modes, ARRAYSIZE(light_culliing_modes)))
@@ -133,6 +137,7 @@ void GameApp::UpdateScene(float dt)
 				m_pDeferredEffect->SetVisualizeShadingFreq(m_VisualizeShadingFreq);
 			}
 		}
+		
 		
 		ImGui::Text("Light Height Scale");
 		ImGui::PushID(0);
@@ -179,20 +184,26 @@ void GameApp::DrawScene()
 	//
 	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_NONE)
 		RenderForward(false);
-	else if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_PREZ_NONE)
+	else if (m_LightCullTechnique <= LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
 		RenderForward(true);
-	else if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_NONE){
+	else {
 		RenderGBuffer();
-		m_pDeferredEffect->ComputeLightingDefault(m_pd3dImmediateContext.Get(), m_pLitBuffer->GetRenderTarget(),
-			m_pDepthBufferReadOnlyDSV.Get(), m_pLightBuffer->GetShaderResource(),
-			m_pGBufferSRVs.data(), m_pCamera->GetViewPort());
+		if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_NONE)
+			m_pDeferredEffect->ComputeLightingDefault(m_pd3dImmediateContext.Get(), m_pLitBuffer->GetRenderTarget(),
+				m_pDepthBufferReadOnlyDSV.Get(), m_pLightBuffer->GetShaderResource(),
+				m_pGBufferSRVs.data(), m_pCamera->GetViewPort());
+		else if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
+			m_pDeferredEffect->ComputeTiledLightCulling(m_pd3dImmediateContext.Get(),
+				m_pFlatLitBuffer->GetUnorderedAccess(),
+				m_pLightBuffer->GetShaderResource(),
+				m_pGBufferSRVs.data());
 	}
 	RenderSkyboxAndToneMap();
 
 	//
 	// ImGui部分
 	//
-	if (static_cast<uint32_t>(m_LightCullTechnique) >= 2)
+	if (m_LightCullTechnique >= LightCullTechnique::CULL_DEFERRED_NONE)
 	{
 		if (ImGui::Begin("Normal"))
 		{
@@ -258,7 +269,9 @@ bool GameApp::InitResource()
 	// 注意：反转Z
 	m_pForwardEffect->SetProjMatrix(camera->GetProjMatrixXM(true));
 	m_pDeferredEffect->SetProjMatrix(camera->GetProjMatrixXM(true));
+	m_pForwardEffect->SetCameraNearFar(0.5f, 300.0f);
 	m_pDeferredEffect->SetCameraNearFar(0.5f, 300.0f);
+	m_pForwardEffect->SetMsaaSamples(1);
 	m_pDeferredEffect->SetMsaaSamples(1);
 	m_pSkyboxEffect->SetMsaaSamples(1);
 
@@ -391,6 +404,14 @@ void XM_CALLCONV GameApp::SetupLights(DirectX::XMMATRIX viewMatrix)
 void GameApp::ResizeBuffers(UINT width, UINT height, UINT msaaSamples)
 {
 	// ******************
+	// 初始化前向渲染所需资源
+	//
+	UINT tileWidth = (width + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
+	UINT tileHeight = (height + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
+	m_pTileBuffer = std::make_unique<StructuredBuffer<TileInfo>>(m_pd3dDevice.Get(), 
+		width * height, D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
+
+	// ******************
 	// 初始化延迟渲染所需资源
 	//
 	DXGI_SAMPLE_DESC sampleDesc;
@@ -399,6 +420,11 @@ void GameApp::ResizeBuffers(UINT width, UINT height, UINT msaaSamples)
 	m_pLitBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), width, height,
 		DXGI_FORMAT_R16G16B16A16_FLOAT, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,
 		sampleDesc);
+
+	m_pFlatLitBuffer = std::make_unique<StructuredBuffer<DirectX::XMUINT2>>(
+		m_pd3dDevice.Get(), width * height * msaaSamples,
+		D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
+	
 	m_pDepthBuffer = std::make_unique<Depth2D>(m_pd3dDevice.Get(), width, height,
 		D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, sampleDesc,
 		msaaSamples > 1);	// 使用MSAA则需要提供模板
@@ -447,6 +473,7 @@ void GameApp::ResizeBuffers(UINT width, UINT height, UINT msaaSamples)
 	m_pDepthBuffer->SetDebugObjectName("DepthBuffer");
 	D3D11SetDebugObjectName(m_pDepthBufferReadOnlyDSV.Get(), "DepthBufferReadOnlyDSV");
 	m_pLitBuffer->SetDebugObjectName("LitBuffer");
+	m_pFlatLitBuffer->SetDebugObjectName("FlatLitBuffer");
 	m_pGBuffers[0]->SetDebugObjectName("GBuffer_Normal_Specular");
 	m_pGBuffers[1]->SetDebugObjectName("GBuffer_Albedo");
 	m_pGBuffers[2]->SetDebugObjectName("GBuffer_PosZgrad");
@@ -468,17 +495,36 @@ void GameApp::RenderForward(bool doPreZ)
 		m_pd3dImmediateContext->OMSetRenderTargets(0, 0, m_pDepthBuffer->GetDepthStencil());
 		m_pForwardEffect->SetRenderPreZPass(m_pd3dImmediateContext.Get());
 		m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
+		m_pd3dImmediateContext->OMSetRenderTargets(0, 0, nullptr);
+	}
+
+	// 光源裁剪阶段
+	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+	{
+		m_pForwardEffect->ComputeTiledLightCulling(m_pd3dImmediateContext.Get(),
+			m_pTileBuffer->GetUnorderedAccess(),
+			m_pLightBuffer->GetShaderResource(),
+			m_pGBufferSRVs[3]);
 	}
 
 	// 正常绘制
 	ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
 	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
 
-	m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+	{
+		m_pForwardEffect->SetTileBuffer(m_pTileBuffer->GetShaderResource());
+		m_pForwardEffect->SetRenderWithTiledLightCulling(m_pd3dImmediateContext.Get());
+	}
+	else
+		m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+
 	m_pForwardEffect->SetLightBuffer(m_pLightBuffer->GetShaderResource());
 	m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
 
 	// 清除绑定
+	m_pForwardEffect->SetTileBuffer(nullptr);
+	m_pForwardEffect->Apply(m_pd3dImmediateContext.Get());
 	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
@@ -519,9 +565,14 @@ void GameApp::RenderSkyboxAndToneMap()
 	m_pSkyboxEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
 
 	m_pSkyboxEffect->SetSkyboxTexture(m_pTextureCubeSRV.Get());
-	m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
+	// 根据所用技术绑定合适的缓冲区
+	if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
+		m_pSkyboxEffect->SetFlatLitTexture(m_pFlatLitBuffer->GetShaderResource(), m_ClientWidth, m_ClientHeight);
+	else
+		m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
 	m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
-	
+	m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+
 	// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
 	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
 	m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
@@ -529,6 +580,7 @@ void GameApp::RenderSkyboxAndToneMap()
 	// 清除状态
 	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 	m_pSkyboxEffect->SetLitTexture(nullptr);
+	m_pSkyboxEffect->SetFlatLitTexture(nullptr, 0, 0);
 	m_pSkyboxEffect->SetDepthTexture(nullptr);
 	m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
 }

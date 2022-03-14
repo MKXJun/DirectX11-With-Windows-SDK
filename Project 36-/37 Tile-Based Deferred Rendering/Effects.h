@@ -48,17 +48,28 @@ public:
 	// ForwardEffect
 	//
 
-	//
+	void SetMsaaSamples(UINT msaaSamples);
+
 	void SetLightBuffer(ID3D11ShaderResourceView* lightBuffer);
+	void SetTileBuffer(ID3D11ShaderResourceView* tileBuffer);
+	void SetCameraNearFar(float nearZ, float farZ);
 
 	void SetLightingOnly(bool enable);
 	void SetFaceNormals(bool enable);
 	void SetVisualizeLightCount(bool enable);
 
-	// 进行Pre-Z通道绘制
-	void SetRenderPreZPass(ID3D11DeviceContext* deviceContext);
 	// 默认状态来绘制
 	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+
+	// 进行Pre-Z通道绘制
+	void SetRenderPreZPass(ID3D11DeviceContext* deviceContext);
+	// 执行分块光照裁剪
+	void ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
+		ID3D11UnorderedAccessView* tileInfoBufferUAV,
+		ID3D11ShaderResourceView* lightBufferSRV,
+		ID3D11ShaderResourceView* depthBufferSRV);
+	// 根据裁剪后的光照数据绘制
+	void SetRenderWithTiledLightCulling(ID3D11DeviceContext* deviceContext);
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext) override;
@@ -107,6 +118,8 @@ public:
 	void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);
 	// 设置场景渲染图
 	void SetLitTexture(ID3D11ShaderResourceView* litTexture);
+	// 设置TBDR场景渲染图
+	void SetFlatLitTexture(ID3D11ShaderResourceView* flatLitTexture, UINT width, UINT height);
 
 	// 设置MSAA采样等级
 	void SetMsaaSamples(UINT msaaSamples);
@@ -169,7 +182,7 @@ public:
 
 	// 绘制G缓冲区
 	void SetRenderGBuffer(ID3D11DeviceContext* deviceContext);
-	
+
 	// 将法线G-Buffer渲染到目标纹理
 	void DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
 		ID3D11RenderTargetView* rtv,
@@ -190,7 +203,11 @@ public:
 		ID3D11ShaderResourceView* GBuffers[4],
 		D3D11_VIEWPORT viewport);
 
-	
+	// 执行分块光照裁剪
+	void ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
+		ID3D11UnorderedAccessView* litFlatBufferUAV,
+		ID3D11ShaderResourceView* lightBufferSRV,
+		ID3D11ShaderResourceView* GBuffers[4]);
 
 	//
 	// IEffect

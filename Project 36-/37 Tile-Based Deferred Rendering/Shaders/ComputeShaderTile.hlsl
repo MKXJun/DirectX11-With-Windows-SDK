@@ -42,22 +42,9 @@ uint2 UnpackCoords(uint coords)
 }
 
 
-void ConstructFrustum(uint3 groupId, float minZSample, float maxZSample,
+void ConstructFrustumPlanes(uint3 groupId, float minZSample, float maxZSample,
                       out float4 frustumPlanes[6])
 {
-    // 注意：这里可以进行并行归约(parallel reduction)的优化，但由于我们使用了MSAA并
-    // 存储了多重采样的像素在共享内存中，逐渐增加的共享内存压力实际上**减小**内核的总
-    // 体运行速度。因为即便是在最好的情况下，在目前具有典型分块(tile)大小的的架构上，
-    // 并行归约的速度优势也是不大的。
-    // 只有少量实际合法样本的像素在其中。
-    if (maxZSample >= minZSample)
-    {
-        InterlockedMin(s_MinZ, asuint(minZSample));
-        InterlockedMax(s_MaxZ, asuint(maxZSample));
-    }
-
-    GroupMemoryBarrierWithGroupSync();
-
     float minTileZ = asfloat(s_MinZ);
     float maxTileZ = asfloat(s_MaxZ);
     
@@ -103,14 +90,6 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
                                  uint groupIndex : SV_GroupIndex
                                  )
 {
-    // NOTE: This is currently necessary rather than just using SV_GroupIndex to work
-    // around a compiler bug on Fermi.
-    // uint groupIndex = groupThreadId.y * COMPUTE_SHADER_TILE_GROUP_DIM + groupThreadId.x;
-    // 注：费米架构是很久以前的显卡了，这里就直接使用SV_GroupIndex
- 
-    uint totalLights, dummy;
-    g_Light.GetDimensions(totalLights, dummy);
-
     //
     // 获取表面数据，计算当前分块的视锥体
     //
@@ -121,8 +100,8 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
     ComputeSurfaceDataFromGBufferAllSamples(globalCoords, surfaceSamples);
         
     // 寻找所有采样中的Z边界
-    float minZSample = g_CameraNearFar.x;
-    float maxZSample = g_CameraNearFar.y;
+    float minZSample = g_CameraNearFar.y;
+    float maxZSample = g_CameraNearFar.x;
     {
         [unroll]
         for (uint sample = 0; sample < MSAA_SAMPLES; ++sample)
@@ -130,8 +109,8 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
             // 避免对天空盒或其它非法像素着色
             float viewSpaceZ = surfaceSamples[sample].posV.z;
             bool validPixel =
-                 viewSpaceZ >= g_CameraNearFar.y &&
-                 viewSpaceZ < g_CameraNearFar.x;
+                 viewSpaceZ >= g_CameraNearFar.x &&
+                 viewSpaceZ < g_CameraNearFar.y;
             [flatten]
             if (validPixel)
             {
@@ -151,14 +130,35 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
     }
 
     GroupMemoryBarrierWithGroupSync();
+
+    // 注意：这里可以进行并行归约(parallel reduction)的优化，但由于我们使用了MSAA并
+    // 存储了多重采样的像素在共享内存中，逐渐增加的共享内存压力实际上**减小**内核的总
+    // 体运行速度。因为即便是在最好的情况下，在目前具有典型分块(tile)大小的的架构上，
+    // 并行归约的速度优势也是不大的。
+    // 只有少量实际合法样本的像素在其中。
+    if (maxZSample >= minZSample)
+    {
+        InterlockedMin(s_MinZ, asuint(minZSample));
+        InterlockedMax(s_MaxZ, asuint(maxZSample));
+    }
+
+    GroupMemoryBarrierWithGroupSync();
     
     float4 frustumPlanes[6];
-    ConstructFrustum(groupId, minZSample, maxZSample, frustumPlanes);
+    ConstructFrustumPlanes(groupId, minZSample, maxZSample, frustumPlanes);
     
     //
     // 对当前分块(tile)进行光照裁剪
     //
     
+    // NOTE: This is currently necessary rather than just using SV_GroupIndex to work
+    // around a compiler bug on Fermi.
+    // uint groupIndex = groupThreadId.y * COMPUTE_SHADER_TILE_GROUP_DIM + groupThreadId.x;
+    // 注：费米架构是很久以前的显卡了，这里就直接使用SV_GroupIndex
+ 
+    uint totalLights, dummy;
+    g_Light.GetDimensions(totalLights, dummy);
+
     // 组内每个线程承担一部分光源的碰撞检测计算
     for (uint lightIndex = groupIndex; lightIndex < totalLights; lightIndex += COMPUTE_SHADER_TILE_GROUP_SIZE)
     {
@@ -301,9 +301,6 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
                                 uint groupIndex : SV_GroupIndex
                                 )
 {
-    uint totalLights, dummy;
-    g_Light.GetDimensions(totalLights, dummy);
-    
     //
     // 获取深度数据，计算当前分块的视锥体
     //
@@ -347,13 +344,29 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
 
     GroupMemoryBarrierWithGroupSync();
     
+    // 注意：这里可以进行并行归约(parallel reduction)的优化，但由于我们使用了MSAA并
+    // 存储了多重采样的像素在共享内存中，逐渐增加的共享内存压力实际上**减小**内核的总
+    // 体运行速度。因为即便是在最好的情况下，在目前具有典型分块(tile)大小的的架构上，
+    // 并行归约的速度优势也是不大的。
+    // 只有少量实际合法样本的像素在其中。
+    if (maxZSample >= minZSample)
+    {
+        InterlockedMin(s_MinZ, asuint(minZSample));
+        InterlockedMax(s_MaxZ, asuint(maxZSample));
+    }
+
+    GroupMemoryBarrierWithGroupSync();
+
     float4 frustumPlanes[6];
-    ConstructFrustum(groupId, minZSample, maxZSample, frustumPlanes);
+    ConstructFrustumPlanes(groupId, minZSample, maxZSample, frustumPlanes);
     
     //
     // 对当前分块(tile)进行光照裁剪
     //
     
+    uint totalLights, dummy;
+    g_Light.GetDimensions(totalLights, dummy);
+
     // 计算当前tile在光照索引缓冲区中的位置
     uint2 dispatchWidth = (g_FramebufferDimensions.x + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
     uint tilebufferIndex = groupId.y * dispatchWidth + groupId.x;

@@ -150,7 +150,7 @@ void GameApp::UpdateScene(float dt)
 		static int light_level = static_cast<int>(log2f(static_cast<float>(m_ActiveLights)));
 		ImGui::Text("Lights: %d", m_ActiveLights);
 		ImGui::PushID(1);
-		if (ImGui::SliderInt("", &light_level, 0, 10, ""))
+		if (ImGui::SliderInt("", &light_level, 0, (int)roundf(log2f(MAX_LIGHTS)), ""))
 		{
 			m_ActiveLights = (1 << light_level);
 			ResizeLights(m_ActiveLights);

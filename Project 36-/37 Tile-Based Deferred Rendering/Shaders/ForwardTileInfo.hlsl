@@ -10,7 +10,7 @@
 struct TileInfo
 {
     uint tileNumLights;
-    uint tileLightIndices[MAX_LIGHTS >> 2];
+    uint tileLightIndices[MAX_LIGHT_INDICES];
 };
 
 #endif // FORWARD_TILE_INFO_HLSL

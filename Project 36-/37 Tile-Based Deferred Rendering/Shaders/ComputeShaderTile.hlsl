@@ -15,7 +15,7 @@ groupshared uint s_MinZ;
 groupshared uint s_MaxZ;
 
 // 当前tile的光照列表
-groupshared uint s_TileLightIndices[MAX_LIGHTS];
+groupshared uint s_TileLightIndices[MAX_LIGHTS >> 3];
 groupshared uint s_TileNumLights;
 
 // 当前tile中需要逐样本着色的像素列表
@@ -42,12 +42,9 @@ uint2 UnpackCoords(uint coords)
 }
 
 
-void ConstructFrustumPlanes(uint3 groupId, float minZSample, float maxZSample,
-                      out float4 frustumPlanes[6])
+void ConstructFrustumPlanes(uint3 groupId, float minTileZ, float maxTileZ, 
+                            out float4 frustumPlanes[6])
 {
-    float minTileZ = asfloat(s_MinZ);
-    float maxTileZ = asfloat(s_MaxZ);
-    
     // 注意：下面的计算每个分块都是统一的(例如：不需要每个线程都执行)，但代价低廉。
     // 我们可以只是先为每个分块预计算视锥平面，然后将结果放到一个常量缓冲区中...
     // 只有当投影矩阵改变的时候才需要变化，因为我们是在观察空间执行，
@@ -80,8 +77,6 @@ void ConstructFrustumPlanes(uint3 groupId, float minZSample, float maxZSample,
         frustumPlanes[i] *= rcp(length(frustumPlanes[i].xyz));
     }
 }
-
-
 
 [numthreads(COMPUTE_SHADER_TILE_GROUP_DIM, COMPUTE_SHADER_TILE_GROUP_DIM, 1)]
 void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
@@ -144,8 +139,10 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
 
     GroupMemoryBarrierWithGroupSync();
     
+    float minTileZ = asfloat(s_MinZ);
+    float maxTileZ = asfloat(s_MaxZ);
     float4 frustumPlanes[6];
-    ConstructFrustumPlanes(groupId, minZSample, maxZSample, frustumPlanes);
+    ConstructFrustumPlanes(groupId, minTileZ, maxTileZ, frustumPlanes);
     
     //
     // 对当前分块(tile)进行光照裁剪
@@ -308,22 +305,20 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
     uint2 globalCoords = dispatchThreadId.xy;
     
     // 寻找所有采样中的Z边界
-    float minZSample = g_CameraNearFar.x;
-    float maxZSample = g_CameraNearFar.y;
+    float minZSample = g_CameraNearFar.y;
+    float maxZSample = g_CameraNearFar.x;
     {
         [unroll]
         for (uint sample = 0; sample < MSAA_SAMPLES; ++sample)
         {
             // 这里取的是深度缓冲区的Z值
-            float viewSpaceZ = g_GBufferTextures[3].Load(globalCoords, sample);
-            float2 screenPixelOffset = float2(2.0f, -2.0f) / g_FramebufferDimensions.xy;
-            float2 posNdc = (float2(globalCoords) + 0.5f) * screenPixelOffset.xy + float2(-1.0f, 1.0f);
-            viewSpaceZ = ComputePositionViewFromZ(posNdc, viewSpaceZ).z;
+            float zBuffer = g_GBufferTextures[3].Load(globalCoords, sample);
+            float viewSpaceZ = g_Proj._m32 / (zBuffer - g_Proj._m22);
             
             // 避免对天空盒或其它非法像素着色
             bool validPixel =
-                 viewSpaceZ >= g_CameraNearFar.y &&
-                 viewSpaceZ < g_CameraNearFar.x;
+                 viewSpaceZ >= g_CameraNearFar.x &&
+                 viewSpaceZ < g_CameraNearFar.y;
             [flatten]
             if (validPixel)
             {
@@ -357,8 +352,10 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
 
     GroupMemoryBarrierWithGroupSync();
 
+    float minTileZ = asfloat(s_MinZ);
+    float maxTileZ = asfloat(s_MaxZ);
     float4 frustumPlanes[6];
-    ConstructFrustumPlanes(groupId, minZSample, maxZSample, frustumPlanes);
+    ConstructFrustumPlanes(groupId, minTileZ, maxTileZ, frustumPlanes);
     
     //
     // 对当前分块(tile)进行光照裁剪

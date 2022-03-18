@@ -33,7 +33,7 @@ struct PointLightInitData
 struct TileInfo
 {
 	UINT numLights;
-	UINT lightIndices[MAX_LIGHTS >> 2];
+	UINT lightIndices[MAX_LIGHT_INDICES];
 };
 
 

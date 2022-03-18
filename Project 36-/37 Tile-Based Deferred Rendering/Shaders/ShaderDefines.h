@@ -1,8 +1,9 @@
 #ifndef SHADER_DEFINES_H
 #define SHADER_DEFINES_H
 
-#define MAX_LIGHTS_POWER 10
+#define MAX_LIGHTS_POWER 11
 #define MAX_LIGHTS (1 << MAX_LIGHTS_POWER)
+#define MAX_LIGHT_INDICES ((MAX_LIGHTS >> 3) - 1)
 
 // 确定分块(tile)的大小用于光照去除和相关的权衡取舍 
 #define COMPUTE_SHADER_TILE_GROUP_DIM 16

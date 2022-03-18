@@ -109,7 +109,7 @@ private:
 	std::vector<ID3D11ShaderResourceView*> m_pGBufferSRVs;
 
 	// 光照
-	UINT m_ActiveLights = (MAX_LIGHTS >> 2);
+	UINT m_ActiveLights = (MAX_LIGHTS >> 3);
 	std::vector<PointLightInitData> m_PointLightInitDatas;
 	std::vector<PointLight> m_PointLightParams;
 	std::vector<DirectX::XMFLOAT3> m_PointLightPosWorlds;

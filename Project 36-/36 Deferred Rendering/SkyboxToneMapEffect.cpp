@@ -95,8 +95,8 @@ bool SkyboxToneMapEffect::InitAll(ID3D11Device * device)
 	// 创建顶点着色器
 	//
 
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\SkyboxToneMap.hlsl", defines, "SkyboxVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("SkyboxVS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("SkyboxVS", L"Shaders\\SkyboxToneMap.hlsl", 
+		device, "SkyboxVS", "vs_5_0", defines, blob.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
@@ -110,8 +110,8 @@ bool SkyboxToneMapEffect::InitAll(ID3D11Device * device)
 		std::string msaaSamplesStr = std::to_string(msaaSamples);
 		defines[0].Definition = msaaSamplesStr.c_str();
 		std::string shaderName = "Skybox_" + msaaSamplesStr + "xMSAA_PS";
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\SkyboxToneMap.hlsl", defines, "SkyboxPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderName, device, blob.Get()));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderName, L"Shaders\\SkyboxToneMap.hlsl",
+			device, "SkyboxPS", "ps_5_0", defines));
 
 		// ******************
 		// 创建通道

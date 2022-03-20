@@ -11,7 +11,9 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "Model.h"
+#include "Geometry.h"
+#include "Material.h"
+#include "MeshData.h"
 #include "Transform.h"
 #include "IEffect.h"
 
@@ -36,35 +38,31 @@ public:
 	// 获取物体变换
 	const Transform& GetTransform() const;
 
+	size_t GetMeshCount() const;
+	size_t GetMaterialCount() const;
+
 	//
 	// 获取包围盒
 	//
 
 	DirectX::BoundingBox GetLocalBoundingBox() const;
+	DirectX::BoundingBox GetLocalBoundingBox(size_t idx) const;
 	DirectX::BoundingBox GetBoundingBox() const;
+	DirectX::BoundingBox GetBoundingBox(size_t idx) const;
 	DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
+	DirectX::BoundingOrientedBox GetBoundingOrientedBox(size_t idx) const;
 
 	//
-	// 单体的视锥体碰撞检测
+	// 视锥体碰撞检测
 	//
 	void FrustumCulling(const DirectX::BoundingFrustum& frustumInWorld);
-
-	//
-	// 设置实例缓冲区
-	//
-
-	// 获取缓冲区可容纳实例的数目
-	size_t GetCapacity() const;
-	// 重新设置实例缓冲区可容纳实例的数目
-	void ResizeBuffer(ID3D11Device * device, size_t count);
-	
 
 	//
 	// 设置模型
 	//
 
-	void SetModel(Model&& model);
-	void SetModel(const Model& model);
+	void LoadModelFromFile(ID3D11Device* device, std::string_view filename);
+	void LoadModelFromGeometry(ID3D11Device* device, const Geometry::MeshData& meshData);
 
 	//
 	// 绘制
@@ -72,9 +70,7 @@ public:
 
 	// 绘制对象
 	void Draw(ID3D11DeviceContext* deviceContext, IEffect* effect);
-	// 绘制实例
-	void DrawInstanced(ID3D11DeviceContext* deviceContext, IEffect* effect, const std::vector<Transform>& data);
-
+	
 	//
 	// 调试 
 	//
@@ -84,11 +80,11 @@ public:
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	Model m_Model = {};											    // 模型
-	Transform m_Transform = {};										// 物体变换
-
-	ComPtr<ID3D11Buffer> m_pInstancedBuffer = nullptr;				// 实例缓冲区
-	size_t m_Capacity = 0;										    // 缓冲区容量
+	std::vector<std::shared_ptr<Material>> m_pMaterials;
+	std::vector<std::shared_ptr<MeshData>> m_pMeshDatas;
+	DirectX::BoundingBox m_BoundingBox;
+	Transform m_Transform = {};
+	bool m_InFrustum = true;
 };
 
 

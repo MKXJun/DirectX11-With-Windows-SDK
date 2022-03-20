@@ -94,15 +94,13 @@ bool DeferredEffect::InitAll(ID3D11Device * device)
 	// ******************
 	// 创建顶点着色器
 	//
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "GeometryVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("GeometryVS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("FullScreenTriangleVS", L"Shaders\\FullScreenTriangle.hlsl",
+		device, "FullScreenTriangleVS", "vs_5_0", defines));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders\\GBuffer.hlsl",
+		device, "GeometryVS", "vs_5_0", defines, blob.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\FullScreenTriangle.hlsl", defines, "FullScreenTriangleVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("FullScreenTriangleVS", device, blob.Get()));
 
 	int msaaSamples = 1;
 	while (msaaSamples <= 8)
@@ -122,26 +120,20 @@ bool DeferredEffect::InitAll(ID3D11Device * device)
 			"ComputeShaderTileDeferred" + msaaSamplesStr + "xMSAA_CS"
 		};
 
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "GBufferPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[0], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "RequiresPerSampleShadingPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[1], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\BasicDeferred.hlsl", defines, "BasicDeferredPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[2], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\BasicDeferred.hlsl", defines, "BasicDeferredPerSamplePS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[3], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "DebugNormalPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[4], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\GBuffer.hlsl", defines, "DebugPosZGradPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[5], device, blob.Get()));
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\ComputeShaderTile.hlsl", defines, "ComputeShaderTileDeferredCS", "cs_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderNames[6], device, blob.Get()));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[0], L"Shaders\\GBuffer.hlsl",
+			device, "GBufferPS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[1], L"Shaders\\GBuffer.hlsl",
+			device, "RequiresPerSampleShadingPS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[2], L"Shaders\\BasicDeferred.hlsl",
+			device, "BasicDeferredPS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[3], L"Shaders\\BasicDeferred.hlsl",
+			device, "BasicDeferredPerSamplePS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[4], L"Shaders\\GBuffer.hlsl",
+			device, "DebugNormalPS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[5], L"Shaders\\GBuffer.hlsl",
+			device, "DebugPosZGradPS", "ps_5_0", defines));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[6], L"Shaders\\ComputeShaderTile.hlsl",
+			device, "ComputeShaderTileDeferredCS", "cs_5_0", defines));
 
 		// ******************
 		// 创建通道

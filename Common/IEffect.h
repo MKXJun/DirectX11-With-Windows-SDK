@@ -11,9 +11,21 @@
 
 #include "WinMin.h"
 #include <memory>
+#include <vector>
 #include <d3d11_1.h>
 #include <DirectXMath.h>
 
+class Material;
+struct MeshData;
+
+struct MeshDataInput
+{
+	std::vector<ID3D11Buffer*> pVertexBuffers;
+	ID3D11Buffer* pIndexBuffer = nullptr;
+	std::vector<uint32_t> strides;
+	std::vector<uint32_t> offsets;
+	uint32_t indexCount = 0;
+};
 
 class IEffect
 {
@@ -44,21 +56,14 @@ public:
 class IEffectMaterial
 {
 public:
-	virtual void XM_CALLCONV SetAmbinet(const DirectX::XMFLOAT4& ambient) = 0;
-	virtual void XM_CALLCONV SetDiffuse(const DirectX::XMFLOAT4& diffuse) = 0;
-	virtual void XM_CALLCONV SetSpecular(const DirectX::XMFLOAT4& specular) = 0;
+	virtual void SetMaterial(Material& material) = 0;
 };
 
-class IEffectTextureDiffuse
+class IEffectMeshData
 {
 public:
-	virtual void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) = 0;
+	virtual MeshDataInput GetInputData(MeshData& meshData) = 0;
 };
 
-class IEffectTextureNormalMap
-{
-public:
-	virtual void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormal) = 0;
-};
 
 #endif

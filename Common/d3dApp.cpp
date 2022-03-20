@@ -32,9 +32,6 @@ D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidt
 	m_Maximized(false),
 	m_Resizing(false)
 {
-	ZeroMemory(&m_ScreenViewport, sizeof(D3D11_VIEWPORT));
-
-
 	// 让一个全局指针获取这个类，这样我们就可以在Windows消息处理的回调函数
 	// 让这个类调用内部的回调函数了
 	g_pd3dApp = this;
@@ -130,12 +127,8 @@ void D3DApp::OnResize()
 		assert(m_pSwapChain1);
 	}
 
-	// 释放渲染管线输出用到的相关资源
-	m_pRenderTargetView.Reset();
-	m_pDepthStencilView.Reset();
-	m_pDepthStencilBuffer.Reset();
-
 	// 重设交换链并且重新创建渲染目标视图
+	m_pRenderTargetView.Reset();
 	ComPtr<ID3D11Texture2D> backBuffer;
 	HR(m_pSwapChain->ResizeBuffers(1, m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 0));
 	HR(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.GetAddressOf())));
@@ -143,47 +136,8 @@ void D3DApp::OnResize()
 	
 	// 设置调试对象名
 	D3D11SetDebugObjectName(backBuffer.Get(), "BackBuffer[0]");
-	
-	backBuffer.Reset();
-
-
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
-
-	depthStencilDesc.Width = m_ClientWidth;
-	depthStencilDesc.Height = m_ClientHeight;
-	depthStencilDesc.MipLevels = 1;
-	depthStencilDesc.ArraySize = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.SampleDesc.Count = 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
-	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags = 0;
-	depthStencilDesc.MiscFlags = 0;
-
-	// 创建深度缓冲区以及深度模板视图
-	HR(m_pd3dDevice->CreateTexture2D(&depthStencilDesc, nullptr, m_pDepthStencilBuffer.GetAddressOf()));
-	HR(m_pd3dDevice->CreateDepthStencilView(m_pDepthStencilBuffer.Get(), nullptr, m_pDepthStencilView.GetAddressOf()));
-
-
-	// 将渲染目标视图和深度/模板缓冲区结合到管线
-	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-
-	// 设置视口变换
-	m_ScreenViewport.TopLeftX = 0;
-	m_ScreenViewport.TopLeftY = 0;
-	m_ScreenViewport.Width = static_cast<float>(m_ClientWidth);
-	m_ScreenViewport.Height = static_cast<float>(m_ClientHeight);
-	m_ScreenViewport.MinDepth = 0.0f;
-	m_ScreenViewport.MaxDepth = 1.0f;
-
-	m_pd3dImmediateContext->RSSetViewports(1, &m_ScreenViewport);
-	
-	// 设置调试对象名
-	D3D11SetDebugObjectName(m_pDepthStencilBuffer.Get(), "DepthStencilBuffer");
-	D3D11SetDebugObjectName(m_pDepthStencilView.Get(), "DepthStencilView");
 	D3D11SetDebugObjectName(m_pRenderTargetView.Get(), "BackBufferRTV[0]");
-	
+	backBuffer.Reset();
 }
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

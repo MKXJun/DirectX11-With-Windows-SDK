@@ -1,6 +1,7 @@
 #define STBI_WINDOWS_UTF8
 #include "stb_image.h"
 #include "TextureManager.h"
+#include "d3dUtil.h"
 #include "DXTrace.h"
 #include "DDSTextureLoader.h"
 
@@ -34,23 +35,23 @@ void TextureManager::Init(ID3D11Device* device)
 	m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
 }
 
-ID3D11ShaderResourceView* TextureManager::CreateTexture(const std::wstring& filename, bool enableMips, bool forceSRGB)
+ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filename, bool enableMips, bool forceSRGB)
 {
-	if (m_TextureSRVs.count(filename))
-		return m_TextureSRVs[filename].Get();
+	size_t fileID = StringToID(filename);
+	if (m_TextureSRVs.count(fileID))
+		return m_TextureSRVs[fileID].Get();
 
-	auto& res = m_TextureSRVs[filename];
-	
+	auto& res = m_TextureSRVs[fileID];
+	std::wstring wstr = UTF8ToWString(filename);
 	if (FAILED(DirectX::CreateDDSTextureFromFileEx(m_pDevice.Get(),
 		enableMips ? m_pDeviceContext.Get() : nullptr,
-		filename.c_str(), 0, D3D11_USAGE_DEFAULT,
+		wstr.c_str(), 0, D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE, 0, 0, 
 		forceSRGB, nullptr, res.GetAddressOf())))
 	{
 		int width, height, comp;
-		char filename_utf8[500];
-		stbi_convert_wchar_to_utf8(filename_utf8, 500, filename.c_str());
-		stbi_uc* img_data = stbi_load(filename_utf8, &width, &height, &comp, STBI_rgb_alpha);
+		
+		stbi_uc* img_data = stbi_load(filename.data(), &width, &height, &comp, STBI_rgb_alpha);
 		if (img_data)
 		{
 			CD3D11_TEXTURE2D_DESC texDesc(forceSRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM, 
@@ -67,9 +68,19 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(const std::wstring& file
 			HR(m_pDevice->CreateShaderResourceView(tex.Get(), &srvDesc, res.GetAddressOf()));
 			if (enableMips)
 				m_pDeviceContext->GenerateMips(res.Get());
+			
+			D3D11SetDebugObjectName(tex.Get(), filename.data());
 		}
 		stbi_image_free(img_data);
 	}
 
 	return res.Get();
+}
+
+ID3D11ShaderResourceView* TextureManager::GetTexture(std::string_view filename)
+{
+	size_t fileID = StringToID(filename);
+	if (m_TextureSRVs.count(fileID))
+		return m_TextureSRVs[fileID].Get();
+	return nullptr;
 }

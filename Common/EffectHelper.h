@@ -24,118 +24,12 @@
 #endif
 
 #include "WinMin.h"
-#include <string>
+#include <string_view>
 #include <memory>
 #include <d3d11_1.h>
 #include <wrl/client.h>
+#include "Property.h"
 
-// 若类需要内存对齐，从该类派生
-template<class DerivedType>
-struct AlignedType
-{
-	static void* operator new(size_t size)
-	{
-		const size_t alignedSize = __alignof(DerivedType);
-
-		static_assert(alignedSize > 8, "AlignedNew is only useful for types with > 8 byte alignment! Did you forget a __declspec(align) on DerivedType?");
-
-		void* ptr = _aligned_malloc(size, alignedSize);
-
-		if (!ptr)
-			throw std::bad_alloc();
-
-		return ptr;
-	}
-
-	static void operator delete(void* ptr)
-	{
-		_aligned_free(ptr);
-	}
-};
-
-struct CBufferBase
-{
-	template<class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
-
-	CBufferBase() : isDirty() {}
-
-	BOOL isDirty;
-	ComPtr<ID3D11Buffer> cBuffer;
-
-	virtual HRESULT CreateBuffer(ID3D11Device* device) = 0;
-	virtual void UpdateBuffer(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindVS(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindHS(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindDS(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindGS(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindCS(ID3D11DeviceContext* deviceContext) = 0;
-	virtual void BindPS(ID3D11DeviceContext* deviceContext) = 0;
-};
-
-// 用于创建简易Effect框架
-template<UINT startSlot, class T>
-struct CBufferObject : CBufferBase
-{
-	T data;
-
-	CBufferObject() : CBufferBase(), data() {}
-
-	HRESULT CreateBuffer(ID3D11Device* device) override
-	{
-		if (cBuffer != nullptr)
-			return S_OK;
-		D3D11_BUFFER_DESC cbd;
-		ZeroMemory(&cbd, sizeof(cbd));
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.ByteWidth = sizeof(T);
-		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
-	}
-
-	void UpdateBuffer(ID3D11DeviceContext* deviceContext) override
-	{
-		if (isDirty)
-		{
-			isDirty = false;
-			D3D11_MAPPED_SUBRESOURCE mappedData;
-			deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-			memcpy_s(mappedData.pData, sizeof(T), &data, sizeof(T));
-			deviceContext->Unmap(cBuffer.Get(), 0);
-		}
-	}
-
-	void BindVS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->VSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-
-	void BindHS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->HSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-
-	void BindDS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->DSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-
-	void BindGS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->GSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-
-	void BindCS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->CSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-
-	void BindPS(ID3D11DeviceContext* deviceContext) override
-	{
-		deviceContext->PSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
-};
 
 //
 // EffectHelper
@@ -145,12 +39,12 @@ struct CBufferObject : CBufferBase
 // 通过指定添加着色器时提供的名字来设置着色器
 struct EffectPassDesc
 {
-	LPCSTR nameVS = nullptr;
-	LPCSTR nameDS = nullptr;
-	LPCSTR nameHS = nullptr;
-	LPCSTR nameGS = nullptr;
-	LPCSTR namePS = nullptr;
-	LPCSTR nameCS = nullptr;
+	std::string_view nameVS;
+	std::string_view nameDS;
+	std::string_view nameHS;
+	std::string_view nameGS;
+	std::string_view namePS;
+	std::string_view nameCS;
 };
 
 // 常量缓冲区的变量
@@ -192,6 +86,9 @@ struct IEffectConstantBufferVariable
 	// 设置其余类型，允许指定设置范围
 	virtual void SetRaw(const void* data, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) = 0;
 
+	// 设置属性
+	virtual void Set(const Property& prop) = 0;
+
 	// 获取最近一次设置的值，允许指定读取范围
 	virtual HRESULT GetRaw(void* pOutput, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) = 0;
 };
@@ -209,17 +106,17 @@ struct IEffectPass
 	virtual void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilValue) = 0;
 
 	// 获取顶点着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(std::string_view paramName) = 0;
 	// 获取域着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(std::string_view paramName) = 0;
 	// 获取外壳着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(std::string_view paramName) = 0;
 	// 获取几何着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(std::string_view paramName) = 0;
 	// 获取像素着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(std::string_view paramName) = 0;
 	// 获取计算着色器的uniform形参用于设置值
-	virtual std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) = 0;
+	virtual std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(std::string_view paramName) = 0;
 	// 获取所属特效助理
 	virtual EffectHelper* GetEffectHelper() = 0;
 	// 获取特效名
@@ -248,44 +145,52 @@ public:
 	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
 	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
 	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
-	HRESULT AddShader(const std::string& name, ID3D11Device* device, ID3DBlob* blob);
+	HRESULT AddShader(std::string_view name, ID3D11Device* device, ID3DBlob* blob);
+
+	// 编译着色器 或 读取着色器字节码，添加到内部并为其设置标识名
+	// 注意：
+	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
+	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
+	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
+	HRESULT CreateShaderFromFile(std::string_view name, const std::wstring& filename, ID3D11Device* device,
+		LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines = nullptr, ID3DBlob** ppShaderByteCode = nullptr);
 
 	// 添加带流输出的几何着色器并为其设置标识名
 	// 注意：
 	// 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
 	// 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
 	// 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置 
-	HRESULT AddGeometryShaderWithStreamOutput(const std::string& name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob);
+	HRESULT AddGeometryShaderWithStreamOutput(std::string_view name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob);
 
 	// 清空所有内容
 	void Clear();
 
 	// 创建渲染通道
-	HRESULT AddEffectPass(const std::string& effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc);
+	HRESULT AddEffectPass(std::string_view effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc);
 	// 获取特定渲染通道
-	std::shared_ptr<IEffectPass> GetEffectPass(const std::string& effectPassName);
+	std::shared_ptr<IEffectPass> GetEffectPass(std::string_view effectPassName);
 
 	// 获取常量缓冲区的变量用于设置值
-	std::shared_ptr<IEffectConstantBufferVariable> GetConstantBufferVariable(const std::string& name);
+	std::shared_ptr<IEffectConstantBufferVariable> GetConstantBufferVariable(std::string_view name);
 
 	// 按槽设置采样器状态
 	void SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerState);
 	// 按名设置采样器状态(若存在同槽多名称则只能使用按槽设置)
-	void SetSamplerStateByName(const std::string& name, ID3D11SamplerState* samplerState);
+	void SetSamplerStateByName(std::string_view name, ID3D11SamplerState* samplerState);
 	
 	// 按槽设置着色器资源
 	void SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv);
 	// 按名设置着色器资源(若存在同槽多名称则只能使用按槽设置)
-	void SetShaderResourceByName(const std::string& name, ID3D11ShaderResourceView* srv);
+	void SetShaderResourceByName(std::string_view name, ID3D11ShaderResourceView* srv);
 	
 
 	// 按槽设置可读写资源
 	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);
 	// 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
-	void SetUnorderedAccessByName(const std::string& name, ID3D11UnorderedAccessView* uav, UINT initialCount);
+	void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, UINT initialCount);
 
 	// 设置调试对象名
-	void SetDebugObjectName(const std::string& name);
+	void SetDebugObjectName(std::string name);
 
 private:
 	class Impl;

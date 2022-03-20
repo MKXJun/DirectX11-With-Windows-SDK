@@ -88,9 +88,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	// ******************
 	// 创建顶点着色器
 	//
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", nullptr, "GeometryVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("GeometryVS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders\\Forward.hlsl", 
+		device, "GeometryVS", "vs_5_0", nullptr, blob.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
@@ -98,9 +97,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	// ******************
 	// 创建像素着色器
 	//
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", nullptr, "ForwardPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("ForwardPS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ForwardPS", L"Shaders\\Forward.hlsl", 
+		device, "ForwardPS", "ps_5_0"));
 
 	// ******************
 	// 创建通道

@@ -92,12 +92,12 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 		{nullptr, nullptr}
 	};
 
+
 	// ******************
 	// 创建顶点着色器
 	//
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", defines, "GeometryVS", "vs_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("GeometryVS", device, blob.Get()));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders\\Forward.hlsl",
+		device, "GeometryVS", "vs_5_0", nullptr, blob.GetAddressOf()));
 	// 创建顶点布局
 	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
@@ -105,13 +105,10 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	// ******************
 	// 创建像素着色器
 	//
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", defines, "ForwardPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("ForwardPS", device, blob.Get()));
-
-	HR(CreateShaderFromFile(nullptr, L"Shaders\\Forward.hlsl", defines, "ForwardPlusPS", "ps_5_0", blob.ReleaseAndGetAddressOf()));
-	HR(pImpl->m_pEffectHelper->AddShader("ForwardPlusPS", device, blob.Get()));
-
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ForwardPS", L"Shaders\\Forward.hlsl",
+		device, "ForwardPS", "ps_5_0"));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ForwardPlusPS", L"Shaders\\Forward.hlsl",
+		device, "ForwardPlusPS", "ps_5_0"));
 
 	// ******************
 	// 创建通道
@@ -156,9 +153,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 		std::string msaaSamplesStr = std::to_string(msaaSamples);
 		defines[0].Definition = msaaSamplesStr.c_str();
 		std::string shaderName = "ComputeShaderTileForward" + msaaSamplesStr + "xMSAA_CS";
-
-		HR(CreateShaderFromFile(nullptr, L"Shaders\\ComputeShaderTile.hlsl", defines, "ComputeShaderTileForwardCS", "cs_5_0", blob.ReleaseAndGetAddressOf()));
-		HR(pImpl->m_pEffectHelper->AddShader(shaderName, device, blob.Get()));
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderName, L"Shaders\\ComputeShaderTile.hlsl",
+			device, "ComputeShaderTileForwardCS", "cs_5_0", defines));
 
 		passDesc.nameCS = shaderName.c_str();
 		std::string passName = "ComputeShaderTileForward_" + std::to_string(msaaSamples) + "xMSAA";

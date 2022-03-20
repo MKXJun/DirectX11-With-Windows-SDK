@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.12)
 
 add_subdirectory("36 Deferred Rendering")
 add_subdirectory("37 Tile-Based Deferred Rendering")
+add_subdirectory("38 Shadow Mapping II")
 
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Texture)
 	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Texture DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

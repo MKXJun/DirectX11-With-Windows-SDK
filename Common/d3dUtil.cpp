@@ -1,27 +1,32 @@
 #include "d3dUtil.h"
 #include "DDSTextureLoader.h"
-#include "WICTextureLoader.h"
 
 using namespace DirectX;
 
-std::wstring UTF8ToWString(const std::string& utf8str)
+std::wstring UTF8ToWString(std::string_view utf8str)
 {
 	if (utf8str.empty()) return std::wstring();
 	int cbMultiByte = static_cast<int>(utf8str.size());
-	int req = MultiByteToWideChar(CP_UTF8, 0, utf8str.c_str(), cbMultiByte, nullptr, 0);
+	int req = MultiByteToWideChar(CP_UTF8, 0, utf8str.data(), cbMultiByte, nullptr, 0);
 	std::wstring res(req, 0);
-	MultiByteToWideChar(CP_UTF8, 0, utf8str.c_str(), cbMultiByte, &res[0], req);
+	MultiByteToWideChar(CP_UTF8, 0, utf8str.data(), cbMultiByte, &res[0], req);
 	return res;
 }
 
-std::string WStringToUTF8(const std::wstring& wstr)
+std::string WStringToUTF8(std::wstring_view wstr)
 {
 	if (wstr.empty()) return std::string();
 	int cbMultiByte = static_cast<int>(wstr.size());
-	int req = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), cbMultiByte, nullptr, 0, nullptr, nullptr);
+	int req = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), cbMultiByte, nullptr, 0, nullptr, nullptr);
 	std::string res(req, 0);
-	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), cbMultiByte, &res[0], req, nullptr, nullptr);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.data(), cbMultiByte, &res[0], req, nullptr, nullptr);
 	return res;
+}
+
+size_t StringToID(std::string_view str)
+{
+	static std::hash<std::string_view> hash;
+	return hash(str);
 }
 
 //

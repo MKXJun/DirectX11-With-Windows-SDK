@@ -2,11 +2,14 @@
 #include <unordered_map>
 #include <d3d11shader.h>
 #include <d3dcompiler.h>
+#include "d3dUtil.h"
 #include "EffectHelper.h"
 
 using namespace Microsoft::WRL;
 
 # pragma warning(disable: 26812)
+
+
 
 //
 // 代码宏
@@ -14,17 +17,18 @@ using namespace Microsoft::WRL;
 
 #define EFFECTHELPER_CREATE_SHADER(FullShaderType, ShaderType)\
 {\
-	m_##FullShaderType##s[name] = std::make_shared<##FullShaderType##Info>();\
+	m_##FullShaderType##s[nameID] = std::make_shared<##FullShaderType##Info>();\
+    m_##FullShaderType##s[nameID]->name = name;\
 	hr = device->Create##FullShaderType##(blob->GetBufferPointer(), blob->GetBufferSize(),\
-		nullptr, m_##FullShaderType##s[name]->p##ShaderType##.GetAddressOf());\
+		nullptr, m_##FullShaderType##s[nameID]->p##ShaderType##.GetAddressOf());\
 	break;\
 }
 
 #define EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(FullShaderType, ShaderType) \
 {\
-	if (pDesc->name##ShaderType##)\
+	if (!pDesc->name##ShaderType##.empty())\
 	{\
-		auto it = pImpl->m_##FullShaderType##s.find(pDesc->name##ShaderType##);\
+		auto it = pImpl->m_##FullShaderType##s.find(StringToID(pDesc->name##ShaderType##));\
 		if (it != pImpl->m_##FullShaderType##s.end())\
 		{\
 			pEffectPass->p##ShaderType##Info = it->second;\
@@ -44,7 +48,7 @@ using namespace Microsoft::WRL;
 {\
 	for (auto& it : pImpl->m_##FullShaderType##s)\
 	{\
-		std::string name##ShaderType = name + "." + it.first;\
+		std::string name##ShaderType = std::string(name) + "." + it.second->name;\
 		it.second->p##ShaderType##->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name##ShaderType##.size(), name##ShaderType##.c_str());\
 	}\
 }
@@ -192,23 +196,25 @@ struct SamplerState
 };
 
 // 内部使用的常量缓冲区数据
-struct CBufferData : CBufferBase
+struct CBufferData
 {
+	BOOL isDirty = false;
+	ComPtr<ID3D11Buffer> cBuffer;
 	std::unique_ptr<BYTE[]> pData;
 	std::string cbufferName;
-	UINT startSlot;
-	UINT byteWidth;
+	UINT startSlot = 0;
+	UINT byteWidth = 0;
 
-	CBufferData() : CBufferBase(), startSlot(), byteWidth() {}
+	CBufferData() = default;
 	CBufferData(const std::string& name, UINT startSlot, UINT byteWidth, BYTE* initData = nullptr) :
-		CBufferBase(), cbufferName(name), pData(new BYTE[byteWidth]{}), startSlot(startSlot),
+		cbufferName(name), pData(new BYTE[byteWidth]{}), startSlot(startSlot),
 		byteWidth(byteWidth)
 	{
 		if (initData)
 			memcpy_s(pData.get(), byteWidth, initData, byteWidth);
 	}
 
-	HRESULT CreateBuffer(ID3D11Device* device) override
+	HRESULT CreateBuffer(ID3D11Device* device)
 	{
 		if (cBuffer != nullptr)
 			return S_OK;
@@ -221,7 +227,7 @@ struct CBufferData : CBufferBase
 		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
 	}
 
-	void UpdateBuffer(ID3D11DeviceContext* deviceContext) override
+	void UpdateBuffer(ID3D11DeviceContext* deviceContext)
 	{
 		if (isDirty)
 		{
@@ -233,32 +239,32 @@ struct CBufferData : CBufferBase
 		}
 	}
 
-	void BindVS(ID3D11DeviceContext* deviceContext) override
+	void BindVS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->VSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
 
-	void BindHS(ID3D11DeviceContext* deviceContext) override
+	void BindHS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->HSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
 
-	void BindDS(ID3D11DeviceContext* deviceContext) override
+	void BindDS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->DSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
 
-	void BindGS(ID3D11DeviceContext* deviceContext) override
+	void BindGS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->GSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
 
-	void BindCS(ID3D11DeviceContext* deviceContext) override
+	void BindCS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->CSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
 
-	void BindPS(ID3D11DeviceContext* deviceContext) override
+	void BindPS(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->PSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
 	}
@@ -269,8 +275,8 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 	ConstantBufferVariable() = default;
 	~ConstantBufferVariable() = default;
 
-	ConstantBufferVariable(UINT offset, UINT size, CBufferData* pData)
-		: startByteOffset(offset), byteWidth(size), pCBufferData(pData)
+	ConstantBufferVariable(std::string_view name_, UINT offset, UINT size, CBufferData* pData)
+		: name(name_), startByteOffset(offset), byteWidth(size), pCBufferData(pData)
 	{
 	}
 
@@ -336,7 +342,7 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 
 	void SetRaw(const void* data, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) override
 	{
-		if (byteOffset > byteWidth)
+		if (!data || byteOffset > byteWidth)
 			return;
 		if (byteOffset + byteCount > byteWidth)
 			byteCount = byteWidth - byteOffset;
@@ -346,6 +352,18 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 		{
 			memcpy_s(pCBufferData->pData.get() + startByteOffset + byteOffset, byteCount, data, byteCount);
 			pCBufferData->isDirty = true;
+		}
+	}
+
+	void Set(const Property& prop) override
+	{
+		switch (prop.index())
+		{
+		case 0: SetSInt(std::get<0>(prop)); break;
+		case 1: SetUInt(std::get<1>(prop)); break;
+		case 2: SetFloat(std::get<2>(prop)); break;
+		case 3: SetFloatVector(4, (float*)&std::get<3>(prop)); break;
+		case 4: SetFloatMatrix(4, 4, (float*)&std::get<4>(prop)); break;
 		}
 	}
 
@@ -381,6 +399,7 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 		}
 	}
 
+	std::string name;
 	UINT startByteOffset = 0;
 	UINT byteWidth = 0;
 	CBufferData* pCBufferData = nullptr;
@@ -388,68 +407,74 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 
 struct VertexShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11VertexShader> pVS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT unused = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 struct DomainShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11DomainShader> pDS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT unused = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 struct HullShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11HullShader> pHS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT unused = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 struct GeometryShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11GeometryShader> pGS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT unused = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 struct PixelShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11PixelShader> pPS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT rwUseMask = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 struct ComputeShaderInfo
 {
+	std::string name;
 	ComPtr<ID3D11ComputeShader> pCS;
 	UINT cbUseMask = 0;
 	UINT ssUseMask = 0;
 	UINT rwUseMask = 0;
 	UINT srUseMasks[4] = {};
 	std::unique_ptr<CBufferData> pParamData = nullptr;
-	std::unordered_map<std::string, std::shared_ptr<ConstantBufferVariable>> params;
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
 
 
@@ -457,7 +482,7 @@ struct EffectPass : public IEffectPass
 {
 	EffectPass(
 		EffectHelper* _pEffectHelper,
-		const std::string& _passName,
+		std::string_view _passName,
 		std::unordered_map<UINT, CBufferData>& _cBuffers,
 		std::unordered_map<UINT, ShaderResource>& _shaderResources,
 		std::unordered_map<UINT, SamplerState>& _samplers,
@@ -470,12 +495,12 @@ struct EffectPass : public IEffectPass
 	void SetRasterizerState(ID3D11RasterizerState* pRS)  override;
 	void SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask) override;
 	void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilRef)  override;
-	std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(const std::string& paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(const std::string& paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(const std::string& paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(const std::string& paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(const std::string& paramName) override;
-	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(const std::string& paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(std::string_view paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(std::string_view paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(std::string_view paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> GSGetParamByName(std::string_view paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> PSGetParamByName(std::string_view paramName) override;
+	std::shared_ptr<IEffectConstantBufferVariable> CSGetParamByName(std::string_view paramName) override;
 	EffectHelper* GetEffectHelper() override;
 	const std::string& GetPassName() override;
 
@@ -525,29 +550,28 @@ public:
 	~Impl() = default;
 
 	// 更新收集着色器反射信息
-	HRESULT UpdateShaderReflection(const std::string& name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag);
+	HRESULT UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag);
 	// 清空所有资源与反射信息
 	void Clear();
 	//根据Blob创建着色器并指定标识名
-	HRESULT CreateShaderFromBlob(const std::string& name, ID3D11Device* device, UINT shaderFlag,
+	HRESULT CreateShaderFromBlob(std::string_view name, ID3D11Device* device, UINT shaderFlag,
 		ID3DBlob* blob);
 
 public:
-	std::unordered_map<std::string, std::shared_ptr<EffectPass>> m_EffectPasses;				// 渲染通道
+	std::unordered_map<size_t, std::shared_ptr<EffectPass>> m_EffectPasses;			// 渲染通道
 
-	std::unordered_map<std::string,																// 常量缓冲区的变量
-		std::shared_ptr<ConstantBufferVariable>> m_ConstantBufferVariables;
-	std::unordered_map<UINT, CBufferData> m_CBuffers;											// 常量缓冲区临时缓存的数据
-	std::unordered_map<UINT, ShaderResource> m_ShaderResources;									// 着色器资源
-	std::unordered_map<UINT, SamplerState> m_Samplers;											// 采样器
-	std::unordered_map<UINT, RWResource> m_RWResources;											// 可读写资源
+	std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> m_ConstantBufferVariables;  // 常量缓冲区的变量
+	std::unordered_map<UINT, CBufferData> m_CBuffers;											    // 常量缓冲区临时缓存的数据
+	std::unordered_map<UINT, ShaderResource> m_ShaderResources;									    // 着色器资源
+	std::unordered_map<UINT, SamplerState> m_Samplers;											    // 采样器
+	std::unordered_map<UINT, RWResource> m_RWResources;											    // 可读写资源
 
-	std::unordered_map<std::string, std::shared_ptr<VertexShaderInfo>> m_VertexShaders;			// 顶点着色器
-	std::unordered_map<std::string, std::shared_ptr<HullShaderInfo>> m_HullShaders;				// 外壳着色器
-	std::unordered_map<std::string, std::shared_ptr<DomainShaderInfo>> m_DomainShaders;			// 域着色器
-	std::unordered_map<std::string, std::shared_ptr<GeometryShaderInfo>> m_GeometryShaders;		// 几何着色器
-	std::unordered_map<std::string, std::shared_ptr<PixelShaderInfo>> m_PixelShaders;			// 像素着色器
-	std::unordered_map<std::string, std::shared_ptr<ComputeShaderInfo>> m_ComputeShaders;		// 计算着色器
+	std::unordered_map<size_t, std::shared_ptr<VertexShaderInfo>> m_VertexShaders;	// 顶点着色器
+	std::unordered_map<size_t, std::shared_ptr<HullShaderInfo>> m_HullShaders;		// 外壳着色器
+	std::unordered_map<size_t, std::shared_ptr<DomainShaderInfo>> m_DomainShaders;	// 域着色器
+	std::unordered_map<size_t, std::shared_ptr<GeometryShaderInfo>> m_GeometryShaders;// 几何着色器
+	std::unordered_map<size_t, std::shared_ptr<PixelShaderInfo>> m_PixelShaders;		// 像素着色器
+	std::unordered_map<size_t, std::shared_ptr<ComputeShaderInfo>> m_ComputeShaders;	// 计算着色器
 
 
 													
@@ -558,7 +582,7 @@ public:
 //
 
 
-HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag)
+HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag)
 {
 	HRESULT hr;
 
@@ -566,6 +590,8 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 	hr = pShaderReflection->GetDesc(&sd);
 	if (FAILED(hr))
 		return hr;
+
+	size_t nameID = StringToID(name);
 
 	for (UINT i = 0;; ++i)
 	{
@@ -602,12 +628,12 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 				{
 					switch (shaderFlag)
 					{
-					case VertexShader: m_VertexShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
-					case DomainShader: m_DomainShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
-					case HullShader: m_HullShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
-					case GeometryShader: m_GeometryShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
-					case PixelShader: m_PixelShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
-					case ComputeShader: m_ComputeShaders[name]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case VertexShader: m_VertexShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case DomainShader: m_DomainShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case HullShader: m_HullShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case GeometryShader: m_GeometryShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case PixelShader: m_PixelShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
+					case ComputeShader: m_ComputeShaders[nameID]->cbUseMask |= (1 << sibDesc.BindPoint); break;
 					}
 				}
 			}
@@ -615,12 +641,12 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 			{
 				switch (shaderFlag)
 				{
-				case VertexShader: m_VertexShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
-				case DomainShader: m_DomainShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
-				case HullShader: m_HullShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
-				case GeometryShader: m_GeometryShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
-				case PixelShader: m_PixelShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
-				case ComputeShader: m_ComputeShaders[name]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case VertexShader: m_VertexShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case DomainShader: m_DomainShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case HullShader: m_HullShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case GeometryShader: m_GeometryShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case PixelShader: m_PixelShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
+				case ComputeShader: m_ComputeShaders[nameID]->pParamData = std::make_unique<CBufferData>(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr); break;
 				}
 			}
 
@@ -633,6 +659,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 				if (FAILED(hr))
 					return hr;
 
+				size_t svNameID = StringToID(svDesc.Name);
 				// 着色器形参需要特殊对待
 				// 记录着色器的uniform形参
 				// **忽略着色器形参默认值**
@@ -640,34 +667,34 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 				{
 					switch (shaderFlag)
 					{
-					case VertexShader: m_VertexShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_VertexShaders[name]->pParamData.get());
+					case VertexShader: m_VertexShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_VertexShaders[nameID]->pParamData.get());
 						break;
-					case DomainShader: m_DomainShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_DomainShaders[name]->pParamData.get());
+					case DomainShader: m_DomainShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_DomainShaders[nameID]->pParamData.get());
 						break;
-					case HullShader: m_HullShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_HullShaders[name]->pParamData.get());
+					case HullShader: m_HullShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_HullShaders[nameID]->pParamData.get());
 						break;
-					case GeometryShader: m_GeometryShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_GeometryShaders[name]->pParamData.get());
+					case GeometryShader: m_GeometryShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_GeometryShaders[nameID]->pParamData.get());
 						break;
-					case PixelShader: m_PixelShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_PixelShaders[name]->pParamData.get());
+					case PixelShader: m_PixelShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_PixelShaders[nameID]->pParamData.get());
 						break;
-					case ComputeShader: m_ComputeShaders[name]->params[svDesc.Name] =
-						std::make_shared<ConstantBufferVariable>(svDesc.StartOffset, svDesc.Size, m_ComputeShaders[name]->pParamData.get());
+					case ComputeShader: m_ComputeShaders[nameID]->params[svNameID] =
+						std::make_shared<ConstantBufferVariable>(svDesc.Name, svDesc.StartOffset, svDesc.Size, m_ComputeShaders[nameID]->pParamData.get());
 						break;
 					}
 				}
 				// 常量缓冲区的成员
 				else
 				{	
-					m_ConstantBufferVariables[svDesc.Name] = std::make_shared<ConstantBufferVariable>(
-						svDesc.StartOffset, svDesc.Size, &m_CBuffers[sibDesc.BindPoint]);
+					m_ConstantBufferVariables[svNameID] = std::make_shared<ConstantBufferVariable>(
+						svDesc.Name, svDesc.StartOffset, svDesc.Size, &m_CBuffers[sibDesc.BindPoint]);
 					// 如果有默认值，对其赋初值
 					if (svDesc.DefaultValue)
-						m_ConstantBufferVariables[svDesc.Name]->SetRaw(svDesc.DefaultValue);
+						m_ConstantBufferVariables[svNameID]->SetRaw(svDesc.DefaultValue);
 				}
 			}
 			
@@ -690,12 +717,12 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 			// 标记该着色器使用了当前着色器资源
 			switch (shaderFlag)
 			{
-			case VertexShader: m_VertexShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
-			case DomainShader: m_DomainShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
-			case HullShader: m_HullShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
-			case GeometryShader: m_GeometryShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
-			case PixelShader: m_PixelShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
-			case ComputeShader: m_ComputeShaders[name]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case VertexShader: m_VertexShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case DomainShader: m_DomainShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case HullShader: m_HullShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case GeometryShader: m_GeometryShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case PixelShader: m_PixelShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
+			case ComputeShader: m_ComputeShaders[nameID]->srUseMasks[sibDesc.BindPoint / 32] |= (1 << (sibDesc.BindPoint % 32)); break;
 			}
 
 		}
@@ -712,12 +739,12 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 			// 标记该着色器使用了当前采样器
 			switch (shaderFlag)
 			{
-			case VertexShader: m_VertexShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
-			case DomainShader: m_DomainShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
-			case HullShader: m_HullShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
-			case GeometryShader: m_GeometryShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
-			case PixelShader: m_PixelShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
-			case ComputeShader: m_ComputeShaders[name]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case VertexShader: m_VertexShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case DomainShader: m_DomainShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case HullShader: m_HullShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case GeometryShader: m_GeometryShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case PixelShader: m_PixelShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
+			case ComputeShader: m_ComputeShaders[nameID]->ssUseMask |= (1 << sibDesc.BindPoint); break;
 			}
 
 		}
@@ -736,8 +763,8 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(const std::string& name, ID3D
 			// 标记该着色器使用了当前可读写资源
 			switch (shaderFlag)
 			{
-			case PixelShader: m_PixelShaders[name]->rwUseMask |= (1 << sibDesc.BindPoint); break;
-			case ComputeShader: m_ComputeShaders[name]->rwUseMask |= (1 << sibDesc.BindPoint); break;
+			case PixelShader: m_PixelShaders[nameID]->rwUseMask |= (1 << sibDesc.BindPoint); break;
+			case ComputeShader: m_ComputeShaders[nameID]->rwUseMask |= (1 << sibDesc.BindPoint); break;
 			}
 		}
 	}
@@ -763,7 +790,7 @@ void EffectHelper::Impl::Clear()
 	m_ComputeShaders.clear();
 }
 
-HRESULT EffectHelper::Impl::CreateShaderFromBlob(const std::string& name, ID3D11Device* device, UINT shaderFlag,
+HRESULT EffectHelper::Impl::CreateShaderFromBlob(std::string_view name, ID3D11Device* device, UINT shaderFlag,
 	ID3DBlob* blob)
 {
 	HRESULT hr = 0;
@@ -774,6 +801,7 @@ HRESULT EffectHelper::Impl::CreateShaderFromBlob(const std::string& name, ID3D11
 	ComPtr<ID3D11PixelShader> pPS;
 	ComPtr<ID3D11ComputeShader> pCS;
 	// 创建着色器
+	size_t nameID = StringToID(name);
 	switch (shaderFlag)
 	{
 	case PixelShader: EFFECTHELPER_CREATE_SHADER(PixelShader, PS);
@@ -800,7 +828,7 @@ EffectHelper::~EffectHelper()
 {
 }
 
-HRESULT EffectHelper::AddShader(const std::string& name, ID3D11Device* device, ID3DBlob* blob)
+HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3DBlob* blob)
 {
 	if (name.empty())
 		return E_INVALIDARG;
@@ -828,7 +856,53 @@ HRESULT EffectHelper::AddShader(const std::string& name, ID3D11Device* device, I
 	return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
 }
 
-HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(const std::string& name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
+HRESULT EffectHelper::CreateShaderFromFile(std::string_view name, const std::wstring& filename,
+	ID3D11Device* device, LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines, ID3DBlob** ppShaderByteCode)
+{
+	size_t pos = filename.find_last_of(L".cso");
+	ID3DBlob* pBlobOut = nullptr;
+	HRESULT hr;
+	if (pos != std::wstring::npos && pos + 4 == filename.size())
+	{
+		hr = D3DReadFileToBlob(filename.c_str(), &pBlobOut);
+		if (FAILED(hr))
+			return hr;
+	}
+	else
+	{
+		DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+		// 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
+		// 但仍然允许着色器进行优化操作
+		dwShaderFlags |= D3DCOMPILE_DEBUG;
+
+		// 在Debug环境下禁用优化以避免出现一些不合理的情况
+		dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+		ID3DBlob* errorBlob = nullptr;
+		hr = D3DCompileFromFile(filename.c_str(), pDefines, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint, shaderModel,
+			dwShaderFlags, 0, &pBlobOut, &errorBlob);
+		if (FAILED(hr))
+		{
+			if (errorBlob != nullptr)
+			{
+				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+			}
+			errorBlob->Release();
+			return hr;
+		}
+	}
+
+	hr = AddShader(name, device, pBlobOut);
+	if (ppShaderByteCode)
+		*ppShaderByteCode = pBlobOut;
+	else
+		pBlobOut->Release();
+
+	return hr;
+}
+
+HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(std::string_view name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
 {
 	if (name.empty() || !gsWithSO)
 		return E_INVALIDARG;
@@ -850,8 +924,9 @@ HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(const std::string& name,
 	if (shaderFlag != GeometryShader)
 		return E_INVALIDARG;
 
-	pImpl->m_GeometryShaders[name] = std::make_shared<GeometryShaderInfo>();
-	pImpl->m_GeometryShaders[name]->pGS = gsWithSO;
+	size_t nameID = StringToID(name);
+	pImpl->m_GeometryShaders[nameID] = std::make_shared<GeometryShaderInfo>();
+	pImpl->m_GeometryShaders[nameID]->pGS = gsWithSO;
 
 	// 建立着色器反射
 	return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
@@ -862,17 +937,19 @@ void EffectHelper::Clear()
 	pImpl->Clear();
 }
 
-HRESULT EffectHelper::AddEffectPass(const std::string& effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc)
+HRESULT EffectHelper::AddEffectPass(std::string_view effectPassName, ID3D11Device* device, const EffectPassDesc* pDesc)
 {
 	if (!pDesc || effectPassName.empty())
 		return E_INVALIDARG;
 
+	size_t effectPassID = StringToID(effectPassName);
+
 	// 不允许重复添加
-	auto it = pImpl->m_EffectPasses.find(effectPassName);
+	auto it = pImpl->m_EffectPasses.find(effectPassID);
 	if (it != pImpl->m_EffectPasses.end())
 		return ERROR_OBJECT_NAME_EXISTS;
 
-	auto pEffectPass = pImpl->m_EffectPasses[effectPassName] = 
+	auto pEffectPass = pImpl->m_EffectPasses[effectPassID] =
 		std::make_shared<EffectPass>(this, effectPassName, pImpl->m_CBuffers, pImpl->m_ShaderResources, pImpl->m_Samplers, pImpl->m_RWResources);
 
 	EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(VertexShader, VS);
@@ -885,17 +962,17 @@ HRESULT EffectHelper::AddEffectPass(const std::string& effectPassName, ID3D11Dev
 	return S_OK;
 }
 
-std::shared_ptr<IEffectPass> EffectHelper::GetEffectPass(const std::string& effectPassName)
+std::shared_ptr<IEffectPass> EffectHelper::GetEffectPass(std::string_view effectPassName)
 {
-	auto it = pImpl->m_EffectPasses.find(effectPassName);
+	auto it = pImpl->m_EffectPasses.find(StringToID(effectPassName));
 	if (it != pImpl->m_EffectPasses.end())
 		return it->second;
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectHelper::GetConstantBufferVariable(const std::string& name)
+std::shared_ptr<IEffectConstantBufferVariable> EffectHelper::GetConstantBufferVariable(std::string_view name)
 {
-	auto it = pImpl->m_ConstantBufferVariables.find(name);
+	auto it = pImpl->m_ConstantBufferVariables.find(StringToID(name));
 	if (it != pImpl->m_ConstantBufferVariables.end())
 		return it->second;
 	else
@@ -909,7 +986,7 @@ void EffectHelper::SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerS
 		it->second.pSS = samplerState;
 }
 
-void EffectHelper::SetSamplerStateByName(const std::string& name, ID3D11SamplerState* samplerState)
+void EffectHelper::SetSamplerStateByName(std::string_view name, ID3D11SamplerState* samplerState)
 {
 	auto it = std::find_if(pImpl->m_Samplers.begin(), pImpl->m_Samplers.end(),
 		[name](const std::pair<UINT, SamplerState>& p) {
@@ -926,7 +1003,7 @@ void EffectHelper::SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* 
 		it->second.pSRV = srv;
 }
 
-void EffectHelper::SetShaderResourceByName(const std::string& name, ID3D11ShaderResourceView* srv)
+void EffectHelper::SetShaderResourceByName(std::string_view name, ID3D11ShaderResourceView* srv)
 {
 	auto it = std::find_if(pImpl->m_ShaderResources.begin(), pImpl->m_ShaderResources.end(),
 		[name](const std::pair<UINT, ShaderResource>& p) {
@@ -947,7 +1024,7 @@ void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView
 		
 }
 
-void EffectHelper::SetUnorderedAccessByName(const std::string& name, ID3D11UnorderedAccessView* uav, UINT initialCount)
+void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, UINT initialCount)
 {
 	auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
 		[name](const std::pair<UINT, RWResource>& p) {
@@ -960,7 +1037,7 @@ void EffectHelper::SetUnorderedAccessByName(const std::string& name, ID3D11Unord
 	}
 }
 
-void EffectHelper::SetDebugObjectName(const std::string& name)
+void EffectHelper::SetDebugObjectName(std::string name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
 	for (auto& it : pImpl->m_CBuffers)
@@ -1004,68 +1081,68 @@ void EffectPass::SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stenci
 	this->stencilRef = stencilRef;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::VSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::VSGetParamByName(std::string_view paramName)
 {
 	if (pVSInfo)
 	{
-		auto it = pVSInfo->params.find(paramName);
+		auto it = pVSInfo->params.find(StringToID(paramName));
 		if (it != pVSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pVSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pVSParamData.get());
 	}
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::DSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::DSGetParamByName(std::string_view paramName)
 {
 	if (pDSInfo)
 	{
-		auto it = pDSInfo->params.find(paramName);
+		auto it = pDSInfo->params.find(StringToID(paramName));
 		if (it != pDSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pDSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pDSParamData.get());
 	}
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::HSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::HSGetParamByName(std::string_view paramName)
 {
 	if (pHSInfo)
 	{
-		auto it = pHSInfo->params.find(paramName);
+		auto it = pHSInfo->params.find(StringToID(paramName));
 		if (it != pHSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pHSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pHSParamData.get());
 	}
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::GSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::GSGetParamByName(std::string_view paramName)
 {
 	if (pGSInfo)
 	{
-		auto it = pGSInfo->params.find(paramName);
+		auto it = pGSInfo->params.find(StringToID(paramName));
 		if (it != pGSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pGSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pGSParamData.get());
 	}
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::PSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::PSGetParamByName(std::string_view paramName)
 {
 	if (pPSInfo)
 	{
-		auto it = pPSInfo->params.find(paramName);
+		auto it = pPSInfo->params.find(StringToID(paramName));
 		if (it != pPSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pPSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pPSParamData.get());
 	}
 	return nullptr;
 }
 
-std::shared_ptr<IEffectConstantBufferVariable> EffectPass::CSGetParamByName(const std::string& paramName)
+std::shared_ptr<IEffectConstantBufferVariable> EffectPass::CSGetParamByName(std::string_view paramName)
 {
 	if (pCSInfo)
 	{
-		auto it = pCSInfo->params.find(paramName);
+		auto it = pCSInfo->params.find(StringToID(paramName));
 		if (it != pCSInfo->params.end())
-			return std::make_shared<ConstantBufferVariable>(it->second->startByteOffset, it->second->byteWidth, pCSParamData.get());
+			return std::make_shared<ConstantBufferVariable>(paramName, it->second->startByteOffset, it->second->byteWidth, pCSParamData.get());
 	}
 	return nullptr;
 }

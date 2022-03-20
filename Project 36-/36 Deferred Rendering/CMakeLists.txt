@@ -23,11 +23,9 @@ target_link_libraries(36_Deferred_Rendering d3d11.lib dxgi.lib dxguid.lib D3DCom
 include_directories(../../ImGui)
 include_directories(../../Common)
 
-aux_source_directory(../../ImGui IMGUI_SRCS)
-file(GLOB IMGUI_HEADER_FILES ../../ImGui/*.h)
+target_link_libraries(36_Deferred_Rendering ImGui)
 file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-target_sources(36_Deferred_Rendering PRIVATE ${IMGUI_SRCS} ${IMGUI_HEADER_FILES})
-source_group("ImGui" FILES ${IMGUI_SRCS} ${IMGUI_HEADER_FILES})
+
 source_group("Common" FILES ${COMMON_FILES})
 source_group("Shaders" FILES ${SHADER_FILES})
 set_target_properties(36_Deferred_Rendering PROPERTIES OUTPUT_NAME "36 Deferred Rendering")

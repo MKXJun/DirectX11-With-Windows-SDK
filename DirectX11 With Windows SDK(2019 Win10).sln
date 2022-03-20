@@ -71,6 +71,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "36 Deferred Rendering(2019 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "37 Tile-Based Deferred Rendering(2019 Win10)", "Project 36-\37 Tile-Based Deferred Rendering\37 Tile-Based Deferred Rendering(2019 Win10).vcxproj", "{FE960566-AC64-4AB5-9944-438582D0EB5A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "38 Shadow Mapping II(2019 Win10)", "Project 36-\38 Shadow Mapping II\38 Shadow Mapping II(2019 Win10).vcxproj", "{70C36DAA-3138-442A-9D19-AAA0C644D7E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -351,6 +353,14 @@ Global
 		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Release|x64.Build.0 = Release|x64
 		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Release|x86.ActiveCfg = Release|Win32
 		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Release|x86.Build.0 = Release|Win32
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x64.ActiveCfg = Debug|x64
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x64.Build.0 = Debug|x64
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x86.ActiveCfg = Debug|Win32
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x86.Build.0 = Debug|Win32
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x64.ActiveCfg = Release|x64
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x64.Build.0 = Release|x64
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x86.ActiveCfg = Release|Win32
+		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

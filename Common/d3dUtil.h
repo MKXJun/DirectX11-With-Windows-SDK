@@ -16,6 +16,7 @@
 #include <d3dcompiler.h>
 #include <vector>
 #include <string>
+#include <string_view>
 
 //
 // 宏相关
@@ -34,10 +35,14 @@
 // 文本转换函数
 //
 
-std::wstring UTF8ToWString(const std::string& utf8str);
+std::wstring UTF8ToWString(std::string_view utf8str);
 
-std::string WStringToUTF8(const std::wstring& wstr);
+std::string WStringToUTF8(std::wstring_view wstr);
 
+//
+// 获取ID
+//
+size_t StringToID(std::string_view str);
 
 //
 // 辅助调试相关函数
@@ -49,45 +54,10 @@ std::string WStringToUTF8(const std::wstring& wstr);
 // 为D3D设备创建出来的对象在图形调试器中设置对象名
 // [In]resource				D3D11设备创建出的对象
 // [In]name					对象名
-template<UINT TNameLength>
-inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
+inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
-#else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
-#endif
-}
-
-// ------------------------------
-// D3D11SetDebugObjectName函数
-// ------------------------------
-// 为D3D设备创建出来的对象在图形调试器中设置对象名
-// [In]resource				D3D11设备创建出的对象
-// [In]name					对象名
-// [In]length				字符串长度
-inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ LPCSTR name, _In_ UINT length)
-{
-#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
-#else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
-#endif
-}
-
-// ------------------------------
-// D3D11SetDebugObjectName函数
-// ------------------------------
-// 为D3D设备创建出来的对象在图形调试器中设置对象名
-// [In]resource				D3D11设备创建出的对象
-// [In]name					对象名
-inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const std::string& name)
-{
-#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+	resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.data());
 #else
 	UNREFERENCED_PARAMETER(resource);
 	UNREFERENCED_PARAMETER(name);
@@ -108,22 +78,7 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::
 #endif
 }
 
-// ------------------------------
-// DXGISetDebugObjectName函数
-// ------------------------------
-// 为DXGI对象在图形调试器中设置对象名
-// [In]object				DXGI对象
-// [In]name					对象名
-template<UINT TNameLength>
-inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&name)[TNameLength])
-{
-#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
-#else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
-#endif
-}
+
 
 // ------------------------------
 // DXGISetDebugObjectName函数
@@ -131,28 +86,10 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&na
 // 为DXGI对象在图形调试器中设置对象名
 // [In]object				DXGI对象
 // [In]name					对象名
-// [In]length				字符串长度
-inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ LPCSTR name, _In_ UINT length)
+inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
-#else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
-#endif
-}
-
-// ------------------------------
-// DXGISetDebugObjectName函数
-// ------------------------------
-// 为DXGI对象在图形调试器中设置对象名
-// [In]object				DXGI对象
-// [In]name					对象名
-inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const std::string& name)
-{
-#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+	object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.data());
 #else
 	UNREFERENCED_PARAMETER(object);
 	UNREFERENCED_PARAMETER(name);

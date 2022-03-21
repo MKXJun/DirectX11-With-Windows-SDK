@@ -1,18 +1,19 @@
 //***************************************************************************************
-// d3dUtil.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
+// XUtil.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
-// D3D实用工具集
-// Direct3D utility tools.
+// 实用工具集
+// utility tools.
 //***************************************************************************************
 
 #pragma once
 
-#ifndef D3DUTIL_H
-#define D3DUTIL_H
+#ifndef XUTIL_H
+#define XUTIL_H
 
-#include <d3d11_1.h>			// 已包含Windows.h
-#include <DirectXMath.h>        // 已包含DirectXMath.h
+#include "WinMin.h"
+#include <d3d11_1.h>
+#include <DirectXMath.h>
 #include <d3dcompiler.h>
 #include <vector>
 #include <string>
@@ -35,14 +36,34 @@
 // 文本转换函数
 //
 
-std::wstring UTF8ToWString(std::string_view utf8str);
+inline std::wstring UTF8ToWString(std::string_view utf8str)
+{
+	if (utf8str.empty()) return std::wstring();
+	int cbMultiByte = static_cast<int>(utf8str.size());
+	int req = MultiByteToWideChar(CP_UTF8, 0, utf8str.data(), cbMultiByte, nullptr, 0);
+	std::wstring res(req, 0);
+	MultiByteToWideChar(CP_UTF8, 0, utf8str.data(), cbMultiByte, &res[0], req);
+	return res;
+}
 
-std::string WStringToUTF8(std::wstring_view wstr);
+inline std::string WStringToUTF8(std::wstring_view wstr)
+{
+	if (wstr.empty()) return std::string();
+	int cbMultiByte = static_cast<int>(wstr.size());
+	int req = WideCharToMultiByte(CP_UTF8, 0, wstr.data(), cbMultiByte, nullptr, 0, nullptr, nullptr);
+	std::string res(req, 0);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.data(), cbMultiByte, &res[0], req, nullptr, nullptr);
+	return res;
+}
 
 //
 // 获取ID
 //
-size_t StringToID(std::string_view str);
+inline size_t StringToID(std::string_view str)
+{
+	static std::hash<std::string_view> hash;
+	return hash(str);
+}
 
 //
 // 辅助调试相关函数
@@ -78,8 +99,6 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::
 #endif
 }
 
-
-
 // ------------------------------
 // DXGISetDebugObjectName函数
 // ------------------------------
@@ -111,28 +130,6 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::nullptr_t
 }
 
 //
-// 着色器编译相关函数
-//
-
-// ------------------------------
-// CreateShaderFromFile函数
-// ------------------------------
-// [In]csoFileNameInOut 编译好的着色器二进制文件(.cso)，若有指定则优先寻找该文件并读取
-// [In]hlslFileName     着色器代码，若未找到着色器二进制文件则编译着色器代码
-// [In]pDefines         预添加宏定义数组，以{nullptr, nullptr}元素结尾
-// [In]entryPoint       入口点(指定开始的函数)
-// [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
-// [Out]ppBlobOut       输出着色器二进制信息
-HRESULT CreateShaderFromFile(
-	const WCHAR* csoFileNameInOut,
-	const WCHAR* hlslFileName,
-	const D3D_SHADER_MACRO* pDefines,
-	LPCSTR entryPoint,
-	LPCSTR shaderModel,
-	ID3DBlob** ppBlobOut);
-
-
-//
 // 数学相关函数
 //
 
@@ -155,7 +152,7 @@ namespace XMath
 
 	inline float Lerp(float a, float b, float t)
 	{
-		return a + (b - a) * t;
+		return (1.0f - t) * a + t * b;
 	}
 
 	inline float Clamp(float val, float minVal, float maxVal)

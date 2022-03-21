@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.34.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+[![Build status](https://ci.appveyor.com/api/projects/status/fv2f3emvusqsuj49?svg=true)](https://ci.appveyor.com/project/MKXJun/directx11-with-windows-sdk-hk9xb) ![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.34.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -7,9 +7,10 @@
 
 ## 最近更新
 
-2022/3/14 Ver1.34.0
+2022/3/21 Ver1.34.1
 
-- 添加项目Tile-Based Deferred Shading
+- 36章起的项目，模型加载从tinyobjloader替换为Assimp
+- 添加Cmake配置、Assimp编译配置、自建项目教程
 
 ## 博客教程
 
@@ -28,13 +29,13 @@ QQ群号：727623616
 ## 项目概况
 
 语言:</br>
-- C++14</br>
+- C++14/17</br>
 - HLSL Shader Model 5.0
 
-目前项目添加了下述代码库或文件：
+目前项目使用了下述代码库或文件：
 - [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-36章。</br>
 - [nothings/stb](https://github.com/nothings/stb)：使用其stb_image</br>
-- [tinyobjloader/tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)</br>
+- [assimp/assimp](https://github.com/assimp/assimp)：模型加载</br>
 - [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
 - [DirectXTex/WICTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/WICTextureLoader)</br>
 - [DirectXTex/ScreenGrab](https://github.com/Microsoft/DirectXTex/tree/master/ScreenGrab)</br>
@@ -43,15 +44,15 @@ QQ群号：727623616
 
 作为教程演示项目，这里并不是以实现一个软引擎为目标。建议读者在跟随教程学习的同时要动手实践。
 
-## 如何打开教程项目
+## 安装Assimp
+
+打开36章之后的项目需要安装Assimp，具体过程**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+
+## 打开教程项目
 
 **对于Win10系统，直接打开DirectX11 With Windows SDK(2019 Win10).sln**
 
-**对于Win7和Win8.x的系统，请使用cmake构建项目**
-
-可使用cmake-gui.exe构建项目，其中Win 7系统的用户需要勾选`WIN7_SYSTEM_SUPPORT`。
-
-若取消勾选`USE_IMGUI`，则使用的是原来Direct2D和DWrite作为UI的版本。
+**对于Win7和Win8.x的系统，请阅读 cmake构建项目一节 **
 
 建议一次性生成所有项目，比单独生成会快很多。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
 
@@ -62,6 +63,24 @@ QQ群号：727623616
 > 2. **VS2015在安装时需要勾选VS2015 更新 3， 以及Tools(1.4.1)和Windows 10 SDK(10.0.14393)！**
 > 3. Win7系统需要安装Service Pack 1以及KB2670838补丁以支持Direct3D 11.1
 > 4. 建议安装配置表列出的VS所使用的对应版本的Windows SDK
+
+## CMake构建项目
+
+首先需要安装Assimp，**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+
+安装好后，使用`cmake-gui.exe`填写源码路径和构建路径，然后会弹出下述变量：
+
+![004](README\004.png)
+
+- `Assimp_INSTALLED_DIR`：需要填写，项目36之后的会用到Assimp
+- `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
+- `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启
+
+再次点击`Configure`会看到`Assimp_DIR`的出现，说明找到了Assimp，然后就可以生成项目。
+
+## 创建自己的项目
+
+如果有想要把源码copy到自己的VS项目，又或者是想在VSCode来编写的，**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Your-Project/README.md)**
 
 ## 支持/赞赏博主
 **博客和项目维护不易，如果本系列教程对您有所帮助，希望能够扫码支持一下博主。**
@@ -79,3 +98,8 @@ QQ群号：727623616
 
 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
 
+
+
+
+
+![image-20220321092311166](E:\Code\C++\DirectX11-With-Windows-SDK\README\image-20220321092311166.png)

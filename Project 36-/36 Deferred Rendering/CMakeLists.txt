@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.12)
 
+set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
 if (WIN7_SYSTEM_SUPPORT MATCHES ON)
 	add_compile_definitions(_WIN32_WINNT=0x601)
@@ -20,11 +21,17 @@ endforeach()
 add_executable(36_Deferred_Rendering WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_FILES} ${COMMON_FILES})
 target_link_libraries(36_Deferred_Rendering d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
-include_directories(../../ImGui)
-include_directories(../../Common)
+# Assimp
+target_link_libraries(36_Deferred_Rendering "${Assimp_INSTALLED_DIR}/lib/assimp-vc${MSVC_TOOLSET_VERSION}-mt$<$<CONFIG:Debug>:d>.lib")
+include_directories(${Assimp_INSTALLED_DIR}/include)
+set_target_properties(36_Deferred_Rendering PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${Assimp_INSTALLED_DIR}/bin")
 
+# ImGui
 target_link_libraries(36_Deferred_Rendering ImGui)
 file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+# Common
+include_directories(../../Common)
 
 source_group("Common" FILES ${COMMON_FILES})
 source_group("Shaders" FILES ${SHADER_FILES})

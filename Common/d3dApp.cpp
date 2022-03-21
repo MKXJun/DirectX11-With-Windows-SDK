@@ -1,5 +1,5 @@
 #include "d3dApp.h"
-#include "d3dUtil.h"
+#include "XUtil.h"
 #include "DXTrace.h"
 #include <sstream>
 

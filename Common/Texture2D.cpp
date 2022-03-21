@@ -1,5 +1,5 @@
 #include "Texture2D.h"
-#include "d3dUtil.h"
+#include "XUtil.h"
 #include <cassert>
 
 #pragma warning(disable: 26812)

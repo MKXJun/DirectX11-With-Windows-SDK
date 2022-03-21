@@ -5,6 +5,7 @@
 #include "d3dApp.h"
 #include "CameraController.h"
 #include "Effects.h"
+#include "RenderStates.h"
 #include "GameObject.h"
 #include "Collision.h"
 #include "Texture2D.h"

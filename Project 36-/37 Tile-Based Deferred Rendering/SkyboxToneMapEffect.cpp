@@ -1,13 +1,16 @@
 #include "Effects.h"
-#include "d3dUtil.h"
-#include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
+#include "XUtil.h"
+#include "RenderStates.h"
+#include "EffectHelper.h"
 #include "DXTrace.h"
 #include "Vertex.h"
+#include "TextureManager.h"
 using namespace DirectX;
 
+# pragma warning(disable: 26812)
 
 //
-// SkyEffect::Impl 需要先于SkyEffect的定义
+// SkyboxToneMapEffect::Impl 需要先于SkyboxToneMapEffect的定义
 //
 
 class SkyboxToneMapEffect::Impl
@@ -35,7 +38,7 @@ public:
 };
 
 //
-// SkyEffect
+// SkyboxToneMapEffect
 //
 
 namespace
@@ -161,9 +164,29 @@ void XM_CALLCONV SkyboxToneMapEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void SkyboxToneMapEffect::SetSkyboxTexture(ID3D11ShaderResourceView * skyboxTexture)
+void SkyboxToneMapEffect::SetMaterial(Material& material)
 {
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_SkyboxTexture", skyboxTexture);
+	TextureManager& tm = TextureManager::Get();
+
+	const std::string& str = material.GetTexture("$Skybox");
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_SkyboxTexture", tm.GetTexture(str));
+}
+
+MeshDataInput SkyboxToneMapEffect::GetInputData(MeshData& meshData)
+{
+	MeshDataInput input;
+	input.pVertexBuffers = {
+		meshData.m_pVertices.Get(),
+		meshData.m_pNormals.Get(),
+		meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get()
+	};
+	input.strides = { 12, 12, 8 };
+	input.offsets = { 0, 0, 0 };
+
+	input.pIndexBuffer = meshData.m_pIndices.Get();
+	input.indexCount = meshData.m_IndexCount;
+
+	return input;
 }
 
 void SkyboxToneMapEffect::SetDepthTexture(ID3D11ShaderResourceView* depthTexture)

@@ -69,6 +69,27 @@
     <ClInclude Include="..\..\ImGui\imgui_internal.h">
       <Filter>ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="GameApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Effects.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\FramebufferFlat.hlsl">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ComputeShaderTile.hlsl">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ShaderDefines.h">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ForwardTileInfo.hlsl">
+      <Filter>着色器</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Texture2D.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Common\TextureManager.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -102,9 +123,6 @@
     <ClInclude Include="..\..\Common\d3dApp.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\d3dUtil.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\DDSTextureLoader.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -126,7 +144,13 @@
     <ClInclude Include="..\..\Common\IEffect.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\Model.h">
+    <ClInclude Include="..\..\Common\Material.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\MeshData.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Property.h">
       <Filter>通用文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\RenderStates.h">
@@ -137,27 +161,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Common\stb_image.h">
       <Filter>通用文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\Texture2D.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GameApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Effects.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\FramebufferFlat.hlsl">
-      <Filter>着色器</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\ComputeShaderTile.hlsl">
-      <Filter>着色器</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\ShaderDefines.h">
-      <Filter>着色器</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\ForwardTileInfo.hlsl">
-      <Filter>着色器</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,27 @@
     <ClCompile Include="..\..\ImGui\imgui_impl_win32.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyboxToneMapEffect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredEffect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardEffect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GameApp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\Texture2D.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\TextureManager.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Common\tiny_obj_loader.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
@@ -194,9 +218,6 @@
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\Buffer.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\Camera.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
@@ -207,9 +228,6 @@
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\d3dApp.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\d3dUtil.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\DDSTextureLoader.cpp">
@@ -227,7 +245,7 @@
     <ClCompile Include="..\..\Common\GameTimer.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\Model.cpp">
+    <ClCompile Include="..\..\Common\Geometry.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\RenderStates.cpp">
@@ -238,27 +256,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Common\stb_image.cpp">
       <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Texture2D.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\TextureManager.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyboxToneMapEffect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DeferredEffect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ForwardEffect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GameApp.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

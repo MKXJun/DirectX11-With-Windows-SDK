@@ -1,9 +1,10 @@
 #define STBI_WINDOWS_UTF8
 #include "stb_image.h"
 #include "TextureManager.h"
-#include "d3dUtil.h"
+#include "XUtil.h"
 #include "DXTrace.h"
 #include "DDSTextureLoader.h"
+#include <filesystem>
 
 namespace
 {
@@ -69,7 +70,8 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
 			if (enableMips)
 				m_pDeviceContext->GenerateMips(res.Get());
 			
-			D3D11SetDebugObjectName(tex.Get(), filename.data());
+			std::string fname = std::filesystem::path(filename).filename().string();
+			D3D11SetDebugObjectName(res.Get(), fname);
 		}
 		stbi_image_free(img_data);
 	}

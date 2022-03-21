@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <d3d11shader.h>
 #include <d3dcompiler.h>
-#include "d3dUtil.h"
+#include "XUtil.h"
 #include "EffectHelper.h"
 
 using namespace Microsoft::WRL;

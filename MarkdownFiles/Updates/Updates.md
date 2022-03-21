@@ -4,6 +4,11 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+2022/3/21 Ver1.34.1
+
+- 36章起的项目，模型加载从tinyobjloader替换为Assimp
+- 添加Cmake配置、Assimp编译配置、自建项目教程
+
 2022/3/14 Ver1.34.0
 
 - 添加项目Tile-Based Deferred Shading

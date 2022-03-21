@@ -40,6 +40,9 @@ public:
 
 	size_t GetMeshCount() const;
 	size_t GetMaterialCount() const;
+	const Material* GetMaterial(size_t idx) const;
+
+	Material* GetMaterial(size_t idx);
 
 	//
 	// 获取包围盒

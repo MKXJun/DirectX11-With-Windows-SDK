@@ -1,5 +1,5 @@
+#include "XUtil.h"
 #include "GameObject.h"
-#include "d3dUtil.h"
 #include "DXTrace.h"
 #include "TextureManager.h"
 
@@ -35,6 +35,16 @@ size_t GameObject::GetMeshCount() const
 size_t GameObject::GetMaterialCount() const
 {
 	return m_pMaterials.size();
+}
+
+const Material* GameObject::GetMaterial(size_t idx) const
+{
+	return (idx < m_pMaterials.size() ? m_pMaterials[idx].get() : nullptr);
+}
+
+Material* GameObject::GetMaterial(size_t idx)
+{
+	return (idx < m_pMaterials.size() ? m_pMaterials[idx].get() : nullptr);
 }
 
 BoundingBox GameObject::GetBoundingBox() const
@@ -96,7 +106,7 @@ void GameObject::LoadModelFromFile(ID3D11Device* device, std::string_view filena
 	Importer importer;
 
 	auto pAssimpScene = importer.ReadFile(filename.data(), aiProcess_ConvertToLeftHanded |
-		aiProcess_FixInfacingNormals | aiProcess_GenBoundingBoxes | aiProcess_Triangulate | aiProcess_ImproveCacheLocality);
+		aiProcess_GenBoundingBoxes | aiProcess_Triangulate | aiProcess_ImproveCacheLocality);
 
 	if (pAssimpScene && !(pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && pAssimpScene->HasMeshes())
 	{
@@ -299,7 +309,8 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
 
 		MeshDataInput input = pEffectMeshData->GetInputData(*pMeshData);
 		{
-			deviceContext->IASetVertexBuffers(0, input.pVertexBuffers.size(), input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
+			deviceContext->IASetVertexBuffers(0, (uint32_t)input.pVertexBuffers.size(), 
+				input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
 			deviceContext->IASetIndexBuffer(input.pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 			deviceContext->DrawIndexed(input.indexCount, 0, 0);

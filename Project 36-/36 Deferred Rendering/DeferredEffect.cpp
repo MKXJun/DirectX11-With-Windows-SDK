@@ -1,8 +1,10 @@
 #include "Effects.h"
-#include "d3dUtil.h"
-#include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
+#include "XUtil.h"
+#include "RenderStates.h"
+#include "EffectHelper.h"
 #include "DXTrace.h"
 #include "Vertex.h"
+#include "TextureManager.h"
 using namespace DirectX;
 
 # pragma warning(disable: 26812)
@@ -362,9 +364,29 @@ void XM_CALLCONV DeferredEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void DeferredEffect::SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse)
+void DeferredEffect::SetMaterial(Material& material)
 {
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", textureDiffuse);
+	TextureManager& tm = TextureManager::Get();
+
+	const std::string& str = material.GetTexture("$Diffuse");
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", tm.GetTexture(str));
+}
+
+MeshDataInput DeferredEffect::GetInputData(MeshData& meshData)
+{
+	MeshDataInput input;
+	input.pVertexBuffers = {
+		meshData.m_pVertices.Get(),
+		meshData.m_pNormals.Get(),
+		meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get()
+	};
+	input.strides = { 12, 12, 8 };
+	input.offsets = { 0, 0, 0 };
+
+	input.pIndexBuffer = meshData.m_pIndices.Get();
+	input.indexCount = meshData.m_IndexCount;
+
+	return input;
 }
 
 void DeferredEffect::Apply(ID3D11DeviceContext * deviceContext)

@@ -1,5 +1,5 @@
 #include "GameApp.h"
-#include "d3dUtil.h"
+#include "XUtil.h"
 #include "DXTrace.h"
 using namespace DirectX;
 
@@ -244,7 +244,7 @@ bool GameApp::InitResource()
 
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 300.0f);
-	camera->LookAt(XMFLOAT3(-60.0f, 10.0f, -2.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	camera->LookAt(XMFLOAT3(-60.0f, 10.0f, 2.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	m_FPSCameraController.InitCamera(camera.get());
 	m_FPSCameraController.SetMoveSpeed(10.0f);
@@ -263,20 +263,17 @@ bool GameApp::InitResource()
 	m_pSkyboxEffect->SetMsaaSamples(1);
 
 	// ******************
-	// 初始化对象
-	//
-	Model sponza;
-	sponza.SetModel(m_pd3dDevice.Get(), "..\\Model\\Sponza\\sponza.obj");
-	m_Sponza.SetModel(std::move(sponza));
-	m_Sponza.GetTransform().SetScale(0.05f, 0.05f, 0.05f);
-
-	m_Skybox.SetModel(Model(m_pd3dDevice.Get(), Geometry::CreateBox()));
-
+// 初始化天空盒纹理
+//
+	m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
 
 	// ******************
-	// 初始化天空盒纹理
+	// 初始化对象
 	//
-	m_pTextureCubeSRV = m_TextureManager.CreateTexture(L"..\\Texture\\Clouds.dds");
+	m_Sponza.LoadModelFromFile(m_pd3dDevice.Get(), "..\\Model\\Sponza\\sponza.obj");
+	m_Sponza.GetTransform().SetScale(0.05f, 0.05f, 0.05f);
+	m_Skybox.LoadModelFromGeometry(m_pd3dDevice.Get(), Geometry::CreateBox());
+	m_Skybox.GetMaterial(0)->SetTexture("$Skybox", "..\\Texture\\Clouds.dds");
 
 	// ******************
 	// 初始化光照
@@ -518,7 +515,6 @@ void GameApp::RenderSkyboxAndToneMap()
 	// 注意：反转Z
 	m_pSkyboxEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
 
-	m_pSkyboxEffect->SetSkyboxTexture(m_pTextureCubeSRV.Get());
 	m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
 	m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
 	

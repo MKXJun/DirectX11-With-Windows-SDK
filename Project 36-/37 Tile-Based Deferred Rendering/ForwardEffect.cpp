@@ -1,8 +1,10 @@
 #include "Effects.h"
-#include "d3dUtil.h"
-#include "EffectHelper.h"	// 必须晚于Effects.h和d3dUtil.h包含
+#include "XUtil.h"
+#include "RenderStates.h"
+#include "EffectHelper.h"
 #include "DXTrace.h"
 #include "Vertex.h"
+#include "TextureManager.h"
 #include "Shaders/ShaderDefines.h"
 using namespace DirectX;
 
@@ -131,7 +133,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 		pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
 	}
 
-	passDesc.namePS = nullptr;
+	passDesc.namePS = "";
 	pImpl->m_pEffectHelper->AddEffectPass("PreZ", device, &passDesc);
 	{
 		auto pPass = pImpl->m_pEffectHelper->GetEffectPass("PreZ");
@@ -146,8 +148,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	//
 	
 	UINT msaaSamples = 1;
-	passDesc.nameVS = nullptr;
-	passDesc.namePS = nullptr;
+	passDesc.nameVS = "";
+	passDesc.namePS = "";
 	while (msaaSamples <= 8)
 	{
 		std::string msaaSamplesStr = std::to_string(msaaSamples);
@@ -275,9 +277,29 @@ void XM_CALLCONV ForwardEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void ForwardEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
+void ForwardEffect::SetMaterial(Material& material)
 {
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", textureDiffuse);
+	TextureManager& tm = TextureManager::Get();
+
+	const std::string& str = material.GetTexture("$Diffuse");
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", tm.GetTexture(str));
+}
+
+MeshDataInput ForwardEffect::GetInputData(MeshData& meshData)
+{
+	MeshDataInput input;
+	input.pVertexBuffers = {
+		meshData.m_pVertices.Get(),
+		meshData.m_pNormals.Get(),
+		meshData.m_pTexcoordArrays.empty() ? nullptr : meshData.m_pTexcoordArrays[0].Get()
+	};
+	input.strides = { 12, 12, 8 };
+	input.offsets = { 0, 0, 0 };
+
+	input.pIndexBuffer = meshData.m_pIndices.Get();
+	input.indexCount = meshData.m_IndexCount;
+
+	return input;
 }
 
 void ForwardEffect::Apply(ID3D11DeviceContext * deviceContext)

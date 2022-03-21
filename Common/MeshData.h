@@ -30,9 +30,9 @@ struct MeshData
 	ComPtr<ID3D11Buffer> m_pColors;
 
 	ComPtr<ID3D11Buffer> m_pIndices;
-	uint32_t m_VertexCount;
-	uint32_t m_IndexCount;
-	uint32_t m_MaterialIndex;
+	uint32_t m_VertexCount = 0;
+	uint32_t m_IndexCount = 0;
+	uint32_t m_MaterialIndex = 0;
 
 	DirectX::BoundingBox m_BoundingBox;
 	bool m_InFrustum = true;

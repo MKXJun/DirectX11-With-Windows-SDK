@@ -10,10 +10,11 @@
 #define EFFECTS_H
 
 #include "IEffect.h"
-#include "RenderStates.h"
+#include "Material.h"
+#include "MeshData.h"
 
 class ForwardEffect : public IEffect, public IEffectTransform, 
-	public IEffectTextureDiffuse
+	public IEffectMaterial, public IEffectMeshData
 {
 public:
 	ForwardEffect();
@@ -37,11 +38,16 @@ public:
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
 	//
-	// IEffectTextureDiffuse
+	// IEffectMaterial
 	//
 
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+	void SetMaterial(Material& material) override;
+
+	//
+	// IEffectMeshData
+	//
+
+	MeshDataInput GetInputData(MeshData& meshData) override;
 
 
 	//
@@ -79,7 +85,8 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class SkyboxToneMapEffect : public IEffect, public IEffectTransform
+class SkyboxToneMapEffect : public IEffect, public IEffectTransform,
+	public IEffectMeshData, public IEffectMaterial
 {
 public:
 	SkyboxToneMapEffect();
@@ -105,6 +112,18 @@ public:
 	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
+	//
+	// IEffectMaterial
+	//
+
+	void SetMaterial(Material& material) override;
+
+	//
+	// IEffectMeshData
+	//
+
+	MeshDataInput GetInputData(MeshData& meshData) override;
+
 	// 
 	// SkyboxToneMapEffect
 	//
@@ -112,8 +131,6 @@ public:
 	// 默认状态来绘制
 	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
-	// 设置天空盒
-	void SetSkyboxTexture(ID3D11ShaderResourceView* skyboxTexture);
 	// 设置深度图
 	void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);
 	// 设置场景渲染图
@@ -136,7 +153,8 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class DeferredEffect : public IEffect, public IEffectTransform, public IEffectTextureDiffuse
+class DeferredEffect : public IEffect, public IEffectTransform, 
+	public IEffectMaterial, public IEffectMeshData
 {
 public:
 
@@ -161,11 +179,16 @@ public:
 	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
 	//
-	// IEffectTextureDiffuse
+	// IEffectMaterial
 	//
 
-	// 设置漫反射纹理
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
+	void SetMaterial(Material& material) override;
+
+	//
+	// IEffectMeshData
+	//
+
+	MeshDataInput GetInputData(MeshData& meshData) override;
 
 	// 
 	// BasicDeferredEffect
@@ -221,50 +244,5 @@ private:
 	std::unique_ptr<Impl> pImpl;
 };
 
-class DebugEffect : public IEffect, public IEffectTextureDiffuse
-{
-public:
-	DebugEffect();
-	virtual ~DebugEffect() override;
-
-	DebugEffect(DebugEffect&& moveFrom) noexcept;
-	DebugEffect& operator=(DebugEffect&& moveFrom) noexcept;
-
-	// 获取单例
-	static DebugEffect& Get();
-
-	// 初始化所需资源
-	bool InitAll(ID3D11Device* device);
-
-	//
-	// IEffectTextureDiffuse
-	//
-
-	void SetTextureDiffuse(ID3D11ShaderResourceView* textureDiffuse) override;
-
-	// 
-	// DebugEffect
-	//
-
-	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
-
-	// 绘制单通道(0-R, 1-G, 2-B)
-	void SetRenderOneComponent(ID3D11DeviceContext* deviceContext, int index);
-
-	// 绘制单通道，但以灰度的形式呈现(0-R, 1-G, 2-B, 3-A)
-	void SetRenderOneComponentGray(ID3D11DeviceContext* deviceContext, int index);
-
-	//
-	// IEffect
-	//
-
-	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext) override;
-
-private:
-	class Impl;
-	std::unique_ptr<Impl> pImpl;
-};
 
 #endif

@@ -102,11 +102,13 @@
 ```cmake
 cmake_minimum_required (VERSION 3.12)
 
+project("DirectX11 Test")
+
 set(CMAKE_CXX_STANDARD 17) 
 add_compile_definitions(UNICODE _UNICODE)
 # add_compile_definitions(_WIN32_WINNT=0x601)  # Win7使用
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-# 编写好的着色器放在HLSL文件夹中，生成项目的时候需要复制到build文件夹内给程序使用
+# 编写好的着色器放在HLSL文件夹中
 file(COPY HLSL DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # 项目名为 DirectX11_Test
@@ -127,6 +129,8 @@ target_link_libraries(DirectX11_Test d3d11.lib dxgi.lib dxguid.lib D3DCompiler.l
 # ImGui 需要将项目中的ImGui文件夹复制进来
 #
 
+# add_subdirectory(ImGui)
+# add_compile_definitions(USE_IMGUI)
 # target_link_libraries(DirectX11_Test ImGui)
 # file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -136,7 +140,6 @@ set_target_properties(DirectX11_Test PROPERTIES OUTPUT_NAME "DirectX11 Test")
 set_target_properties(DirectX11_Test PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
 # Release输出exe到项目文件夹中
 set_target_properties(DirectX11_Test PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
-
 
 ```
 

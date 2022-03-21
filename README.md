@@ -46,7 +46,7 @@ QQ群号：727623616
 
 ## 安装Assimp
 
-打开36章之后的项目需要安装Assimp，具体过程**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+打开36章之后的项目需要安装Assimp，具体过程 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
 
 ## 打开教程项目
 
@@ -70,7 +70,7 @@ QQ群号：727623616
 
 安装好后，使用`cmake-gui.exe`填写源码路径和构建路径，然后会弹出下述变量：
 
-![004](README\004.png)
+![004](MarkdownFiles/004.png)
 
 - `Assimp_INSTALLED_DIR`：需要填写，项目36之后的会用到Assimp
 - `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
@@ -97,9 +97,3 @@ QQ群号：727623616
 ## 更新记录
 
 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
-
-
-
-
-
-![image-20220321092311166](E:\Code\C++\DirectX11-With-Windows-SDK\README\image-20220321092311166.png)

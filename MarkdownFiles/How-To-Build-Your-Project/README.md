@@ -143,7 +143,7 @@ set_target_properties(DirectX11_Test PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
 
 ```
 
-将源代码放进文件夹，着色器放入`Shaders`文件夹内。
+将源代码放进文件夹，着色器放入`HLSL`文件夹内。
 
 然后ctrl + shift + P调出用于执行命令的输入框，找到`CMake：快速入门`，然后根据你安装的VS版本选择toolkit，若本机为64位，直接选择`amd64`版本的。每次修改cmake后需要保存，然后cmake就会自动运行并生成VS项目(但不需要打开)。在下方的菜单栏选择build会编译项目。编译成功后就可以调试或运行了。
 

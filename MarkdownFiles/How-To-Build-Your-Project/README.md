@@ -123,7 +123,7 @@ file(GLOB HLSL_FILES ${HLSL_DIR}/*.hlsl)
 file(GLOB HEADER_FILES ./*.h)
 
 aux_source_directory(. DIR_SRCS)
-add_executable(${TARGET_NAME} WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
+add_executable(${TARGET_NAME} WIN32 ${DIR_SRCS} ${HEADER_FILES})
 target_link_libraries(${TARGET_NAME} d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 # target_link_libraries(${TARGET_NAME} d2d1.lib dwrite.lib)  # 使用Direct2D需要取消注释
 source_group("HLSL Files" FILES ${HLSL_FILES})
@@ -141,6 +141,7 @@ set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
 # ShaderType为右边任意一种：VS, vs, HS, hs, DS, ds, GS, gs, PS, ps, CS, cs
 #
 
+# target_sources(${TARGET_NAME} ${HLSL_FILES})
 # file(GLOB HLSL_FILES ${HLSL_DIR}/*.hlsl)
 # foreach(HLSL_FILE ${HLSL_FILES})
 #     get_filename_component(HLSL_FDIR ${HLSL_FILE} DIRECTORY)

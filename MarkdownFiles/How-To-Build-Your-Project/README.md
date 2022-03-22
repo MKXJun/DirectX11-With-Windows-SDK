@@ -179,10 +179,10 @@ set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE
 # 使用ImGui 需要将项目中的ImGui文件夹复制进来，保留*.h/*.cpp/CMakeLists.txt
 #
 
-add_subdirectory(ImGui)
-target_compile_definitions(${TARGET_NAME} PRIVATE USE_IMGUI)
-target_link_libraries(${TARGET_NAME} ImGui)
-file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# add_subdirectory(ImGui)
+# target_compile_definitions(${TARGET_NAME} PRIVATE USE_IMGUI)
+# target_link_libraries(${TARGET_NAME} ImGui)
+# file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 #
 # 使用Assimp 需要先在cmake中完成Install

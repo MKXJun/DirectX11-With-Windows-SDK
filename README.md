@@ -33,7 +33,7 @@ QQ群号：727623616
 - HLSL Shader Model 5.0
 
 目前项目使用了下述代码库或文件：
-- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-36章。</br>
+- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-37章。</br>
 - [nothings/stb](https://github.com/nothings/stb)：使用其stb_image</br>
 - [assimp/assimp](https://github.com/assimp/assimp)：模型加载</br>
 - [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
@@ -59,10 +59,8 @@ QQ群号：727623616
 ![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/raw/master/MarkdownFiles/001.png)
 
 > **注意：** 
-> 1. **教程不支持VS2013及更低版本！**
-> 2. **VS2015在安装时需要勾选VS2015 更新 3， 以及Tools(1.4.1)和Windows 10 SDK(10.0.14393)！**
-> 3. Win7系统需要安装Service Pack 1以及KB2670838补丁以支持Direct3D 11.1
-> 4. 建议安装配置表列出的VS所使用的对应版本的Windows SDK
+> 1. **目前教程仅支持VS2017(平台工具集v141)及更高版本！**
+> 2. 如果需要使用Direct2D/DWrite，Win7系统需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
 
 ## CMake构建项目
 

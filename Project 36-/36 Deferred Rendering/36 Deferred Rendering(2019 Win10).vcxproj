@@ -98,8 +98,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imguid.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -118,8 +118,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imgui.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -134,8 +134,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imguid.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,8 +154,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imgui.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;C:\Program Files (x86)\Assimp\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,13 +178,6 @@
     <ClCompile Include="..\..\Common\Transform.cpp" />
     <ClCompile Include="..\..\Common\Vertex.cpp" />
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="DeferredEffect.cpp" />
     <ClCompile Include="ForwardEffect.cpp" />
     <ClCompile Include="GameApp.cpp" />
@@ -218,14 +211,6 @@
     <ClInclude Include="..\..\Common\Vertex.h" />
     <ClInclude Include="..\..\Common\WICTextureLoader.h" />
     <ClInclude Include="..\..\Common\WinMin.h" />
-    <ClInclude Include="..\..\ImGui\imconfig.h" />
-    <ClInclude Include="..\..\ImGui\imgui.h" />
-    <ClInclude Include="..\..\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\..\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="..\..\ImGui\imgui_internal.h" />
-    <ClInclude Include="..\..\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="..\..\ImGui\imstb_textedit.h" />
-    <ClInclude Include="..\..\ImGui\imstb_truetype.h" />
     <ClInclude Include="Effects.h" />
     <ClInclude Include="GameApp.h" />
   </ItemGroup>

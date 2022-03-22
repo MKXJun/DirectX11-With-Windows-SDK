@@ -97,7 +97,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imguid.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -112,7 +113,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imguid.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,7 +133,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imgui.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,17 +153,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dxguid.lib;d3d11.lib;dxgi.lib;winmm.lib;d3dcompiler.lib;imgui.lib;d2d1.lib;dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../ImGui/lib;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ImGui\imgui.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="..\..\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="d3dApp.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DXTrace.cpp" />
@@ -172,14 +169,6 @@
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ImGui\imconfig.h" />
-    <ClInclude Include="..\..\ImGui\imgui.h" />
-    <ClInclude Include="..\..\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\..\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="..\..\ImGui\imgui_internal.h" />
-    <ClInclude Include="..\..\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="..\..\ImGui\imstb_textedit.h" />
-    <ClInclude Include="..\..\ImGui\imstb_truetype.h" />
     <ClInclude Include="d3dApp.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="DXTrace.h" />

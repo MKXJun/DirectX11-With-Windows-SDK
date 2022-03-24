@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.12)
 
 add_compile_definitions(UNICODE _UNICODE)
 if (WIN7_SYSTEM_SUPPORT MATCHES ON)
-	add_compile_definitions(_WIN32_WINNT=0x601)
+    add_compile_definitions(_WIN32_WINNT=0x601)
 endif()
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")

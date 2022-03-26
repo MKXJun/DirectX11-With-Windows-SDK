@@ -16,9 +16,11 @@
 
 目前对应的博客更新：
 
-**[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)（优先保证最新）**
+**[Github在线版](https://mkxjun.github.io/DirectX11-With-Windows-SDK-Book) (优先保证最新) **
 
-[CSDN](https://blog.csdn.net/x_jun96/article/details/80293670)
+**[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)**
+
+**因更新麻烦，CSDN目前考虑停更**
 
 ## QQ群交流
 

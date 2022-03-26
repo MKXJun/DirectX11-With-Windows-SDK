@@ -33,14 +33,12 @@ public:
 	HRESULT InitResource(ID3D11Device* device,
 		ID3D11DeviceContext* deviceContext,
 		const std::wstring& cubemapFilename,
-		float skySphereRadius,		// 天空球半径
 		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 
 	// 需要提供天空盒的六张正方形贴图
 	HRESULT InitResource(ID3D11Device* device,
 		ID3D11DeviceContext* deviceContext,
 		const std::vector<std::wstring>& cubemapFilenames,
-		float skySphereRadius,		// 天空球半径
 		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 
 	ID3D11ShaderResourceView* GetTextureCube();
@@ -51,7 +49,7 @@ public:
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	HRESULT InitResource(ID3D11Device* device, float skySphereRadius);
+	HRESULT InitResource(ID3D11Device* device);
 
 
 private:
@@ -77,16 +75,14 @@ public:
 	HRESULT InitResource(ID3D11Device* device,
 		ID3D11DeviceContext* deviceContext,
 		const std::wstring& cubemapFilename,
-		float skySphereRadius,		// 天空球半径
-		int dynamicCubeSize,		// 立方体棱长
+		int dynamicCubeSize,		// 动态天空盒纹理宽高
 		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 									// 动态天空盒必然生成mipmaps
 
 	HRESULT InitResource(ID3D11Device* device,
 		ID3D11DeviceContext* deviceContext,
 		const std::vector<std::wstring>& cubemapFilenames,
-		float skySphereRadius,		// 天空球半径
-		int dynamicCubeSize,		// 立方体棱长
+		int dynamicCubeSize,		// 动态天空盒纹理宽高
 		bool generateMips = false);	// 默认不为静态天空盒生成mipmaps
 									// 动态天空盒必然生成mipmaps
 

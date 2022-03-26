@@ -16,7 +16,7 @@
 
 目前对应的博客更新：
 
-**[Github在线版](https://mkxjun.github.io/DirectX11-With-Windows-SDK-Book) (优先保证最新) **
+**[Github在线版](https://mkxjun.github.io/DirectX11-With-Windows-SDK-Book)(优先保证最新) **
 
 **[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)**
 

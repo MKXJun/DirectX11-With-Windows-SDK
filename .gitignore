@@ -4,6 +4,7 @@ x64/
 .git/
 .vs/
 build/
+lib/
 *.vcxproj.user
 *.cso
 *.dso
@@ -18,7 +19,6 @@ build/
 *.ipdb
 *.pdb
 *.exp
-*.lib
 *.lastcodeanalysissucceeded
 !dxtex.exe
 *.exe

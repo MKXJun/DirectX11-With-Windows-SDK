@@ -530,7 +530,7 @@ bool GameApp::InitResource()
 
 	m_pDesert = std::make_unique<SkyRender>();
 	HR(m_pDesert->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
-		L"..\\Texture\\desertcube1024.dds", 5000.0f));
+		L"..\\Texture\\desertcube1024.dds"));
 
 	m_pBasicEffect->SetTextureCube(m_pDesert->GetTextureCube());
 	

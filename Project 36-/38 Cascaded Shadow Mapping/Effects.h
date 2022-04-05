@@ -139,8 +139,7 @@ public:
 	void RenderDepthToTexture(ID3D11DeviceContext* deviceContext, 
 		ID3D11ShaderResourceView* input, 
 		ID3D11RenderTargetView* output, 
-		const D3D11_VIEWPORT& vp,
-		bool reversedZ = false);
+		const D3D11_VIEWPORT& vp);
 
 	// 应用常量缓冲区和纹理资源的变更
 	void Apply(ID3D11DeviceContext* deviceContext) override;

@@ -2,6 +2,10 @@
 #ifndef SKYBOX_TONE_MAP_HLSL
 #define SKYBOX_TONE_MAP_HLSL
 
+#ifndef MSAA_SAMPLES
+#define MSAA_SAMPLES 1
+#endif
+
 uniform matrix g_ViewProj;
 
 struct VertexPosNormalTex
@@ -53,11 +57,11 @@ float4 SkyboxPS(SkyboxVSOut input) : SV_Target
     {
         float depth = g_DepthTexture.Load(coords, sampleIndex);
 
-        // 检查天空盒的状态（注意：反向Z!）  
         if (depth >= 1.0f)
         {
             ++skyboxSamples;
         }
+
         else
         {
             lit += g_LitTexture.Load(coords, sampleIndex).xyz;
@@ -73,7 +77,7 @@ float4 SkyboxPS(SkyboxVSOut input) : SV_Target
     }
     
     // Resolve 多重采样(简单盒型滤波)
-    return float4(lit * rcp(MSAA_SAMPLES), 1.0f);
+    return float4(lit * rcp((float) MSAA_SAMPLES), 1.0f);
 }
 
 

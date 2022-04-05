@@ -1,5 +1,5 @@
 # DirectX11 With Windows SDK教程演示项目
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.34.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.35.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -7,18 +7,18 @@
 
 ## 最近更新
 
-2022/3/21 Ver1.34.1
+2022/4/5 Ver1.35.0
 
-- 36章起的项目，模型加载从tinyobjloader替换为Assimp
-- 添加Cmake配置、Assimp编译配置、自建项目教程
+- **添加项目 Cascaded Shadow Mapping**
+- 天空盒从球体变成了立方体
 
 ## 博客教程
 
 目前对应的博客更新：
 
-**[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)（优先保证最新）**
+[**Github电子书（优先保证最新）**]([DirectX11 With Windows SDK (mkxjun.github.io)](https://mkxjun.github.io/DirectX11-With-Windows-SDK-Book/#/))
 
-[CSDN](https://blog.csdn.net/x_jun96/article/details/80293670)
+[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)
 
 ## QQ群交流
 

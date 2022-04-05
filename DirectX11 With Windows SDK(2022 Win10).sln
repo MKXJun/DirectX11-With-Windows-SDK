@@ -119,6 +119,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "ImGui\ImGui.vcxproj", "{2B0863F6-DFF1-48D5-8016-8EEE63859162}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "38 Cascaded Shadow Mapping(2022 Win10)", "Project 36-\38 Cascaded Shadow Mapping\38 Cascaded Shadow Mapping(2022 Win10).vcxproj", "{70C36DAA-3138-442A-9D19-AAA0C644D7E1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

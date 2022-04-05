@@ -92,7 +92,7 @@ public:
     bool        m_MoveLightTexelSize = true;            // 是否进行逐光照texel移动
 
     CameraSelection     m_SelectedCamera = CameraSelection::CameraSelection_Eye;
-    FitProjection       m_SelectedCascadesFit = FitProjection::FitProjection_ToScene;
+    FitProjection       m_SelectedCascadesFit = FitProjection::FitProjection_ToCascade;
     FitNearFar          m_SelectedNearFarFit = FitNearFar::FitNearFar_SceneAABB;
     CascadeSelection    m_SelectedCascadeSelection = CascadeSelection::CascadeSelection_Map;
 

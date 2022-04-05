@@ -34,7 +34,7 @@ private:
 	bool InitResource();
 
 	void RenderShadowForAllCascades();
-	void RenderForward(bool doPreZ);
+	void RenderForward();
 	void RenderSkyboxAndToneMap();
 	
 
@@ -47,7 +47,8 @@ private:
 	CascadedShadowManager m_CSManager;
 	int m_CascadeLevels = 3;
 	int m_ShadowSize = 1024;
-	bool m_DebugShadow = true;
+	bool m_DebugShadow = false;
+	bool m_ReversedZ = false;
 
 	// 各种资源
 	TextureManager m_TextureManager;                                // 纹理读取管理

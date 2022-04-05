@@ -45,12 +45,14 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
     }
     
     float frustumIntervalBegin, frustumIntervalEnd;
-    XMVECTOR lightCameraOrthographicMinVec;    // 光照空间视锥体AABB
-    XMVECTOR lightCameraOrthographicMaxVec;
+    XMVECTOR lightCameraOrthographicMinVec;     // 视锥体在光照空间下的AABB vMin
+    XMVECTOR lightCameraOrthographicMaxVec;     // 视锥体在光照空间下的AABB vMax
     float cameraNearFarRange = viewerCamera.GetFarZ() - viewerCamera.GetNearZ();
 
     XMVECTOR worldUnitsPerTexelVec = g_XMZero;
-    // 为每个级联计算正交投影矩阵
+    //
+    // 为每个级联计算光照空间下的正交投影矩阵
+    //
     for (int cascadeIndex = 0; cascadeIndex < m_CascadeLevels; ++cascadeIndex)
     {
         // 计算当前级联覆盖的视锥体区间。我们以沿着Z轴最小/最大距离来衡量级联覆盖的区间
@@ -61,7 +63,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             if (cascadeIndex == 0)
                 frustumIntervalBegin = 0.0f;
             else
-                frustumIntervalBegin = m_CascadePartitionsPercentage[cascadeIndex - 1];
+                frustumIntervalBegin = (float)m_CascadePartitionsPercentage[cascadeIndex - 1];
         }
         else
         {
@@ -72,7 +74,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         }
 
         // 算出视锥体Z区间
-        frustumIntervalEnd = m_CascadePartitionsPercentage[cascadeIndex];
+        frustumIntervalEnd = (float)m_CascadePartitionsPercentage[cascadeIndex];
         frustumIntervalBegin /= m_CascadePartitionsMax;
         frustumIntervalEnd /= m_CascadePartitionsMax;
         frustumIntervalBegin = frustumIntervalBegin * cameraNearFarRange;
@@ -83,7 +85,6 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         viewerFrustum.Near = frustumIntervalBegin;
         viewerFrustum.Far = frustumIntervalEnd;
         // 将局部视锥体变换到世界空间后，再变换到光照空间
-        viewerFrustum.GetCorners(viewerFrustumPoints);
         viewerFrustum.Transform(viewerFrustum, ViewerInvView * LightView);
         viewerFrustum.GetCorners(viewerFrustumPoints);
         // 计算视锥体在光照空间下的AABB和vMax, vMin
@@ -93,19 +94,19 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         lightCameraOrthographicMinVec = XMLoadFloat3(&viewerFrustumBox.Center) - XMLoadFloat3(&viewerFrustumBox.Extents);
 
         //
-        // 投影视锥体的XY边界 适配到场景 或 适配到级联
+        // 视锥体在光照空间下的AABB，其XY边界 适配到场景 或 适配到级联
         //
 
         // 这段代码可以消除由于光线改变以适应摄像机而造成的阴影边缘的闪烁效果
         if (m_SelectedCascadesFit == FitProjection::FitProjection_ToScene)
         {
             // 将正交投影的近平面设为0，远平面设为当前级联远平面
-            // 使用子视锥体的对角线大小填充该投影
+            // 使用子视锥体的对角线大小作为XY的宽高，然后填充该投影
             // 
-            // 为了这么做，我们填充正交投影使得它足够大，且总是能覆盖整个摄像机视锥体
+            // 为了这么做，我们填充正交投影使得它足够大，且总是能覆盖当前级联的视锥体
             
             XMVECTOR diagVec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 1);
-            // 找到视锥体对角线的长度
+            // 找到视锥体对角线的长度作为AABB的宽高
             diagVec = XMVector3Length(diagVec);
             float diagLength = XMVectorGetX(diagVec);
 
@@ -116,7 +117,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             lightCameraOrthographicMaxVec += borderOffsetVec * xyzw1100Vec;
             lightCameraOrthographicMinVec -= borderOffsetVec * xyzw1100Vec;
 
-            // 计算每个texel对应世界空间单位大小，用于后续避免阴影边缘的闪烁
+            // 计算阴影图中每个texel对应世界空间的宽高，用于后续避免阴影边缘的闪烁
             float worldUnitsPerTexel = diagLength / m_ShadowSize;
             worldUnitsPerTexelVec = XMVectorSet(worldUnitsPerTexel, worldUnitsPerTexel, 0.0f, 0.0f);
         }
@@ -136,7 +137,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             lightCameraOrthographicMinVec -= borderOffsetVec;
 
             // 由于我们在级联之间紧密贴合，阴影边缘的闪烁会在摄像机旋转的时候依然存在
-            // 然而当放大或平移的时候，阴影的边缘不会出现闪烁了
+            // 不过当放大或平移的时候，阴影的边缘不会出现闪烁了
             worldUnitsPerTexelVec = lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec;
             worldUnitsPerTexelVec *= normalizeByBufferSize;
         }
@@ -146,12 +147,12 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         if (m_MoveLightTexelSize)
         {
             // worldUnitsPerTexel
-            // | |
-            // [x][x][ ]    [ ][x][x]
+            // | |                     光照空间
+            // [x][x][ ]    [ ][x][x]  x是阴影texel
             // [x][x][ ] => [ ][x][x]
             // [ ][ ][ ]    [ ][ ][ ]
             // 在摄像机移动的时候，视锥体在光照空间下的AABB并不会立马跟着移动
-            // 而是移动到texel对应世界空间单位大小的变化时，AABB才会发生一次对应大小的跃动
+            // 而是累积到texel对应世界空间的宽高的变化时，AABB才会发生一次texel大小的跃动
             // 所以移动摄像机的时候不会出现阴影的抖动
             lightCameraOrthographicMinVec /= worldUnitsPerTexelVec;
             lightCameraOrthographicMinVec = XMVectorFloor(lightCameraOrthographicMinVec);
@@ -167,7 +168,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         float farPlane = 10000.0f;
 
         //
-        // 投影视锥体的近/远平面 适配到场景AABB 或 与场景进行相交测试后再进行计算
+        // 视锥体在光照空间下的AABB，适配到场景AABB 或 与场景进行相交测试后再进行计算
         //
         if (m_SelectedNearFarFit == FitNearFar::FitNearFar_AABB)
         {
@@ -186,7 +187,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         }
         else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB)
         {
-            // 通过光照视锥体与场景AABB的相交测试，我们可以得到一个更紧密的近平面和远平面
+            // 通过光照空间下视锥体的AABB与场景AABB的相交测试，我们可以得到一个更紧密的近平面和远平面
             ComputeNearAndFar(nearPlane, farPlane, lightCameraOrthographicMinVec, lightCameraOrthographicMaxVec, 
                 sceneAABBPointsLightSpace);
         }
@@ -197,6 +198,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
                 XMVectorGetY(lightCameraOrthographicMinVec), XMVectorGetY(lightCameraOrthographicMaxVec),
                 nearPlane, farPlane));
 
+        // 创建最终的正交投影AABB
         lightCameraOrthographicMinVec = XMVectorSetZ(lightCameraOrthographicMinVec, nearPlane);
         lightCameraOrthographicMaxVec = XMVectorSetZ(lightCameraOrthographicMaxVec, farPlane);
         BoundingBox::CreateFromPoints(m_ShadowProjBoundingBox[cascadeIndex], 
@@ -214,7 +216,7 @@ struct Triangle
 //--------------------------------------------------------------------------------------
 // 计算一个准确的近平面/远平面可以减少surface acne和Peter-panning
 // 通常偏移量会用于PCF滤波来解决阴影问题
-// 计算准确的近平面/远平面显得更加重要
+// 而准确的近平面/远平面可以提升精度
 // 这个概念并不复杂，但相交测试的代码比较复杂
 //--------------------------------------------------------------------------------------
 void XM_CALLCONV CascadedShadowManager::ComputeNearAndFar(
@@ -226,8 +228,12 @@ void XM_CALLCONV CascadedShadowManager::ComputeNearAndFar(
 {
     // 核心思想
     // 1. 对AABB的所有12个三角形进行迭代
-    // 2. 每个三角形分别对正交投影的4个侧面进行裁剪。裁剪过程中可能会产生新的三角形，这些
-    //    三角形都需要对剩余的面进行测试与裁剪
+    // 2. 每个三角形分别对正交投影的4个侧面进行裁剪。裁剪过程中可能会出现这些情况：
+    //    - 0个点在该侧面的内部，该三角形可以剔除
+    //    - 1个点在该侧面的内部，计算该点与另外两个点在侧面上的交点得到新三角形
+    //    - 2个点在该侧面的内部，计算这两个点与另一个点在侧面上的交点，分裂得到2个新三角形
+    //    - 3个点都在该侧面的内部
+    //    遍历中的三角形与新生产的三角形都要进行剩余侧面的裁剪
     // 3. 在这些三角形中找到最小/最大的Z值作为近平面/远平面
 
     outNearPlane = FLT_MAX;

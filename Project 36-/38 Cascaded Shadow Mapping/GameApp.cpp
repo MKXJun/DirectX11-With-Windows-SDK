@@ -60,7 +60,7 @@ void GameApp::OnResize()
 	// 摄像机变更显示
 	if (m_pViewerCamera != nullptr)
 	{
-		m_pViewerCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.05f, 500.0f);
+		m_pViewerCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 300.0f);
 		m_pViewerCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM());
 	}
@@ -275,7 +275,7 @@ void GameApp::DrawScene()
 	// 场景渲染部分
 	//
 	RenderShadowForAllCascades();
-	RenderForward(true);
+	RenderForward();
 	RenderSkyboxAndToneMap();
 
 	//
@@ -333,7 +333,7 @@ bool GameApp::InitResource()
 	m_pViewerCamera = viewerCamera;
 
 	m_pViewerCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
-	m_pViewerCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.05f, 500.0f);
+	m_pViewerCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 300.0f);
 	viewerCamera->LookAt(XMFLOAT3(100.0f, 5.0f, 5.0f), XMFLOAT3(), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	auto lightCamera = std::make_shared<FirstPersonCamera>();
@@ -341,17 +341,18 @@ bool GameApp::InitResource()
 
 	m_pLightCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	lightCamera->LookAt(XMFLOAT3(-320.0f, 300.0f, -220.3f), XMFLOAT3(), XMFLOAT3(0.0f, 1.0f, 0.0f));
-	lightCamera->SetFrustum(XM_PI / 3, 1.0f, 0.1f, 1000.0f);
+	lightCamera->SetFrustum(XM_PI / 4, 1.0f, 0.1f, 1000.0f);
 
 	m_FPSCameraController.InitCamera(viewerCamera.get());
 	m_FPSCameraController.SetMoveSpeed(10.0f);
 	m_FPSCameraController.SetStrafeSpeed(10.0f);
+	// 仅当开启垂直同步的时候才适合使用动量，否则容易出现突然加速的情况
+	m_FPSCameraController.EnableMomentum(false);
 	// ******************
 	// 初始化特效
 	//
 
 	m_pForwardEffect->SetViewMatrix(viewerCamera->GetViewMatrixXM());
-	// 注意：反向Z
 	m_pForwardEffect->SetProjMatrix(viewerCamera->GetProjMatrixXM());
 	m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_PCFKernelSize);
 	m_pForwardEffect->SetPCFDepthOffset(m_CSManager.m_PCFDepthOffset);
@@ -405,7 +406,6 @@ void GameApp::RenderShadowForAllCascades()
 	{
 		ID3D11RenderTargetView* nullRTV = nullptr;
 		ID3D11DepthStencilView* depthDSV = m_CSManager.GetCascadeDepthStencilView(cascadeIdx);
-		// 反向Z
 		m_pd3dImmediateContext->ClearDepthStencilView(depthDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
 		m_pd3dImmediateContext->OMSetRenderTargets(1, &nullRTV, depthDSV);
 
@@ -421,11 +421,10 @@ void GameApp::RenderShadowForAllCascades()
 	}
 }
 
-void GameApp::RenderForward(bool doPreZ)
+void GameApp::RenderForward()
 {
 	float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), black);
-	// 注意：反向Z的缓冲区，远平面为0
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	D3D11_VIEWPORT viewport = m_pViewerCamera->GetViewPort();
@@ -448,7 +447,7 @@ void GameApp::RenderForward(bool doPreZ)
 			static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
 		frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
 		m_Powerplant.FrustumCulling(frustum);
-		viewport.Width = std::min(m_ClientHeight, m_ClientWidth);
+		viewport.Width = (float)std::min(m_ClientHeight, m_ClientWidth);
 		viewport.Height = viewport.Width;
 	}
 	m_pd3dImmediateContext->RSSetViewports(1, &viewport);
@@ -457,7 +456,7 @@ void GameApp::RenderForward(bool doPreZ)
 	ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
 	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
 
-	m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+	
 	m_pForwardEffect->SetCascadeFrustumsEyeSpaceDepths(m_CSManager.GetCascadePartitions());
 
 	// 将NDC空间 [-1, +1]^2 变换到纹理坐标空间 [0, 1]^2
@@ -481,6 +480,7 @@ void GameApp::RenderForward(bool doPreZ)
 	m_pForwardEffect->SetCascadeScales(scales);
 	m_pForwardEffect->SetShadowViewMatrix(m_pLightCamera->GetViewMatrixXM());
 	m_pForwardEffect->SetShadowTextureArray(m_CSManager.GetCascadesOutput());
+	m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
 	m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
 	
 	// 清除绑定

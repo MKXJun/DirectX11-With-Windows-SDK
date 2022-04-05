@@ -113,12 +113,16 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
 
 	// 前四位代表
-// [级联级别][偏导偏移][级联间混合][级联选择]
+	// [级联级别][偏导偏移][级联间混合][级联选择]
 	std::string psName = "0000_ForwardPS";
 	std::string passName = "0000_Forward";
 	EffectPassDesc passDesc;
 	size_t shaderCount = 0;
 	
+	// 创建通道
+	passDesc.nameVS = "GeometryVS";
+	pImpl->m_pEffectHelper->AddEffectPass("PreZ_Forward", device, &passDesc);
+
 	for (int cascadeCount = 1; cascadeCount <= 8; ++cascadeCount)
 	{
 		psName[0] = passName[0] = '0' + cascadeCount;
@@ -144,11 +148,6 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 					passDesc.nameVS = "GeometryVS";
 					passDesc.namePS = psName;
 					pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
-					{
-						auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
-						// 注意：反向Z => GREATER_EQUAL测试
-						// pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
-					}
 				}
 			}
 		}
@@ -305,7 +304,9 @@ void ForwardEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
 
 void ForwardEffect::SetRenderPreZPass(ID3D11DeviceContext* deviceContext)
 {
-
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("PreZ_Forward");
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void ForwardEffect::Apply(ID3D11DeviceContext * deviceContext)

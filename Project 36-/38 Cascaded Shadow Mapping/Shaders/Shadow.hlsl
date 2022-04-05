@@ -6,7 +6,6 @@
 cbuffer CB : register(b0)
 {
     matrix g_WorldViewProj;
-    int g_ReversedZ;
 }
 
 struct VertexPosNormalTex
@@ -49,8 +48,6 @@ void ShadowPS(VertexPosHTex pIn, uniform float clipValue)
 float4 DebugPS(VertexPosHTex pIn) : SV_Target
 {
     float depth = g_DiffuseMap.Sample(g_Sam, pIn.texCoord).r;
-    if (g_ReversedZ)
-        depth = 1.0f - depth;
     return float4(depth.rrr, 1.0f);
 }
 

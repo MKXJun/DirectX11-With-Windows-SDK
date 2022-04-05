@@ -4,24 +4,22 @@
 
 #include "ConstantBuffers.hlsl"
 
-// 使用导数信息将阴影贴图中的texels映射到正在渲染的图元的观察空间平面上
+// 使用偏导，将shadow map中的texels映射到正在渲染的图元的观察空间平面上
 // 该深度将会用于比较并减少阴影走样
-// 这项技术是昂贵的，且仅当对象是平面的时候才有效
+// 这项技术是开销昂贵的，且假定对象是平面较多的时候才有效
 #ifndef USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG
 #define USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG 0
 #endif
 
 // 允许在不同级联之间对阴影值混合。当shadow maps比较小
-// 且伪影在两个级联之间可见的时候最为有效
+// 且artifacts在两个级联之间可见的时候最为有效
 #ifndef BLEND_BETWEEN_CASCADE_LAYERS_FLAG
 #define BLEND_BETWEEN_CASCADE_LAYERS_FLAG 0
 #endif
 
 // 有两种方法为当前像素片元选择合适的级联：
 // Interval-based Selection 将视锥体的深度分区与像素片元的深度进行比较
-// Map-based Selection 将纹理坐标与实际的级联映射进行比较
-// 前者更容易扩充和理解
-// 后者具有更广的覆盖
+// Map-based Selection 找到纹理坐标在shadow map范围中的最小级联
 #ifndef SELECT_CASCADE_BY_INTERVAL_FLAG
 #define SELECT_CASCADE_BY_INTERVAL_FLAG 0
 #endif
@@ -32,7 +30,7 @@
 #endif
 
 // 大多数情况下，使用3-4个级联，并开启BLEND_BETWEEN_CASCADE_LAYERS_FLAG，
-// 适用于低端PC。高端PC可以处理更大的阴影，以及更大的混合地带
+// 可以适用于低端PC。高端PC可以处理更大的阴影，以及更大的混合地带
 // 在使用更大的PCF核时，可以给高端PC使用基于偏导的深度偏移
 
 Texture2DArray g_TextureShadow : register(t10);
@@ -51,7 +49,7 @@ static const float4 s_CascadeColorsMultiplier[8] =
 };
 
 //--------------------------------------------------------------------------------------
-// 为阴影空间的texels计算屏幕空间深度
+// 为阴影空间的texels计算对应光照空间
 //--------------------------------------------------------------------------------------
 void CalculateRightAndUpTexelDepthDeltas(float3 shadowTexDDX, float3 shadowTexDDY,
                                          out float upTextDepthWeight,
@@ -149,10 +147,13 @@ void CalculateBlendAmountForInterval(int currentCascadeIndex,
     // 然后我们就可以提前脱离开销昂贵的PCF for循环
     float blendInterval = g_CascadeFrustumsEyeSpaceDepthsFloat4[currentCascadeIndex].x;
     
-    // 如果currentCascadeIndex为0，引发的越界访问会返回0
-    int blendIntervalbelowIndex = min(0, currentCascadeIndex - 1);
-    pixelDepth -= g_CascadeFrustumsEyeSpaceDepthsFloat4[blendIntervalbelowIndex].x;
-    blendInterval -= g_CascadeFrustumsEyeSpaceDepthsFloat4[blendIntervalbelowIndex].x;
+    // 对原项目中这部分代码进行了修正
+    if (currentCascadeIndex > 0)
+    {
+        int blendIntervalbelowIndex = currentCascadeIndex - 1;
+        pixelDepth -= g_CascadeFrustumsEyeSpaceDepthsFloat4[blendIntervalbelowIndex].x;
+        blendInterval -= g_CascadeFrustumsEyeSpaceDepthsFloat4[blendIntervalbelowIndex].x;
+    }
     
     // 当前像素的混合地带的位置
     currentPixelsBlendBandLocation = 1.0f - pixelDepth / blendInterval;
@@ -257,7 +258,7 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
                                      CASCADE_COUNT_FLAG > 7),
                               cmpVec2);
             index = min(index, CASCADE_COUNT_FLAG - 1);
-            currentCascadeIndex = (int)index;
+            currentCascadeIndex = (int) index;
         }
         
         shadowMapTexCoord = shadowMapTexCoordViewSpace * g_CascadeScale[currentCascadeIndex] + g_CascadeOffset[currentCascadeIndex];
@@ -293,8 +294,7 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     // 
     float3 shadowMapTexCoordDDX;
     float3 shadowMapTexCoordDDY;
-    // 这些导数用于寻找当前平面的斜率
-    // 导数的计算必须在循环内部，以阻止流控制分歧的影响
+    // 这些偏导用于计算投影纹理空间相邻texel对应到光照空间不同方向引起的深度变化
     if (USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG)
     {
         // 计算观察空间的偏导映射到投影纹理空间的变化率
@@ -319,7 +319,7 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     //
     if (BLEND_BETWEEN_CASCADE_LAYERS_FLAG)
     {
-        // 为下一个级联重复纹理坐标的计算
+        // 为下一个级联重复进行投影纹理坐标的计算
         // 下一级联的索引用于在两个级联之间模糊
         nextCascadeIndex = min(CASCADE_COUNT_FLAG - 1, currentCascadeIndex + 1);
     }
@@ -347,13 +347,8 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     {
         if (currentPixelsBlendBandLocation < g_CascadeBlendArea)
         {
-            // 当前像素在混合地带内
-            // 重复当前纹理坐标用于下一级联
-            // 下一级联的所用用于在级联间模糊
-            if (!SELECT_CASCADE_BY_INTERVAL_FLAG)
-            {
-                shadowMapTexCoord_blend = shadowMapTexCoordViewSpace * g_CascadeScale[nextCascadeIndex] + g_CascadeOffset[nextCascadeIndex];
-            }
+            // 计算下一级联的投影纹理坐标
+            shadowMapTexCoord_blend = shadowMapTexCoordViewSpace * g_CascadeScale[nextCascadeIndex] + g_CascadeOffset[nextCascadeIndex];
             
             // 在级联之间混合时，为下一级联也进行计算
             if (currentPixelsBlendBandLocation < g_CascadeBlendArea)

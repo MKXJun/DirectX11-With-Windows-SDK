@@ -111,16 +111,14 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	HR(pImpl->m_pEffectHelper->AddEffectPass("Shadow", device, &passDesc));
 	auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Shadow");
 	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
-	// 反向Z
-	//pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
+
 	passDesc.nameVS = "ShadowVS";
 	passDesc.namePS = "ShadowPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowAlphaClip", device, &passDesc));
 	pImpl->m_pEffectHelper->GetEffectPass("ShadowAlphaClip")->SetRasterizerState(RenderStates::RSNoCull.Get());
 	pPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowAlphaClip");
 	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
-	// 反向Z
-	// pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
+
 	passDesc.nameVS = "FullScreenTriangleTexcoordVS";
 	passDesc.namePS = "DebugPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("Debug", device, &passDesc));
@@ -152,14 +150,12 @@ void ShadowEffect::RenderDepthToTexture(
 	ID3D11DeviceContext* deviceContext,
 	ID3D11ShaderResourceView* input,
 	ID3D11RenderTargetView* output,
-	const D3D11_VIEWPORT& vp,
-	bool reversedZ)
+	const D3D11_VIEWPORT& vp)
 {
 	deviceContext->IASetInputLayout(nullptr);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Debug");
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", input);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ReversedZ")->SetSInt(reversedZ);
 	pImpl->m_pCurrEffectPass->Apply(deviceContext);
 	deviceContext->OMSetRenderTargets(1, &output, nullptr);
 	deviceContext->RSSetViewports(1, &vp);

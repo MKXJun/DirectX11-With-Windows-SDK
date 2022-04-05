@@ -60,7 +60,7 @@ void RenderStates::InitAll(ID3D11Device* device)
 
     // 深度偏移模式
     rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-    rasterizerDesc.CullMode = D3D11_CULL_BACK;
+    rasterizerDesc.CullMode = D3D11_CULL_NONE;
     rasterizerDesc.FrontCounterClockwise = false;
     rasterizerDesc.DepthBias = 0;
     rasterizerDesc.DepthBiasClamp = 0.0f;

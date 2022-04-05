@@ -59,6 +59,7 @@ public:
 	// 视锥体碰撞检测
 	//
 	void FrustumCulling(const DirectX::BoundingFrustum& frustumInWorld);
+	void CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld);
 
 	//
 	// 设置模型

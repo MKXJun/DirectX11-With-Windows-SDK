@@ -98,7 +98,7 @@ inline void StructuredBuffer<T>::SetDebugObjectName(const std::string& name)
 	if (m_pUnorderedAccess)
 	{
 		std::string uavName = name + ".UAV";
-		m_pShaderResource->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(uavName.length()), uavName.c_str());
+		m_pUnorderedAccess->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(uavName.length()), uavName.c_str());
 	}
 		
 #else

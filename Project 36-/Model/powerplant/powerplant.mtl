@@ -1,0 +1,237 @@
+newmtl mat0
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd wall_tex_a.dds
+newmtl mat1
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd wall_tex_a.dds
+newmtl mat2
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd mav_b_body.dds
+newmtl mat3
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd mav_b_lit.dds
+newmtl mat4
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd mav_a_ring.dds
+newmtl mat5
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tank_top.dds
+newmtl mat6
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tank_side.dds
+newmtl mat7
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tow_rib_ a.dds
+newmtl mat8
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tw_tex_a.dds
+newmtl mat9
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd red_girder_a.dds
+newmtl mat10
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd re_bar_a.dds
+newmtl mat11
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd grt_sm_a.dds
+newmtl mat12
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd hz_a.dds
+newmtl mat13
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd grt_sm_b.dds
+newmtl mat14
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tw_tex_a.dds
+newmtl mat15
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ring_a.dds
+newmtl mat16
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pipe_a.dds
+newmtl mat17
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pipe_e.dds
+newmtl mat18
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pipe_b.dds
+newmtl mat19
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pipe_d.dds
+newmtl mat20
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ring_a.dds
+newmtl mat21
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_d.dds
+newmtl mat22
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_f.dds
+newmtl mat23
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_g.dds
+newmtl mat24
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_e.dds
+newmtl mat25
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_i.dds
+newmtl mat26
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_c.dds
+newmtl mat27
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd grt_sm_a.dds
+newmtl mat28
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd sm_pan_a.dds
+newmtl mat29
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd gravel_c.dds
+newmtl mat30
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd test_ground_b.dds
+newmtl mat31
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pad_big_b.dds
+newmtl mat32
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd gravel_a.dds
+newmtl mat33
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd pad_pan_a.dds
+newmtl mat34
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd hill_mound_b.dds
+newmtl mat35
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd road_loop_a.dds
+newmtl mat36
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd trench_surround.dds
+newmtl mat37
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd trench_b.dds
+newmtl mat38
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd road_end.dds
+newmtl mat39
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd road_end_b.dds
+newmtl mat40
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd road_end_a.dds
+newmtl mat41
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd road_st_a.dds
+newmtl mat42
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd con_edge.dds
+newmtl mat43
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd trench_end.dds
+newmtl mat44
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd truss_a.dds
+newmtl mat45
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd fan_housing_b.dds
+newmtl mat46
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd fan_blde.dds
+newmtl mat47
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd fan_hub.dds
+newmtl mat48
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd truss_end.dds
+newmtl mat49
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tw_tex_a.dds
+newmtl mat50
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tow_rib_ a.dds
+newmtl mat51
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tank_top.dds
+newmtl mat52
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd container_gry_num.dds
+newmtl mat53
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd container_orn_num.dds
+newmtl mat54
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd container_grn_num.dds
+newmtl mat55
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd command_a.dds
+newmtl mat56
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd re_bar_a.dds
+newmtl mat57
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ele_floor.dds
+newmtl mat58
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd yellow_girder_a.dds
+newmtl mat59
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ele_bot.dds
+newmtl mat60
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ele_support.dds
+newmtl mat61
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crane_light.dds
+newmtl mat62
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd rail.dds
+newmtl mat63
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd container_hab_num.dds
+newmtl mat64
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_a.dds
+newmtl mat65
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_i.dds
+newmtl mat66
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd walkway_a.dds
+newmtl mat67
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd yellow_girder_a.dds
+newmtl mat68
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd wall_tex_b.dds
+newmtl mat69
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd ele_track_a.dds
+newmtl mat70
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd tow_rib_c.dds
+newmtl mat71
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_clamp_a.dds
+newmtl mat72
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crane_wheel.dds
+newmtl mat73
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd wheel_house.dds
+newmtl mat74
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_i.dds
+newmtl mat75
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crn_pan_c.dds
+newmtl mat76
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd basket_map.dds
+newmtl mat77
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crane_light.dds
+newmtl mat78
+kd 0.800000 0.800000 0.800000 1.000000
+map_Kd crane_light.dds

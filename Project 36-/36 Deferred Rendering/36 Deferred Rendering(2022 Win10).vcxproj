@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{09d9793e-6aa6-49ed-86eb-d7743f03b734}</ProjectGuid>
-    <RootNamespace>My36DeferredRendering2019Win10</RootNamespace>
+    <RootNamespace>My36DeferredRendering</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

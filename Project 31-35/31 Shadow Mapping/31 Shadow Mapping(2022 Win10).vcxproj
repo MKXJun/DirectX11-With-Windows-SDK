@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{9ade0f9b-197c-4987-8528-a2b7a27f581b}</ProjectGuid>
-    <RootNamespace>My31ShadowMapping2019Win10</RootNamespace>
+    <RootNamespace>My31ShadowMapping</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

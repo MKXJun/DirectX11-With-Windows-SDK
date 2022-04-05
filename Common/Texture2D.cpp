@@ -210,6 +210,7 @@ void Depth2D::InternalConstruct(ID3D11Device* d3dDevice,
     m_pTexture.Reset();
     m_pTextureSRV.Reset();
     m_pDepthStencilElements.clear();
+    m_pShaderResourceElements.clear();
 
     CD3D11_TEXTURE2D_DESC desc(
         stencil ? DXGI_FORMAT_R32G8X24_TYPELESS : DXGI_FORMAT_R32_TYPELESS,
@@ -244,5 +245,19 @@ void Depth2D::InternalConstruct(ID3D11Device* d3dDevice,
         );
 
         d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &shaderResourceDesc, m_pTextureSRV.GetAddressOf());
+
+        // 单个子资源
+        for (UINT i = 0; i < arraySize; ++i) {
+            CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
+                srvDimension,
+                stencil ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_R32_FLOAT,
+                0, 1,  // Mips
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11ShaderResourceView> pSRV;
+            d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            m_pShaderResourceElements.push_back(pSRV);
+        }
     }
 }

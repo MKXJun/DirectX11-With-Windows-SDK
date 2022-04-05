@@ -99,6 +99,17 @@ void GameObject::FrustumCulling(const BoundingFrustum& frustumInWorld)
 	}
 }
 
+void GameObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
+{
+	size_t sz = m_pMeshDatas.size();
+	m_InFrustum = false;
+	for (size_t i = 0; i < sz; ++i)
+	{
+		m_pMeshDatas[i]->m_InFrustum = obbInWorld.Intersects(GetBoundingOrientedBox(i));
+		m_InFrustum = m_InFrustum || m_pMeshDatas[i]->m_InFrustum;
+	}
+}
+
 void GameObject::LoadModelFromFile(ID3D11Device* device, std::string_view filename)
 {
 	using namespace Assimp;

@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{3e99168d-19bf-4584-ac53-b2d98a9bcc75}</ProjectGuid>
-    <RootNamespace>My35ParticleSystem2019Win10</RootNamespace>
+    <RootNamespace>My35ParticleSystem</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

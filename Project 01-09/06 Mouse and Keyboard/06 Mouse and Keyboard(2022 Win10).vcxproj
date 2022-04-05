@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{0D817B81-E9F7-47B3-9C48-2D918C141441}</ProjectGuid>
-    <RootNamespace>My06MouseandKeyboard2019Win10</RootNamespace>
+    <RootNamespace>My06MouseandKeyboard</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

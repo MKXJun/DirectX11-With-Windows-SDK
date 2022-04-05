@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{ce0ebc2b-f04d-44ad-ad29-73519be0fd06}</ProjectGuid>
-    <RootNamespace>My32SSAO2019Win10</RootNamespace>
+    <RootNamespace>My32SSAO</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

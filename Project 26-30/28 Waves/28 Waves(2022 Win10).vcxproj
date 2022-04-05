@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{5A5F6C50-B1DA-4B2B-9CC4-48460EED2205}</ProjectGuid>
-    <RootNamespace>My28Waves2019Win10</RootNamespace>
+    <RootNamespace>My28Waves</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

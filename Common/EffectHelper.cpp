@@ -887,8 +887,8 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view name, const std::wst
 			if (errorBlob != nullptr)
 			{
 				OutputDebugStringA(reinterpret_cast<const char*>(errorBlob->GetBufferPointer()));
+				errorBlob->Release();
 			}
-			errorBlob->Release();
 			return hr;
 		}
 	}

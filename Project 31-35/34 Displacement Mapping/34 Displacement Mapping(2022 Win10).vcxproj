@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{4407f41b-4554-4c20-83cf-2bf87494aac8}</ProjectGuid>
-    <RootNamespace>My34DisplacementMapping2019Win10</RootNamespace>
+    <RootNamespace>My34DisplacementMapping</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

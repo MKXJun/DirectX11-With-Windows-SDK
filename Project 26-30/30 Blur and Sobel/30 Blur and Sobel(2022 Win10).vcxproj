@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{6C15DA9C-F8D0-4B6A-8471-BFB4349B9691}</ProjectGuid>
-    <RootNamespace>My30BlurandSobel2019Win10</RootNamespace>
+    <RootNamespace>My30BlurandSobel</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

@@ -178,7 +178,6 @@
     <ClCompile Include="..\..\Common\stb_image.cpp" />
     <ClCompile Include="..\..\Common\Texture2D.cpp" />
     <ClCompile Include="..\..\Common\TextureManager.cpp" />
-    <ClCompile Include="..\..\Common\tiny_obj_loader.cpp" />
     <ClCompile Include="..\..\Common\Transform.cpp" />
     <ClCompile Include="..\..\Common\Vertex.cpp" />
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp" />
@@ -210,7 +209,6 @@
     <ClInclude Include="..\..\Common\stb_image.h" />
     <ClInclude Include="..\..\Common\Texture2D.h" />
     <ClInclude Include="..\..\Common\TextureManager.h" />
-    <ClInclude Include="..\..\Common\tiny_obj_loader.h" />
     <ClInclude Include="..\..\Common\Transform.h" />
     <ClInclude Include="..\..\Common\Vertex.h" />
     <ClInclude Include="..\..\Common\WICTextureLoader.h" />

@@ -36,9 +36,6 @@
     <ClCompile Include="..\..\Common\TextureManager.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\tiny_obj_loader.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\Transform.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
       <Filter>着色器</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\TextureManager.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\tiny_obj_loader.h">
       <Filter>通用文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Common\Transform.h">

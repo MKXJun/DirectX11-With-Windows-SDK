@@ -342,7 +342,7 @@ bool GameApp::InitResource()
 	//
 	m_pGrassCube = std::make_unique<SkyRender>();
 	HR(m_pGrassCube->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
-		L"..\\Texture\\grasscube1024.dds", 5000.0f));
+		L"..\\Texture\\grasscube1024.dds"));
 
 	m_pBasicEffect->SetTextureCube(m_pGrassCube->GetTextureCube());
 

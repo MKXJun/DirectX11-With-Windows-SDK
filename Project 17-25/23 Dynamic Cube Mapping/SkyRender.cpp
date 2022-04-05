@@ -7,7 +7,7 @@
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename, float skySphereRadius, bool generateMips)
+HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
 	m_pIndexBuffer.Reset();
@@ -37,10 +37,10 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 	if (FAILED(hr))
 		return hr;
 
-	return InitResource(device, skySphereRadius);
+	return InitResource(device);
 }
 
-HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames, float skySphereRadius, bool generateMips)
+HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
 	m_pIndexBuffer.Reset();
@@ -58,7 +58,7 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* devic
 	if (FAILED(hr))
 		return hr;
 
-	return InitResource(device, skySphereRadius);
+	return InitResource(device);
 }
 
 ID3D11ShaderResourceView* SkyRender::GetTextureCube()
@@ -96,29 +96,29 @@ void SkyRender::SetDebugObjectName(const std::string& name)
 #endif
 }
 
-HRESULT SkyRender::InitResource(ID3D11Device* device, float skySphereRadius)
+HRESULT SkyRender::InitResource(ID3D11Device* device)
 {
 	HRESULT hr;
-	auto sphere = Geometry::CreateSphere<VertexPos>(skySphereRadius);
+	auto box = Geometry::CreateBox<VertexPos>();
 
 	// 顶点缓冲区创建
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)sphere.vertexVec.size();
+	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)box.vertexVec.size();
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = sphere.vertexVec.data();
+	InitData.pSysMem = box.vertexVec.data();
 
 	hr = device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer);
 	if (FAILED(hr))
 		return hr;
 
 	// 索引缓冲区创建
-	m_IndexCount = (UINT)sphere.indexVec.size();
+	m_IndexCount = (UINT)box.indexVec.size();
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
@@ -128,13 +128,13 @@ HRESULT SkyRender::InitResource(ID3D11Device* device, float skySphereRadius)
 	ibd.StructureByteStride = 0;
 	ibd.MiscFlags = 0;
 
-	InitData.pSysMem = sphere.indexVec.data();
+	InitData.pSysMem = box.indexVec.data();
 
 	return device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer);
 }
 
 HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::wstring& cubemapFilename,
-	float skySphereRadius, int dynamicCubeSize, bool generateMips)
+	int dynamicCubeSize, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
 	m_pCacheRTV.Reset();
@@ -147,14 +147,14 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext
 	}
 
 	HRESULT hr;
-	hr = SkyRender::InitResource(device, deviceContext, cubemapFilename, skySphereRadius, generateMips);
+	hr = SkyRender::InitResource(device, deviceContext, cubemapFilename, generateMips);
 	if (FAILED(hr))
 		return hr;
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);
 }
 
 HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext* deviceContext, const std::vector<std::wstring>& cubemapFilenames,
-	float skySphereRadius, int dynamicCubeSize, bool generateMips)
+	int dynamicCubeSize, bool generateMips)
 {
 	// 防止重复初始化造成内存泄漏
 	m_pCacheRTV.Reset();
@@ -167,7 +167,7 @@ HRESULT DynamicSkyRender::InitResource(ID3D11Device* device, ID3D11DeviceContext
 	}
 
 	HRESULT hr;
-	hr = SkyRender::InitResource(device, deviceContext, cubemapFilenames, skySphereRadius, generateMips);
+	hr = SkyRender::InitResource(device, deviceContext, cubemapFilenames, generateMips);
 	if (FAILED(hr))
 		return hr;
 	return DynamicSkyRender::InitResource(device, dynamicCubeSize);

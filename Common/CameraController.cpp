@@ -6,8 +6,6 @@ using namespace DirectX;
 
 void CameraController::ApplyMomentum(float& oldValue, float& newValue, float deltaTime)
 {
-	deltaTime = std::min(1.0f / 100.0f, deltaTime);
-	
 	float blendedValue;
 	if (fabs(newValue) > fabs(oldValue))
 		blendedValue = XMath::Lerp(newValue, oldValue, powf(0.6f, deltaTime * 60.0f));

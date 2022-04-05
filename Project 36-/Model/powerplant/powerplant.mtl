@@ -1,0 +1,882 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v5.2.0)
+
+newmtl DefaultMaterial
+Kd 0.600000024 0.600000024 0.600000024
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+
+newmtl mat0
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd wall_tex_a.dds
+
+newmtl mat1
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd wall_tex_a.dds
+
+newmtl mat2
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd mav_b_body.dds
+
+newmtl mat3
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd mav_b_lit.dds
+
+newmtl mat4
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd mav_a_ring.dds
+
+newmtl mat5
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tank_top.dds
+
+newmtl mat6
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tank_side.dds
+
+newmtl mat7
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tow_rib_ a.dds
+
+newmtl mat8
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tw_tex_a.dds
+
+newmtl mat9
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd red_girder_a.dds
+
+newmtl mat10
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd re_bar_a.dds
+
+newmtl mat11
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd grt_sm_a.dds
+
+newmtl mat12
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd hz_a.dds
+
+newmtl mat13
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd grt_sm_b.dds
+
+newmtl mat14
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tw_tex_a.dds
+
+newmtl mat15
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ring_a.dds
+
+newmtl mat16
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pipe_a.dds
+
+newmtl mat17
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pipe_e.dds
+
+newmtl mat18
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pipe_b.dds
+
+newmtl mat19
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pipe_d.dds
+
+newmtl mat20
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ring_a.dds
+
+newmtl mat21
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_d.dds
+
+newmtl mat22
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_f.dds
+
+newmtl mat23
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_g.dds
+
+newmtl mat24
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_e.dds
+
+newmtl mat25
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_i.dds
+
+newmtl mat26
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_c.dds
+
+newmtl mat27
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd grt_sm_a.dds
+
+newmtl mat28
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd sm_pan_a.dds
+
+newmtl mat29
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd gravel_c.dds
+
+newmtl mat30
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd test_ground_b.dds
+
+newmtl mat31
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pad_big_b.dds
+
+newmtl mat32
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd gravel_a.dds
+
+newmtl mat33
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd pad_pan_a.dds
+
+newmtl mat34
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd hill_mound_b.dds
+
+newmtl mat35
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd road_loop_a.dds
+
+newmtl mat36
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd trench_surround.dds
+
+newmtl mat37
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd trench_b.dds
+
+newmtl mat38
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd road_end.dds
+
+newmtl mat39
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd road_end_b.dds
+
+newmtl mat40
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd road_end_a.dds
+
+newmtl mat41
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd road_st_a.dds
+
+newmtl mat42
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd con_edge.dds
+
+newmtl mat43
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd trench_end.dds
+
+newmtl mat44
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd truss_a.dds
+
+newmtl mat45
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd fan_housing_b.dds
+
+newmtl mat46
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd fan_blde.dds
+
+newmtl mat47
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd fan_hub.dds
+
+newmtl mat48
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd truss_end.dds
+
+newmtl mat49
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tw_tex_a.dds
+
+newmtl mat50
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tow_rib_ a.dds
+
+newmtl mat51
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tank_top.dds
+
+newmtl mat52
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd container_gry_num.dds
+
+newmtl mat53
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd container_orn_num.dds
+
+newmtl mat54
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd container_grn_num.dds
+
+newmtl mat55
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd command_a.dds
+
+newmtl mat56
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd re_bar_a.dds
+
+newmtl mat57
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ele_floor.dds
+
+newmtl mat58
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd yellow_girder_a.dds
+
+newmtl mat59
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ele_bot.dds
+
+newmtl mat60
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ele_support.dds
+
+newmtl mat61
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crane_light.dds
+
+newmtl mat62
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd rail.dds
+
+newmtl mat63
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd container_hab_num.dds
+
+newmtl mat64
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_a.dds
+
+newmtl mat65
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_i.dds
+
+newmtl mat66
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd walkway_a.dds
+
+newmtl mat67
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd yellow_girder_a.dds
+
+newmtl mat68
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd wall_tex_b.dds
+
+newmtl mat69
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd ele_track_a.dds
+
+newmtl mat70
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd tow_rib_c.dds
+
+newmtl mat71
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_clamp_a.dds
+
+newmtl mat72
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crane_wheel.dds
+
+newmtl mat73
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd wheel_house.dds
+
+newmtl mat74
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_i.dds
+
+newmtl mat75
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crn_pan_c.dds
+
+newmtl mat76
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd basket_map.dds
+
+newmtl mat77
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crane_light.dds
+
+newmtl mat78
+Kd 0.800000012 0.800000012 0.800000012
+Ka 0 0 0
+Ks 0 0 0
+Ke 0 0 0
+Tf 1 1 1
+d 1
+Ni 1
+illum 1
+map_Kd crane_light.dds
+

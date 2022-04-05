@@ -107,6 +107,7 @@ public:
 	ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
 	ID3D11DepthStencilView* GetDepthStencil(std::size_t arrayIndex = 0) { return m_pDepthStencilElements[arrayIndex].Get(); }
 	ID3D11ShaderResourceView* GetShaderResource() { return m_pTextureSRV.Get(); }
+	ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
 
 	// 设置调试对象名
 	void SetDebugObjectName(const std::string& name);
@@ -125,6 +126,7 @@ private:
 	ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
 	// 每个元素一个深度/模板视图
 	std::vector<ComPtr<ID3D11DepthStencilView>> m_pDepthStencilElements;
+	std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
 };
 
 

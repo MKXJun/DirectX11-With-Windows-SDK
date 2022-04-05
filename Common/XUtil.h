@@ -18,6 +18,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include <algorithm>
 
 //
 // 宏相关

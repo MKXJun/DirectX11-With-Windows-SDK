@@ -222,21 +222,18 @@ bool GameApp::InitResource()
 
 	m_pDaylight = std::make_unique<SkyRender>();
 	HR(m_pDaylight->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
-		L"..\\Texture\\daylight.jpg", 
-		5000.0f));
+		L"..\\Texture\\daylight.jpg"));
 
 	m_pSunset = std::make_unique<SkyRender>();
 	HR(m_pSunset->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
 		std::vector<std::wstring>{
 		L"..\\Texture\\sunset_posX.bmp", L"..\\Texture\\sunset_negX.bmp",
 			L"..\\Texture\\sunset_posY.bmp", L"..\\Texture\\sunset_negY.bmp",
-			L"..\\Texture\\sunset_posZ.bmp", L"..\\Texture\\sunset_negZ.bmp", },
-		5000.0f));
+			L"..\\Texture\\sunset_posZ.bmp", L"..\\Texture\\sunset_negZ.bmp", }));
 
 	m_pDesert = std::make_unique<SkyRender>();
 	HR(m_pDesert->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
-		L"..\\Texture\\desertcube1024.dds",
-		5000.0f));
+		L"..\\Texture\\desertcube1024.dds"));
 
 	m_BasicEffect.SetTextureCube(m_pDaylight->GetTextureCube());
 	// ******************

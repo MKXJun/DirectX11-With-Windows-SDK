@@ -201,7 +201,7 @@ void GameApp::UpdateScene(float dt)
 		};
 		if (ImGui::Combo("##7", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadeSelection), cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
 		{
-			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(&m_CSManager.m_SelectedCascadeSelection);
+			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(static_cast<bool>(m_CSManager.m_SelectedCascadeSelection));
 		}
 
 		static const char* cascade_levels[] = {

@@ -63,7 +63,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             if (cascadeIndex == 0)
                 frustumIntervalBegin = 0.0f;
             else
-                frustumIntervalBegin = (float)m_CascadePartitionsPercentage[cascadeIndex - 1];
+                frustumIntervalBegin = m_CascadePartitionsPercentage[cascadeIndex - 1];
         }
         else
         {
@@ -74,9 +74,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         }
 
         // 算出视锥体Z区间
-        frustumIntervalEnd = (float)m_CascadePartitionsPercentage[cascadeIndex];
-        frustumIntervalBegin /= m_CascadePartitionsMax;
-        frustumIntervalEnd /= m_CascadePartitionsMax;
+        frustumIntervalEnd = m_CascadePartitionsPercentage[cascadeIndex];
         frustumIntervalBegin = frustumIntervalBegin * cameraNearFarRange;
         frustumIntervalEnd = frustumIntervalEnd * cameraNearFarRange;
 
@@ -180,7 +178,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             for (int i = 0; i < 8; ++i)
             {
                 lightSpaceSceneAABBminValueVec = XMVectorMin(sceneAABBPointsLightSpace[i], lightSpaceSceneAABBminValueVec);
-                lightSpaceSceneAABBmaxValueVec = XMVectorMin(sceneAABBPointsLightSpace[i], lightSpaceSceneAABBmaxValueVec);
+                lightSpaceSceneAABBmaxValueVec = XMVectorMax(sceneAABBPointsLightSpace[i], lightSpaceSceneAABBmaxValueVec);
             }
             nearPlane = XMVectorGetZ(lightSpaceSceneAABBminValueVec);
             farPlane = XMVectorGetZ(lightSpaceSceneAABBmaxValueVec);

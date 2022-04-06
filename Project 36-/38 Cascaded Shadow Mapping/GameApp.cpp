@@ -113,6 +113,7 @@ void GameApp::UpdateScene(float dt)
 		{
 			m_ShadowSize = (1 << texture_level);
 			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
+			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
 		}
 
 		
@@ -150,11 +151,7 @@ void GameApp::UpdateScene(float dt)
 			"Fit Projection To Cascade",
 			"Fit Projection To Scene"
 		};
-		static int fit_proj_idx = 1;
-		if (ImGui::Combo("##4", &fit_proj_idx, fit_projection_strs, ARRAYSIZE(fit_projection_strs)))
-		{
-			m_CSManager.m_SelectedCascadesFit = static_cast<FitProjection>(fit_proj_idx);
-		}
+		ImGui::Combo("##4", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadesFit), fit_projection_strs, ARRAYSIZE(fit_projection_strs));
 
 		static const char* camera_strs[] = {
 			"Main Camera",
@@ -175,9 +172,18 @@ void GameApp::UpdateScene(float dt)
 		{
 			m_CSManager.m_SelectedCamera = static_cast<CameraSelection>(camera_idx);
 			if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
+			{
 				m_FPSCameraController.InitCamera(static_cast<FirstPersonCamera*>(m_pViewerCamera.get()));
+				m_FPSCameraController.SetMoveSpeed(10.0f);
+				m_FPSCameraController.SetStrafeSpeed(10.0f);
+			}
 			else if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Light)
+			{
 				m_FPSCameraController.InitCamera(static_cast<FirstPersonCamera*>(m_pLightCamera.get()));
+				m_FPSCameraController.SetMoveSpeed(50.0f);
+				m_FPSCameraController.SetStrafeSpeed(50.0f);
+			}
+				
 		}
 
 		static const char* fit_near_far_strs[] = {
@@ -224,13 +230,15 @@ void GameApp::UpdateScene(float dt)
 		for (int i = 0; i < m_CascadeLevels; ++i)
 		{
 			level_str[5] = '1' + i;
-			ImGui::SliderInt(level_str, m_CSManager.m_CascadePartitionsPercentage + i, 0, 100);
+			ImGui::SliderFloat(level_str, m_CSManager.m_CascadePartitionsPercentage + i, 0.0f, 1.0f, "");
+			ImGui::SameLine();
+			ImGui::Text("%.1f%%", m_CSManager.m_CascadePartitionsPercentage[i] * 100);
 			if (i && m_CSManager.m_CascadePartitionsPercentage[i] < m_CSManager.m_CascadePartitionsPercentage[i - 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i - 1];
 			if (i < m_CascadeLevels - 1 && m_CSManager.m_CascadePartitionsPercentage[i] > m_CSManager.m_CascadePartitionsPercentage[i + 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i + 1];
-			if (m_CSManager.m_CascadePartitionsPercentage[i] > 100)
-				m_CSManager.m_CascadePartitionsPercentage[i] = 100;
+			if (m_CSManager.m_CascadePartitionsPercentage[i] > 1.0f)
+				m_CSManager.m_CascadePartitionsPercentage[i] = 1.0f;
 		}
 
 	}

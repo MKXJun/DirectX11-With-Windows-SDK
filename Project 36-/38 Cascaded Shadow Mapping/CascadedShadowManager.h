@@ -79,10 +79,9 @@ public:
     // 级联相关的配置
     //
     //
-    int		    m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
-        5, 15, 60, 100, 100, 100, 100, 100
+    float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
+        0.05f, 0.15f, 0.6f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
     };    
-    const int   m_CascadePartitionsMax = 100;           // 100%
     int		    m_PCFKernelSize = 5;                    // PCF核大小(奇数)
     float       m_PCFDepthOffset = 0.002f;              // PCF深度偏移值
     bool        m_DerivativeBasedOffset = true;         // 是否进行基于偏导的偏移
@@ -95,7 +94,7 @@ public:
     FitProjection       m_SelectedCascadesFit = FitProjection::FitProjection_ToCascade;
     FitNearFar          m_SelectedNearFarFit = FitNearFar::FitNearFar_SceneAABB;
     CascadeSelection    m_SelectedCascadeSelection = CascadeSelection::CascadeSelection_Map;
-
+    
 private:
     void XM_CALLCONV ComputeNearAndFar(float& outNearPlane, float& outFarPlane,
         DirectX::FXMVECTOR lightCameraOrthographicMinVec,

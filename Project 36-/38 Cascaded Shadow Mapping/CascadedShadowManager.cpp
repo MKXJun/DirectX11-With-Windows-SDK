@@ -31,18 +31,6 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
     XMMATRIX ViewerView = viewerCamera.GetViewMatrixXM();
     XMMATRIX LightView = lightCamera.GetViewMatrixXM();
     XMMATRIX ViewerInvView = XMMatrixInverse(nullptr, ViewerView);
-    // 将场景AABB的角点变换到光照空间
-    XMVECTOR sceneAABBPointsLightSpace[8]{};
-    {
-        XMFLOAT3 corners[8];
-        sceneBoundingBox.GetCorners(corners);
-        for (int i = 0; i < 8; ++i)
-        {
-            XMVECTOR v = XMLoadFloat3(corners + i);
-            sceneAABBPointsLightSpace[i] = XMVector3Transform(v, LightView);
-        }
-            
-    }
     
     float frustumIntervalBegin, frustumIntervalEnd;
     XMVECTOR lightCameraOrthographicMinVec;     // 视锥体在光照空间下的AABB vMin
@@ -156,6 +144,18 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
 
         float nearPlane = 0.0f;
         float farPlane = 0.0f;
+
+        // 将场景AABB的角点变换到光照空间
+        XMVECTOR sceneAABBPointsLightSpace[8]{};
+        {
+            XMFLOAT3 corners[8];
+            sceneBoundingBox.GetCorners(corners);
+            for (int i = 0; i < 8; ++i)
+            {
+                XMVECTOR v = XMLoadFloat3(corners + i);
+                sceneAABBPointsLightSpace[i] = XMVector3Transform(v, LightView);
+            }
+        }
 
         if (m_SelectedNearFarFit == FitNearFar::FitNearFar_ZeroOne)
         {

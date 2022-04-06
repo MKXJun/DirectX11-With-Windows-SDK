@@ -89,6 +89,7 @@ public:
     bool        m_BlendBetweenCascades = true;          // 是否在两个级联间混合
     float       m_BlendBetweenCascadesRange = 0.005f;   // 级联混合地带的范围
 
+    bool        m_FixedSizeFrustumAABB = true;          // 是否固定视锥体产生的AABB宽高
     bool        m_MoveLightTexelSize = true;            // 是否进行逐光照texel移动
 
     CameraSelection     m_SelectedCamera = CameraSelection::CameraSelection_Eye;

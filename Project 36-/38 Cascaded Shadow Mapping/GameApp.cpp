@@ -145,6 +145,7 @@ void GameApp::UpdateScene(float dt)
 		{
 			m_pForwardEffect->SetPCFDerivativesOffsetEnabled(m_CSManager.m_DerivativeBasedOffset);
 		}
+		ImGui::Checkbox("Fixed Size Frustum AABB", &m_CSManager.m_FixedSizeFrustumAABB);
 		ImGui::Checkbox("Fit Light to Texels", &m_CSManager.m_MoveLightTexelSize);
 		
 		static const char* fit_projection_strs[] = {
@@ -345,7 +346,7 @@ bool GameApp::InitResource()
 
 	m_pLightCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	lightCamera->LookAt(XMFLOAT3(-320.0f, 300.0f, -220.3f), XMFLOAT3(), XMFLOAT3(0.0f, 1.0f, 0.0f));
-	lightCamera->SetFrustum(XM_PI / 4, 1.0f, 0.1f, 1000.0f);
+	lightCamera->SetFrustum(XM_PI / 3, 1.0f, 0.1f, 1000.0f);
 
 	m_FPSCameraController.InitCamera(viewerCamera.get());
 	m_FPSCameraController.SetMoveSpeed(10.0f);

@@ -91,59 +91,52 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         lightCameraOrthographicMaxVec = XMLoadFloat3(&viewerFrustumBox.Center) + XMLoadFloat3(&viewerFrustumBox.Extents);
         lightCameraOrthographicMinVec = XMLoadFloat3(&viewerFrustumBox.Center) - XMLoadFloat3(&viewerFrustumBox.Extents);
 
-        //
-        // 视锥体在光照空间下的AABB，其XY边界 适配到场景 或 适配到级联
-        //
-
-        // 这段代码可以消除由于光线改变以适应摄像机而造成的阴影边缘的闪烁效果
-        if (m_SelectedCascadesFit == FitProjection::FitProjection_ToScene)
+        // 这段代码可以消除由于光线改变或摄像机视角变化导致阴影边缘出现的闪烁效果
+        if (m_FixedSizeFrustumAABB)
         {
-            // 将正交投影的近平面设为0，远平面设为当前级联远平面
-            // 使用子视锥体的对角线大小作为XY的宽高，然后填充该投影
-            // 
-            // 为了这么做，我们填充正交投影使得它足够大，且总是能覆盖当前级联的视锥体
+            // 使用max(子视锥体的斜对角线, 远平面对角线)的长度作为XY的宽高，从而固定AABB的宽高
+            // 并且它的宽高足够大，且总是能覆盖当前级联的视锥体
             
-            XMVECTOR diagVec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 1);
+            //     Near    Far
+            //    0----1  4----5
+            //    |    |  |    |
+            //    |    |  |    |
+            //    3----2  7----6
+            XMVECTOR diagVec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 1);   // 子视锥体的斜对角线
+            XMVECTOR diag2Vec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 5);  // 远平面对角线
             // 找到视锥体对角线的长度作为AABB的宽高
-            diagVec = XMVector3Length(diagVec);
-            float diagLength = XMVectorGetX(diagVec);
+            XMVECTOR lengthVec = XMVectorMax(XMVector3Length(diagVec), XMVector3Length(diag2Vec));
 
             // 计算出的偏移量会填充正交投影
-            XMVECTOR borderOffsetVec = (diagVec - (lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec)) * g_XMOneHalf;
+            XMVECTOR borderOffsetVec = (lengthVec - (lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec)) * g_XMOneHalf;
             // 我们仅对XY方向进行填充
             static const XMVECTORF32 xyzw1100Vec = { {1.0f, 1.0f, 0.0f, 0.0f} };
             lightCameraOrthographicMaxVec += borderOffsetVec * xyzw1100Vec;
             lightCameraOrthographicMinVec -= borderOffsetVec * xyzw1100Vec;
-
-            // 计算阴影图中每个texel对应世界空间的宽高，用于后续避免阴影边缘的闪烁
-            float worldUnitsPerTexel = diagLength / m_ShadowSize;
-            worldUnitsPerTexelVec = XMVectorSet(worldUnitsPerTexel, worldUnitsPerTexel, 0.0f, 0.0f);
         }
-        else if (m_SelectedCascadesFit == FitProjection::FitProjection_ToCascade)
+        
+        // 我们基于PCF核的大小再计算一个边界扩充值使得包围盒稍微放大一些。
+        // 等比缩放不会影响前面固定大小的AABB
         {
-            // 我们基于PCF核的大小计算一个边界扩充值使得包围盒稍微放大一些。这确保我们在正确的map中采样
             float scaleDuetoBlur = m_PCFKernelSize / (float)m_ShadowSize;
             XMVECTORF32 scaleDuetoBlurVec = { {scaleDuetoBlur, scaleDuetoBlur, 0.0f, 0.0f} };
-
-            float normalizeByBufferSize = 1.0f / m_ShadowSize;
-            XMVECTORF32 normalizeByBufferSizeVec = { {normalizeByBufferSize, normalizeByBufferSize, 0.0f, 0.0f} };
 
             XMVECTOR borderOffsetVec = lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec;
             borderOffsetVec *= g_XMOneHalf;
             borderOffsetVec *= scaleDuetoBlurVec;
             lightCameraOrthographicMaxVec += borderOffsetVec;
             lightCameraOrthographicMinVec -= borderOffsetVec;
-
-            // 由于我们在级联之间紧密贴合，阴影边缘的闪烁会在摄像机旋转的时候依然存在
-            // 不过当放大或平移的时候，阴影的边缘不会出现闪烁了
-            worldUnitsPerTexelVec = lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec;
-            worldUnitsPerTexelVec *= normalizeByBufferSize;
         }
-
-        float lightCameraOrthographicMinZ = XMVectorGetZ(lightCameraOrthographicMinVec);
+        
 
         if (m_MoveLightTexelSize)
         {
+            // 计算阴影图中每个texel对应世界空间的宽高，用于后续避免阴影边缘的闪烁
+            float normalizeByBufferSize = 1.0f / m_ShadowSize;
+            XMVECTORF32 normalizeByBufferSizeVec = { {normalizeByBufferSize, normalizeByBufferSize, 0.0f, 0.0f} };
+            worldUnitsPerTexelVec = lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec;
+            worldUnitsPerTexelVec *= normalizeByBufferSize;
+
             // worldUnitsPerTexel
             // | |                     光照空间
             // [x][x][ ]    [ ][x][x]  x是阴影texel

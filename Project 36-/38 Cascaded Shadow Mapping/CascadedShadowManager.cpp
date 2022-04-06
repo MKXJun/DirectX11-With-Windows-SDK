@@ -104,7 +104,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             //    3----2  7----6
             XMVECTOR diagVec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 1);   // 子视锥体的斜对角线
             XMVECTOR diag2Vec = XMLoadFloat3(viewerFrustumPoints + 7) - XMLoadFloat3(viewerFrustumPoints + 5);  // 远平面对角线
-            // 找到视锥体对角线的长度作为AABB的宽高
+            // 找到较长的对角线作为AABB的宽高
             XMVECTOR lengthVec = XMVectorMax(XMVector3Length(diagVec), XMVector3Length(diag2Vec));
 
             // 计算出的偏移量会填充正交投影

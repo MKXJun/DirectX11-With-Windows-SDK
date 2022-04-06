@@ -23,8 +23,8 @@ cbuffer CBCascadedShadow : register(b1)
     
     // 对Map-based Selection方案，这将保持有效范围内的像素。
     // 当没有边界时，Min和Max分别为0和1
-    float  g_MinBorderPadding;      // 1 / SIZE
-    float  g_MaxBorderPadding;      // 1 - 1 / SIZE
+    float  g_MinBorderPadding;      // (kernelSize / 2) / (float)shadowSize
+    float  g_MaxBorderPadding;      // 1.0f - (kernelSize / 2) / (float)shadowSize
     float  g_ShadowBias;            // 处理阴影伪影的偏移值，这些伪影会因为PCF而加剧
     float  g_CascadeBlendArea;      // 级联之间重叠量时的混合区域
     

@@ -275,7 +275,7 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
         if (CASCADE_COUNT_FLAG > 1)
         {
             // 寻找最近的级联，使得纹理坐标位于纹理边界内
-            // minBoard < tx, ty < maxBoard
+            // minBorder < tx, ty < maxBorder
             for (int cascadeIndex = 0; cascadeIndex < CASCADE_COUNT_FLAG && cascadeFound == 0; ++cascadeIndex)
             {
                 shadowMapTexCoord = shadowMapTexCoordViewSpace * g_CascadeScale[cascadeIndex] + g_CascadeOffset[cascadeIndex];
@@ -297,7 +297,7 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     // 这些偏导用于计算投影纹理空间相邻texel对应到光照空间不同方向引起的深度变化
     if (USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG)
     {
-        // 计算观察空间的偏导映射到投影纹理空间的变化率
+        // 计算光照空间的偏导映射到投影纹理空间的变化率
         shadowMapTexCoordDDX = ddx(shadowMapTexCoordViewSpace);
         shadowMapTexCoordDDY = ddy(shadowMapTexCoordViewSpace);
         

@@ -122,7 +122,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         else if (m_SelectedCascadesFit == FitProjection::FitProjection_ToCascade)
         {
             // 我们基于PCF核的大小计算一个边界扩充值使得包围盒稍微放大一些。这确保我们在正确的map中采样
-            float scaleDuetoBlur = (m_PCFKernelSize * 2 + 1) / (float)m_ShadowSize;
+            float scaleDuetoBlur = m_PCFKernelSize / (float)m_ShadowSize;
             XMVECTORF32 scaleDuetoBlurVec = { {scaleDuetoBlur, scaleDuetoBlur, 0.0f, 0.0f} };
 
             float normalizeByBufferSize = 1.0f / m_ShadowSize;

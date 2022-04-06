@@ -37,6 +37,8 @@ public:
 	int m_DerivativeOffset = 0;
 	int m_CascadeBlend = 0;
 	int m_CascadeSelection = 0;
+	int m_PCFKernelSize = 1;
+	int m_ShadowSize = 1024;
 };
 
 //
@@ -258,8 +260,12 @@ void ForwardEffect::SetPCFKernelSize(int size)
 {
 	int start = -size / 2;
 	int end = size + start;
+	pImpl->m_PCFKernelSize = size;
+	float padding = (size / 2) / (float)pImpl->m_ShadowSize;
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_PCFBlurForLoopStart")->SetSInt(start);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_PCFBlurForLoopEnd")->SetSInt(end);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinBorderPadding")->SetFloat(padding);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxBorderPadding")->SetFloat(1.0f - padding);
 }
 
 void ForwardEffect::SetPCFDepthOffset(float offset)
@@ -269,9 +275,11 @@ void ForwardEffect::SetPCFDepthOffset(float offset)
 
 void ForwardEffect::SetShadowSize(int size)
 {
+	pImpl->m_ShadowSize = size;
+	float padding = (pImpl->m_PCFKernelSize / 2) / (float)size;
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_TexelSize")->SetFloat(1.0f / size);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinBorderPadding")->SetFloat(1.0f / size);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxBorderPadding")->SetFloat((size - 1.0f) / size);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MinBorderPadding")->SetFloat(padding);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_MaxBorderPadding")->SetFloat(1.0f - padding);
 }
 
 void XM_CALLCONV ForwardEffect::SetShadowViewMatrix(DirectX::FXMMATRIX ShadowView)

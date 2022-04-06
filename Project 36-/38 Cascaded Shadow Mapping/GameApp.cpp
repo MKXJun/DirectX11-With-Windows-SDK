@@ -188,24 +188,20 @@ void GameApp::UpdateScene(float dt)
 
 		static const char* fit_near_far_strs[] = {
 			"0:1 NearFar",
-			"AABB NearFar",
-			"AABB/Scene NearFar"
+			"Cascade AABB NearFar",
+			"Scene AABB NearFar",
+			"Scene AABB Intersection NearFar"
 		};
-		static int fit_near_far_idx = 2;
-		if (ImGui::Combo("##6", &fit_near_far_idx, fit_near_far_strs, ARRAYSIZE(fit_near_far_strs)))
-		{
-			m_CSManager.m_SelectedNearFarFit = static_cast<FitNearFar>(fit_near_far_idx);
-		}
+		
+		ImGui::Combo("##6", reinterpret_cast<int*>(&m_CSManager.m_SelectedNearFarFit), fit_near_far_strs, ARRAYSIZE(fit_near_far_strs));
 
 		static const char* cascade_selection_strs[] = {
 			"Map-based Selection",
 			"Interval-based Selection",
 		};
-		static int cascade_selection_idx = 0;
-		if (ImGui::Combo("##7", &cascade_selection_idx, cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
+		if (ImGui::Combo("##7", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadeSelection), cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
 		{
-			m_CSManager.m_SelectedCascadeSelection = static_cast<CascadeSelection>(cascade_selection_idx);
-			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(cascade_selection_idx);
+			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(&m_CSManager.m_SelectedCascadeSelection);
 		}
 
 		static const char* cascade_levels[] = {
@@ -218,7 +214,7 @@ void GameApp::UpdateScene(float dt)
 			"7 Levels",
 			"8 Levels"
 		};
-		static int cascade_level_idx = 2;
+		static int cascade_level_idx = m_CascadeLevels - 1;
 		if (ImGui::Combo("Cascade", &cascade_level_idx, cascade_levels, ARRAYSIZE(cascade_levels)))
 		{
 			m_CascadeLevels = cascade_level_idx + 1;

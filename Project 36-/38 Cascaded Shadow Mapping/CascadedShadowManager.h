@@ -28,8 +28,9 @@ enum class CameraSelection
 enum class FitNearFar
 {
     FitNearFar_ZeroOne,
-    FitNearFar_AABB,
-    FitNearFar_SceneAABB
+    FitNearFar_CascadeAABB,
+    FitNearFar_SceneAABB,
+    FitNearFar_SceneAABB_Intersection
 };
 
 enum class FitProjection
@@ -80,11 +81,11 @@ public:
     //
     //
     float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
-        0.05f, 0.15f, 0.6f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
+        0.05f, 0.15f, 0.3f, 0.5f, 0.7f, 1.0f, 1.0f, 1.0f
     };    
     int		    m_PCFKernelSize = 5;                    // PCF核大小(奇数)
     float       m_PCFDepthOffset = 0.002f;              // PCF深度偏移值
-    bool        m_DerivativeBasedOffset = true;         // 是否进行基于偏导的偏移
+    bool        m_DerivativeBasedOffset = false;        // 是否进行基于偏导的偏移
     bool        m_BlendBetweenCascades = true;          // 是否在两个级联间混合
     float       m_BlendBetweenCascadesRange = 0.005f;   // 级联混合地带的范围
 
@@ -92,7 +93,7 @@ public:
 
     CameraSelection     m_SelectedCamera = CameraSelection::CameraSelection_Eye;
     FitProjection       m_SelectedCascadesFit = FitProjection::FitProjection_ToCascade;
-    FitNearFar          m_SelectedNearFarFit = FitNearFar::FitNearFar_SceneAABB;
+    FitNearFar          m_SelectedNearFarFit = FitNearFar::FitNearFar_SceneAABB_Intersection;
     CascadeSelection    m_SelectedCascadeSelection = CascadeSelection::CascadeSelection_Map;
     
 private:

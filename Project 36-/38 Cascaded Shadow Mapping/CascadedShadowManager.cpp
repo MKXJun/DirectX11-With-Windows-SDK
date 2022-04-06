@@ -161,14 +161,23 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             lightCameraOrthographicMaxVec *= worldUnitsPerTexelVec;
         }
 
-        // 下面的值用于展示计算准确的近平面和远平面的重要性，否则会出现可怕的结果
-        float nearPlane = 0.1f;
-        float farPlane = 10000.0f;
+        float nearPlane = 0.0f;
+        float farPlane = 0.0f;
 
-        //
-        // 视锥体在光照空间下的AABB，适配到场景AABB 或 与场景进行相交测试后再进行计算
-        //
-        if (m_SelectedNearFarFit == FitNearFar::FitNearFar_AABB)
+        if (m_SelectedNearFarFit == FitNearFar::FitNearFar_ZeroOne)
+        {
+            // 下面的值用于展示计算准确的近平面和远平面的重要性，否则会出现可怕的结果
+            nearPlane = 0.1f;
+            farPlane = 10000.0f;
+        }
+        if (m_SelectedNearFarFit == FitNearFar::FitNearFar_CascadeAABB)
+        {
+            // 由于缺乏视锥体AABB外的信息，位于近平面外的物体无法投射到shadow map
+            // 故无法产生遮挡
+            nearPlane = XMVectorGetZ(lightCameraOrthographicMinVec);
+            farPlane = XMVectorGetZ(lightCameraOrthographicMaxVec);
+        }
+        else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB)
         {
             XMVECTOR lightSpaceSceneAABBminValueVec = g_XMFltMax;
             XMVECTOR lightSpaceSceneAABBmaxValueVec = -g_XMFltMax;
@@ -183,7 +192,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             nearPlane = XMVectorGetZ(lightSpaceSceneAABBminValueVec);
             farPlane = XMVectorGetZ(lightSpaceSceneAABBmaxValueVec);
         }
-        else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB)
+        else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB_Intersection)
         {
             // 通过光照空间下视锥体的AABB与场景AABB的相交测试，我们可以得到一个更紧密的近平面和远平面
             ComputeNearAndFar(nearPlane, farPlane, lightCameraOrthographicMinVec, lightCameraOrthographicMaxVec, 

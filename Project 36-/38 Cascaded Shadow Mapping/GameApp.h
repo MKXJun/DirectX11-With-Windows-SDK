@@ -45,7 +45,7 @@ private:
 
 	// 阴影
 	CascadedShadowManager m_CSManager;
-	int m_CascadeLevels = 3;
+	int m_CascadeLevels = 5;
 	int m_ShadowSize = 1024;
 	bool m_DebugShadow = false;
 	bool m_ReversedZ = false;

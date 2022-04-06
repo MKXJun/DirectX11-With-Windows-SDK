@@ -187,7 +187,7 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         }
         else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB_Intersection)
         {
-            // 通过光照空间下视锥体的AABB与场景AABB的相交测试，我们可以得到一个更紧密的近平面和远平面
+            // 通过光照空间下视锥体的AABB 与 变换到光照空间的场景AABB 的相交测试，我们可以得到一个更紧密的近平面和远平面
             ComputeNearAndFar(nearPlane, farPlane, lightCameraOrthographicMinVec, lightCameraOrthographicMaxVec, 
                 sceneAABBPointsLightSpace);
         }
@@ -241,6 +241,12 @@ void XM_CALLCONV CascadedShadowManager::ComputeNearAndFar(
     Triangle triangleList[16]{};
     int numTriangles;
 
+    //      4----5
+    //     /|   /| 
+    //    0-+--1 | 
+    //    | 7--|-6
+    //    |/   |/  
+    //    3----2
     static const int all_indices[][3] = {
         {4,7,6}, {6,5,4},
         {5,6,2}, {2,1,5},

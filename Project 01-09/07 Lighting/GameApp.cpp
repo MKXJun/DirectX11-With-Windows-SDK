@@ -116,12 +116,12 @@ void GameApp::UpdateScene(float dt)
 		}
 		else
 		{
-			ImGui::ColorEdit3("Ambient", &m_SpotLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse", &m_SpotLight.diffuse.x);
-			ImGui::ColorEdit3("Specular", &m_SpotLight.specular.x);
-			ImGui::InputFloat("Spot", &m_SpotLight.spot);
-			ImGui::InputFloat("Range", &m_SpotLight.range);
-			ImGui::InputFloat3("Attenutation", &m_SpotLight.att.x);
+			ImGui::ColorEdit3("Ambient", &m_PSConstantBuffer.spotLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse", &m_PSConstantBuffer.spotLight.diffuse.x);
+			ImGui::ColorEdit3("Specular", &m_PSConstantBuffer.spotLight.specular.x);
+			ImGui::InputFloat("Spot", &m_PSConstantBuffer.spotLight.spot);
+			ImGui::InputFloat("Range", &m_PSConstantBuffer.spotLight.range);
+			ImGui::InputFloat3("Attenutation", &m_PSConstantBuffer.spotLight.att.x);
 		}
 		ImGui::PopID();
 

@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.35.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.35.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -8,10 +8,9 @@
 
 ## 最近更新
 
-2022/4/5 Ver1.35.0
+2022/4/9 Ver1.35.1
 
-- **添加项目 Cascaded Shadow Mapping**
-- 天空盒从球体变成了立方体
+- 修正光照一章ImGui中spotLight的问题
 
 ## 博客教程
 

@@ -4,6 +4,10 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+2022/4/9 Ver1.35.1
+
+- 修正光照一章ImGui中spotLight的问题
+
 2022/4/5 Ver1.35.0
 
 - **添加项目 Cascaded Shadow Mapping**

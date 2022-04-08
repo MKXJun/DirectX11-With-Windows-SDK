@@ -92,9 +92,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 
 	pImpl->m_pEffectHelper = std::make_unique<EffectHelper>();
 
-	// 为了对每个着色器编译出最优版本，需要对同一个文件编译出64种版本的着色器。 In order to compile optimal versions of each shaders,compile out 64 versions of the same file.  
-	// The if statments are dependent upon these macros.  This enables the compiler to optimize out code that can never be reached.
-	// D3D11 Dynamic shader linkage would have this same effect without the need to compile 64 versions of the shader.
+	// 为了对每个着色器编译出最优版本，需要对同一个文件编译出64种版本的着色器。
 	
 	const char* numStrs[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8"};
 	D3D_SHADER_MACRO defines[] =

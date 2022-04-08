@@ -36,7 +36,7 @@ QQ群号：727623616
 - HLSL Shader Model 5.0
 
 目前项目使用了下述代码库或文件：
-- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-37章。</br>
+- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-38章。</br>
 - [nothings/stb](https://github.com/nothings/stb)：使用其stb_image</br>
 - [assimp/assimp](https://github.com/assimp/assimp)：模型加载</br>
 - [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>
@@ -49,17 +49,29 @@ QQ群号：727623616
 
 ## 安装Assimp
 
-打开36章之后的项目需要安装Assimp，具体过程 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+打开36章之后的项目需要先安装并配置好Assimp，具体过程 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
 
 ## 打开教程项目
 
-**对于Win10系统，直接打开DirectX11 With Windows SDK(2019 Win10).sln**
+**对于Win10系统，直接打开DirectX11 With Windows SDK(2022 Win10).sln**
 
 **对于Win7和Win8.x的系统，请阅读 cmake构建项目一节 **
 
-建议一次性生成所有项目，比单独生成会快很多。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
+如果你使用的是**VS2017**或**VS2019**，则需要全选项目然后右键属性：
 
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/raw/master/MarkdownFiles/001.png)
+![](MarkdownFiles/005.png)
+
+然后修改平台工具集为你当前有的版本：
+
+![](MarkdownFiles/006.png)
+
+如果是VS2017，还需要选择当前你所拥有的Windows SDK版本：
+
+![](MarkdownFiles/007.png)
+
+建议使用**Debug x64或Release x64**的属性配置来生成项目，**Release x64会更快**。36章之后的项目需要先按照Assimp的配置。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
+
+![](MarkdownFiles/001.png)
 
 > **注意：** 
 > 1. **目前教程仅支持VS2017(平台工具集v141)及更高版本！**
@@ -77,7 +89,7 @@ QQ群号：727623616
 - `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
 - `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启
 
-再次点击`Configure`会看到`Assimp_DIR`的出现，说明找到了Assimp，然后就可以生成项目。
+再次点击`Configure`会看到`Assimp_DIR`的出现，说明找到了Assimp，然后就可以点`Generate`生成项目，生成的项目位于build文件夹内，或者点`Open Project`打开
 
 ## 创建自己的项目
 
@@ -86,7 +98,7 @@ QQ群号：727623616
 ## 支持/赞赏博主
 **博客和项目维护不易，如果本系列教程对您有所帮助，希望能够扫码支持一下博主。**
 
-![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/002.png)![](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/003.png)
+![](MarkdownFiles/002.png)![](MarkdownFiles/003.png)
 
 ## 遇到项目无法编译、运行的问题
 **[点此查看无法编译、运行教程项目的解决方法](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Solution/README.md)**

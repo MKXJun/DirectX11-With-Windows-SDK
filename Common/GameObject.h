@@ -17,6 +17,8 @@
 #include "Transform.h"
 #include "IEffect.h"
 
+struct Model;
+
 class GameObject
 {
 public:
@@ -38,23 +40,6 @@ public:
 	// 获取物体变换
 	const Transform& GetTransform() const;
 
-	size_t GetMeshCount() const;
-	size_t GetMaterialCount() const;
-	const Material* GetMaterial(size_t idx) const;
-
-	Material* GetMaterial(size_t idx);
-
-	//
-	// 获取包围盒
-	//
-
-	DirectX::BoundingBox GetLocalBoundingBox() const;
-	DirectX::BoundingBox GetLocalBoundingBox(size_t idx) const;
-	DirectX::BoundingBox GetBoundingBox() const;
-	DirectX::BoundingBox GetBoundingBox(size_t idx) const;
-	DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
-	DirectX::BoundingOrientedBox GetBoundingOrientedBox(size_t idx) const;
-
 	//
 	// 视锥体碰撞检测
 	//
@@ -62,11 +47,10 @@ public:
 	void CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld);
 
 	//
-	// 设置模型
+	// 模型
 	//
-
-	void LoadModelFromFile(ID3D11Device* device, std::string_view filename);
-	void LoadModelFromGeometry(ID3D11Device* device, const Geometry::MeshData& meshData);
+	void SetModel(const Model* pModel);
+	const Model* GetModel() const;
 
 	//
 	// 绘制
@@ -74,19 +58,10 @@ public:
 
 	// 绘制对象
 	void Draw(ID3D11DeviceContext* deviceContext, IEffect* effect);
-	
-	//
-	// 调试 
-	//
-	
-	// 设置调试对象名
-	// 若模型被重新设置，调试对象名也需要被重新设置
-	void SetDebugObjectName(const std::string& name);
 
 private:
-	std::vector<std::shared_ptr<Material>> m_pMaterials;
-	std::vector<std::shared_ptr<MeshData>> m_pMeshDatas;
-	DirectX::BoundingBox m_BoundingBox;
+	const Model* m_pModel = nullptr;
+	std::vector<bool> m_SubModelInFrustum;
 	Transform m_Transform = {};
 	bool m_InFrustum = true;
 };

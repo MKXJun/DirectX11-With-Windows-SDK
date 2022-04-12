@@ -46,15 +46,25 @@ Texture2D::Texture2D(ID3D11Device* d3dDevice,
 
 void Texture2D::SetDebugObjectName(const std::string& name)
 {
-#ifdef GRAPHICS_DEBUGGER_OBJECT_NAME
-    D3D11SetDebugObjectName(m_pTexture.Get(), name);
-    D3D11SetDebugObjectName(m_pTextureSRV.Get(), name + ".SRV");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    std::string str = name + ".SRV";
+    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
     for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
-        D3D11SetDebugObjectName(m_pRenderTargetElements[i].Get(), name + ".RTV[" + std::to_string(i) + "]");
+    {
+        str = name + ".RTV[" + std::to_string(i) + "]";
+        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+    }
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-        D3D11SetDebugObjectName(m_pShaderResourceElements[i].Get(), name + ".SRV[" + std::to_string(i) + "]");
+    {
+        str = name + ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+    }
     for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
-        D3D11SetDebugObjectName(m_pUnorderedAccessElements[i].Get(), name + ".UAV[" + std::to_string(i) + "]");
+    {
+        str = name + ".UAV[" + std::to_string(i) + "]";
+        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+    }
 #else
     UNREFERENCED_PARAMETER(name);
 #endif
@@ -189,11 +199,15 @@ Depth2D::Depth2D(ID3D11Device* d3dDevice,
 
 void Depth2D::SetDebugObjectName(const std::string& name)
 {
-#ifdef GRAPHICS_DEBUGGER_OBJECT_NAME
-    D3D11SetDebugObjectName(m_pTexture.Get(), name);
-    D3D11SetDebugObjectName(m_pTextureSRV.Get(), name + ".SRV");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    std::string str = name + ".SRV";
+    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
     for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
-        D3D11SetDebugObjectName(m_pDepthStencilElements[i].Get(), name + ".DSV[" + std::to_string(i) + "]");
+    {
+        str = name + ".DSV[" + std::to_string(i) + "]";
+        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    }
 #else
     UNREFERENCED_PARAMETER(name);
 #endif // GRAPHICS_DEBUGGER_OBJECT_NAME

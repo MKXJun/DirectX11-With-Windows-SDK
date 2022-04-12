@@ -1,3 +1,16 @@
+//***************************************************************************************
+// Effects.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 级联阴影管理
+// Cascaded Shadow Manager.
+//***************************************************************************************
+#pragma once
+
+#ifndef CASCADEDSHADOWMANAGER_H
+#define CASCADEDSHADOWMANAGER_H
+
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <DirectXCollision.h>
 #include <wrl/client.h>
@@ -87,7 +100,7 @@ public:
     float       m_PCFDepthOffset = 0.002f;              // PCF深度偏移值
     bool        m_DerivativeBasedOffset = false;        // 是否进行基于偏导的偏移
     bool        m_BlendBetweenCascades = true;          // 是否在两个级联间混合
-    float       m_BlendBetweenCascadesRange = 0.005f;   // 级联混合地带的范围
+    float       m_BlendBetweenCascadesRange = 0.2f;     // 级联混合地带的范围
 
     bool        m_FixedSizeFrustumAABB = true;          // 是否固定视锥体产生的AABB宽高
     bool        m_MoveLightTexelSize = true;            // 是否进行逐光照texel移动
@@ -114,3 +127,5 @@ private:
 
     std::unique_ptr<Depth2D> m_pCSMTextureArray;
 };
+
+#endif

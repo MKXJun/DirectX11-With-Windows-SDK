@@ -109,8 +109,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders/Rendering.hlsl", device,
 		"GeometryVS", "vs_5_0", defines, blob.GetAddressOf());
 	// 创建顶点布局
-	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
-		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
+	HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
+		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
 	// 前四位代表
 	// [级联级别][偏导偏移][级联间混合][级联选择]
@@ -160,7 +160,10 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerShadow", RenderStates::SSShadowPCF.Get());
 
 	// 设置调试对象名
-	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "ForwardEffect.VertexPosNormalTexLayout");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string str = "ForwardEffect.VertexPosNormalTexLayout";
+	pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+#endif
 	pImpl->m_pEffectHelper->SetDebugObjectName("ForwardEffect");
 
 	return true;
@@ -181,7 +184,7 @@ void XM_CALLCONV ForwardEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void ForwardEffect::SetMaterial(Material& material)
+void ForwardEffect::SetMaterial(const Material& material)
 {
 	TextureManager& tm = TextureManager::Get();
 
@@ -189,7 +192,7 @@ void ForwardEffect::SetMaterial(Material& material)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", tm.GetTexture(str));
 }
 
-MeshDataInput ForwardEffect::GetInputData(MeshData& meshData)
+MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)
 {
 	MeshDataInput input;
 	input.pVertexBuffers = {
@@ -231,17 +234,17 @@ void ForwardEffect::SetCascadeVisulization(bool enable)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_VisualizeCascades")->SetSInt(enable);
 }
 
-void ForwardEffect::SetCascadeOffsets(DirectX::XMFLOAT4 offsets[8])
+void ForwardEffect::SetCascadeOffsets(const DirectX::XMFLOAT4 offsets[8])
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_CascadeOffset")->SetRaw(offsets);
 }
 
-void ForwardEffect::SetCascadeScales(DirectX::XMFLOAT4 scales[8])
+void ForwardEffect::SetCascadeScales(const DirectX::XMFLOAT4 scales[8])
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_CascadeScale")->SetRaw(scales);
 }
 
-void ForwardEffect::SetCascadeFrustumsEyeSpaceDepths(float depths[8])
+void ForwardEffect::SetCascadeFrustumsEyeSpaceDepths(const float depths[8])
 {
 	float depthsArray[8][4] = { {depths[0]},{depths[1]}, {depths[2]}, {depths[3]}, 
 		{depths[4]}, {depths[5]}, {depths[6]}, {depths[7]} };

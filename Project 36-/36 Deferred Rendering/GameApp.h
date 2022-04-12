@@ -7,7 +7,7 @@
 #include "Effects.h"
 #include "RenderStates.h"
 #include "GameObject.h"
-#include "Collision.h"
+#include "ModelManager.h"
 #include "Texture2D.h"
 #include "Buffer.h"
 #include "TextureManager.h"
@@ -73,6 +73,12 @@ private:
 
 private:
 	
+	// GPU计时
+	GpuTimer m_GpuTimer_PreZ;
+	GpuTimer m_GpuTimer_Geometry;
+	GpuTimer m_GpuTimer_Lighting;
+	GpuTimer m_GpuTimer_Skybox;
+
 	// 设置
 	LightCullTechnique m_LightCullTechnique = LightCullTechnique::CULL_DEFERRED_NONE;
 	bool m_AnimateLights = false;
@@ -86,6 +92,7 @@ private:
 
 	// 各种资源
 	TextureManager m_TextureManager;                                // 纹理读取管理
+	ModelManager m_ModelManager;									// 模型读取管理
 	UINT m_MsaaSamples = 1;
 	bool m_MsaaSamplesChanged = false;
 	std::unique_ptr<Texture2D> m_pLitBuffer;                        // 场景渲染缓冲区

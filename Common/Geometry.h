@@ -14,7 +14,8 @@ namespace Geometry
 		std::vector<DirectX::XMFLOAT3> normals;
 		std::vector<DirectX::XMFLOAT2> texcoords;
 		std::vector<DirectX::XMFLOAT4> tangents;
-		std::vector<uint32_t> indices;
+		std::vector<uint32_t> indices32;
+		std::vector<uint16_t> indices16;
 	};
 
 
@@ -27,14 +28,8 @@ namespace Geometry
 	// 创建圆柱体网格数据，slices越大，精度越高。
 	MeshData CreateCylinder(float radius = 1.0f, float height = 2.0f, uint32_t slices = 20, uint32_t stacks = 10, float texU = 1.0f, float texV = 1.0f);
 
-	// 创建只有圆柱体侧面的网格数据，slices越大，精度越高
-	MeshData CreateCylinderNoCap(float radius = 1.0f, float height = 2.0f, uint32_t slices = 20, uint32_t stacks = 10, float texU = 1.0f, float texV = 1.0f);
-
 	// 创建圆锥体网格数据，slices越大，精度越高。
 	MeshData CreateCone(float radius = 1.0f, float height = 2.0f, uint32_t slices = 20);
-
-	// 创建只有圆锥体侧面网格数据，slices越大，精度越高。
-	MeshData CreateConeNoCap(float radius = 1.0f, float height = 2.0f, uint32_t slices = 20);
 
 	
 	// 创建一个平面

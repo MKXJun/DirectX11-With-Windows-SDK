@@ -26,6 +26,7 @@ bool GameApp::Init()
 		return false;
 
 	m_TextureManager.Init(m_pd3dDevice.Get());
+	m_ModelManager.Init(m_pd3dDevice.Get());
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
 	RenderStates::InitAll(m_pd3dDevice.Get());
@@ -267,7 +268,7 @@ void GameApp::UpdateScene(float dt)
 		
 	m_pShadowEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
 
-	m_CSManager.UpdateFrame(*m_pViewerCamera, *m_pLightCamera, m_Powerplant.GetBoundingBox());
+	m_CSManager.UpdateFrame(*m_pViewerCamera, *m_pLightCamera, m_Powerplant.GetModel()->boundingbox);
 	m_pForwardEffect->SetLightDir(m_pLightCamera->GetLookAxis());
 }
 
@@ -377,8 +378,10 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化对象
 	//
-	m_Powerplant.LoadModelFromFile(m_pd3dDevice.Get(), "..\\Model\\powerplant\\powerplant.obj");
-	m_Skybox.LoadModelFromGeometry(m_pd3dDevice.Get(), Geometry::CreateBox());
+	m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.obj"));
+	m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
+	m_Skybox.SetModel(m_ModelManager.GetModel("skyboxCube"));
+
 
 	// ******************
 	// 初始化天空盒纹理
@@ -395,8 +398,6 @@ bool GameApp::InitResource()
 	// 设置调试对象名
 	//
 	m_pLitBuffer->SetDebugObjectName("LitBuffer");
-	m_Powerplant.SetDebugObjectName("Powerplant");
-	m_Skybox.SetDebugObjectName("Skybox");
 
 	return true;
 }

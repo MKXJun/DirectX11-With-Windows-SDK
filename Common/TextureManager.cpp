@@ -8,15 +8,15 @@
 
 namespace
 {
-	// ForwardEffect单例
-	static TextureManager* g_pInstance = nullptr;
+	// TextureManager单例
+	TextureManager* s_pInstance = nullptr;
 }
 
 TextureManager::TextureManager()
 {
-	if (g_pInstance)
-		throw std::exception("ForwardEffect is a singleton!");
-	g_pInstance = this;
+	if (s_pInstance)
+		throw std::exception("TextureManager is a singleton!");
+	s_pInstance = this;
 }
 
 TextureManager::~TextureManager()
@@ -25,9 +25,9 @@ TextureManager::~TextureManager()
 
 TextureManager& TextureManager::Get()
 {
-	if (!g_pInstance)
+	if (!s_pInstance)
 		throw std::exception("TextureManager needs an instance!");
-	return *g_pInstance;
+	return *s_pInstance;
 }
 
 void TextureManager::Init(ID3D11Device* device)
@@ -38,7 +38,7 @@ void TextureManager::Init(ID3D11Device* device)
 
 ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filename, bool enableMips, bool forceSRGB)
 {
-	size_t fileID = StringToID(filename);
+	XID fileID = StringToID(filename);
 	if (m_TextureSRVs.count(fileID))
 		return m_TextureSRVs[fileID].Get();
 
@@ -71,7 +71,9 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
 				m_pDeviceContext->GenerateMips(res.Get());
 			
 			std::string fname = std::filesystem::path(filename).filename().string();
-			D3D11SetDebugObjectName(res.Get(), fname);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+			tex->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)fname.length(), fname.c_str());
+#endif
 		}
 		stbi_image_free(img_data);
 	}
@@ -79,9 +81,15 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
 	return res.Get();
 }
 
+bool TextureManager::AddTexture(std::string_view name, ID3D11ShaderResourceView* texture)
+{
+	XID nameID = StringToID(name);
+	return m_TextureSRVs.try_emplace(nameID, texture).second;
+}
+
 ID3D11ShaderResourceView* TextureManager::GetTexture(std::string_view filename)
 {
-	size_t fileID = StringToID(filename);
+	XID fileID = StringToID(filename);
 	if (m_TextureSRVs.count(fileID))
 		return m_TextureSRVs[fileID].Get();
 	return nullptr;

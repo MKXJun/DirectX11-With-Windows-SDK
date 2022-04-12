@@ -66,9 +66,6 @@
     <ClInclude Include="..\..\Common\TextureManager.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\tiny_obj_loader.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\Transform.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -108,9 +105,6 @@
     <ClInclude Include="..\..\Common\GameObject.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\GameTimer.h">
-      <Filter>通用文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Common\Geometry.h">
       <Filter>通用文件</Filter>
     </ClInclude>
@@ -129,10 +123,19 @@
     <ClInclude Include="..\..\Common\RenderStates.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\ScreenGrab.h">
+    <ClInclude Include="..\..\Common\stb_image.h">
       <Filter>通用文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Common\stb_image.h">
+    <ClInclude Include="..\..\Common\ModelManager.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\XUtil.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\CpuTimer.h">
+      <Filter>通用文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\GpuTimer.h">
       <Filter>通用文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -156,15 +159,6 @@
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\TextureManager.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\tiny_obj_loader.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Transform.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\Vertex.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp">
@@ -194,16 +188,19 @@
     <ClCompile Include="..\..\Common\GameObject.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\GameTimer.cpp">
-      <Filter>通用文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Common\Geometry.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\RenderStates.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Common\ScreenGrab.cpp">
+    <ClCompile Include="..\..\Common\ModelManager.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\CpuTimer.cpp">
+      <Filter>通用文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\GpuTimer.cpp">
       <Filter>通用文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Common\stb_image.cpp">

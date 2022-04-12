@@ -1,13 +1,19 @@
+//***************************************************************************************
+// MeshData.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 存放材质与属性
+// Material and property storage.
+//***************************************************************************************
+
 
 #pragma once
 
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <variant>
 #include <string_view>
 #include <unordered_map>
-#include <DirectXMath.h>
 #include "Property.h"
 
 class Material
@@ -62,15 +68,16 @@ public:
 	}
 
 private:
-	static size_t StringToID(std::string_view str)
+	using XID = size_t;
+	static XID StringToID(std::string_view str)
 	{
 		static std::hash<std::string_view> hash;
 		return hash(str);
 	}
 private:
 
-	std::unordered_map<size_t, std::string> m_Textures;
-	std::unordered_map<size_t, Property> m_Properties;
+	std::unordered_map<XID, std::string> m_Textures;
+	std::unordered_map<XID, Property> m_Properties;
 };
 
 

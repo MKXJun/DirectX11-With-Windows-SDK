@@ -135,8 +135,10 @@ void D3DApp::OnResize()
 	HR(m_pd3dDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, m_pRenderTargetView.GetAddressOf()));
 	
 	// 设置调试对象名
-	D3D11SetDebugObjectName(backBuffer.Get(), "BackBuffer[0]");
-	D3D11SetDebugObjectName(m_pRenderTargetView.Get(), "BackBufferRTV[0]");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	backBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BackBuffer[0]"));
+	m_pRenderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BackBufferRTV[0]"));
+#endif
 	backBuffer.Reset();
 }
 
@@ -438,8 +440,10 @@ bool D3DApp::InitDirect3D()
 	dxgiFactory1->MakeWindowAssociation(m_hMainWnd, DXGI_MWA_NO_ALT_ENTER | DXGI_MWA_NO_WINDOW_CHANGES);
 
 	// 设置调试对象名
-	D3D11SetDebugObjectName(m_pd3dImmediateContext.Get(), "ImmediateContext");
-	DXGISetDebugObjectName(m_pSwapChain.Get(), "SwapChain");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	m_pd3dImmediateContext->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("ImmediateContext"));
+	m_pSwapChain->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SwapChain"));
+#endif
 
 	// 每当窗口被重新调整大小的时候，都需要调用这个OnResize函数。现在调用
 	// 以避免代码重复

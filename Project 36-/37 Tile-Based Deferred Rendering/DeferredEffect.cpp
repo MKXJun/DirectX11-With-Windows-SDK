@@ -101,7 +101,7 @@ bool DeferredEffect::InitAll(ID3D11Device * device)
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders\\GBuffer.hlsl",
 		device, "GeometryVS", "vs_5_0", defines, blob.GetAddressOf()));
 	// 创建顶点布局
-	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
+	HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.ReleaseAndGetAddressOf()));
 
 	int msaaSamples = 1;
@@ -207,7 +207,10 @@ bool DeferredEffect::InitAll(ID3D11Device * device)
 	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
 
 	// 设置调试对象名
-	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "DeferredEffect.VertexPosNormalTexLayout");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	std::string str = "DeferredEffect.VertexPosNormalTexLayout";
+	pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+#endif
 	pImpl->m_pEffectHelper->SetDebugObjectName("DeferredEffect");
 
 	return true;
@@ -411,7 +414,7 @@ void XM_CALLCONV DeferredEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void DeferredEffect::SetMaterial(Material& material)
+void DeferredEffect::SetMaterial(const Material& material)
 {
 	TextureManager& tm = TextureManager::Get();
 
@@ -419,7 +422,7 @@ void DeferredEffect::SetMaterial(Material& material)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", tm.GetTexture(str));
 }
 
-MeshDataInput DeferredEffect::GetInputData(MeshData& meshData)
+MeshDataInput DeferredEffect::GetInputData(const MeshData& meshData)
 {
 	MeshDataInput input;
 	input.pVertexBuffers = {

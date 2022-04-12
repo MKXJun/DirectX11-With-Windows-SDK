@@ -6,9 +6,11 @@
 
 #include <wrl/client.h>
 #include <string>
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <DirectXMath.h>
-#include "GameTimer.h"
+#include "CpuTimer.h"
+#include "GpuTimer.h"
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
@@ -50,7 +52,7 @@ protected:
 	bool      m_Maximized;       // 应用是否最大化
 	bool      m_Resizing;        // 窗口大小是否变化
 
-	GameTimer m_Timer;           // 计时器
+	CpuTimer m_Timer;           // 计时器
 
 
 	// 使用模板别名(C++11)简化类型名

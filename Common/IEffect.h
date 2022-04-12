@@ -56,13 +56,13 @@ public:
 class IEffectMaterial
 {
 public:
-	virtual void SetMaterial(Material& material) = 0;
+	virtual void SetMaterial(const Material& material) = 0;
 };
 
 class IEffectMeshData
 {
 public:
-	virtual MeshDataInput GetInputData(MeshData& meshData) = 0;
+	virtual MeshDataInput GetInputData(const MeshData& meshData) = 0;
 };
 
 

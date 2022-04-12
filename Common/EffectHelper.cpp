@@ -3,6 +3,7 @@
 #include <d3d11shader.h>
 #include <d3dcompiler.h>
 #include "XUtil.h"
+#include <d3d11_1.h>
 #include "EffectHelper.h"
 
 using namespace Microsoft::WRL;

@@ -11,26 +11,22 @@
 #ifndef EFFECTHELPER_H
 #define EFFECTHELPER_H
 
-//
-// 宏相关
-//
-
-// 默认开启图形调试器具名化
-// 如果不需要该项功能，可通过全局文本替换将其值设置为0
-#if (defined(DEBUG) || defined(_DEBUG))
-	#ifndef GRAPHICS_DEBUGGER_OBJECT_NAME
-	#define GRAPHICS_DEBUGGER_OBJECT_NAME 1
-	#endif
-#endif
-
 #include "WinMin.h"
 #include <string_view>
 #include <memory>
-#include <d3d11_1.h>
 #include <wrl/client.h>
+#include <d3dcompiler.h>
 #include "Property.h"
 
-
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct ID3D11GeometryShader;
+struct ID3D11ShaderResourceView;
+struct ID3D11UnorderedAccessView;
+struct ID3D11SamplerState;
+struct ID3D11RasterizerState;
+struct ID3D11DepthStencilState;
+struct ID3D11BlendState;
 //
 // EffectHelper
 //

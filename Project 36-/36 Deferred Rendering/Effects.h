@@ -41,13 +41,13 @@ public:
 	// IEffectMaterial
 	//
 
-	void SetMaterial(Material& material) override;
+	void SetMaterial(const Material& material) override;
 
 	//
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 
 	//
@@ -105,13 +105,13 @@ public:
 	// IEffectMaterial
 	//
 
-	void SetMaterial(Material& material) override;
+	void SetMaterial(const Material& material) override;
 
 	//
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 	// 
 	// SkyboxToneMapEffect
@@ -169,13 +169,13 @@ public:
 	// IEffectMaterial
 	//
 
-	void SetMaterial(Material& material) override;
+	void SetMaterial(const Material& material) override;
 
 	//
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 	// 
 	// BasicDeferredEffect

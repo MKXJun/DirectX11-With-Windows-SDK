@@ -26,6 +26,13 @@ bool GameApp::Init()
 		return false;
 
 	m_TextureManager.Init(m_pd3dDevice.Get());
+	m_ModelManager.Init(m_pd3dDevice.Get());
+
+	m_GpuTimer_PreZ.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_Lighting.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_LightCulling.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_Geometry.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_Skybox.Init(m_pd3dDevice.Get(), 5000);
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
 	RenderStates::InitAll(m_pd3dDevice.Get());
@@ -68,6 +75,7 @@ void GameApp::UpdateScene(float dt)
 	// 更新摄像机
 	m_FPSCameraController.Update(dt);
 
+	bool need_gpu_timer_reset = false;
 	if (ImGui::Begin("Tile-Based Deferred Rendering"))
 	{
 		static const char* msaa_modes[] = {
@@ -90,6 +98,7 @@ void GameApp::UpdateScene(float dt)
 			m_pForwardEffect->SetMsaaSamples(m_MsaaSamples);
 			m_pSkyboxEffect->SetMsaaSamples(m_MsaaSamples);
 			m_pDeferredEffect->SetMsaaSamples(m_MsaaSamples);
+			need_gpu_timer_reset = true;
 		}
 
 		static const char* light_culliing_modes[] = {
@@ -103,9 +112,11 @@ void GameApp::UpdateScene(float dt)
 		if (ImGui::Combo("Light Culling", &curr_light_culliing_item, light_culliing_modes, ARRAYSIZE(light_culliing_modes)))
 		{
 			m_LightCullTechnique = static_cast<LightCullTechnique>(curr_light_culliing_item);
+			need_gpu_timer_reset = true;
 		}
 
-		ImGui::Checkbox("Animate Lights", &m_AnimateLights);
+		if (ImGui::Checkbox("Animate Lights", &m_AnimateLights))
+			need_gpu_timer_reset = true;
 		if (m_AnimateLights)
 		{
 			UpdateLights(dt);
@@ -115,18 +126,21 @@ void GameApp::UpdateScene(float dt)
 		{
 			m_pForwardEffect->SetLightingOnly(m_LightingOnly);
 			m_pDeferredEffect->SetLightingOnly(m_LightingOnly);
+			need_gpu_timer_reset = true;
 		}
 
 		if (ImGui::Checkbox("Face Normals", &m_FaceNormals))
 		{
 			m_pForwardEffect->SetFaceNormals(m_FaceNormals);
 			m_pDeferredEffect->SetFaceNormals(m_FaceNormals);
+			need_gpu_timer_reset = true;
 		}
 
 		if (ImGui::Checkbox("Visualize Light Count", &m_VisualizeLightCount))
 		{
 			m_pForwardEffect->SetVisualizeLightCount(m_VisualizeLightCount);
 			m_pDeferredEffect->SetVisualizeLightCount(m_VisualizeLightCount);
+			need_gpu_timer_reset = true;
 		}
 
 		if (m_LightCullTechnique >= LightCullTechnique::CULL_DEFERRED_NONE)
@@ -135,6 +149,7 @@ void GameApp::UpdateScene(float dt)
 			if (m_MsaaSamples > 1 && ImGui::Checkbox("Visualize Shading Freq", &m_VisualizeShadingFreq))
 			{
 				m_pDeferredEffect->SetVisualizeShadingFreq(m_VisualizeShadingFreq);
+				need_gpu_timer_reset = true;
 			}
 		}
 		
@@ -144,6 +159,7 @@ void GameApp::UpdateScene(float dt)
 		if (ImGui::SliderFloat("", &m_LightHeightScale, 0.25f, 1.0f))
 		{
 			UpdateLights(0.0f);
+			need_gpu_timer_reset = true;
 		}
 		ImGui::PopID();
 
@@ -159,6 +175,15 @@ void GameApp::UpdateScene(float dt)
 		ImGui::PopID();
 	}
 	ImGui::End();
+
+	if (need_gpu_timer_reset)
+	{
+		m_GpuTimer_PreZ.Reset();
+		m_GpuTimer_Lighting.Reset();
+		m_GpuTimer_LightCulling.Reset();
+		m_GpuTimer_Geometry.Reset();
+		m_GpuTimer_Skybox.Reset();
+	}
 	
 
 	m_pForwardEffect->SetViewMatrix(m_pCamera->GetViewMatrixXM());
@@ -188,6 +213,8 @@ void GameApp::DrawScene()
 		RenderForward(true);
 	else {
 		RenderGBuffer();
+
+		m_GpuTimer_Lighting.Start();
 		if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_NONE)
 			m_pDeferredEffect->ComputeLightingDefault(m_pd3dImmediateContext.Get(), m_pLitBuffer->GetRenderTarget(),
 				m_pDepthBufferReadOnlyDSV.Get(), m_pLightBuffer->GetShaderResource(),
@@ -197,12 +224,61 @@ void GameApp::DrawScene()
 				m_pFlatLitBuffer->GetUnorderedAccess(),
 				m_pLightBuffer->GetShaderResource(),
 				m_pGBufferSRVs.data());
+		m_GpuTimer_Lighting.Stop();
 	}
+	m_GpuTimer_Skybox.Start();
 	RenderSkyboxAndToneMap();
+	m_GpuTimer_Skybox.Stop();
 
 	//
 	// ImGui部分
 	//
+	if (ImGui::Begin("Tile-Based Deferred Rendering"))
+	{
+		ImGui::Separator();
+		ImGui::Text("GPU Profile");
+		double total_time = 0.0f;
+		if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_PREZ_NONE || 
+			m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+		{
+			m_GpuTimer_PreZ.TryGetTime(nullptr);
+			ImGui::Text("PreZ Pass: %.3f ms", m_GpuTimer_PreZ.AverageTime() * 1000);
+			total_time += m_GpuTimer_PreZ.AverageTime();
+		}
+		if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_NONE || 
+			m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
+		{
+			m_GpuTimer_Geometry.TryGetTime(nullptr);
+			ImGui::Text("Geometry Pass: %.3f ms", m_GpuTimer_Geometry.AverageTime() * 1000);
+			total_time += m_GpuTimer_Geometry.AverageTime();
+		}
+		if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+		{
+			m_GpuTimer_LightCulling.TryGetTime(nullptr);
+			ImGui::Text("Light Culling Pass: %.3f ms", m_GpuTimer_LightCulling.AverageTime() * 1000);
+			total_time += m_GpuTimer_LightCulling.AverageTime();
+		}
+		if (m_LightCullTechnique < LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
+		{
+			m_GpuTimer_Lighting.TryGetTime(nullptr);
+			ImGui::Text("Lighting Pass: %.3f ms", m_GpuTimer_Lighting.AverageTime() * 1000);
+			total_time += m_GpuTimer_Lighting.AverageTime();
+		}
+		else
+		{
+			m_GpuTimer_Lighting.TryGetTime(nullptr);
+			ImGui::Text("Culling & Lighting Pass: %.3f ms", m_GpuTimer_Lighting.AverageTime() * 1000);
+			total_time += m_GpuTimer_Lighting.AverageTime();
+		}
+
+		m_GpuTimer_Skybox.TryGetTime(nullptr);
+		ImGui::Text("Skybox Pass: %.3f ms", m_GpuTimer_Skybox.AverageTime() * 1000);
+		total_time += m_GpuTimer_Skybox.AverageTime();
+
+		ImGui::Text("Total: %.3f ms", total_time * 1000);
+	}
+	ImGui::End();
+
 	if (m_LightCullTechnique >= LightCullTechnique::CULL_DEFERRED_NONE)
 	{
 		if (ImGui::Begin("Normal"))
@@ -285,10 +361,12 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化对象
 	//
-	m_Sponza.LoadModelFromFile(m_pd3dDevice.Get(), "..\\Model\\Sponza\\sponza.obj");
+	m_Sponza.SetModel(m_ModelManager.CreateFromFile("..\\Model\\Sponza\\Sponza.obj"));
 	m_Sponza.GetTransform().SetScale(0.05f, 0.05f, 0.05f);
-	m_Skybox.LoadModelFromGeometry(m_pd3dDevice.Get(), Geometry::CreateBox());
-	m_Skybox.GetMaterial(0)->SetTexture("$Skybox", "..\\Texture\\Clouds.dds");
+	m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
+	Model* pModel = m_ModelManager.GetModel("skyboxCube"); 
+	pModel->materials[0].SetTexture("$Skybox", "..\\Texture\\Clouds.dds");
+	m_Skybox.SetModel(pModel);
 
 	// ******************
 	// 初始化光照
@@ -297,12 +375,6 @@ bool GameApp::InitResource()
 	InitLightParams();
 	ResizeLights(m_ActiveLights);
 	UpdateLights(0.0f);
-
-	// ******************
-	// 设置调试对象名
-	//
-	m_Sponza.SetDebugObjectName("Sponza");
-	m_Skybox.SetDebugObjectName("Skybox");
 
 	return true;
 }
@@ -469,8 +541,11 @@ void GameApp::ResizeBuffers(UINT width, UINT height, UINT msaaSamples)
 	// ******************
 	// 设置调试对象名
 	//
+
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	m_pDepthBufferReadOnlyDSV->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DepthBufferReadOnlyDSV"));
+#endif
 	m_pDepthBuffer->SetDebugObjectName("DepthBuffer");
-	D3D11SetDebugObjectName(m_pDepthBufferReadOnlyDSV.Get(), "DepthBufferReadOnlyDSV");
 	m_pLitBuffer->SetDebugObjectName("LitBuffer");
 	m_pFlatLitBuffer->SetDebugObjectName("FlatLitBuffer");
 	m_pGBuffers[0]->SetDebugObjectName("GBuffer_Normal_Specular");
@@ -491,40 +566,48 @@ void GameApp::RenderForward(bool doPreZ)
 	// PreZ Pass
 	if (doPreZ)
 	{
+		m_GpuTimer_PreZ.Start();
 		m_pd3dImmediateContext->OMSetRenderTargets(0, 0, m_pDepthBuffer->GetDepthStencil());
 		m_pForwardEffect->SetRenderPreZPass(m_pd3dImmediateContext.Get());
 		m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
 		m_pd3dImmediateContext->OMSetRenderTargets(0, 0, nullptr);
+		m_GpuTimer_PreZ.Stop();
 	}
 
 	// 光源裁剪阶段
 	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
 	{
+		m_GpuTimer_LightCulling.Start();
 		m_pForwardEffect->ComputeTiledLightCulling(m_pd3dImmediateContext.Get(),
 			m_pTileBuffer->GetUnorderedAccess(),
 			m_pLightBuffer->GetShaderResource(),
 			m_pGBufferSRVs[3]);
+		m_GpuTimer_LightCulling.Stop();
 	}
 
 	// 正常绘制
-	ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
-	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
-
-	if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+	m_GpuTimer_Lighting.Start();
 	{
-		m_pForwardEffect->SetTileBuffer(m_pTileBuffer->GetShaderResource());
-		m_pForwardEffect->SetRenderWithTiledLightCulling(m_pd3dImmediateContext.Get());
+		ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
+		m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
+
+		if (m_LightCullTechnique == LightCullTechnique::CULL_FORWARD_COMPUTE_SHADER_TILE)
+		{
+			m_pForwardEffect->SetTileBuffer(m_pTileBuffer->GetShaderResource());
+			m_pForwardEffect->SetRenderWithTiledLightCulling(m_pd3dImmediateContext.Get());
+		}
+		else
+			m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+
+		m_pForwardEffect->SetLightBuffer(m_pLightBuffer->GetShaderResource());
+		m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
+
+		// 清除绑定
+		m_pForwardEffect->SetTileBuffer(nullptr);
+		m_pForwardEffect->Apply(m_pd3dImmediateContext.Get());
+		m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 	}
-	else
-		m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
-
-	m_pForwardEffect->SetLightBuffer(m_pLightBuffer->GetShaderResource());
-	m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
-
-	// 清除绑定
-	m_pForwardEffect->SetTileBuffer(nullptr);
-	m_pForwardEffect->Apply(m_pd3dImmediateContext.Get());
-	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+	m_GpuTimer_Lighting.Stop();
 }
 
 void GameApp::RenderGBuffer()
@@ -543,11 +626,15 @@ void GameApp::RenderGBuffer()
 	D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
 	m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
-	m_pDeferredEffect->SetRenderGBuffer(m_pd3dImmediateContext.Get());
-	m_pd3dImmediateContext->OMSetRenderTargets(static_cast<UINT>(m_pGBuffers.size()), m_pGBufferRTVs.data(), m_pDepthBuffer->GetDepthStencil());
-	m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pDeferredEffect.get());
+	m_GpuTimer_Geometry.Start();
+	{
+		m_pDeferredEffect->SetRenderGBuffer(m_pd3dImmediateContext.Get());
+		m_pd3dImmediateContext->OMSetRenderTargets(static_cast<UINT>(m_pGBuffers.size()), m_pGBufferRTVs.data(), m_pDepthBuffer->GetDepthStencil());
+		m_Sponza.Draw(m_pd3dImmediateContext.Get(), m_pDeferredEffect.get());
 
-	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+		m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+	}
+	m_GpuTimer_Geometry.Stop();
 }
 
 void GameApp::RenderSkyboxAndToneMap()

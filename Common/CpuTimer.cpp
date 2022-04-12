@@ -1,11 +1,11 @@
 //***************************************************************************************
-// GameTimer.cpp by Frank Luna (C) 2011 All Rights Reserved.
+// CpuTimer.cpp by Frank Luna (C) 2011 All Rights Reserved.
 //***************************************************************************************
 
 #include "WinMin.h"
-#include "GameTimer.h"
+#include "CpuTimer.h"
 
-GameTimer::GameTimer()
+CpuTimer::CpuTimer()
 : m_SecondsPerCount(0.0), m_DeltaTime(-1.0), m_BaseTime(0), m_StopTime(0),
   m_PausedTime(0), m_PrevTime(0), m_CurrTime(0), m_Stopped(false)
 {
@@ -16,7 +16,7 @@ GameTimer::GameTimer()
 
 // Returns the total time elapsed since Reset() was called, NOT counting any
 // time when the clock is stopped.
-float GameTimer::TotalTime()const
+float CpuTimer::TotalTime()const
 {
 	// If we are stopped, do not count the time that has passed since we stopped.
 	// Moreover, if we previously already had a pause, the distance 
@@ -48,12 +48,12 @@ float GameTimer::TotalTime()const
 	}
 }
 
-float GameTimer::DeltaTime()const
+float CpuTimer::DeltaTime()const
 {
 	return (float)m_DeltaTime;
 }
 
-void GameTimer::Reset()
+void CpuTimer::Reset()
 {
 	__int64 currTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
@@ -65,7 +65,7 @@ void GameTimer::Reset()
 	m_Stopped  = false;
 }
 
-void GameTimer::Start()
+void CpuTimer::Start()
 {
 	__int64 startTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
@@ -87,7 +87,7 @@ void GameTimer::Start()
 	}
 }
 
-void GameTimer::Stop()
+void CpuTimer::Stop()
 {
 	if( !m_Stopped )
 	{
@@ -99,7 +99,7 @@ void GameTimer::Stop()
 	}
 }
 
-void GameTimer::Tick()
+void CpuTimer::Tick()
 {
 	if( m_Stopped )
 	{

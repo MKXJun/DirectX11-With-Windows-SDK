@@ -189,22 +189,24 @@ void RenderStates::InitAll(ID3D11Device* device)
     // ******************
     // 设置调试对象名
     //
-    D3D11SetDebugObjectName(RSCullClockWise.Get(), "RSCullClockWise");
-    D3D11SetDebugObjectName(RSNoCull.Get(), "RSNoCull");
-    D3D11SetDebugObjectName(RSWireframe.Get(), "RSWireframe");
-    D3D11SetDebugObjectName(RSShadow.Get(), "RSShadow");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    RSCullClockWise->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSCullClockWise"));
+    RSNoCull->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSNoCull"));
+    RSWireframe->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSWireframe"));
+    RSShadow->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSShadow"));
 
-    D3D11SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
-    D3D11SetDebugObjectName(SSAnistropicWrap16x.Get(), "SSAnistropicWrap16x");
-    D3D11SetDebugObjectName(SSShadowPCF.Get(), "SSShadowPCF");
+    SSLinearWrap->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSLinearWrap"));
+    SSAnistropicWrap16x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicWrap16x"));
+    SSShadowPCF->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSShadowPCF"));
 
-    D3D11SetDebugObjectName(BSAlphaToCoverage.Get(), "BSAlphaToCoverage");
-    D3D11SetDebugObjectName(BSTransparent.Get(), "BSTransparent");
-    D3D11SetDebugObjectName(BSAdditive.Get(), "BSAdditive");
+    BSAlphaToCoverage->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BSAlphaToCoverage"));
+    BSTransparent->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BSTransparent"));
+    BSAdditive->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BSAdditive"));
 
-    D3D11SetDebugObjectName(DSSEqual.Get(), "DSSEqual");
-    D3D11SetDebugObjectName(DSSGreaterEqual.Get(), "DSSGreaterEqual");
-    D3D11SetDebugObjectName(DSSNoDepthTest.Get(), "DSSNoDepthTest");
-    D3D11SetDebugObjectName(DSSWriteStencil.Get(), "DSSWriteStencil");
-    D3D11SetDebugObjectName(DSSEqualStencil.Get(), "DSSEqualStencil");
+    DSSEqual->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DSSEqual"));
+    DSSGreaterEqual->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DSSGreaterEqual"));
+    DSSNoDepthTest->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DSSNoDepthTest"));
+    DSSWriteStencil->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DSSWriteStencil"));
+    DSSEqualStencil->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("DSSEqualStencil"));
+#endif
 }

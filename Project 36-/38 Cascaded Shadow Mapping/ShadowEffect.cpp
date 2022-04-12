@@ -89,7 +89,7 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ShadowVS", L"Shaders\\Shadow.hlsl", 
 		device, "ShadowVS", "vs_5_0", nullptr, blob.GetAddressOf()));
 	// 创建顶点布局
-	HR(device->CreateInputLayout(VertexPosNormalTex::inputLayout, ARRAYSIZE(VertexPosNormalTex::inputLayout),
+	HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
 		blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("FullScreenTriangleTexcoordVS", L"Shaders\\Shadow.hlsl",
 		device, "FullScreenTriangleTexcoordVS", "vs_5_0"));
@@ -126,7 +126,9 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
 	// 设置调试对象名
-	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "ShadowEffect.VertexPosNormalTexLayout");
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("ShadowEffect.VertexPosNormalTexLayout"));
+#endif
 	pImpl->m_pEffectHelper->SetDebugObjectName("ShadowEffect");
 
 	return true;
@@ -183,7 +185,7 @@ void XM_CALLCONV ShadowEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 	XMStoreFloat4x4(&pImpl->m_Proj, P);
 }
 
-void ShadowEffect::SetMaterial(Material& material)
+void ShadowEffect::SetMaterial(const Material& material)
 {
 	TextureManager& tm = TextureManager::Get();
 
@@ -191,7 +193,7 @@ void ShadowEffect::SetMaterial(Material& material)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(str));
 }
 
-MeshDataInput ShadowEffect::GetInputData(MeshData& meshData)
+MeshDataInput ShadowEffect::GetInputData(const MeshData& meshData)
 {
 	MeshDataInput input;
 	input.pVertexBuffers = {

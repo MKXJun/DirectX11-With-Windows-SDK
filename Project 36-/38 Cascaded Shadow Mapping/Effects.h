@@ -41,13 +41,13 @@ public:
 	// IEffectMaterial
 	//
 
-	void SetMaterial(Material& material) override;
+	void SetMaterial(const Material& material) override;
 
 	//
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 
 	//
@@ -60,9 +60,9 @@ public:
 	void SetCascadeIntervalSelectionEnabled(bool enable);
 
 	void SetCascadeVisulization(bool enable);
-	void SetCascadeOffsets(DirectX::XMFLOAT4 offsets[8]);
-	void SetCascadeScales(DirectX::XMFLOAT4 scales[8]);
-	void SetCascadeFrustumsEyeSpaceDepths(float depths[8]);
+	void SetCascadeOffsets(const DirectX::XMFLOAT4 offsets[8]);
+	void SetCascadeScales(const DirectX::XMFLOAT4 scales[8]);
+	void SetCascadeFrustumsEyeSpaceDepths(const float depths[8]);
 	void SetCascadeBlendArea(float blendArea);
 
 	void SetPCFKernelSize(int size);
@@ -117,13 +117,13 @@ public:
 	// IEffectMaterial
 	//
 
-	void SetMaterial(Material& material) override;
+	void SetMaterial(const Material& material) override;
 
 	//
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 	//
 	// ShadowEffect
@@ -180,7 +180,7 @@ public:
 	// IEffectMeshData
 	//
 
-	MeshDataInput GetInputData(MeshData& meshData) override;
+	MeshDataInput GetInputData(const MeshData& meshData) override;
 
 	// 
 	// SkyboxToneMapEffect

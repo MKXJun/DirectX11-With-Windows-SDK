@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRAPHICS_DEBUGGER_OBJECT_NAME;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>../../Common;../../ImGui;C:\Program Files (x86)\Assimp\include;</AdditionalIncludeDirectories>
@@ -130,7 +130,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GRAPHICS_DEBUGGER_OBJECT_NAME;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>../../Common;../../ImGui;C:\Program Files (x86)\Assimp\include;</AdditionalIncludeDirectories>
@@ -166,20 +166,19 @@
     <ClCompile Include="..\..\Common\Camera.cpp" />
     <ClCompile Include="..\..\Common\CameraController.cpp" />
     <ClCompile Include="..\..\Common\Collision.cpp" />
+    <ClCompile Include="..\..\Common\CpuTimer.cpp" />
     <ClCompile Include="..\..\Common\d3dApp.cpp" />
     <ClCompile Include="..\..\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="..\..\Common\DXTrace.cpp" />
     <ClCompile Include="..\..\Common\EffectHelper.cpp" />
     <ClCompile Include="..\..\Common\GameObject.cpp" />
-    <ClCompile Include="..\..\Common\GameTimer.cpp" />
     <ClCompile Include="..\..\Common\Geometry.cpp" />
+    <ClCompile Include="..\..\Common\GpuTimer.cpp" />
+    <ClCompile Include="..\..\Common\ModelManager.cpp" />
     <ClCompile Include="..\..\Common\RenderStates.cpp" />
-    <ClCompile Include="..\..\Common\ScreenGrab.cpp" />
     <ClCompile Include="..\..\Common\stb_image.cpp" />
     <ClCompile Include="..\..\Common\Texture2D.cpp" />
     <ClCompile Include="..\..\Common\TextureManager.cpp" />
-    <ClCompile Include="..\..\Common\Transform.cpp" />
-    <ClCompile Include="..\..\Common\Vertex.cpp" />
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp" />
     <ClCompile Include="CascadedShadowManager.cpp" />
     <ClCompile Include="ShadowEffect.cpp" />
@@ -193,19 +192,20 @@
     <ClInclude Include="..\..\Common\Camera.h" />
     <ClInclude Include="..\..\Common\CameraController.h" />
     <ClInclude Include="..\..\Common\Collision.h" />
+    <ClInclude Include="..\..\Common\CpuTimer.h" />
     <ClInclude Include="..\..\Common\d3dApp.h" />
     <ClInclude Include="..\..\Common\DDSTextureLoader.h" />
     <ClInclude Include="..\..\Common\DXTrace.h" />
     <ClInclude Include="..\..\Common\EffectHelper.h" />
     <ClInclude Include="..\..\Common\GameObject.h" />
-    <ClInclude Include="..\..\Common\GameTimer.h" />
     <ClInclude Include="..\..\Common\Geometry.h" />
+    <ClInclude Include="..\..\Common\GpuTimer.h" />
     <ClInclude Include="..\..\Common\IEffect.h" />
     <ClInclude Include="..\..\Common\Material.h" />
     <ClInclude Include="..\..\Common\MeshData.h" />
+    <ClInclude Include="..\..\Common\ModelManager.h" />
     <ClInclude Include="..\..\Common\Property.h" />
     <ClInclude Include="..\..\Common\RenderStates.h" />
-    <ClInclude Include="..\..\Common\ScreenGrab.h" />
     <ClInclude Include="..\..\Common\stb_image.h" />
     <ClInclude Include="..\..\Common\Texture2D.h" />
     <ClInclude Include="..\..\Common\TextureManager.h" />

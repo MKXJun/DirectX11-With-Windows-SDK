@@ -19,7 +19,10 @@ namespace Geometry
 		meshData.normals.resize(vertexCount);
 		meshData.texcoords.resize(vertexCount);
 		meshData.tangents.resize(vertexCount);
-		meshData.indices.resize(indexCount);
+		if (indexCount > 65535)
+			meshData.indices32.resize(indexCount);
+		else
+			meshData.indices16.resize(indexCount);
 
 		uint32_t vIndex = 0, iIndex = 0;
 
@@ -67,9 +70,18 @@ namespace Geometry
 		{
 			for (uint32_t j = 1; j <= slices; ++j)
 			{
-				meshData.indices[iIndex++] = 0;
-				meshData.indices[iIndex++] = j % (slices + 1) + 1;
-				meshData.indices[iIndex++] = j;
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = 0;
+					meshData.indices32[iIndex++] = j % (slices + 1) + 1;
+					meshData.indices32[iIndex++] = j;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = 0;
+					meshData.indices16[iIndex++] = j % (slices + 1) + 1;
+					meshData.indices16[iIndex++] = j;
+				}
 			}
 		}
 
@@ -78,13 +90,27 @@ namespace Geometry
 		{
 			for (uint32_t j = 1; j <= slices; ++j)
 			{
-				meshData.indices[iIndex++] = (i - 1) * (slices + 1) + j;
-				meshData.indices[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
-				meshData.indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = (i - 1) * (slices + 1) + j;
+					meshData.indices32[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices32[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
 
-				meshData.indices[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
-				meshData.indices[iIndex++] = i * (slices + 1) + j;
-				meshData.indices[iIndex++] = (i - 1) * (slices + 1) + j;
+					meshData.indices32[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices32[iIndex++] = i * (slices + 1) + j;
+					meshData.indices32[iIndex++] = (i - 1) * (slices + 1) + j;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = (i - 1) * (slices + 1) + j;
+					meshData.indices16[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices16[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+
+					meshData.indices16[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices16[iIndex++] = i * (slices + 1) + j;
+					meshData.indices16[iIndex++] = (i - 1) * (slices + 1) + j;
+				}
+				
 			}
 		}
 
@@ -93,9 +119,18 @@ namespace Geometry
 		{
 			for (uint32_t j = 1; j <= slices; ++j)
 			{
-				meshData.indices[iIndex++] = (levels - 2) * (slices + 1) + j;
-				meshData.indices[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
-				meshData.indices[iIndex++] = (levels - 1) * (slices + 1) + 1;
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = (levels - 2) * (slices + 1) + j;
+					meshData.indices32[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices32[iIndex++] = (levels - 1) * (slices + 1) + 1;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = (levels - 2) * (slices + 1) + j;
+					meshData.indices16[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
+					meshData.indices16[iIndex++] = (levels - 1) * (slices + 1) + 1;
+				}
 			}
 		}
 
@@ -176,9 +211,9 @@ namespace Geometry
 			meshData.texcoords[i * 4 + 3] = XMFLOAT2(1.0f, 1.0f);
 		}
 
-		meshData.indices.resize(36);
+		meshData.indices16.resize(36);
 		
-		uint32_t indices[] = {
+		uint16_t indices[] = {
 			0, 1, 2, 2, 3, 0,		// 右面(+X面)
 			4, 5, 6, 6, 7, 4,		// 左面(-X面)
 			8, 9, 10, 10, 11, 8,	// 顶面(+Y面)
@@ -186,7 +221,7 @@ namespace Geometry
 			16, 17, 18, 18, 19, 16, // 背面(+Z面)
 			20, 21, 22, 22, 23, 20	// 正面(-Z面)
 		};
-		memcpy_s(meshData.indices.data(), sizeof indices, indices, sizeof indices);
+		memcpy_s(meshData.indices16.data(), sizeof indices, indices, sizeof indices);
 
 		return meshData;
 	}
@@ -195,7 +230,7 @@ namespace Geometry
 	{
 		using namespace DirectX;
 
-		MeshData meshData = CreateCylinderNoCap(radius, height, slices, stacks, texU, texV);
+		MeshData meshData;
 		uint32_t vertexCount = (slices + 1) * (stacks + 3) + 2;
 		uint32_t indexCount = 6 * slices * (stacks + 1);
 
@@ -204,128 +239,149 @@ namespace Geometry
 		meshData.tangents.resize(vertexCount);
 		meshData.texcoords.resize(vertexCount);
 
-		meshData.indices.resize(indexCount);
-
-		float h2 = height / 2;
-		float theta = 0.0f;
-		float per_theta = 2 * PI / slices;
-
-		uint32_t vIndex = (slices + 1) * (stacks + 1), iIndex = 6 * slices * stacks;
-		uint32_t offset = vIndex;
-
-		// 放入顶端圆心
-		meshData.vertices[vIndex] = XMFLOAT3(0.0f, h2, 0.0f);
-		meshData.normals[vIndex] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-		meshData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-		meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
-
-		// 放入顶端圆上各点
-		for (uint32_t i = 0; i <= slices; ++i)
-		{
-			theta = i * per_theta;
-			float u = cosf(theta) * radius / height + 0.5f;
-			float v = sinf(theta) * radius / height + 0.5f;
-			meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta));
-			meshData.normals[vIndex] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-			meshData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-			meshData.texcoords[vIndex++] = XMFLOAT2(u, v);
-		}
-
-		// 放入底端圆心
-		meshData.vertices[vIndex] = XMFLOAT3(0.0f, -h2, 0.0f);
-		meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
-		meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-		meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
-
-		// 放入底部圆上各点
-		for (uint32_t i = 0; i <= slices; ++i)
-		{
-			theta = i * per_theta;
-			float u = cosf(theta) * radius / height + 0.5f;
-			float v = sinf(theta) * radius / height + 0.5f;
-			meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta));
-			meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
-			meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-			meshData.texcoords[vIndex++] = XMFLOAT2(u, v);
-		}
-
-
-		// 放入顶部三角形索引
-		for (uint32_t i = 1; i <= slices; ++i)
-		{
-			meshData.indices[iIndex++] = offset;
-			meshData.indices[iIndex++] = offset + i % (slices + 1) + 1;
-			meshData.indices[iIndex++] = offset + i;
-		}
-
-		// 放入底部三角形索引
-		offset += slices + 2;
-		for (uint32_t i = 1; i <= slices; ++i)
-		{
-			meshData.indices[iIndex++] = offset;
-			meshData.indices[iIndex++] = offset + i;
-			meshData.indices[iIndex++] = offset + i % (slices + 1) + 1;
-		}
-
-		return meshData;
-	}
-
-	MeshData CreateCylinderNoCap(float radius, float height, uint32_t slices, uint32_t stacks, float texU, float texV)
-	{
-		using namespace DirectX;
-
-		MeshData meshData;
-
-		uint32_t vertexCount = (slices + 1) * (stacks + 1);
-		uint32_t indexCount = 6 * slices * stacks;
-
-		
-		meshData.vertices.resize(vertexCount);
-		meshData.normals.resize(vertexCount);
-		meshData.texcoords.resize(vertexCount);
-		meshData.tangents.resize(vertexCount);
-
-		meshData.indices.resize(indexCount);
+		if (indexCount > 65535)
+			meshData.indices32.resize(indexCount);
+		else
+			meshData.indices16.resize(indexCount);
 
 		float h2 = height / 2;
 		float theta = 0.0f;
 		float per_theta = 2 * PI / slices;
 		float stackHeight = height / stacks;
-
-		// 自底向上铺设侧面端点
-		uint32_t vIndex = 0;
-		for (uint32_t i = 0; i < stacks + 1; ++i)
+		//
+		// 侧面部分
+		//
 		{
-			float y = -h2 + i * stackHeight;
-			// 当前层顶点
-			for (uint32_t j = 0; j <= slices; ++j)
+			// 自底向上铺设侧面端点
+			size_t vIndex = 0;
+			for (size_t i = 0; i < stacks + 1; ++i)
 			{
-				theta = j * per_theta;
-				float u = theta / 2 / PI;
-				float v = 1.0f - (float)i / stacks;
+				float y = -h2 + i * stackHeight;
+				// 当前层顶点
+				for (size_t j = 0; j <= slices; ++j)
+				{
+					theta = j * per_theta;
+					float u = theta / 2 / PI;
+					float v = 1.0f - (float)i / stacks;
 
-				meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), y, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
-				meshData.normals[vIndex] = XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
-				meshData.tangents[i] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
-				meshData.texcoords[vIndex++] = XMFLOAT2(u * texU, v * texV);
+					meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), y, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
+					meshData.normals[vIndex] = XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
+					meshData.tangents[i] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
+					meshData.texcoords[vIndex++] = XMFLOAT2(u * texU, v * texV);
+				}
+			}
+
+			// 放入索引
+			size_t iIndex = 0;
+			for (uint32_t i = 0; i < stacks; ++i)
+			{
+				for (uint32_t j = 0; j < slices; ++j)
+				{
+					if (indexCount > 65535)
+					{
+						meshData.indices32[iIndex++] = i * (slices + 1) + j;
+						meshData.indices32[iIndex++] = (i + 1) * (slices + 1) + j;
+						meshData.indices32[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+
+						meshData.indices32[iIndex++] = i * (slices + 1) + j;
+						meshData.indices32[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+						meshData.indices32[iIndex++] = i * (slices + 1) + j + 1;
+					}
+					else
+					{
+						meshData.indices16[iIndex++] = i * (slices + 1) + j;
+						meshData.indices16[iIndex++] = (i + 1) * (slices + 1) + j;
+						meshData.indices16[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+
+						meshData.indices16[iIndex++] = i * (slices + 1) + j;
+						meshData.indices16[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+						meshData.indices16[iIndex++] = i * (slices + 1) + j + 1;
+					}
+				}
 			}
 		}
 
-		// 放入索引
-		uint32_t iIndex = 0;
-		for (uint32_t i = 0; i < stacks; ++i)
+		//
+		// 顶盖底盖部分
+		//
 		{
-			for (uint32_t j = 0; j < slices; ++j)
-			{
-				meshData.indices[iIndex++] = i * (slices + 1) + j;
-				meshData.indices[iIndex++] = (i + 1) * (slices + 1) + j;
-				meshData.indices[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+			size_t vIndex = (slices + 1) * (stacks + 1), iIndex = 6 * slices * stacks;
+			uint32_t offset = static_cast<uint32_t>(vIndex);
 
-				meshData.indices[iIndex++] = i * (slices + 1) + j;
-				meshData.indices[iIndex++] = (i + 1) * (slices + 1) + j + 1;
-				meshData.indices[iIndex++] = i * (slices + 1) + j + 1;
+			// 放入顶端圆心
+			meshData.vertices[vIndex] = XMFLOAT3(0.0f, h2, 0.0f);
+			meshData.normals[vIndex] = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			meshData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+			meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
+
+			// 放入顶端圆上各点
+			for (uint32_t i = 0; i <= slices; ++i)
+			{
+				theta = i * per_theta;
+				float u = cosf(theta) * radius / height + 0.5f;
+				float v = sinf(theta) * radius / height + 0.5f;
+				meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), h2, radius * sinf(theta));
+				meshData.normals[vIndex] = XMFLOAT3(0.0f, 1.0f, 0.0f);
+				meshData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+				meshData.texcoords[vIndex++] = XMFLOAT2(u, v);
+			}
+
+			// 放入底端圆心
+			meshData.vertices[vIndex] = XMFLOAT3(0.0f, -h2, 0.0f);
+			meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
+			meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+			meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
+
+			// 放入底部圆上各点
+			for (uint32_t i = 0; i <= slices; ++i)
+			{
+				theta = i * per_theta;
+				float u = cosf(theta) * radius / height + 0.5f;
+				float v = sinf(theta) * radius / height + 0.5f;
+				meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta));
+				meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
+				meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+				meshData.texcoords[vIndex++] = XMFLOAT2(u, v);
+			}
+
+
+			// 放入顶部三角形索引
+			for (uint32_t i = 1; i <= slices; ++i)
+			{
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = offset;
+					meshData.indices32[iIndex++] = offset + i % (slices + 1) + 1;
+					meshData.indices32[iIndex++] = offset + i;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = offset;
+					meshData.indices16[iIndex++] = offset + i % (slices + 1) + 1;
+					meshData.indices16[iIndex++] = offset + i;
+				}
+
+			}
+
+			// 放入底部三角形索引
+			offset += slices + 2;
+			for (uint32_t i = 1; i <= slices; ++i)
+			{
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = offset;
+					meshData.indices32[iIndex++] = offset + i;
+					meshData.indices32[iIndex++] = offset + i % (slices + 1) + 1;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = offset;
+					meshData.indices16[iIndex++] = offset + i;
+					meshData.indices16[iIndex++] = offset + i % (slices + 1) + 1;
+				}
 			}
 		}
+		
 
 		return meshData;
 	}
@@ -334,7 +390,7 @@ namespace Geometry
 	{
 		using namespace DirectX;
 		
-		MeshData meshData = CreateConeNoCap(radius, height, slices);
+		MeshData meshData;
 
 		uint32_t vertexCount = 3 * slices + 1;
 		uint32_t indexCount = 6 * slices;
@@ -343,90 +399,103 @@ namespace Geometry
 		meshData.tangents.resize(vertexCount);
 		meshData.texcoords.resize(vertexCount);
 
-		meshData.indices.resize(indexCount);
-
-		float h2 = height / 2;
-		float theta = 0.0f;
-		float per_theta = 2 * PI / slices;
-		uint32_t iIndex = 3 * slices;
-		uint32_t vIndex = 2 * slices;
-
-		// 放入圆锥底面顶点
-		for (uint32_t i = 0; i < slices; ++i)
-		{
-			theta = i * per_theta;
-
-			meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)),
-			meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
-			meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-			meshData.texcoords[vIndex++] = XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f);
-		}
-		// 放入圆锥底面圆心
-		meshData.vertices[vIndex] = XMFLOAT3(0.0f, -h2, 0.0f),
-			meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
-		meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
-
-		// 放入索引
-		uint32_t offset = 2 * slices;
-		for (uint32_t i = 0; i < slices; ++i)
-		{
-			meshData.indices[iIndex++] = offset + slices;
-			meshData.indices[iIndex++] = offset + i % slices;
-			meshData.indices[iIndex++] = offset + (i + 1) % slices;
-		}
-
-		return meshData;
-	}
-
-	MeshData CreateConeNoCap(float radius, float height, uint32_t slices)
-	{
-		using namespace DirectX;
-
-		MeshData meshData;
-		
-		uint32_t vertexCount = 2 * slices;
-		uint32_t indexCount = 3 * slices;
-		meshData.vertices.resize(vertexCount);
-		meshData.normals.resize(vertexCount);
-		meshData.tangents.resize(vertexCount);
-		meshData.texcoords.resize(vertexCount);
-
-		meshData.indices.resize(indexCount);
+		if (indexCount > 65535)
+			meshData.indices32.resize(indexCount);
+		else
+			meshData.indices16.resize(indexCount);
 
 		float h2 = height / 2;
 		float theta = 0.0f;
 		float per_theta = 2 * PI / slices;
 		float len = sqrtf(height * height + radius * radius);
-		uint32_t iIndex = 0;
-		uint32_t vIndex = 0;
-
-		// 放入圆锥尖端顶点(每个顶点位置相同，但包含不同的法向量和切线向量)
-		for (uint32_t i = 0; i < slices; ++i)
+		
+		//
+		// 圆锥侧面
+		//
 		{
-			theta = i * per_theta + per_theta / 2;
-			meshData.vertices[vIndex] = XMFLOAT3(0.0f, h2, 0.0f);
-			meshData.normals[vIndex] = XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len);
-			meshData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
+			size_t iIndex = 0;
+			size_t vIndex = 0;
+
+			// 放入圆锥尖端顶点(每个顶点位置相同，但包含不同的法向量和切线向量)
+			for (uint32_t i = 0; i < slices; ++i)
+			{
+				theta = i * per_theta + per_theta / 2;
+				meshData.vertices[vIndex] = XMFLOAT3(0.0f, h2, 0.0f);
+				meshData.normals[vIndex] = XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len);
+				meshData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
+				meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
+			}
+
+			// 放入圆锥侧面底部顶点
+			for (uint32_t i = 0; i < slices; ++i)
+			{
+				theta = i * per_theta;
+				meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta));
+				meshData.normals[vIndex] = XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len);
+				meshData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
+				meshData.texcoords[vIndex++] = XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f);
+			}
+
+			// 放入索引
+			for (uint32_t i = 0; i < slices; ++i)
+			{
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = i;
+					meshData.indices32[iIndex++] = slices + (i + 1) % slices;
+					meshData.indices32[iIndex++] = slices + i % slices;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = i;
+					meshData.indices16[iIndex++] = slices + (i + 1) % slices;
+					meshData.indices16[iIndex++] = slices + i % slices;
+				}
+			}
+		}
+		
+		//
+		// 圆锥底面
+		//
+		{
+			size_t iIndex = 3 * slices;
+			size_t vIndex = 2 * slices;
+
+			// 放入圆锥底面顶点
+			for (uint32_t i = 0; i < slices; ++i)
+			{
+				theta = i * per_theta;
+
+				meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta)),
+					meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
+				meshData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
+				meshData.texcoords[vIndex++] = XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f);
+			}
+			// 放入圆锥底面圆心
+			meshData.vertices[vIndex] = XMFLOAT3(0.0f, -h2, 0.0f),
+				meshData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
 			meshData.texcoords[vIndex++] = XMFLOAT2(0.5f, 0.5f);
-		}
 
-		// 放入圆锥侧面底部顶点
-		for (uint32_t i = 0; i < slices; ++i)
-		{
-			theta = i * per_theta;
-			meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), -h2, radius * sinf(theta));
-			meshData.normals[vIndex] = XMFLOAT3(radius * cosf(theta) / len, height / len, radius * sinf(theta) / len);
-			meshData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
-			meshData.texcoords[vIndex++] = XMFLOAT2(cosf(theta) / 2 + 0.5f, sinf(theta) / 2 + 0.5f);
-		}
+			// 放入索引
+			uint32_t offset = 2 * slices;
+			for (uint32_t i = 0; i < slices; ++i)
+			{
+				if (indexCount > 65535)
+				{
+					meshData.indices32[iIndex++] = offset + slices;
+					meshData.indices32[iIndex++] = offset + i % slices;
+					meshData.indices32[iIndex++] = offset + (i + 1) % slices;
+				}
+				else
+				{
+					meshData.indices16[iIndex++] = offset + slices;
+					meshData.indices16[iIndex++] = offset + i % slices;
+					meshData.indices16[iIndex++] = offset + (i + 1) % slices;
+				}
 
-		// 放入索引
-		for (uint32_t i = 0; i < slices; ++i)
-		{
-			meshData.indices[iIndex++] = i;
-			meshData.indices[iIndex++] = slices + (i + 1) % slices;
-			meshData.indices[iIndex++] = slices + i % slices;
+			}
 		}
+		
 
 		return meshData;
 	}
@@ -469,7 +538,7 @@ namespace Geometry
 		meshData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 		meshData.texcoords[vIndex++] = XMFLOAT2(texU, texV);
 
-		meshData.indices = { 0, 1, 2, 2, 3, 0 };
+		meshData.indices16 = { 0, 1, 2, 2, 3, 0 };
 
 		return meshData;
 	}

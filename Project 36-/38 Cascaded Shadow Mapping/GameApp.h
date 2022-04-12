@@ -8,10 +8,10 @@
 #include "Effects.h"
 #include "RenderStates.h"
 #include "GameObject.h"
-#include "Collision.h"
 #include "Texture2D.h"
 #include "Buffer.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 #include "CascadedShadowManager.h"
 
 
@@ -52,6 +52,7 @@ private:
 
 	// 各种资源
 	TextureManager m_TextureManager;                                // 纹理读取管理
+	ModelManager m_ModelManager;									// 模型读取管理
 	std::unique_ptr<Texture2D> m_pLitBuffer;                        // 场景渲染缓冲区
 	std::unique_ptr<Depth2D> m_pDepthBuffer;                        // 深度缓冲区
 	std::unique_ptr<Texture2D> m_pDebugShadowBuffer;				// 调试用shadow map纹理

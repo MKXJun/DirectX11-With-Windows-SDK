@@ -306,11 +306,9 @@ void GameApp::DrawScene()
 	//
 	// 场景渲染部分
 	//
-	
 	RenderShadowForAllCascades();
 	RenderForward();
 	RenderSkyboxAndToneMap();
-	
 
 	//
 	// ImGui部分

@@ -222,7 +222,7 @@ bool GameApp::InitResource()
 
 	m_pDaylight = std::make_unique<SkyRender>();
 	HR(m_pDaylight->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),
-		L"..\\Texture\\test.jpg"));
+		L"..\\Texture\\daylight.jpg"));
 
 	m_pSunset = std::make_unique<SkyRender>();
 	HR(m_pSunset->InitResource(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get(),

@@ -33,10 +33,13 @@ class GpuTimer
 public:
 	GpuTimer() = default;
 	
-	void Init(ID3D11Device* device, size_t recentCount = 1);
+	// recentCount为0时统计所有间隔的平均值
+	// 否则统计最近N帧间隔的平均值
+	void Init(ID3D11Device* device, size_t recentCount = 0);
 	
-	// 重置平均用时、帧ID
-	// recentCount为0时不改变用于计算平均数的最近N帧
+	// 重置平均用时
+	// recentCount为0时统计所有间隔的平均值
+	// 否则统计最近N帧间隔的平均值
 	void Reset(size_t recentCount = 0);
 	// 给命令队列插入起始时间戳
 	HRESULT Start();
@@ -49,7 +52,10 @@ public:
 	// 计算平均用时
 	double AverageTime()
 	{
-		return m_AccumTime / m_DeltaTimes.size();
+		if (m_RecentCount)
+			return m_AccumTime / m_DeltaTimes.size();
+		else
+			return m_AccumTime / m_AccumCount;
 	}
 
 private:
@@ -59,7 +65,8 @@ private:
 
 	std::deque<double> m_DeltaTimes;
 	double m_AccumTime = 0.0;
-	size_t m_RecentCount = 1;
+	size_t m_AccumCount = 0;
+	size_t m_RecentCount = 0;
 	size_t m_FrameID = 0;
 
 	std::deque<GpuTimerInfo> m_Queries;

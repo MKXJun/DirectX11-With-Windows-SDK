@@ -5,6 +5,8 @@ void GpuTimer::Init(ID3D11Device* device, size_t recentCount)
 	m_pDevice = device;
 	m_pDevice->GetImmediateContext(m_pImmediateContext.ReleaseAndGetAddressOf());
 	m_RecentCount = recentCount;
+	m_AccumTime = 0.0;
+	m_AccumCount = 0;
 }
 
 void GpuTimer::Reset(size_t recentCount)
@@ -12,6 +14,7 @@ void GpuTimer::Reset(size_t recentCount)
 	m_Queries.clear();
 	m_DeltaTimes.clear();
 	m_AccumTime = 0.0;
+	m_AccumCount = 0;
 	if (recentCount)
 		m_RecentCount = recentCount;
 }
@@ -63,8 +66,10 @@ bool GpuTimer::TryGetTime(double* pOut)
 	if (!info.disjointData.Disjoint)
 	{
 		double deltaTime = static_cast<double>(info.stopData - info.startData) / info.disjointData.Frequency;
-		m_DeltaTimes.push_back(deltaTime);
+		if (m_RecentCount > 0)
+			m_DeltaTimes.push_back(deltaTime);
 		m_AccumTime += deltaTime;
+		m_AccumCount++;
 		if (m_DeltaTimes.size() > m_RecentCount)
 		{
 			m_AccumTime -= m_DeltaTimes.front();
@@ -109,8 +114,10 @@ double GpuTimer::GetTime()
 	if (!info.disjointData.Disjoint)
 	{
 		deltaTime = static_cast<double>(info.stopData - info.startData) / info.disjointData.Frequency;
-		m_DeltaTimes.push_back(deltaTime);
+		if (m_RecentCount > 0)
+			m_DeltaTimes.push_back(deltaTime);
 		m_AccumTime += deltaTime;
+		m_AccumCount++;
 		if (m_DeltaTimes.size() > m_RecentCount)
 		{
 			m_AccumTime -= m_DeltaTimes.front();

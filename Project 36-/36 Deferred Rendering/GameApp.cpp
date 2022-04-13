@@ -28,10 +28,10 @@ bool GameApp::Init()
 	m_TextureManager.Init(m_pd3dDevice.Get());
 	m_ModelManager.Init(m_pd3dDevice.Get());
 
-	m_GpuTimer_PreZ.Init(m_pd3dDevice.Get(), 5000);
-	m_GpuTimer_Lighting.Init(m_pd3dDevice.Get(), 5000);
-	m_GpuTimer_Geometry.Init(m_pd3dDevice.Get(), 5000);
-	m_GpuTimer_Skybox.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_PreZ.Init(m_pd3dDevice.Get());
+	m_GpuTimer_Lighting.Init(m_pd3dDevice.Get());
+	m_GpuTimer_Geometry.Init(m_pd3dDevice.Get());
+	m_GpuTimer_Skybox.Init(m_pd3dDevice.Get());
 
 	// 务必先初始化所有渲染状态，以供下面的特效使用
 	RenderStates::InitAll(m_pd3dDevice.Get());

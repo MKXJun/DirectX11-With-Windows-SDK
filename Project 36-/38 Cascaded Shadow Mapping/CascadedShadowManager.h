@@ -92,7 +92,7 @@ public:
     //
     // 级联相关的配置
     //
-    //
+
     float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
         0.05f, 0.15f, 0.3f, 0.5f, 0.7f, 1.0f, 1.0f, 1.0f
     };    

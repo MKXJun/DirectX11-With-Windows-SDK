@@ -28,6 +28,10 @@ bool GameApp::Init()
 	m_TextureManager.Init(m_pd3dDevice.Get());
 	m_ModelManager.Init(m_pd3dDevice.Get());
 
+	m_GpuTimer_Shadow.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_Lighting.Init(m_pd3dDevice.Get(), 5000);
+	m_GpuTimer_Skybox.Init(m_pd3dDevice.Get(), 5000);
+
 	// 务必先初始化所有渲染状态，以供下面的特效使用
 	RenderStates::InitAll(m_pd3dDevice.Get());
 
@@ -73,13 +77,18 @@ void GameApp::UpdateScene(float dt)
 	if (m_CSManager.m_SelectedCamera <= CameraSelection::CameraSelection_Light)
 		m_FPSCameraController.Update(dt);
 
+	bool need_gpu_timer_reset = false;
 	if (ImGui::Begin("Cascaded Shadow Mapping"))
 	{
 		ImGui::Checkbox("Debug Shadow", &m_DebugShadow);
 
 		static bool visualizeCascades = false;
 		if (ImGui::Checkbox("Visualize Cascades", &visualizeCascades))
+		{
 			m_pForwardEffect->SetCascadeVisulization(visualizeCascades);
+			need_gpu_timer_reset = true;
+		}
+			
 		
 		static const char* msaa_modes[] = {
 			"None",
@@ -105,6 +114,7 @@ void GameApp::UpdateScene(float dt)
 			m_pDepthBuffer = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight,
 				D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, sampleDesc);
 			m_pSkyboxEffect->SetMsaaSamples(m_MsaaSamples);
+			need_gpu_timer_reset = true;
 		}
 		
 		
@@ -115,6 +125,7 @@ void GameApp::UpdateScene(float dt)
 			m_ShadowSize = (1 << texture_level);
 			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
 			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
+			need_gpu_timer_reset = true;
 		}
 
 		
@@ -125,6 +136,7 @@ void GameApp::UpdateScene(float dt)
 		{
 			m_CSManager.m_PCFKernelSize = 2 * pcl_kernel_level + 1;
 			m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_PCFKernelSize);
+			need_gpu_timer_reset = true;
 		}
 
 		ImGui::Text("Depth Offset");
@@ -136,6 +148,7 @@ void GameApp::UpdateScene(float dt)
 		if (ImGui::Checkbox("Cascade Blur", &m_CSManager.m_BlendBetweenCascades))
 		{
 			m_pForwardEffect->SetCascadeBlendEnabled(m_CSManager.m_BlendBetweenCascades);
+			need_gpu_timer_reset = true;
 		}
 		if (ImGui::SliderFloat("##3", &m_CSManager.m_BlendBetweenCascadesRange, 0.0f, 0.5f))
 		{
@@ -145,15 +158,19 @@ void GameApp::UpdateScene(float dt)
 		if (ImGui::Checkbox("DDX, DDY offset", &m_CSManager.m_DerivativeBasedOffset))
 		{
 			m_pForwardEffect->SetPCFDerivativesOffsetEnabled(m_CSManager.m_DerivativeBasedOffset);
+			need_gpu_timer_reset = true;
 		}
-		ImGui::Checkbox("Fixed Size Frustum AABB", &m_CSManager.m_FixedSizeFrustumAABB);
-		ImGui::Checkbox("Fit Light to Texels", &m_CSManager.m_MoveLightTexelSize);
+		if (ImGui::Checkbox("Fixed Size Frustum AABB", &m_CSManager.m_FixedSizeFrustumAABB))
+			need_gpu_timer_reset = true;
+		if (ImGui::Checkbox("Fit Light to Texels", &m_CSManager.m_MoveLightTexelSize))
+			need_gpu_timer_reset = true;
 		
 		static const char* fit_projection_strs[] = {
 			"Fit Projection To Cascade",
 			"Fit Projection To Scene"
 		};
-		ImGui::Combo("##4", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadesFit), fit_projection_strs, ARRAYSIZE(fit_projection_strs));
+		if (ImGui::Combo("##4", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadesFit), fit_projection_strs, ARRAYSIZE(fit_projection_strs)))
+			need_gpu_timer_reset = true;
 
 		static const char* camera_strs[] = {
 			"Main Camera",
@@ -185,7 +202,6 @@ void GameApp::UpdateScene(float dt)
 				m_FPSCameraController.SetMoveSpeed(50.0f);
 				m_FPSCameraController.SetStrafeSpeed(50.0f);
 			}
-				
 		}
 
 		static const char* fit_near_far_strs[] = {
@@ -195,7 +211,8 @@ void GameApp::UpdateScene(float dt)
 			"Scene AABB Intersection NearFar"
 		};
 		
-		ImGui::Combo("##6", reinterpret_cast<int*>(&m_CSManager.m_SelectedNearFarFit), fit_near_far_strs, ARRAYSIZE(fit_near_far_strs));
+		if (ImGui::Combo("##6", reinterpret_cast<int*>(&m_CSManager.m_SelectedNearFarFit), fit_near_far_strs, ARRAYSIZE(fit_near_far_strs)))
+			need_gpu_timer_reset = true;
 
 		static const char* cascade_selection_strs[] = {
 			"Map-based Selection",
@@ -204,6 +221,7 @@ void GameApp::UpdateScene(float dt)
 		if (ImGui::Combo("##7", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadeSelection), cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
 		{
 			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(static_cast<bool>(m_CSManager.m_SelectedCascadeSelection));
+			need_gpu_timer_reset = true;
 		}
 
 		static const char* cascade_levels[] = {
@@ -222,6 +240,7 @@ void GameApp::UpdateScene(float dt)
 			m_CascadeLevels = cascade_level_idx + 1;
 			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
 			m_pForwardEffect->SetCascadeLevels(m_CascadeLevels);
+			need_gpu_timer_reset = true;
 		}
 
 		char level_str[] = "Level1";
@@ -241,6 +260,13 @@ void GameApp::UpdateScene(float dt)
 
 	}
 	ImGui::End();
+
+	if (need_gpu_timer_reset)
+	{
+		m_GpuTimer_Lighting.Reset();
+		m_GpuTimer_Shadow.Reset();
+		m_GpuTimer_Skybox.Reset();
+	}
 
 	if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
 	{
@@ -280,13 +306,37 @@ void GameApp::DrawScene()
 	//
 	// 场景渲染部分
 	//
+	
 	RenderShadowForAllCascades();
 	RenderForward();
 	RenderSkyboxAndToneMap();
+	
 
 	//
 	// ImGui部分
 	//
+	if (ImGui::Begin("Cascaded Shadow Mapping"))
+	{
+		ImGui::Separator();
+		ImGui::Text("GPU Profile");
+		double total_time = 0.0f;
+
+		m_GpuTimer_Shadow.TryGetTime(nullptr);
+		ImGui::Text("Shadow Pass: %.3f ms", m_GpuTimer_Shadow.AverageTime() * 1000);
+		total_time += m_GpuTimer_Shadow.AverageTime();
+
+		m_GpuTimer_Lighting.TryGetTime(nullptr);
+		ImGui::Text("Lighting Pass: %.3f ms", m_GpuTimer_Lighting.AverageTime() * 1000);
+		total_time += m_GpuTimer_Lighting.AverageTime();
+
+		m_GpuTimer_Skybox.TryGetTime(nullptr);
+		ImGui::Text("Skybox Pass: %.3f ms", m_GpuTimer_Skybox.AverageTime() * 1000);
+		total_time += m_GpuTimer_Skybox.AverageTime();
+
+		ImGui::Text("Total: %.3f ms", total_time * 1000);
+	}
+	ImGui::End();
+
 	if (m_DebugShadow)
 	{
 		if (ImGui::Begin("Debug Shadow"))
@@ -404,118 +454,130 @@ bool GameApp::InitResource()
 
 void GameApp::RenderShadowForAllCascades()
 {
-	m_pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
-	D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
-	m_pd3dImmediateContext->RSSetViewports(1, &vp);
-
-	for (size_t cascadeIdx = 0; cascadeIdx < m_CascadeLevels; ++cascadeIdx)
+	m_GpuTimer_Shadow.Start();
 	{
-		ID3D11RenderTargetView* nullRTV = nullptr;
-		ID3D11DepthStencilView* depthDSV = m_CSManager.GetCascadeDepthStencilView(cascadeIdx);
-		m_pd3dImmediateContext->ClearDepthStencilView(depthDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
-		m_pd3dImmediateContext->OMSetRenderTargets(1, &nullRTV, depthDSV);
+		m_pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+		D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
+		m_pd3dImmediateContext->RSSetViewports(1, &vp);
 
-		XMMATRIX shadowProj = m_CSManager.GetShadowProjectionXM(cascadeIdx);
-		m_pShadowEffect->SetProjMatrix(shadowProj);
-		
-		// 更新物体与投影立方体的裁剪
-		BoundingOrientedBox obb = m_CSManager.GetShadowOBB(cascadeIdx);
-		obb.Transform(obb, m_pLightCamera->GetLocalToWorldMatrixXM());
-		m_Powerplant.CubeCulling(obb);
+		for (size_t cascadeIdx = 0; cascadeIdx < m_CascadeLevels; ++cascadeIdx)
+		{
+			ID3D11RenderTargetView* nullRTV = nullptr;
+			ID3D11DepthStencilView* depthDSV = m_CSManager.GetCascadeDepthStencilView(cascadeIdx);
+			m_pd3dImmediateContext->ClearDepthStencilView(depthDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+			m_pd3dImmediateContext->OMSetRenderTargets(1, &nullRTV, depthDSV);
 
-		m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pShadowEffect.get());
+			XMMATRIX shadowProj = m_CSManager.GetShadowProjectionXM(cascadeIdx);
+			m_pShadowEffect->SetProjMatrix(shadowProj);
+
+			// 更新物体与投影立方体的裁剪
+			BoundingOrientedBox obb = m_CSManager.GetShadowOBB(cascadeIdx);
+			obb.Transform(obb, m_pLightCamera->GetLocalToWorldMatrixXM());
+			m_Powerplant.CubeCulling(obb);
+
+			m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pShadowEffect.get());
+		}
 	}
+	m_GpuTimer_Shadow.Stop();
 }
 
 void GameApp::RenderForward()
 {
-	float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), black);
-	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	D3D11_VIEWPORT viewport = m_pViewerCamera->GetViewPort();
-	BoundingFrustum frustum;
-	if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
+	m_GpuTimer_Lighting.Start();
 	{
-		BoundingFrustum::CreateFromMatrix(frustum, m_pViewerCamera->GetProjMatrixXM());
-		frustum.Transform(frustum, m_pViewerCamera->GetLocalToWorldMatrixXM());
-		m_Powerplant.FrustumCulling(frustum);
-	}
-	else if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Light)
-	{
-		BoundingFrustum::CreateFromMatrix(frustum, m_pLightCamera->GetProjMatrixXM());
-		frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
-		m_Powerplant.FrustumCulling(frustum);
-	}
-	else
-	{
-		BoundingFrustum::CreateFromMatrix(frustum, m_CSManager.GetShadowProjectionXM(
-			static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
-		frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
-		m_Powerplant.FrustumCulling(frustum);
-		viewport.Width = (float)std::min(m_ClientHeight, m_ClientWidth);
-		viewport.Height = viewport.Width;
-	}
-	m_pd3dImmediateContext->RSSetViewports(1, &viewport);
+		float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), black);
+		m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	// 正常绘制
-	ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
-	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
+		D3D11_VIEWPORT viewport = m_pViewerCamera->GetViewPort();
+		BoundingFrustum frustum;
+		if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
+		{
+			BoundingFrustum::CreateFromMatrix(frustum, m_pViewerCamera->GetProjMatrixXM());
+			frustum.Transform(frustum, m_pViewerCamera->GetLocalToWorldMatrixXM());
+			m_Powerplant.FrustumCulling(frustum);
+		}
+		else if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Light)
+		{
+			BoundingFrustum::CreateFromMatrix(frustum, m_pLightCamera->GetProjMatrixXM());
+			frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
+			m_Powerplant.FrustumCulling(frustum);
+		}
+		else
+		{
+			BoundingFrustum::CreateFromMatrix(frustum, m_CSManager.GetShadowProjectionXM(
+				static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
+			frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
+			m_Powerplant.FrustumCulling(frustum);
+			viewport.Width = (float)std::min(m_ClientHeight, m_ClientWidth);
+			viewport.Height = viewport.Width;
+		}
+		m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
-	
-	m_pForwardEffect->SetCascadeFrustumsEyeSpaceDepths(m_CSManager.GetCascadePartitions());
+		// 正常绘制
+		ID3D11RenderTargetView* pRTVs[1] = { m_pLitBuffer->GetRenderTarget() };
+		m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
 
-	// 将NDC空间 [-1, +1]^2 变换到纹理坐标空间 [0, 1]^2
-	static XMMATRIX T(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, -0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.5f, 0.5f, 0.0f, 1.0f);
-	XMFLOAT4 scales[8]{};
-	XMFLOAT4 offsets[8]{};
-	for (size_t cascadeIndex = 0; cascadeIndex < m_CascadeLevels; ++cascadeIndex)
-	{
-		XMMATRIX ShadowTexture = m_CSManager.GetShadowProjectionXM(cascadeIndex) * T;
-		scales[cascadeIndex].x = XMVectorGetX(ShadowTexture.r[0]);
-		scales[cascadeIndex].y = XMVectorGetY(ShadowTexture.r[1]);
-		scales[cascadeIndex].z = XMVectorGetZ(ShadowTexture.r[2]);
-		scales[cascadeIndex].w = 1.0f;
-		XMStoreFloat3((XMFLOAT3*)(offsets + cascadeIndex), ShadowTexture.r[3]);
+
+		m_pForwardEffect->SetCascadeFrustumsEyeSpaceDepths(m_CSManager.GetCascadePartitions());
+
+		// 将NDC空间 [-1, +1]^2 变换到纹理坐标空间 [0, 1]^2
+		static XMMATRIX T(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f);
+		XMFLOAT4 scales[8]{};
+		XMFLOAT4 offsets[8]{};
+		for (size_t cascadeIndex = 0; cascadeIndex < m_CascadeLevels; ++cascadeIndex)
+		{
+			XMMATRIX ShadowTexture = m_CSManager.GetShadowProjectionXM(cascadeIndex) * T;
+			scales[cascadeIndex].x = XMVectorGetX(ShadowTexture.r[0]);
+			scales[cascadeIndex].y = XMVectorGetY(ShadowTexture.r[1]);
+			scales[cascadeIndex].z = XMVectorGetZ(ShadowTexture.r[2]);
+			scales[cascadeIndex].w = 1.0f;
+			XMStoreFloat3((XMFLOAT3*)(offsets + cascadeIndex), ShadowTexture.r[3]);
+		}
+		m_pForwardEffect->SetCascadeOffsets(offsets);
+		m_pForwardEffect->SetCascadeScales(scales);
+		m_pForwardEffect->SetShadowViewMatrix(m_pLightCamera->GetViewMatrixXM());
+		m_pForwardEffect->SetShadowTextureArray(m_CSManager.GetCascadesOutput());
+		m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+		m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
+
+		// 清除绑定
+		m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+		m_pForwardEffect->SetShadowTextureArray(nullptr);
+		m_pForwardEffect->Apply(m_pd3dImmediateContext.Get());
 	}
-	m_pForwardEffect->SetCascadeOffsets(offsets);
-	m_pForwardEffect->SetCascadeScales(scales);
-	m_pForwardEffect->SetShadowViewMatrix(m_pLightCamera->GetViewMatrixXM());
-	m_pForwardEffect->SetShadowTextureArray(m_CSManager.GetCascadesOutput());
-	m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
-	m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
-	
-	// 清除绑定
-	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
-	m_pForwardEffect->SetShadowTextureArray(nullptr);
-	m_pForwardEffect->Apply(m_pd3dImmediateContext.Get());
+	m_GpuTimer_Lighting.Stop();
 }
 
 
 void GameApp::RenderSkyboxAndToneMap()
 {
-	D3D11_VIEWPORT skyboxViewport = m_pViewerCamera->GetViewPort();
-	skyboxViewport.MinDepth = 1.0f;
-	skyboxViewport.MaxDepth = 1.0f;
-	m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
+	m_GpuTimer_Skybox.Start();
+	{
+		D3D11_VIEWPORT skyboxViewport = m_pViewerCamera->GetViewPort();
+		skyboxViewport.MinDepth = 1.0f;
+		skyboxViewport.MaxDepth = 1.0f;
+		m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
 
-	m_pSkyboxEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
-	m_pSkyboxEffect->SetSkyboxTexture(m_pTextureCubeSRV.Get());
-	m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
-	m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
-	
-	// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
-	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
-	m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
+		m_pSkyboxEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+		m_pSkyboxEffect->SetSkyboxTexture(m_pTextureCubeSRV.Get());
+		m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
+		m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
 
-	// 清除状态
-	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
-	m_pSkyboxEffect->SetLitTexture(nullptr);
-	m_pSkyboxEffect->SetDepthTexture(nullptr);
-	m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+		// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
+		m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
+		m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
+
+		// 清除状态
+		m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+		m_pSkyboxEffect->SetLitTexture(nullptr);
+		m_pSkyboxEffect->SetDepthTexture(nullptr);
+		m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+	}
+	m_GpuTimer_Skybox.Stop();
 }
 

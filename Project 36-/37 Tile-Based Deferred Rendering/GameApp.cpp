@@ -226,9 +226,8 @@ void GameApp::DrawScene()
 				m_pGBufferSRVs.data());
 		m_GpuTimer_Lighting.Stop();
 	}
-	m_GpuTimer_Skybox.Start();
+	
 	RenderSkyboxAndToneMap();
-	m_GpuTimer_Skybox.Stop();
 
 	//
 	// ImGui部分
@@ -639,34 +638,38 @@ void GameApp::RenderGBuffer()
 
 void GameApp::RenderSkyboxAndToneMap()
 {
-	D3D11_VIEWPORT skyboxViewport = m_pCamera->GetViewPort();
-	skyboxViewport.MinDepth = 1.0f;
-	skyboxViewport.MaxDepth = 1.0f;
-	m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
+	m_GpuTimer_Skybox.Start();
+	{
+		D3D11_VIEWPORT skyboxViewport = m_pCamera->GetViewPort();
+		skyboxViewport.MinDepth = 1.0f;
+		skyboxViewport.MaxDepth = 1.0f;
+		m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
 
-	m_pSkyboxEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+		m_pSkyboxEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
 
-	m_pSkyboxEffect->SetViewMatrix(m_pCamera->GetViewMatrixXM());
-	// 注意：反转Z
-	m_pSkyboxEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
+		m_pSkyboxEffect->SetViewMatrix(m_pCamera->GetViewMatrixXM());
+		// 注意：反转Z
+		m_pSkyboxEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM(true));
 
-	// 根据所用技术绑定合适的缓冲区
-	if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
-		m_pSkyboxEffect->SetFlatLitTexture(m_pFlatLitBuffer->GetShaderResource(), m_ClientWidth, m_ClientHeight);
-	else
-		m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
-	m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
-	m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+		// 根据所用技术绑定合适的缓冲区
+		if (m_LightCullTechnique == LightCullTechnique::CULL_DEFERRED_COMPUTE_SHADER_TILE)
+			m_pSkyboxEffect->SetFlatLitTexture(m_pFlatLitBuffer->GetShaderResource(), m_ClientWidth, m_ClientHeight);
+		else
+			m_pSkyboxEffect->SetLitTexture(m_pLitBuffer->GetShaderResource());
+		m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
+		m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
 
-	// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
-	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
-	m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
+		// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
+		m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
+		m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
 
-	// 清除状态
-	m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
-	m_pSkyboxEffect->SetLitTexture(nullptr);
-	m_pSkyboxEffect->SetFlatLitTexture(nullptr, 0, 0);
-	m_pSkyboxEffect->SetDepthTexture(nullptr);
-	m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+		// 清除状态
+		m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+		m_pSkyboxEffect->SetLitTexture(nullptr);
+		m_pSkyboxEffect->SetFlatLitTexture(nullptr, 0, 0);
+		m_pSkyboxEffect->SetDepthTexture(nullptr);
+		m_pSkyboxEffect->Apply(m_pd3dImmediateContext.Get());
+	}
+	m_GpuTimer_Skybox.Stop();
 }
 

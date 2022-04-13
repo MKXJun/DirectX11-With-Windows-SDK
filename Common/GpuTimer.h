@@ -1,3 +1,10 @@
+//***************************************************************************************
+// GameObject.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
+// Licensed under the MIT License.
+//
+// 获取GPU两个时间戳的间隔
+// Retrieve the interval between two timestamps of the GPU.
+//***************************************************************************************
 
 #pragma once
 

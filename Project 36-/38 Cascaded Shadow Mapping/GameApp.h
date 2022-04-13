@@ -41,6 +41,12 @@ private:
 
 private:
 	
+	// GPU计时
+	GpuTimer m_GpuTimer_Shadow;
+	GpuTimer m_GpuTimer_Lighting;
+	GpuTimer m_GpuTimer_Skybox;
+
+	// MSAA
 	int m_MsaaSamples = 1;
 
 	// 阴影

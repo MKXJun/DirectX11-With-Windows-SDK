@@ -13,16 +13,11 @@ cbuffer CBChangesEveryDrawing : register(b0)
 
 cbuffer CBChangesEveryFrame : register(b1)
 {
-    matrix g_View;
+    matrix g_ViewProj;
     float3 g_EyePosW;
 }
 
-cbuffer CBChangesOnResize : register(b2)
-{
-    matrix g_Proj;
-}
-
-cbuffer CBChangesRarely : register(b3)
+cbuffer CBChangesRarely : register(b2)
 {
     DirectionalLight g_DirLight[5];
     PointLight g_PointLight[5];

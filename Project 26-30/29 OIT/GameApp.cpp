@@ -257,37 +257,46 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"..\\Texture\\Red.dds", nullptr, redBoxDiffuse.GetAddressOf()));
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"..\\Texture\\Yellow.dds", nullptr, yellowBoxDiffuse.GetAddressOf()));
 
-	Model model;
-	// 地面
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateTerrain(XMFLOAT2(160.0f, 160.0f),
-		XMUINT2(50, 50), XMFLOAT2(10.0f, 10.0f),
-		[](float x, float z) { return 0.3f*(z * sinf(0.1f * x) + x * cosf(0.1f * z)); },	// 高度函数
-		[](float x, float z) { return XMFLOAT3{ -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z), 1.0f,	
-		-0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z) }; }));		// 法向量函数
 	Material material;
+	
+	// 地面
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 	material.reflect = XMFLOAT4();
-	model.modelParts[0].material = material;
-	model.modelParts[0].texDiffuse = landDiffuse;
-	m_Land.SetModel(std::move(model));
-	m_Land.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateTerrain(XMFLOAT2(160.0f, 160.0f),
+			XMUINT2(50, 50), XMFLOAT2(10.0f, 10.0f),
+			[](float x, float z) { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); },	// 高度函数
+			[](float x, float z) { return XMFLOAT3{ -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z), 1.0f,
+			-0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z) }; }));		// 法向量函数
+		model.modelParts[0].material = material;
+		model.modelParts[0].texDiffuse = landDiffuse;
+		m_Land.SetModel(std::move(model));
+		m_Land.GetTransform().SetPosition(0.0f, -1.0f, 0.0f);
+	}
 	// 透明红盒与黄盒
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateBox(8.0f, 8.0f, 8.0f));
 	material.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material = material;
-	model.modelParts[0].texDiffuse = redBoxDiffuse;
-	m_RedBox.SetModel(std::move(model));
-	m_RedBox.GetTransform().SetPosition(-6.0f, 2.0f, -4.0f);
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateBox(8.0f, 8.0f, 8.0f));
-	model.modelParts[0].material = material;
-	model.modelParts[0].texDiffuse = yellowBoxDiffuse;
-	m_YellowBox.SetModel(std::move(model));
-	m_YellowBox.GetTransform().SetPosition(-2.0f, 1.8f, 0.0f);
-
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateBox(8.0f, 8.0f, 8.0f));
+		model.modelParts[0].material = material;
+		model.modelParts[0].texDiffuse = redBoxDiffuse;
+		m_RedBox.SetModel(std::move(model));
+		m_RedBox.GetTransform().SetPosition(-6.0f, 2.0f, -4.0f);
+	}
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateBox(8.0f, 8.0f, 8.0f));
+		model.modelParts[0].material = material;
+		model.modelParts[0].texDiffuse = yellowBoxDiffuse;
+		m_YellowBox.SetModel(std::move(model));
+		m_YellowBox.GetTransform().SetPosition(-2.0f, 1.8f, 0.0f);
+	}
+	
 	// ******************
 	// 初始化水面波浪
 	//
@@ -321,7 +330,7 @@ bool GameApp::InitResource()
 	// 初始化摄像机
 	//
 
-	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
+	auto camera = std::make_shared<ThirdPersonCamera>();
 	m_pCamera = camera;
 
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
@@ -366,7 +375,6 @@ bool GameApp::InitResource()
 	m_BasicEffect.SetFogColor(XMVectorSet(0.75f, 0.75f, 0.75f, 1.0f));
 	m_BasicEffect.SetFogStart(15.0f);
 	m_BasicEffect.SetFogRange(135.0f);
-	m_BasicEffect.SetTextureUsed(true);
 	
 	// ******************
 	// 设置调试对象名

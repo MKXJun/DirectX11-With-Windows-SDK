@@ -278,7 +278,7 @@ bool GameApp::InitResource()
 	// 初始化摄像机
 	//
 
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
@@ -289,7 +289,6 @@ bool GameApp::InitResource()
 	// 初始化特效
 	//
 
-	m_pBasicEffect->SetTextureUsed(true);
 	m_pBasicEffect->SetShadowEnabled(false);
 	m_pBasicEffect->SetSSAOEnabled(false);
 	m_pBasicEffect->SetViewMatrix(camera->GetViewXM());

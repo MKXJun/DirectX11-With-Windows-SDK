@@ -24,7 +24,7 @@ public:
 
 	ComPtr<ID3D11InputLayout> m_pVertexPosLayout;
 
-	XMFLOAT4X4 m_World, m_View, m_Proj;
+	XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
 };
 
 //

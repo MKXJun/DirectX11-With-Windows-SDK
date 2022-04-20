@@ -83,9 +83,6 @@ public:
 
 	void SetMaterial(const Material& material);
 
-
-	void SetTextureUsed(bool isUsed);
-
 	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 
 	void SetEyePos(const DirectX::XMFLOAT3& eyePos);

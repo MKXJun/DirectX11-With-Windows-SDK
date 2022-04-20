@@ -85,9 +85,6 @@ public:
 
 	void SetMaterial(const Material& material);
 
-
-	void SetTextureUsed(bool isUsed);
-
 	void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
 	void SetTextureNormalMap(ID3D11ShaderResourceView * textureNormalMap);
 	void SetTextureCube(ID3D11ShaderResourceView * textureCube);

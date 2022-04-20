@@ -5,17 +5,17 @@ RWStructuredBuffer<FLStaticNode> g_FLBuffer : register(u1);
 RWByteAddressBuffer g_StartOffsetBuffer : register(u2);
 
 // 静态链表创建
-// 提前开启深度/模板测试，避免产生不符合深度的像素片元的节点
+// 强制开启早期深度/模板测试，避免产生不符合深度的像素片元的节点
 [earlydepthstencil]
 void PS(VertexPosHWNormalTex pIn)
 {
-    // 若不使用纹理，则使用默认白色
+    uint texWidth, texHeight;
+    g_DiffuseMap.GetDimensions(texWidth, texHeight);
     float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    if (g_TextureUsed)
+    if (texWidth > 0 && texHeight > 0)
     {
-        texColor = g_DiffuseMap.Sample(g_SamLinearWrap, pIn.Tex);
         // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
+        texColor = g_DiffuseMap.Sample(g_SamLinearWrap, pIn.Tex);
         clip(texColor.a - 0.1f);
     }
     

@@ -26,8 +26,8 @@ public:
 	ComPtr<ID3D11InputLayout> m_pInstancePosNormalTexLayout;
 	ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
-	XMFLOAT4X4 m_World, m_View, m_Proj;
-	ShadowEffect::RenderType m_RenderType;
+	XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
+	RenderType m_RenderType = RenderType::RenderObject;
 };
 
 //

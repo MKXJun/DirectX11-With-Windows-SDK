@@ -132,8 +132,6 @@ public:
 	void SetSpotLight(size_t pos, const SpotLight& spotLight);
 	void SetMaterial(const Material& material);
 
-	// 是否使用纹理
-	void SetTextureUsed(bool isUsed);
 	// 是否使用阴影
 	void SetShadowEnabled(bool enabled);
 	// 是否使用SSAO

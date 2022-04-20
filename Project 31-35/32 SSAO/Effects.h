@@ -104,7 +104,6 @@ public:
 
 	void SetMaterial(const Material& material);
 
-	void SetTextureUsed(bool isUsed);
 	void SetShadowEnabled(bool enabled);
 	void SetSSAOEnabled(bool enabled);
 

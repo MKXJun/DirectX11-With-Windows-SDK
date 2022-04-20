@@ -257,14 +257,14 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&material);
 }
 
-void BasicEffect::SetTextureUsed(bool isUsed)
-{
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_TextureUsed")->SetSInt(isUsed);
-}
-
 void BasicEffect::SetShadowEnabled(bool enabled)
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EnableShadow")->SetSInt(enabled);
+}
+
+void BasicEffect::SetDepthBias(float bias)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_DepthBias")->SetFloat(bias);
 }
 
 void BasicEffect::SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse)
@@ -298,20 +298,16 @@ void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 	XMMATRIX V = XMLoadFloat4x4(&pImpl->m_View);
 	XMMATRIX P = XMLoadFloat4x4(&pImpl->m_Proj);
 
-	XMMATRIX WVP = W * V * P;
+	XMMATRIX VP = V * P;
 	XMMATRIX WInvT = InverseTranspose(W);
 
-	WVP = XMMatrixTranspose(WVP);
+	VP = XMMatrixTranspose(VP);
 	WInvT = XMMatrixTranspose(WInvT);
 	W = XMMatrixTranspose(W);
-	V = XMMatrixTranspose(V);
-	P = XMMatrixTranspose(P);
 
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_World")->SetFloatMatrix(4, 4, (FLOAT*)&W);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_View")->SetFloatMatrix(4, 4, (FLOAT*)&V);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Proj")->SetFloatMatrix(4, 4, (FLOAT*)&P);
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&WVP);
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_WorldInvTranspose")->SetFloatMatrix(4, 4, (FLOAT*)&WInvT);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&VP);
 
 	if (pImpl->m_pCurrEffectPass)
 		pImpl->m_pCurrEffectPass->Apply(deviceContext);

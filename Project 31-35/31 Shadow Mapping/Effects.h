@@ -98,8 +98,8 @@ public:
 	void SetSpotLight(size_t pos, const SpotLight& spotLight);
 	void SetMaterial(const Material& material);
 
-	void SetTextureUsed(bool isUsed);
 	void SetShadowEnabled(bool enabled);
+	void SetDepthBias(float bias);
 	void SetTextureNormalMap(ID3D11ShaderResourceView* textureNormalMap);
 	void SetTextureShadowMap(ID3D11ShaderResourceView* textureShadowMap);
 	void SetTextureCube(ID3D11ShaderResourceView* textureCube);

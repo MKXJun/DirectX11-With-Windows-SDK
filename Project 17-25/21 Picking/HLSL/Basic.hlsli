@@ -15,25 +15,14 @@ cbuffer CBChangesEveryObjectDrawing : register(b1)
     Material g_Material;
 }
 
-cbuffer CBDrawingStates : register(b2)
+cbuffer CBChangesEveryFrame : register(b2)
 {
-    int g_TextureUsed;
-    float3 g_Pad;
-}
-
-cbuffer CBChangesEveryFrame : register(b3)
-{
-    matrix g_View;
+    matrix g_ViewProj;
     float3 g_EyePosW;
-    float g_Pad2;
+    float g_Pad;
 }
 
-cbuffer CBChangesOnResize : register(b4)
-{
-    matrix g_Proj;
-}
-
-cbuffer CBChangesRarely : register(b5)
+cbuffer CBChangesRarely : register(b3)
 {
     DirectionalLight g_DirLight[5];
     PointLight g_PointLight[5];

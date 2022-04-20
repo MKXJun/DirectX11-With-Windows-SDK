@@ -3,13 +3,13 @@
 // 像素着色器(3D)
 float4 PS(VertexOutNormalMap pIn) : SV_Target
 {
-    // 若不使用纹理，则使用默认白色
+    uint texWidth, texHeight;
+    g_DiffuseMap.GetDimensions(texWidth, texHeight);
     float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    if (g_TextureUsed)
+    if (texWidth > 0 && texHeight > 0)
     {
+        // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
         texColor = g_DiffuseMap.Sample(g_Sam, pIn.Tex);
-        // 提前进行裁剪，对不符合要求的像素可以避免后续运算
         clip(texColor.a - 0.1f);
     }
     

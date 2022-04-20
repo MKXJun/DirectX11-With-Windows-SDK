@@ -458,8 +458,8 @@ namespace Geometry
 		// 圆锥底面
 		//
 		{
-			size_t iIndex = 3 * slices;
-			size_t vIndex = 2 * slices;
+			size_t iIndex = 3 * (size_t)slices;
+			size_t vIndex = 2 * (size_t)slices;
 
 			// 放入圆锥底面顶点
 			for (uint32_t i = 0; i < slices; ++i)

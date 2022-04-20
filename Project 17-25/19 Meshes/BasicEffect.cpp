@@ -27,14 +27,9 @@ public:
 
 	struct CBChangesEveryFrame
 	{
-		DirectX::XMMATRIX view;
+		DirectX::XMMATRIX viewProj;
 		DirectX::XMFLOAT3 eyePos;
 		float pad;
-	};
-
-	struct CBChangesOnResize
-	{
-		DirectX::XMMATRIX proj;
 	};
 
 	struct CBChangesRarely
@@ -52,13 +47,14 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
+	XMMATRIX m_View{}, m_Proj{};
 	CBufferObject<0, CBChangesEveryDrawing> m_CBDrawing;		// 每次对象绘制的常量缓冲区
 	CBufferObject<1, CBChangesEveryFrame>   m_CBFrame;		    // 每帧绘制的常量缓冲区
-	CBufferObject<2, CBChangesOnResize>     m_CBOnResize;		// 每次窗口大小变更的常量缓冲区
-	CBufferObject<3, CBChangesRarely>		m_CBRarely;		    // 几乎不会变更的常量缓冲区
+	CBufferObject<2, CBChangesRarely>		m_CBRarely;		    // 几乎不会变更的常量缓冲区
 	BOOL m_IsDirty;											    // 是否有值变更
 	std::vector<CBufferBase*> m_pCBuffers;					    // 统一管理上面所有的常量缓冲区
 
+	
 
 	ComPtr<ID3D11VertexShader> m_pBasicVS;
 	ComPtr<ID3D11PixelShader> m_pBasicPS;
@@ -138,7 +134,6 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	pImpl->m_pCBuffers.assign({
 		&pImpl->m_CBDrawing, 
 		&pImpl->m_CBFrame, 
-		&pImpl->m_CBOnResize, 
 		&pImpl->m_CBRarely});
 
 	// 创建常量缓冲区
@@ -151,11 +146,9 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	D3D11SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "VertexPosNormalTexLayout");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[0]->cBuffer.Get(), "CBDrawing");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "CBFrame");
-	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBOnResize");
-	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "CBRarely");
 	D3D11SetDebugObjectName(pImpl->m_pBasicVS.Get(), "Basic_VS");
 	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "Basic_PS");
-
 
 	return true;
 }
@@ -173,11 +166,9 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext * deviceContext)
 	deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 }
 
-
-
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
-	auto& cBuffer = pImpl->m_CBDrawing;
+	auto& cBuffer = pImpl->m_CBInstDrawing;
 	cBuffer.data.world = XMMatrixTranspose(W);
 	cBuffer.data.worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
@@ -186,14 +177,14 @@ void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 void XM_CALLCONV BasicEffect::SetViewMatrix(FXMMATRIX V)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
-	cBuffer.data.view = XMMatrixTranspose(V);
+	pImpl->m_View = V;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 {
-	auto& cBuffer = pImpl->m_CBOnResize;
-	cBuffer.data.proj = XMMatrixTranspose(P);
+	auto& cBuffer = pImpl->m_CBFrame;
+	pImpl->m_Proj = P;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
@@ -239,15 +230,16 @@ void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 
 void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
+	pImpl->m_CBFrame.data.viewProj = XMMatrixTranspose(pImpl->m_View * pImpl->m_Proj);
+
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[1]->BindVS(deviceContext);
-	pCBuffers[2]->BindVS(deviceContext);
 
 	pCBuffers[0]->BindPS(deviceContext);
 	pCBuffers[1]->BindPS(deviceContext);
-	pCBuffers[3]->BindPS(deviceContext);
+	pCBuffers[2]->BindPS(deviceContext);
 
 	// 设置纹理
 	deviceContext->PSSetShaderResources(0, 1, pImpl->m_pTextureDiffuse.GetAddressOf());

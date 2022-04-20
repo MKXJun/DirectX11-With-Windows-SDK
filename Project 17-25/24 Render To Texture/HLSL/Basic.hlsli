@@ -21,22 +21,17 @@ cbuffer CBDrawingStates : register(b2)
     int g_FogEnabled;
     float g_FogStart;
     float g_FogRange;
-    int g_TextureUsed;
+    int g_Pad;
 }
 
 cbuffer CBChangesEveryFrame : register(b3)
 {
-    matrix g_View;
+    matrix g_ViewProj;
     float3 g_EyePosW;
-    float g_Pad;
+    float g_Pad2;
 }
 
-cbuffer CBChangesOnResize : register(b4)
-{
-    matrix g_Proj;
-}
-
-cbuffer CBChangesRarely : register(b5)
+cbuffer CBChangesRarely : register(b4)
 {
     DirectionalLight g_DirLight[5];
     PointLight g_PointLight[5];

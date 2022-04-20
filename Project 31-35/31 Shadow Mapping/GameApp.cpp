@@ -182,6 +182,8 @@ void GameApp::UpdateScene(float dt)
 			m_SlopeIndex = i;
 		}
 	}
+
+	// 调整
 		
 	// ******************
 	// 自由摄像机的操作
@@ -392,7 +394,7 @@ bool GameApp::InitResource()
 	// 初始化摄像机
 	//
 
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
@@ -406,8 +408,7 @@ bool GameApp::InitResource()
 	m_pGrayShadowMap = std::make_unique<TextureRender>();
 	HR(m_pGrayShadowMap->InitResource(m_pd3dDevice.Get(), 512, 512));
 
-	// 开启纹理、阴影
-	m_pBasicEffect->SetTextureUsed(true);
+	// 开启阴影
 	m_pBasicEffect->SetShadowEnabled(true);
 	m_pBasicEffect->SetViewMatrix(camera->GetViewXM());
 	m_pBasicEffect->SetProjMatrix(camera->GetProjXM());
@@ -432,52 +433,58 @@ bool GameApp::InitResource()
 	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"..\\Texture\\stone.dds", nullptr, stoneDiffuse.GetAddressOf()));
 
 	// 地面
-	Model groundModel, groundTModel;
+	{
+		Model groundModel;
+		groundModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
+		// 放大地面，让其部分超出正交投影区域
+		// groundModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(40.0f, 60.0f), XMFLOAT2(12.0f, 18.0f)));
+		groundModel.modelParts[0].material.ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		groundModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		groundModel.modelParts[0].material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+		groundModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		groundModel.modelParts[0].texDiffuse = floorDiffuse;
+		m_Ground.SetModel(std::move(groundModel));
+		m_Ground.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
+	}
+	{
+		Model groundTModel;
+		groundTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane<VertexPosNormalTangentTex>(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
+		// 放大地面，让其部分超出正交投影区域
+		// groundTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane<VertexPosNormalTangentTex>(XMFLOAT2(40.0f, 60.0f), XMFLOAT2(12.0f, 18.0f)));
+		groundTModel.modelParts[0].material.ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		groundTModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		groundTModel.modelParts[0].material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+		groundTModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		groundTModel.modelParts[0].texDiffuse = floorDiffuse;
+		groundTModel.modelParts[0].texNormalMap = floorNormalMap;
 
-	groundModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
-	// 放大地面，让其部分超出正交投影区域
-	// groundModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(40.0f, 60.0f), XMFLOAT2(12.0f, 18.0f)));
-	groundModel.modelParts[0].material.ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	groundModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	groundModel.modelParts[0].material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
-	groundModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	groundModel.modelParts[0].texDiffuse = floorDiffuse;
-	m_Ground.SetModel(std::move(groundModel));
-	m_Ground.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
-
-	groundTModel = groundModel;
-	groundTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane<VertexPosNormalTangentTex>(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
-	// 放大地面，让其部分超出正交投影区域
-	// groundTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane<VertexPosNormalTangentTex>(XMFLOAT2(40.0f, 60.0f), XMFLOAT2(12.0f, 18.0f)));
-	groundTModel.modelParts[0].material.ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	groundTModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	groundTModel.modelParts[0].material.specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
-	groundTModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	groundTModel.modelParts[0].texDiffuse = floorDiffuse;
-	groundTModel.modelParts[0].texNormalMap = floorNormalMap;
+		m_GroundT.SetModel(std::move(groundTModel));
+		m_GroundT.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
+	}
 	
-	m_GroundT.SetModel(std::move(groundTModel));
-	m_GroundT.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
 
 	// 圆柱
-	Model cylinderModel, cylinderTModel;
-	cylinderModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreateCylinder(0.5f, 3.0f));
-	cylinderModel.modelParts[0].material.ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cylinderModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cylinderModel.modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f);
-	cylinderModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	cylinderModel.modelParts[0].texDiffuse = bricksDiffuse;
-	m_Cylinder.SetModel(std::move(cylinderModel));
-
-	cylinderTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 3.0f));
-	cylinderTModel.modelParts[0].material.ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cylinderTModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cylinderTModel.modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f);
-	cylinderTModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	cylinderTModel.modelParts[0].texDiffuse = bricksDiffuse;
-	cylinderTModel.modelParts[0].texNormalMap = bricksNormalMap;
-	m_CylinderT.SetModel(std::move(cylinderTModel));
-
+	{
+		Model cylinderModel;
+		cylinderModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreateCylinder(0.5f, 3.0f));
+		cylinderModel.modelParts[0].material.ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		cylinderModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		cylinderModel.modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f);
+		cylinderModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		cylinderModel.modelParts[0].texDiffuse = bricksDiffuse;
+		m_Cylinder.SetModel(std::move(cylinderModel));
+	}
+	{
+		Model cylinderTModel;
+		cylinderTModel.SetMesh(m_pd3dDevice.Get(), Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 3.0f));
+		cylinderTModel.modelParts[0].material.ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		cylinderTModel.modelParts[0].material.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		cylinderTModel.modelParts[0].material.specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f);
+		cylinderTModel.modelParts[0].material.reflect = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+		cylinderTModel.modelParts[0].texDiffuse = bricksDiffuse;
+		cylinderTModel.modelParts[0].texNormalMap = bricksNormalMap;
+		m_CylinderT.SetModel(std::move(cylinderTModel));
+	}
 	m_CylinderTransforms.resize(10);
 	for (int i = 0; i < 10; ++i)
 	{
@@ -516,14 +523,20 @@ bool GameApp::InitResource()
 	houseTransform.SetPosition(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 3.0f), 0.0f);
 
 	// 调试用矩形
-	Model quadModel;
-	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.8125f, 0.6666666f), XMFLOAT2(0.1875f, 0.3333333f)));
-	quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
-	m_DebugQuad.SetModel(std::move(quadModel));
-
-	quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>());
-	quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
-	m_FullScreenDebugQuad.SetModel(std::move(quadModel));
+	{
+		Model quadModel;
+		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>(XMFLOAT2(0.8125f, 0.6666666f), XMFLOAT2(0.1875f, 0.3333333f)));
+		quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
+		m_DebugQuad.SetModel(std::move(quadModel));
+	}
+	
+	{
+		Model quadModel;
+		quadModel.SetMesh(m_pd3dDevice.Get(), Geometry::Create2DShow<VertexPosNormalTex>());
+		quadModel.modelParts[0].texDiffuse = m_pShadowMap->GetOutputTexture();
+		m_FullScreenDebugQuad.SetModel(std::move(quadModel));
+	}
+	
 
 	// ******************
 	// 初始化天空盒相关
@@ -557,9 +570,6 @@ bool GameApp::InitResource()
 		m_OriginalLightDirs[i] = m_DirLights[i].direction;
 		m_pBasicEffect->SetDirLight(i, m_DirLights[i]);
 	}
-
-	// 开启纹理
-	m_pBasicEffect->SetTextureUsed(true);
 
 	
 	// ******************

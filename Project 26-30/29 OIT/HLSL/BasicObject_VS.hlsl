@@ -20,11 +20,10 @@ VertexPosHWNormalTex VS(VertexPosNormalTex vIn)
         vIn.NormalL = normalize(float3(-right + left, 2.0f * g_GridSpatialStep, bottom - top));
     }
     
-    matrix viewProj = mul(g_View, g_Proj);
     vector posW = mul(float4(vIn.PosL, 1.0f), g_World);
 
     vOut.PosW = posW.xyz;
-    vOut.PosH = mul(posW, viewProj);
+    vOut.PosH = mul(posW, g_ViewProj);
     vOut.NormalW = mul(vIn.NormalL, (float3x3) g_WorldInvTranspose);
     vOut.Tex = mul(float4(vIn.Tex, 0.0f, 1.0f), g_TexTransform).xy;
     return vOut;

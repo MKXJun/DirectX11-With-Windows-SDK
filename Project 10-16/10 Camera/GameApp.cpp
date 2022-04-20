@@ -174,7 +174,7 @@ void GameApp::UpdateScene(float dt)
 			{
 				if (!cam1st)
 				{
-					cam1st.reset(new FirstPersonCamera);
+					cam1st = std::make_shared<FirstPersonCamera>();
 					cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 					m_pCamera = cam1st;
 				}
@@ -189,7 +189,7 @@ void GameApp::UpdateScene(float dt)
 			{
 				if (!cam3rd)
 				{
-					cam3rd.reset(new ThirdPersonCamera);
+					cam3rd = std::make_shared<ThirdPersonCamera>();
 					cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 					m_pCamera = cam3rd;
 				}
@@ -204,7 +204,7 @@ void GameApp::UpdateScene(float dt)
 			{
 				if (!cam1st)
 				{
-					cam1st.reset(new FirstPersonCamera);
+					cam1st = std::make_shared<FirstPersonCamera>();
 					cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 					m_pCamera = cam1st;
 				}
@@ -299,7 +299,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam1st)
 		{
-			cam1st.reset(new FirstPersonCamera);
+			cam1st = std::make_shared<FirstPersonCamera>();
 			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam1st;
 		}
@@ -314,7 +314,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam3rd)
 		{
-			cam3rd.reset(new ThirdPersonCamera);
+			cam3rd = std::make_shared<ThirdPersonCamera>();
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
@@ -329,7 +329,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam1st)
 		{
-			cam1st.reset(new FirstPersonCamera);
+			cam1st = std::make_shared<FirstPersonCamera>();
 			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam1st;
 		}
@@ -492,7 +492,7 @@ bool GameApp::InitResource()
 	// 初始化常量缓冲区的值
 	// 初始化每帧可能会变化的值
 	m_CameraMode = CameraMode::FirstPerson;
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->LookAt(XMFLOAT3(), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));

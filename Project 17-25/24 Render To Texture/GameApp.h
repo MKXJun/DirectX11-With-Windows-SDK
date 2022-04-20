@@ -52,7 +52,7 @@ private:
 	Model m_Minimap;											// 小地图网格模型
 	Model m_FullScreenShow;									    // 全屏显示网格模型
 
-	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
+	std::unique_ptr<FirstPersonCamera> m_pCamera;				// 摄像机
 	std::unique_ptr<FirstPersonCamera> m_MinimapCamera;		    // 小地图所用摄像机
 	CameraMode m_CameraMode;									// 摄像机模式
 

@@ -3,9 +3,15 @@
 // 像素着色器(3D)
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
-	// 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
-    float4 texColor = g_DiffuseMap.Sample(g_Sam, pIn.Tex);
-    clip(texColor.a - 0.1f);
+    uint texWidth, texHeight;
+    g_DiffuseMap.GetDimensions(texWidth, texHeight);
+    float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    if (texWidth > 0 && texHeight > 0)
+    {
+        // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
+        texColor = g_DiffuseMap.Sample(g_Sam, pIn.Tex);
+        clip(texColor.a - 0.1f);
+    }
 
     // 标准化法向量
     pIn.NormalW = normalize(pIn.NormalW);

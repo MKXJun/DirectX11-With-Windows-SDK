@@ -113,8 +113,6 @@ void GameApp::UpdateScene(float dt)
 	Keyboard::State keyState = m_pKeyboard->GetState();
 	m_KeyboardTracker.Update(keyState);
 
-	auto cam1st = std::dynamic_pointer_cast<FirstPersonCamera>(m_pCamera);
-
 	// 更新淡入淡出值，并限制摄像机行动
 	if (m_FadeUsed)
 	{
@@ -139,25 +137,25 @@ void GameApp::UpdateScene(float dt)
 
 		// 方向移动
 		if (keyState.IsKeyDown(Keyboard::W))
-			cam1st->Walk(dt * 6.0f);
+			m_pCamera->Walk(dt * 6.0f);
 		if (keyState.IsKeyDown(Keyboard::S))
-			cam1st->Walk(dt * -6.0f);
+			m_pCamera->Walk(dt * -6.0f);
 		if (keyState.IsKeyDown(Keyboard::A))
-			cam1st->Strafe(dt * -6.0f);
+			m_pCamera->Strafe(dt * -6.0f);
 		if (keyState.IsKeyDown(Keyboard::D))
-			cam1st->Strafe(dt * 6.0f);
+			m_pCamera->Strafe(dt * 6.0f);
 
 		// 在鼠标没进入窗口前仍为ABSOLUTE模式
 		if (mouseState.positionMode == Mouse::MODE_RELATIVE)
 		{
-			cam1st->Pitch(mouseState.y * 0.002f);
-			cam1st->RotateY(mouseState.x * 0.002f);
+			m_pCamera->Pitch(mouseState.y * 0.002f);
+			m_pCamera->RotateY(mouseState.x * 0.002f);
 		}
 
 		// 限制移动范围
 		XMFLOAT3 adjustedPos;
-		XMStoreFloat3(&adjustedPos, XMVectorClamp(cam1st->GetPositionXM(), XMVectorReplicate(-90.0f), XMVectorReplicate(90.0f)));
-		cam1st->SetPosition(adjustedPos);
+		XMStoreFloat3(&adjustedPos, XMVectorClamp(m_pCamera->GetPositionXM(), XMVectorReplicate(-90.0f), XMVectorReplicate(90.0f)));
+		m_pCamera->SetPosition(adjustedPos);
 	}
 
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewXM());
@@ -305,14 +303,13 @@ bool GameApp::InitResource()
 
 	// 默认摄像机
 	m_CameraMode = CameraMode::FirstPerson;
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
-	m_pCamera = camera;
-	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
-	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
-	camera->LookTo(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	m_pCamera = std::make_unique<FirstPersonCamera>();
+	m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
+	m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
+	m_pCamera->LookTo(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// 小地图摄像机
-	m_MinimapCamera = std::unique_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	m_MinimapCamera = std::make_unique<FirstPersonCamera>();
 	m_MinimapCamera->SetViewPort(0.0f, 0.0f, 200.0f, 200.0f);	// 200x200小地图
 	m_MinimapCamera->LookTo(XMFLOAT3(0.0f, 10.0f, 0.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f));
 
@@ -385,9 +382,6 @@ bool GameApp::InitResource()
 
 void GameApp::DrawScene(bool drawMinimap)
 {
-
-	m_BasicEffect.SetTextureUsed(true);
-
 
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderInstance);
 	if (drawMinimap)

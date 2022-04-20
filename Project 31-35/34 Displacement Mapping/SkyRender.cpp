@@ -76,7 +76,9 @@ void SkyRender::Draw(ID3D11DeviceContext* deviceContext, SkyEffect& skyEffect, c
 	// 抹除平移分量，避免摄像机移动带来天空盒抖动
 	XMMATRIX V = camera.GetViewXM();
 	V.r[3] = g_XMIdentityR3;
-	skyEffect.SetWorldViewProjMatrix(V * camera.GetProjXM());
+	skyEffect.SetWorldMatrix(XMMatrixIdentity());
+	skyEffect.SetViewMatrix(V);
+	skyEffect.SetProjMatrix(camera.GetProjXM());
 	skyEffect.SetTextureCube(m_pTextureCubeSRV.Get());
 	skyEffect.Apply(deviceContext);
 	deviceContext->DrawIndexed(m_IndexCount, 0, 0);
@@ -102,15 +104,10 @@ HRESULT SkyRender::InitResource(ID3D11Device* device)
 	auto box = Geometry::CreateBox<VertexPos>();
 
 	// 顶点缓冲区创建
-	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(XMFLOAT3) * (UINT)box.vertexVec.size();
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
+	CD3D11_BUFFER_DESC vbd(sizeof(XMFLOAT3) * (UINT)box.vertexVec.size(), 
+		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 
-	D3D11_SUBRESOURCE_DATA InitData;
+	D3D11_SUBRESOURCE_DATA InitData{};
 	InitData.pSysMem = box.vertexVec.data();
 
 	hr = device->CreateBuffer(&vbd, &InitData, &m_pVertexBuffer);
@@ -120,14 +117,8 @@ HRESULT SkyRender::InitResource(ID3D11Device* device)
 	// 索引缓冲区创建
 	m_IndexCount = (UINT)box.indexVec.size();
 
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(DWORD) * m_IndexCount;
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.StructureByteStride = 0;
-	ibd.MiscFlags = 0;
-
+	CD3D11_BUFFER_DESC ibd(sizeof(DWORD) * m_IndexCount,
+		D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	InitData.pSysMem = box.indexVec.data();
 
 	return device->CreateBuffer(&ibd, &InitData, &m_pIndexBuffer);

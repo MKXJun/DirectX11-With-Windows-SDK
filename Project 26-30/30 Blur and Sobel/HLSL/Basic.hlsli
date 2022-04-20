@@ -19,7 +19,7 @@ cbuffer CBChangesEveryObjectDrawing : register(b1)
 
 cbuffer CBChangesEveryFrame : register(b2)
 {
-    matrix g_View;
+    matrix g_ViewProj;
     float3 g_EyePosW;
     float g_Pad;
 }
@@ -27,22 +27,19 @@ cbuffer CBChangesEveryFrame : register(b2)
 cbuffer CBDrawingStates : register(b3)
 {
     float4 g_FogColor;
+    
     int g_FogEnabled;
     float g_FogStart;
     float g_FogRange;
-    int g_TextureUsed;
-    
     int g_WavesEnabled;                     // 开启波浪绘制
+    
     float2 g_DisplacementMapTexelSize;      // 位移贴图两个相邻像素对应顶点之间的x,y方向间距
     float g_GridSpatialStep;                // 栅格空间步长
+    float g_Pad2;
 }
 
-cbuffer CBChangesOnResize : register(b4)
-{
-    matrix g_Proj;
-}
 
-cbuffer CBChangesRarely : register(b5)
+cbuffer CBChangesRarely : register(b4)
 {
     DirectionalLight g_DirLight[5];
     PointLight g_PointLight[5];

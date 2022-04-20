@@ -139,7 +139,7 @@ const Model* ModelManager::CreateFromFile(std::string_view filename)
 				if (numIndices < 65535)
 				{
 					std::vector<uint16_t> indices(numIndices);
-					for (uint32_t i = 0; i < numFaces; ++i)
+					for (size_t i = 0; i < numFaces; ++i)
 					{
 						indices[i * 3] = static_cast<uint16_t>(pAiMesh->mFaces[i].mIndices[0]);
 						indices[i * 3 + 1] = static_cast<uint16_t>(pAiMesh->mFaces[i].mIndices[1]);
@@ -152,7 +152,7 @@ const Model* ModelManager::CreateFromFile(std::string_view filename)
 				else
 				{
 					std::vector<uint32_t> indices(numIndices);
-					for (uint32_t i = 0; i < numFaces; ++i)
+					for (size_t i = 0; i < numFaces; ++i)
 					{
 						memcpy_s(indices.data() + i * 3, sizeof(uint32_t) * 3,
 							pAiMesh->mFaces[i].mIndices, sizeof(uint32_t) * 3);

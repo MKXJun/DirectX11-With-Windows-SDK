@@ -185,7 +185,7 @@ bool GameApp::InitResource()
 	// 初始化摄像机
 	//
 
-	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
+	auto camera = std::make_shared<ThirdPersonCamera>();
 	m_pCamera = camera;
 	
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);

@@ -3,6 +3,8 @@
 #include "DXTrace.h"
 #include <sstream>
 
+#pragma warning(disable: 6031)
+
 namespace
 {
 	// This is just used to forward Windows messages from a global window

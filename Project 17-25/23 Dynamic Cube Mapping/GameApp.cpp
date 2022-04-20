@@ -149,7 +149,7 @@ void GameApp::UpdateScene(float dt)
 				break;
 			}
 		}
-		static int sphere_item = 0;
+		static int sphere_item = static_cast<int>(m_SphereMode);
 		static const char* sphere_modes[] = {
 			"None",
 			"Reflection",
@@ -383,50 +383,59 @@ bool GameApp::InitResource()
 	// 初始化游戏对象
 	//
 	
-	Model model;
 	// 球体
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
-	model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(), 
-		L"..\\Texture\\stone.dds", 
-		nullptr, 
-		model.modelParts[0].texDiffuse.GetAddressOf()));
-	m_Sphere.SetModel(std::move(model));
-	m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
+			L"..\\Texture\\stone.dds",
+			nullptr,
+			model.modelParts[0].texDiffuse.GetAddressOf()));
+		m_Sphere.SetModel(std::move(model));
+		m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	}
 	// 地面
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); 
-	model.modelParts[0].material.reflect = XMFLOAT4();
-	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
-		L"..\\Texture\\floor.dds",
-		nullptr,
-		model.modelParts[0].texDiffuse.GetAddressOf()));
-	m_Ground.SetModel(std::move(model));
-	m_Ground.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreatePlane(XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4();
+		HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
+			L"..\\Texture\\floor.dds",
+			nullptr,
+			model.modelParts[0].texDiffuse.GetAddressOf()));
+		m_Ground.SetModel(std::move(model));
+		m_Ground.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
+	}
 	// 柱体
-	model.SetMesh(m_pd3dDevice.Get(),
-		Geometry::CreateCylinder(0.5f, 2.0f));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material.reflect = XMFLOAT4();
-	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
-		L"..\\Texture\\bricks.dds",
-		nullptr,
-		model.modelParts[0].texDiffuse.GetAddressOf()));
-	m_Cylinder.SetModel(std::move(model));
-	m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(),
+			Geometry::CreateCylinder(0.5f, 2.0f));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4();
+		HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
+			L"..\\Texture\\bricks.dds",
+			nullptr,
+			model.modelParts[0].texDiffuse.GetAddressOf()));
+		m_Cylinder.SetModel(std::move(model));
+		m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	}
+	
 
 	// ******************
 	// 初始化摄像机
 	//
 	m_CameraMode = CameraMode::Free;
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
@@ -472,7 +481,6 @@ void GameApp::DrawScene(bool drawCenterSphere)
 {
 	// 绘制模型
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
-	m_BasicEffect.SetTextureUsed(true);
 	
 	// 只有球体才有反射或折射效果
 	if (drawCenterSphere)

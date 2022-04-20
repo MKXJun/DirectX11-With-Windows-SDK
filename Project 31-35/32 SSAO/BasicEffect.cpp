@@ -257,11 +257,6 @@ void BasicEffect::SetMaterial(const Material & material)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&material);
 }
 
-void BasicEffect::SetTextureUsed(bool isUsed)
-{
-	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_TextureUsed")->SetSInt(isUsed);
-}
-
 void BasicEffect::SetShadowEnabled(bool enabled)
 {
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EnableShadow")->SetSInt(enabled);

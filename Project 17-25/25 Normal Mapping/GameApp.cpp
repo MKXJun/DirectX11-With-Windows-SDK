@@ -265,55 +265,62 @@ bool GameApp::InitResource()
 	m_GroundTModel.modelParts[0].texDiffuse = m_FloorDiffuse;
 	m_GroundT.SetModel(m_GroundTModel);
 	m_GroundT.GetTransform().SetPosition(0.0f, -3.0f, 0.0f);
-	// 球体
-	Model model;
+	
 	ComPtr<ID3D11ShaderResourceView> texDiffuse;
+	// 球体
+	{
+		Model model;
+		HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
+			L"..\\Texture\\stone.dds",
+			nullptr,
+			texDiffuse.GetAddressOf()));
 
-	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
-		L"..\\Texture\\stone.dds",
-		nullptr,
-		texDiffuse.GetAddressOf()));
-
-	model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
-	model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].texDiffuse = texDiffuse;
-	m_Sphere.SetModel(std::move(model));
-	m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
-
+		model.SetMesh(m_pd3dDevice.Get(), Geometry::CreateSphere(1.0f, 30, 30));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		model.modelParts[0].texDiffuse = texDiffuse;
+		m_Sphere.SetModel(std::move(model));
+		m_Sphere.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	}
 	// 柱体
-	HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
-		L"..\\Texture\\bricks.dds",
-		nullptr,
-		texDiffuse.ReleaseAndGetAddressOf()));
+	{
+		Model model;
+		HR(CreateDDSTextureFromFile(m_pd3dDevice.Get(),
+			L"..\\Texture\\bricks.dds",
+			nullptr,
+			texDiffuse.ReleaseAndGetAddressOf()));
 
-	model.SetMesh(m_pd3dDevice.Get(),
-		Geometry::CreateCylinder(0.5f, 2.0f));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material.reflect = XMFLOAT4();
-	model.modelParts[0].texDiffuse = texDiffuse;
-	m_Cylinder.SetModel(std::move(model));
-	m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
-
+		model.SetMesh(m_pd3dDevice.Get(),
+			Geometry::CreateCylinder(0.5f, 2.0f));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4();
+		model.modelParts[0].texDiffuse = texDiffuse;
+		m_Cylinder.SetModel(std::move(model));
+		m_Cylinder.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	}
 	// 带切线向量的柱体
-	model.SetMesh(m_pd3dDevice.Get(),
-		Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 2.0f));
-	model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
-	model.modelParts[0].material.reflect = XMFLOAT4();
-	model.modelParts[0].texDiffuse = texDiffuse;
-	m_CylinderT.SetModel(std::move(model));
-	m_CylinderT.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	{
+		Model model;
+		model.SetMesh(m_pd3dDevice.Get(),
+			Geometry::CreateCylinder<VertexPosNormalTangentTex>(0.5f, 2.0f));
+		model.modelParts[0].material.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+		model.modelParts[0].material.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+		model.modelParts[0].material.specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+		model.modelParts[0].material.reflect = XMFLOAT4();
+		model.modelParts[0].texDiffuse = texDiffuse;
+		m_CylinderT.SetModel(std::move(model));
+		m_CylinderT.ResizeBuffer(m_pd3dDevice.Get(), 5);
+	}
+	
 
 	// ******************
 	// 初始化摄像机
 	//
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
@@ -360,7 +367,6 @@ void GameApp::DrawScene(bool drawCenterSphere)
 {
 	// 绘制模型
 	m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get(), BasicEffect::RenderObject);
-	m_BasicEffect.SetTextureUsed(true);
 	
 	// 只绘制球体的反射效果
 	if (drawCenterSphere)

@@ -28,9 +28,11 @@
 //
 
 // 以下不可删除
-
+#pragma warning(push)
+#pragma warning(disable: 28251)
 extern "C" __declspec(dllimport) int __stdcall MultiByteToWideChar(unsigned int cp, unsigned long flags, const char* str, int cbmb, wchar_t* widestr, int cchwide);
 extern "C" __declspec(dllimport) int __stdcall WideCharToMultiByte(unsigned int cp, unsigned long flags, const wchar_t* widestr, int cchwide, char* str, int cbmb, const char* defchar, int* used_default);
+#pragma warning(pop)
 
 inline std::wstring UTF8ToWString(std::string_view utf8str)
 {

@@ -33,7 +33,7 @@ public:
 
 	struct CBChangesEveryFrame
 	{
-		DirectX::XMMATRIX view;
+		DirectX::XMMATRIX viewProj;
 		DirectX::XMFLOAT3 eyePos;
 		float pad;
 	};
@@ -44,16 +44,11 @@ public:
 		int fogEnabled;
 		float fogStart;
 		float fogRange;
-		int textureUsed;
-
 		int wavesEnabled;
+
 		DirectX::XMFLOAT2 displacementMapTexelSize;
 		float gridSpatialStep;
-	};
-
-	struct CBChangesOnResize
-	{
-		DirectX::XMMATRIX proj;
+		float pad;
 	};
 
 	struct CBChangesRarely
@@ -70,12 +65,12 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
+	XMMATRIX m_View{}, m_Proj{};
 	CBufferObject<0, CBChangesEveryInstanceDrawing>	m_CBInstDrawing;		// 每次实例绘制的常量缓冲区
 	CBufferObject<1, CBChangesEveryObjectDrawing>	m_CBObjDrawing;		    // 每次对象绘制的常量缓冲区
 	CBufferObject<2, CBChangesEveryFrame>			m_CBFrame;			    // 每帧绘制的常量缓冲区
 	CBufferObject<3, CBDrawingStates>				m_CBStates;			    // 每次绘制状态改变的常量缓冲区
-	CBufferObject<4, CBChangesOnResize>				m_CBOnResize;			// 每次窗口大小变更的常量缓冲区
-	CBufferObject<5, CBChangesRarely>				m_CBRarely;			    // 几乎不会变更的常量缓冲区
+	CBufferObject<4, CBChangesRarely>				m_CBRarely;			    // 几乎不会变更的常量缓冲区
 	BOOL m_IsDirty;											                // 是否有值变更
 	std::vector<CBufferBase*> m_pCBuffers;					                // 统一管理上面所有的常量缓冲区
 
@@ -209,7 +204,6 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 		&pImpl->m_CBObjDrawing, 
 		&pImpl->m_CBFrame,
 		&pImpl->m_CBStates,
-		&pImpl->m_CBOnResize, 
 		&pImpl->m_CBRarely});
 
 	// 创建常量缓冲区
@@ -226,8 +220,7 @@ bool BasicEffect::InitAll(ID3D11Device * device)
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[1]->cBuffer.Get(), "BasicEffect.CBObjDrawing");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[2]->cBuffer.Get(), "BasicEffect.CBFrame");
 	D3D11SetDebugObjectName(pImpl->m_pCBuffers[3]->cBuffer.Get(), "BasicEffect.CBStates");
-	D3D11SetDebugObjectName(pImpl->m_pCBuffers[4]->cBuffer.Get(), "BasicEffect.CBOnResize");
-	D3D11SetDebugObjectName(pImpl->m_pCBuffers[5]->cBuffer.Get(), "BasicEffect.CBRarely");
+	D3D11SetDebugObjectName(pImpl->m_pCBuffers[4]->cBuffer.Get(), "BasicEffect.CBRarely");
 	D3D11SetDebugObjectName(pImpl->m_pBasicObjectVS.Get(), "BasicEffect.BasicObject_VS");
 	D3D11SetDebugObjectName(pImpl->m_pBasicInstanceVS.Get(), "BasicEffect.BasicInstance_VS");
 	D3D11SetDebugObjectName(pImpl->m_pBasicPS.Get(), "BasicEffect.Basic_PS");
@@ -311,14 +304,14 @@ void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 void XM_CALLCONV BasicEffect::SetViewMatrix(FXMMATRIX V)
 {
 	auto& cBuffer = pImpl->m_CBFrame;
-	cBuffer.data.view = XMMatrixTranspose(V);
+	pImpl->m_View = V;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
 void XM_CALLCONV BasicEffect::SetProjMatrix(FXMMATRIX P)
 {
-	auto& cBuffer = pImpl->m_CBOnResize;
-	cBuffer.data.proj = XMMatrixTranspose(P);
+	auto& cBuffer = pImpl->m_CBFrame;
+	pImpl->m_Proj = P;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
@@ -354,13 +347,6 @@ void BasicEffect::SetMaterial(const Material & material)
 {
 	auto& cBuffer = pImpl->m_CBObjDrawing;
 	cBuffer.data.material = material;
-	pImpl->m_IsDirty = cBuffer.isDirty = true;
-}
-
-void BasicEffect::SetTextureUsed(bool isUsed)
-{
-	auto& cBuffer = pImpl->m_CBStates;
-	cBuffer.data.textureUsed = isUsed;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 
@@ -428,17 +414,18 @@ void BasicEffect::SetFogRange(float fogRange)
 
 void BasicEffect::Apply(ID3D11DeviceContext * deviceContext)
 {
+	pImpl->m_CBFrame.data.viewProj = XMMatrixTranspose(pImpl->m_View * pImpl->m_Proj);
+
 	auto& pCBuffers = pImpl->m_pCBuffers;
 	// 将缓冲区绑定到渲染管线上
 	pCBuffers[0]->BindVS(deviceContext);
 	pCBuffers[2]->BindVS(deviceContext);
 	pCBuffers[3]->BindVS(deviceContext);
-	pCBuffers[4]->BindVS(deviceContext);
 
 	pCBuffers[1]->BindPS(deviceContext);
 	pCBuffers[2]->BindPS(deviceContext);
 	pCBuffers[3]->BindPS(deviceContext);
-	pCBuffers[5]->BindPS(deviceContext);
+	pCBuffers[4]->BindPS(deviceContext);
 
 	// 设置纹理
 	deviceContext->VSSetShaderResources(1, 1, pImpl->m_pTextureDisplacement.GetAddressOf());

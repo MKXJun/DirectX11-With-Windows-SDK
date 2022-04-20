@@ -291,7 +291,7 @@ bool GameApp::InitResource()
 	//
 
 	// 初始化每帧可能会变化的值
-	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
+	auto camera = std::make_shared<ThirdPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetTarget(XMFLOAT3(0.0f, 0.5f, 0.0f));

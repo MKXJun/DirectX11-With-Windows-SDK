@@ -2,7 +2,7 @@ cbuffer CBFrame : register(b6)
 {
     uint g_FrameWidth;
     uint g_FrameHeight;
-    uint2 g_Pad2;
+    uint2 g_Pad3;
 }
 
 struct FragmentData

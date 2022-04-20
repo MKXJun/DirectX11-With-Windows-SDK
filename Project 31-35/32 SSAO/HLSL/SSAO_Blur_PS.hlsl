@@ -7,13 +7,15 @@ float4 PS(VertexPosHTex pIn, uniform bool horizontalBlur) : SV_Target
     float blurWeights[12] = (float[12]) g_BlurWeights;
     
     float2 texOffset;
+    uint texWidth, texHeight;
+    g_InputImage.GetDimensions(texWidth, texHeight);
     if (horizontalBlur)
     {
-        texOffset = float2(1.0f / g_InputImage.Length.x, 0.0f);
+        texOffset = float2(1.0f / texWidth, 0.0f);
     }
     else
     {
-        texOffset = float2(0.0f, 1.0f / g_InputImage.Length.y);
+        texOffset = float2(0.0f, 1.0f / texHeight);
     }
     
     // 总是把中心值加进去计算

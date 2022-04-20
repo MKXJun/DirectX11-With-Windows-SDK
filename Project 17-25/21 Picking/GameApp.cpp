@@ -183,14 +183,12 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// 绘制不需要纹理的模型
-	m_BasicEffect.SetTextureUsed(false);
 	m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Cube.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 	m_Triangle.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// 绘制需要纹理的模型
-	m_BasicEffect.SetTextureUsed(true);
 	m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
 	// ******************
@@ -243,7 +241,7 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化摄像机
 	//
-	auto camera = std::shared_ptr<FirstPersonCamera>(new FirstPersonCamera);
+	auto camera = std::make_shared<FirstPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);

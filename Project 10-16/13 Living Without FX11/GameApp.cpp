@@ -173,7 +173,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam1st)
 		{
-			cam1st.reset(new FirstPersonCamera);
+			cam1st = std::make_shared<FirstPersonCamera>();
 			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam1st;
 		}
@@ -187,7 +187,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam3rd)
 		{
-			cam3rd.reset(new ThirdPersonCamera);
+			cam3rd = std::make_shared<ThirdPersonCamera>();
 			cam3rd->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam3rd;
 		}
@@ -203,7 +203,7 @@ void GameApp::UpdateScene(float dt)
 	{
 		if (!cam1st)
 		{
-			cam1st.reset(new FirstPersonCamera);
+			cam1st = std::make_shared<FirstPersonCamera>();
 			cam1st->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 1000.0f);
 			m_pCamera = cam1st;
 		}
@@ -409,7 +409,7 @@ bool GameApp::InitResource()
 	// 初始化摄像机
 	//
 
-	auto camera = std::shared_ptr<ThirdPersonCamera>(new ThirdPersonCamera);
+	auto camera = std::make_shared<ThirdPersonCamera>();
 	m_pCamera = camera;
 	camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
 	camera->SetDistance(5.0f);

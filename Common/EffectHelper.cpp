@@ -36,7 +36,7 @@ using namespace Microsoft::WRL;
 			auto& pCBData = it->second->pParamData;\
 			if (pCBData)\
 			{\
-				pEffectPass->p##ShaderType##ParamData = std::make_unique<CBufferData>(pCBData->cbufferName.c_str(), pCBData->startSlot, pCBData->byteWidth); \
+				pEffectPass->p##ShaderType##ParamData = std::make_unique<CBufferData>(pCBData->cbufferName.c_str(), pCBData->startSlot, (UINT)pCBData->cbufferData.size()); \
 				it->second->pParamData->CreateBuffer(device);\
 			}\
 		}\
@@ -97,8 +97,8 @@ using namespace Microsoft::WRL;
 		{\
 			p##ShaderType##ParamData->isDirty = false;\
 			p##ShaderType##Info->pParamData->isDirty = true;\
-			memcpy_s(p##ShaderType##Info->pParamData->pData.get(), p##ShaderType##ParamData->byteWidth,\
-				p##ShaderType##ParamData->pData.get(), p##ShaderType##ParamData->byteWidth);\
+			memcpy_s(p##ShaderType##Info->pParamData->cbufferData.data(), p##ShaderType##ParamData->cbufferData.size(),\
+				p##ShaderType##ParamData->cbufferData.data(), p##ShaderType##ParamData->cbufferData.size());\
 			p##ShaderType##Info->pParamData->UpdateBuffer(deviceContext);\
 		}\
 		deviceContext->##ShaderType##SetConstantBuffers(p##ShaderType##Info->pParamData->startSlot,\
@@ -201,18 +201,16 @@ struct CBufferData
 {
 	BOOL isDirty = false;
 	ComPtr<ID3D11Buffer> cBuffer;
-	std::unique_ptr<BYTE[]> pData;
+	std::vector<uint8_t> cbufferData;
 	std::string cbufferName;
 	UINT startSlot = 0;
-	UINT byteWidth = 0;
 
 	CBufferData() = default;
 	CBufferData(const std::string& name, UINT startSlot, UINT byteWidth, BYTE* initData = nullptr) :
-		cbufferName(name), pData(new BYTE[byteWidth]{}), startSlot(startSlot),
-		byteWidth(byteWidth)
+		cbufferName(name), cbufferData(byteWidth), startSlot(startSlot)
 	{
 		if (initData)
-			memcpy_s(pData.get(), byteWidth, initData, byteWidth);
+			memcpy_s(cbufferData.data(), byteWidth, initData, byteWidth);
 	}
 
 	HRESULT CreateBuffer(ID3D11Device* device)
@@ -224,7 +222,7 @@ struct CBufferData
 		cbd.Usage = D3D11_USAGE_DYNAMIC;
 		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.ByteWidth = byteWidth;
+		cbd.ByteWidth = (UINT)cbufferData.size();
 		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
 	}
 
@@ -235,7 +233,7 @@ struct CBufferData
 			isDirty = false;
 			D3D11_MAPPED_SUBRESOURCE mappedData;
 			deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-			memcpy_s(mappedData.pData, byteWidth, pData.get(), byteWidth);
+			memcpy_s(mappedData.pData, cbufferData.size(), cbufferData.data(), cbufferData.size());
 			deviceContext->Unmap(cBuffer.Get(), 0);
 		}
 	}
@@ -349,9 +347,9 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 			byteCount = byteWidth - byteOffset;
 
 		// 仅当值不同时更新
-		if (memcmp(pCBufferData->pData.get() + startByteOffset + byteOffset, data, byteCount))
+		if (memcmp(pCBufferData->cbufferData.data() + startByteOffset + byteOffset, data, byteCount))
 		{
-			memcpy_s(pCBufferData->pData.get() + startByteOffset + byteOffset, byteCount, data, byteCount);
+			memcpy_s(pCBufferData->cbufferData.data() + startByteOffset + byteOffset, byteCount, data, byteCount);
 			pCBufferData->isDirty = true;
 		}
 	}
@@ -374,7 +372,7 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 			return E_BOUNDS;
 		if (!pOutput)
 			return E_INVALIDARG;
-		memcpy_s(pOutput, byteCount, pCBufferData->pData.get() + startByteOffset + byteOffset, byteCount);
+		memcpy_s(pOutput, byteCount, pCBufferData->cbufferData.data() + startByteOffset + byteOffset, byteCount);
 		return S_OK;
 	}
 
@@ -384,7 +382,7 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
 		if (rows == 0 || rows > 4 || cols == 0 || cols > 4)
 			return;
 		UINT remainBytes = byteWidth < 64 ? byteWidth : 64;
-		BYTE* pData = pCBufferData->pData.get() + startByteOffset;
+		BYTE* pData = pCBufferData->cbufferData.data() + startByteOffset;
 		while (remainBytes > 0 && rows > 0)
 		{
 			UINT rowPitch = sizeof(DWORD) * cols < remainBytes ? sizeof(DWORD) * cols : remainBytes;
@@ -1286,7 +1284,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 				auto& res = rwResources.at(slot);
 				deviceContext->CSSetUnorderedAccessViews(slot, 1, res.pUAV.GetAddressOf(),
 					(res.enableCounter ? &res.initialCount : nullptr));
-				++slot, mask >>= 1; \
+				++slot, mask >>= 1;
 			}
 			else {
 				std::vector<ID3D11UnorderedAccessView*> uavs(count);
@@ -1297,6 +1295,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 					uavs[i] = res.pUAV.Get();
 					initCounts[i] = (res.enableCounter ? res.initialCount : 0);
 				}
+				
 				deviceContext->CSSetUnorderedAccessViews(slot, count, uavs.data(), initCounts.data());
 				slot += count + 1, mask >>= (count + 1);
 			}
@@ -1306,6 +1305,8 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
 	{
 		deviceContext->CSSetShader(nullptr, nullptr, 0);
 	}
+
+	
 
 	// 设置渲染状态	
 	deviceContext->RSSetState(pRasterizerState.Get());

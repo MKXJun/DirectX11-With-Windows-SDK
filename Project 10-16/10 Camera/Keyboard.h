@@ -14,6 +14,9 @@
 #include <memory>
 #include <stdint.h>
 
+#pragma warning(push)
+#pragma warning(disable: 26812)
+
 namespace DirectX
 {
 	class Keyboard
@@ -463,3 +466,5 @@ namespace DirectX
 		std::unique_ptr<Impl> pImpl;
 	};
 }
+
+#pragma warning(pop)

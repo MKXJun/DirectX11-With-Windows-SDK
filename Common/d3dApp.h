@@ -53,11 +53,14 @@ protected:
 	bool      m_Resizing;        // 窗口大小是否变化
 
 	CpuTimer m_Timer;           // 计时器
-
+	UINT m_BackBufferCount = 0;
+	bool m_IsDxgiFlipModel = false;
 
 	// 使用模板别名(C++11)简化类型名
 	template <class T>
 	using ComPtr = Microsoft::WRL::ComPtr<T>;
+	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
+	
 	// Direct3D 11
 	ComPtr<ID3D11Device> m_pd3dDevice;							// D3D11设备
 	ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;			// D3D11设备上下文
@@ -66,8 +69,6 @@ protected:
 	ComPtr<ID3D11Device1> m_pd3dDevice1;						// D3D11.1设备
 	ComPtr<ID3D11DeviceContext1> m_pd3dImmediateContext1;		// D3D11.1设备上下文
 	ComPtr<IDXGISwapChain1> m_pSwapChain1;						// D3D11.1交换链
-	// 常用资源
-	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;			// 渲染目标视图
 	// 派生类应该在构造函数设置好这些自定义的初始参数
 	std::wstring m_MainWndCaption;                               // 主窗口标题
 	int m_ClientWidth;                                           // 视口宽度

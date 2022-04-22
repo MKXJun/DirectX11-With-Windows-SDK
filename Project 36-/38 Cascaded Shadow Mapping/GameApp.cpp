@@ -303,6 +303,12 @@ void GameApp::DrawScene()
 	assert(m_pd3dImmediateContext);
 	assert(m_pSwapChain);
 
+	// 创建后备缓冲区的渲染目标视图
+	ComPtr<ID3D11Texture2D> pBackBuffer;
+	m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
+	CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(D3D11_RTV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+	m_pd3dDevice->CreateRenderTargetView(pBackBuffer.Get(), &rtvDesc, m_pRenderTargetView.ReleaseAndGetAddressOf());
+
 	//
 	// 场景渲染部分
 	//
@@ -374,7 +380,7 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-	HR(m_pSwapChain->Present(0, 0));
+	HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
 bool GameApp::InitResource()

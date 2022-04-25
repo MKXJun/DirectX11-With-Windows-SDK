@@ -5,13 +5,7 @@ x64/
 .vs/
 build/
 lib/
-*.vcxproj.user
 *.cso
-*.dso
-*.gso
-*.hso
-*.pso
-*.vso
 *.mbo
 *.inc
 *.ilk

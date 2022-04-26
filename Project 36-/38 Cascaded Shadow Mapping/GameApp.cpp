@@ -271,6 +271,7 @@ void GameApp::UpdateScene(float dt)
 
 	if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
 	{
+		// 注意：反向Z
 		m_pForwardEffect->SetViewMatrix(m_pViewerCamera->GetViewMatrixXM());
 		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM(true));
 		m_pSkyboxEffect->SetViewMatrix(m_pViewerCamera->GetViewMatrixXM());
@@ -278,6 +279,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	else if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Light)
 	{
+		// 注意：反向Z
 		m_pForwardEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
 		m_pForwardEffect->SetProjMatrix(m_pLightCamera->GetProjMatrixXM(true));
 		m_pSkyboxEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
@@ -285,7 +287,7 @@ void GameApp::UpdateScene(float dt)
 	}
 	else
 	{
-		// 反向Z
+		// 注意：反向Z
 		XMMATRIX ShadowProjRZ = m_CSManager.GetShadowProjectionXM(
 			static_cast<int>(m_CSManager.m_SelectedCamera) - 2);
 		ShadowProjRZ.r[2] *= g_XMNegateZ;

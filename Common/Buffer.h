@@ -39,8 +39,8 @@ public:
 	void SetDebugObjectName(const std::string& name);
 
 private:
-	template<class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
+	template<class Type>
+	using ComPtr = Microsoft::WRL::ComPtr<Type>;
 
 	int m_Elements;
 	ComPtr<ID3D11Buffer> m_pBuffer;

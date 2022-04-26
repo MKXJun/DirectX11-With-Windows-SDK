@@ -96,11 +96,11 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             XMVECTOR lengthVec = XMVectorMax(XMVector3Length(diagVec), XMVector3Length(diag2Vec));
 
             // 计算出的偏移量会填充正交投影
-            XMVECTOR borderOffsetVec = (lengthVec - (lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec)) * g_XMOneHalf;
+            XMVECTOR borderOffsetVec = (lengthVec - (lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec)) * g_XMOneHalf.v;
             // 我们仅对XY方向进行填充
             static const XMVECTORF32 xyzw1100Vec = { {1.0f, 1.0f, 0.0f, 0.0f} };
-            lightCameraOrthographicMaxVec += borderOffsetVec * xyzw1100Vec;
-            lightCameraOrthographicMinVec -= borderOffsetVec * xyzw1100Vec;
+            lightCameraOrthographicMaxVec += borderOffsetVec * xyzw1100Vec.v;
+            lightCameraOrthographicMinVec -= borderOffsetVec * xyzw1100Vec.v;
         }
         
         // 我们基于PCF核的大小再计算一个边界扩充值使得包围盒稍微放大一些。
@@ -110,8 +110,8 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
             XMVECTORF32 scaleDuetoBlurVec = { {scaleDuetoBlur, scaleDuetoBlur, 0.0f, 0.0f} };
 
             XMVECTOR borderOffsetVec = lightCameraOrthographicMaxVec - lightCameraOrthographicMinVec;
-            borderOffsetVec *= g_XMOneHalf;
-            borderOffsetVec *= scaleDuetoBlurVec;
+            borderOffsetVec *= g_XMOneHalf.v;
+            borderOffsetVec *= scaleDuetoBlurVec.v;
             lightCameraOrthographicMaxVec += borderOffsetVec;
             lightCameraOrthographicMinVec -= borderOffsetVec;
         }
@@ -172,8 +172,8 @@ void CascadedShadowManager::UpdateFrame(const Camera& viewerCamera,
         }
         else if (m_SelectedNearFarFit == FitNearFar::FitNearFar_SceneAABB)
         {
-            XMVECTOR lightSpaceSceneAABBminValueVec = g_XMFltMax;
-            XMVECTOR lightSpaceSceneAABBmaxValueVec = -g_XMFltMax;
+            XMVECTOR lightSpaceSceneAABBminValueVec = g_XMFltMax.v;
+            XMVECTOR lightSpaceSceneAABBmaxValueVec = -g_XMFltMax.v;
             // 我们计算光照空间下场景的min max向量
             // 其中光照空间AABB的minZ和maxZ可以用于近平面和远平面
             // 这比场景与AABB的相交测试简单，在某些情况下也能提供相似的结果

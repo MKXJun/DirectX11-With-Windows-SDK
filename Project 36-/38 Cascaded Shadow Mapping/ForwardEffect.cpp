@@ -97,11 +97,11 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	const char* numStrs[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8"};
 	D3D_SHADER_MACRO defines[] =
 	{
-		"CASCADE_COUNT_FLAG", "1",
-		"USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG", "0",
-		"BLEND_BETWEEN_CASCADE_LAYERS_FLAG", "0",
-		"SELECT_CASCADE_BY_INTERVAL_FLAG", "0",
-		nullptr, nullptr
+		{ "CASCADE_COUNT_FLAG", "1" },
+		{ "USE_DERIVATIVES_FOR_DEPTH_OFFSET_FLAG", "0" },
+		{ "BLEND_BETWEEN_CASCADE_LAYERS_FLAG", "0" },
+		{ "SELECT_CASCADE_BY_INTERVAL_FLAG", "0" },
+		{ nullptr, nullptr }
 	};
 
 	Microsoft::WRL::ComPtr<ID3DBlob> blob;
@@ -117,7 +117,6 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 	std::string psName = "0000_ForwardPS";
 	std::string passName = "0000_Forward";
 	EffectPassDesc passDesc;
-	size_t shaderCount = 0;
 	
 	// 创建通道
 	passDesc.nameVS = "GeometryVS";

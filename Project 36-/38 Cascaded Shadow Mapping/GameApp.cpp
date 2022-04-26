@@ -7,9 +7,10 @@ using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
 	: D3DApp(hInstance, windowName, initWidth, initHeight),
+	m_pForwardEffect(std::make_unique<ForwardEffect>()),
 	m_pSkyboxEffect(std::make_unique<SkyboxToneMapEffect>()),
-	m_pShadowEffect(std::make_unique<ShadowEffect>()),
-	m_pForwardEffect(std::make_unique<ForwardEffect>())
+	m_pShadowEffect(std::make_unique<ShadowEffect>())
+	
 {
 }
 
@@ -53,7 +54,7 @@ bool GameApp::Init()
 void GameApp::OnResize()
 {
 	D3DApp::OnResize();
-	DXGI_SAMPLE_DESC sampleDesc;
+	DXGI_SAMPLE_DESC sampleDesc{};
 	sampleDesc.Count = m_MsaaSamples;
 	sampleDesc.Quality = 0;
 	m_pLitBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -290,7 +291,7 @@ void GameApp::UpdateScene(float dt)
 		// 注意：反向Z
 		XMMATRIX ShadowProjRZ = m_CSManager.GetShadowProjectionXM(
 			static_cast<int>(m_CSManager.m_SelectedCamera) - 2);
-		ShadowProjRZ.r[2] *= g_XMNegateZ;
+		ShadowProjRZ.r[2] *= g_XMNegateZ.v;
 		ShadowProjRZ.r[3] = XMVectorSetZ(ShadowProjRZ.r[3], 1.0f - XMVectorGetZ(ShadowProjRZ.r[3]));
 		
 		m_pForwardEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());

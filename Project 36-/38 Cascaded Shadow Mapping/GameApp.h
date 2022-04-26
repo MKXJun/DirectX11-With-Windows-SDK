@@ -54,7 +54,6 @@ private:
 	int m_CascadeLevels = 5;
 	int m_ShadowSize = 1024;
 	bool m_DebugShadow = false;
-	bool m_ReversedZ = false;
 
 	// 各种资源
 	TextureManager m_TextureManager;                                // 纹理读取管理

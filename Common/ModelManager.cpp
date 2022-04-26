@@ -78,7 +78,6 @@ const Model* ModelManager::CreateFromFile(std::string_view filename)
 
 				BoundingBox::CreateFromPoints(mesh.m_BoundingBox, numVertices,
 					(const XMFLOAT3*)pAiMesh->mVertices, sizeof(XMFLOAT3));
-				XMVECTOR vMin = XMLoadFloat3(&mesh.m_BoundingBox.Center) + XMLoadFloat3(&mesh.m_BoundingBox.Extents);
 				if (i == 0)
 					model.boundingbox = mesh.m_BoundingBox;
 				else

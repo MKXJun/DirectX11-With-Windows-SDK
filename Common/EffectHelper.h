@@ -87,6 +87,8 @@ struct IEffectConstantBufferVariable
 
 	// 获取最近一次设置的值，允许指定读取范围
 	virtual HRESULT GetRaw(void* pOutput, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) = 0;
+
+	virtual ~IEffectConstantBufferVariable() {}
 };
 
 // 渲染通道
@@ -120,6 +122,8 @@ struct IEffectPass
 	
 	// 应用着色器、常量缓冲区(包括函数形参)、采样器、着色器资源和可读写资源到渲染管线
 	virtual void Apply(ID3D11DeviceContext* deviceContext) = 0;
+
+	virtual ~IEffectPass() {};
 };
 
 // 特效助理

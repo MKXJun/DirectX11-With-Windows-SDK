@@ -829,7 +829,7 @@ EffectHelper::~EffectHelper()
 
 HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3DBlob* blob)
 {
-	if (name.empty())
+	if (name.empty() || device == nullptr || blob == nullptr)
 		return E_INVALIDARG;
 	
 	HRESULT hr;

@@ -299,7 +299,7 @@ void ForwardEffect::SetLightDir(const DirectX::XMFLOAT3& dir)
 	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_LightDir")->SetFloatVector(3, (const float*)&dir);
 }
 
-void ForwardEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
+void ForwardEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext, bool reversedZ)
 {
 	std::string passName = "0000_Forward";
 	passName[0] = '0' + pImpl->m_CascadeLevel;
@@ -308,13 +308,15 @@ void ForwardEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
 	passName[3] = '0' + pImpl->m_CascadeSelection;
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
 	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pCurrEffectPass->SetDepthStencilState(reversedZ ? RenderStates::DSSGreaterEqual.Get() : nullptr, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void ForwardEffect::SetRenderPreZPass(ID3D11DeviceContext* deviceContext)
+void ForwardEffect::SetRenderPreZPass(ID3D11DeviceContext* deviceContext, bool reversedZ)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
 	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("PreZ_Forward");
+	pImpl->m_pCurrEffectPass->SetDepthStencilState(reversedZ ? RenderStates::DSSGreaterEqual.Get() : nullptr, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 

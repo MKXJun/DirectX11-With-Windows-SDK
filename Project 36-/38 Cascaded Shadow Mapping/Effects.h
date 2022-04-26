@@ -76,9 +76,9 @@ public:
 
 
 	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+	void SetRenderDefault(ID3D11DeviceContext* deviceContext, bool reversedZ = false);
 	// 进行Pre-Z通道绘制
-	void SetRenderPreZPass(ID3D11DeviceContext* deviceContext);
+	void SetRenderPreZPass(ID3D11DeviceContext* deviceContext, bool reversedZ = false);
 
 
 	// 应用常量缓冲区和纹理资源的变更

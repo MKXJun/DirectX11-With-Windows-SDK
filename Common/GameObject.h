@@ -41,10 +41,11 @@ public:
 	const Transform& GetTransform() const;
 
 	//
-	// 视锥体碰撞检测
+	// 相交检测
 	//
 	void FrustumCulling(const DirectX::BoundingFrustum& frustumInWorld);
 	void CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld);
+	void CubeCulling(const DirectX::BoundingBox& aabbInWorld);
 
 	//
 	// 模型

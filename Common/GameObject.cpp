@@ -51,6 +51,20 @@ void GameObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
 	}
 }
 
+void GameObject::CubeCulling(const DirectX::BoundingBox& aabbInWorld)
+{
+	size_t sz = m_pModel->meshdatas.size();
+	m_InFrustum = false;
+	m_SubModelInFrustum.resize(sz);
+	for (size_t i = 0; i < sz; ++i)
+	{
+		BoundingBox box;
+		m_pModel->meshdatas[i].m_BoundingBox.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+		m_SubModelInFrustum[i] = aabbInWorld.Intersects(box);
+		m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
+	}
+}
+
 void GameObject::SetModel(const Model* pModel)
 {
 	m_pModel = pModel;

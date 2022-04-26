@@ -20,7 +20,7 @@ Texture2D::Texture2D(ID3D11Device* d3dDevice,
     UINT bindFlags,
     const DXGI_SAMPLE_DESC& sampleDesc)
 {
-    // UAV's can't poUINT to multisampled resources
+    // UAV's can't point to multisampled resources
     InternalConstruct(d3dDevice, width, height, format, bindFlags, 1, 1, sampleDesc.Count, sampleDesc.Quality,
         D3D11_RTV_DIMENSION_TEXTURE2DMS, D3D11_UAV_DIMENSION_UNKNOWN, D3D11_SRV_DIMENSION_TEXTURE2DMS);
 }

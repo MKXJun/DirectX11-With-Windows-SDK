@@ -12,7 +12,7 @@ ComPtr<ID3D11RasterizerState> RenderStates::RSShadow		    = nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSPointClamp			= nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap16x	= nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap			= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSShadowPCF				= nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSShadowPCF			= nullptr;
 
 ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage		= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSTransparent			= nullptr;

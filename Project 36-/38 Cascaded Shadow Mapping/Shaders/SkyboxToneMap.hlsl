@@ -57,7 +57,8 @@ float4 SkyboxPS(SkyboxVSOut input) : SV_Target
     {
         float depth = g_DepthTexture.Load(coords, sampleIndex);
 
-        if (depth >= 1.0f)
+        // ×¢Òâ£º·´ÏòZ
+        if (depth <= 0.0f)
         {
             ++skyboxSamples;
         }

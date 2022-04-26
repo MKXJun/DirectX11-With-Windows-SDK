@@ -67,7 +67,8 @@ void GameApp::OnResize()
 	{
 		m_pViewerCamera->SetFrustum(XM_PI / 3, AspectRatio(), 0.5f, 300.0f);
 		m_pViewerCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
-		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM());
+		// 注意：反向Z
+		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM(true));
 	}
 }
 
@@ -271,25 +272,29 @@ void GameApp::UpdateScene(float dt)
 	if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
 	{
 		m_pForwardEffect->SetViewMatrix(m_pViewerCamera->GetViewMatrixXM());
-		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM());
+		m_pForwardEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM(true));
 		m_pSkyboxEffect->SetViewMatrix(m_pViewerCamera->GetViewMatrixXM());
-		m_pSkyboxEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM());
+		m_pSkyboxEffect->SetProjMatrix(m_pViewerCamera->GetProjMatrixXM(true));
 	}
 	else if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Light)
 	{
 		m_pForwardEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
-		m_pForwardEffect->SetProjMatrix(m_pLightCamera->GetProjMatrixXM());
+		m_pForwardEffect->SetProjMatrix(m_pLightCamera->GetProjMatrixXM(true));
 		m_pSkyboxEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
-		m_pSkyboxEffect->SetProjMatrix(m_pLightCamera->GetProjMatrixXM());
+		m_pSkyboxEffect->SetProjMatrix(m_pLightCamera->GetProjMatrixXM(true));
 	}
 	else
 	{
+		// 反向Z
+		XMMATRIX ShadowProjRZ = m_CSManager.GetShadowProjectionXM(
+			static_cast<int>(m_CSManager.m_SelectedCamera) - 2);
+		ShadowProjRZ.r[2] *= g_XMNegateZ;
+		ShadowProjRZ.r[3] = XMVectorSetZ(ShadowProjRZ.r[3], 1.0f - XMVectorGetZ(ShadowProjRZ.r[3]));
+		
 		m_pForwardEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
-		m_pForwardEffect->SetProjMatrix(m_CSManager.GetShadowProjectionXM(
-			static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
+		m_pForwardEffect->SetProjMatrix(ShadowProjRZ);
 		m_pSkyboxEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
-		m_pSkyboxEffect->SetProjMatrix(m_CSManager.GetShadowProjectionXM(
-			static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
+		m_pSkyboxEffect->SetProjMatrix(ShadowProjRZ);
 	}
 		
 	m_pShadowEffect->SetViewMatrix(m_pLightCamera->GetViewMatrixXM());
@@ -413,7 +418,7 @@ bool GameApp::InitResource()
 	//
 
 	m_pForwardEffect->SetViewMatrix(viewerCamera->GetViewMatrixXM());
-	m_pForwardEffect->SetProjMatrix(viewerCamera->GetProjMatrixXM());
+	m_pForwardEffect->SetProjMatrix(viewerCamera->GetProjMatrixXM(true));
 	m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_PCFKernelSize);
 	m_pForwardEffect->SetPCFDepthOffset(m_CSManager.m_PCFDepthOffset);
 	m_pForwardEffect->SetShadowSize(m_ShadowSize);
@@ -491,7 +496,8 @@ void GameApp::RenderForward()
 	{
 		float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		m_pd3dImmediateContext->ClearRenderTargetView(m_pLitBuffer->GetRenderTarget(), black);
-		m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		// 注意：反向Z
+		m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
 		D3D11_VIEWPORT viewport = m_pViewerCamera->GetViewPort();
 		BoundingFrustum frustum;
@@ -509,10 +515,10 @@ void GameApp::RenderForward()
 		}
 		else
 		{
-			BoundingFrustum::CreateFromMatrix(frustum, m_CSManager.GetShadowProjectionXM(
-				static_cast<int>(m_CSManager.m_SelectedCamera) - 2));
-			frustum.Transform(frustum, m_pLightCamera->GetLocalToWorldMatrixXM());
-			m_Powerplant.FrustumCulling(frustum);
+			BoundingOrientedBox bbox = m_CSManager.GetShadowOBB(
+				static_cast<int>(m_CSManager.m_SelectedCamera) - 2);
+			bbox.Transform(bbox, m_pLightCamera->GetLocalToWorldMatrixXM());
+			m_Powerplant.CubeCulling(bbox);
 			viewport.Width = (float)std::min(m_ClientHeight, m_ClientWidth);
 			viewport.Height = viewport.Width;
 		}
@@ -546,7 +552,8 @@ void GameApp::RenderForward()
 		m_pForwardEffect->SetCascadeScales(scales);
 		m_pForwardEffect->SetShadowViewMatrix(m_pLightCamera->GetViewMatrixXM());
 		m_pForwardEffect->SetShadowTextureArray(m_CSManager.GetCascadesOutput());
-		m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+		// 注意：反向Z
+		m_pForwardEffect->SetRenderDefault(m_pd3dImmediateContext.Get(), true);
 		m_Powerplant.Draw(m_pd3dImmediateContext.Get(), m_pForwardEffect.get());
 
 		// 清除绑定

@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.35.3-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.35.4-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -8,9 +8,15 @@
 
 ## 最近更新
 
-2022/4/14 Ver1.35.3
+2022/5/2 Ver1.35.4
 
-- GpuTimer添加统计所有间隔平均值
+- 优先指定独显运行
+- 项目38使用反向Z
+- 补回.vcxproj.user
+- 前面的项目没有纹理时默认使用白色
+- 项目36之后添加DXGI翻转模型
+
+**[历史更新记录](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
 
 ## 博客教程
 
@@ -106,6 +112,4 @@ QQ群号：727623616
 
 **[点此查看](https://github.com/MKXJun/Rubik-Cube)**
 
-## 更新记录
 
-**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**

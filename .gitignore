@@ -9,6 +9,7 @@ lib/
 *.mbo
 *.inc
 *.ilk
+*.lib
 *.iobj
 *.ipdb
 *.pdb

@@ -5,6 +5,14 @@
 
 #pragma warning(disable: 6031)
 
+extern "C"
+{
+	// 在具有多显卡的硬件设备中，优先使用NVIDIA或AMD的显卡运行
+	// 需要在.exe中使用
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x00000001;
+}
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace
@@ -130,8 +138,11 @@ void D3DApp::OnResize()
 	}
 
 	// 重设交换链并且重新创建渲染目标视图
+	for (UINT i = 0; i < m_BackBufferCount; ++i)
+		m_pRenderTargetViews->Reset();
 	HR(m_pSwapChain->ResizeBuffers(m_BackBufferCount, m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 
 		m_IsDxgiFlipModel ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0));
+	m_FrameCount = 0;
 }
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

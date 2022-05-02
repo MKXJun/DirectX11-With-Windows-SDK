@@ -54,6 +54,7 @@ bool GameApp::Init()
 void GameApp::OnResize()
 {
 	D3DApp::OnResize();
+
 	DXGI_SAMPLE_DESC sampleDesc{};
 	sampleDesc.Count = m_MsaaSamples;
 	sampleDesc.Quality = 0;
@@ -312,10 +313,13 @@ void GameApp::DrawScene()
 	assert(m_pSwapChain);
 
 	// 创建后备缓冲区的渲染目标视图
-	ComPtr<ID3D11Texture2D> pBackBuffer;
-	m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
-	CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(D3D11_RTV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
-	m_pd3dDevice->CreateRenderTargetView(pBackBuffer.Get(), &rtvDesc, m_pRenderTargetView.ReleaseAndGetAddressOf());
+	if (m_FrameCount < m_BackBufferCount)
+	{
+		ComPtr<ID3D11Texture2D> pBackBuffer;
+		m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(pBackBuffer.GetAddressOf()));
+		CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(D3D11_RTV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+		m_pd3dDevice->CreateRenderTargetView(pBackBuffer.Get(), &rtvDesc, m_pRenderTargetViews[m_FrameCount].ReleaseAndGetAddressOf());
+	}
 
 	//
 	// 场景渲染部分
@@ -385,10 +389,12 @@ void GameApp::DrawScene()
 	m_pd3dImmediateContext->RSSetViewports(1, &vp);
 	ImGui::Render();
 
-	m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
+	ID3D11RenderTargetView* pRTVs[] = { GetBackBufferRTV() };
+	m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
+
 }
 
 bool GameApp::InitResource()
@@ -583,7 +589,8 @@ void GameApp::RenderSkyboxAndToneMap()
 		m_pSkyboxEffect->SetDepthTexture(m_pDepthBuffer->GetShaderResource());
 
 		// 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
-		m_pd3dImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
+		ID3D11RenderTargetView* pRTVs[] = { GetBackBufferRTV() };
+		m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
 		m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_pSkyboxEffect.get());
 
 		// 清除状态

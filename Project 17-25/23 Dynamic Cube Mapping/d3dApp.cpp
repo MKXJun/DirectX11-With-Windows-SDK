@@ -5,6 +5,14 @@
 
 #pragma warning(disable: 6031)
 
+extern "C"
+{
+	// 在具有多显卡的硬件设备中，优先使用NVIDIA或AMD的显卡运行
+	// 需要在.exe中使用
+	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x00000001;
+}
+
 #if USE_IMGUI
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
@@ -16,6 +24,7 @@ namespace
 	// assign a member function to WNDCLASS::lpfnWndProc.
 	D3DApp* g_pd3dApp = nullptr;
 }
+
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -300,8 +300,9 @@ void DeferredEffect::DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
 
 	// 清空
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[2]", nullptr);
-	pPass->Apply(deviceContext);
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_GBufferTextures[2]");
+	posZGradGBuffer = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &posZGradGBuffer);
 }
 
 void DeferredEffect::ComputeLightingDefault(
@@ -391,12 +392,18 @@ void DeferredEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext
 	deviceContext->Dispatch(dispatchWidth, dispatchHeight, 1);
 	
 	// 清空
-	pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_Framebuffer", nullptr, 0);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[0]", nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[1]", nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[2]", nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[3]", nullptr);
-	pPass->Apply(deviceContext);
+
+	int slot = pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_Framebuffer");
+	litFlatBufferUAV = nullptr;
+	deviceContext->CSSetUnorderedAccessViews(slot, 1, &litFlatBufferUAV, nullptr);
+
+	slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_Light");
+	lightBufferSRV = nullptr;
+	deviceContext->CSSetShaderResources(slot, 1, &lightBufferSRV);
+
+	ID3D11ShaderResourceView* nullSRVs[4] = {};
+	slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_GBufferTextures[0]");
+	deviceContext->CSSetShaderResources(slot, 4, nullSRVs);
 }
 
 void XM_CALLCONV DeferredEffect::SetWorldMatrix(DirectX::FXMMATRIX W)

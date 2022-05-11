@@ -4,6 +4,11 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+2022/5/11 Ver1.36.0
+
+- **添加项目VSM and ESM**
+- 修改Common内的CameraController、Collison、EffectHelper
+
 2022/5/2 Ver1.35.4
 
 - 优先指定独显运行

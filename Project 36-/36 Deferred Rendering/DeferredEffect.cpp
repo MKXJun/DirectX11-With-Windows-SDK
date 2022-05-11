@@ -266,8 +266,9 @@ void DeferredEffect::DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
 
 	// 清空
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[0]", nullptr);
-	pPass->Apply(deviceContext);
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_GBufferTextures[0]");
+	normalGBuffer = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &normalGBuffer);
 }
 
 void DeferredEffect::DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
@@ -290,8 +291,9 @@ void DeferredEffect::DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
 
 	// 清空
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[2]", nullptr);
-	pPass->Apply(deviceContext);
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_GBufferTextures[2]");
+	posZGradGBuffer = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &posZGradGBuffer);
 }
 
 void DeferredEffect::ComputeLightingDefault(

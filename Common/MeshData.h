@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef MESHDATA_H
-#define MESHDATA_H
+#ifndef MESH_DATA_H
+#define MESH_DATA_H
 
 #include <wrl/client.h>
 #include <vector>

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef EFFECTHELPER_H
-#define EFFECTHELPER_H
+#ifndef EFFECT_HELPER_H
+#define EFFECT_HELPER_H
 
 #include "WinMin.h"
 #include <string_view>
@@ -177,17 +177,23 @@ public:
 	void SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerState);
 	// 按名设置采样器状态(若存在同槽多名称则只能使用按槽设置)
 	void SetSamplerStateByName(std::string_view name, ID3D11SamplerState* samplerState);
-	
+	// 按名映射采样器状态槽(找不到返回-1)
+	int MapSamplerStateSlot(std::string_view name);
+
 	// 按槽设置着色器资源
 	void SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv);
 	// 按名设置着色器资源(若存在同槽多名称则只能使用按槽设置)
 	void SetShaderResourceByName(std::string_view name, ID3D11ShaderResourceView* srv);
-	
+	// 按名映射着色器资源槽(找不到返回-1)
+	int MapShaderResourceSlot(std::string_view name);
 
 	// 按槽设置可读写资源
 	void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);
 	// 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
 	void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, UINT initialCount);
+	// 按名映射可读写资源槽(找不到返回-1)
+	int MapUnorderedAccessSlot(std::string_view name);
+
 
 	// 设置调试对象名
 	void SetDebugObjectName(std::string name);

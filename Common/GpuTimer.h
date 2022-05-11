@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef GPUTIMER_H
-#define GPUTIMER_H
+#ifndef GPU_TIMER_H
+#define GPU_TIMER_H
 
 #include <cassert>
 #include <cstdint>

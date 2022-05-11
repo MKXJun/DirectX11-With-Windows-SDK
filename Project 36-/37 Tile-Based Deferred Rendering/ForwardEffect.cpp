@@ -252,7 +252,9 @@ void ForwardEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
 	deviceContext->Dispatch(dispatchWidth, dispatchHeight, 1);
 
 	// 清空
-	pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_TilebufferRW", nullptr, 0);
+	int slot = pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_TilebufferRW");
+	tileInfoBufferUAV = nullptr;
+	deviceContext->CSSetUnorderedAccessViews(slot, 1, &tileInfoBufferUAV, nullptr);
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_Light", nullptr);
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[3]", nullptr);
 	pPass->Apply(deviceContext);

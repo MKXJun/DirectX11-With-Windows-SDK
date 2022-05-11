@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef MODELMANAGER_H
-#define MODELMANAGER_H
+#ifndef MODEL_MANAGER_H
+#define MODEL_MANAGER_H
 
 #include "WinMin.h"
 #include "Geometry.h"

@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef TEXTUREMANAGER_H
-#define TEXTUREMANAGER_H
+#ifndef TEXTURE_MANAGER_H
+#define TEXTURE_MANAGER_H
 
 
 #include <unordered_map>

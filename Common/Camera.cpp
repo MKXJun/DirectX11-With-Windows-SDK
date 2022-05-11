@@ -177,6 +177,11 @@ void FirstPersonCamera::MoveForward(float d)
 	m_Transform.Translate(m_Transform.GetForwardAxis(), d);
 }
 
+void FirstPersonCamera::Translate(const DirectX::XMFLOAT3& dir, float magnitude)
+{
+	m_Transform.Translate(dir, magnitude);
+}
+
 void FirstPersonCamera::Pitch(float rad)
 {
 	XMFLOAT3 rotation = m_Transform.GetRotation();

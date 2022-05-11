@@ -4,23 +4,11 @@
 
 using namespace DirectX;
 
-void CameraController::ApplyMomentum(float& oldValue, float& newValue, float deltaTime)
-{
-	float blendedValue;
-	if (fabs(newValue) > fabs(oldValue))
-		blendedValue = XMath::Lerp(newValue, oldValue, powf(0.6f, deltaTime * 60.0f));
-	else
-		blendedValue = XMath::Lerp(newValue, oldValue, powf(0.8f, deltaTime * 60.0f));
-	
-	oldValue = blendedValue;
-	newValue = blendedValue;
-}
-
 void FirstPersonCameraController::Update(float deltaTime)
 {
 	ImGuiIO& io = ImGui::GetIO();
 
-	float yaw = 0.0f, pitch = 0.0f, forward = 0.0f, strafe = 0.0f;
+	float yaw = 0.0f, pitch = 0.0f;
 	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
 	{
 
@@ -28,26 +16,40 @@ void FirstPersonCameraController::Update(float deltaTime)
 		pitch += io.MouseDelta.y * m_MouseSensitivityY;
 	}
 
-	forward = m_MoveSpeed * (
-		(ImGui::IsKeyDown('W') ? deltaTime : 0.0f) +
-		(ImGui::IsKeyDown('S') ? -deltaTime : 0.0f)
+	int forward = (
+		(ImGui::IsKeyDown('W') ? 1 : 0) +
+		(ImGui::IsKeyDown('S') ? -1 : 0)
 		);
-	strafe = m_StrafeSpeed * (
-		(ImGui::IsKeyDown('A') ? -deltaTime : 0.0f) +
-		(ImGui::IsKeyDown('D') ? deltaTime : 0.0f)
+	int strafe = (
+		(ImGui::IsKeyDown('A') ? -1 : 0) +
+		(ImGui::IsKeyDown('D') ? 1 : 0)
 		);
 
-	if (m_Momentum)
+	if (forward || strafe)
 	{
-		ApplyMomentum(m_LastForward, forward, deltaTime);
-		ApplyMomentum(m_LastStrafe, strafe, deltaTime);
+		XMVECTOR dir = m_pCamera->GetLookAxisXM() * (float)forward + m_pCamera->GetRightAxisXM() * (float)strafe;
+		XMStoreFloat3(&m_MoveDir, dir);
+		m_MoveVelocity = m_MoveSpeed;
+		m_DragTimer = m_TotalDragTimeToZero;
+		m_VelocityDrag = m_MoveSpeed / m_DragTimer;
+	}
+	else
+	{
+		if (m_DragTimer > 0.0f)
+		{
+			m_DragTimer -= deltaTime;
+			m_MoveVelocity -= m_VelocityDrag * deltaTime;
+		}
+		else
+		{
+			m_MoveVelocity = 0.0f;
+		}
 	}
 
 	m_pCamera->RotateY(yaw);
 	m_pCamera->Pitch(pitch);
 
-	m_pCamera->MoveForward(forward);
-	m_pCamera->Strafe(strafe);
+	m_pCamera->Translate(m_MoveDir, m_MoveVelocity * deltaTime);
 }
 
 void FirstPersonCameraController::InitCamera(FirstPersonCamera* pCamera)
@@ -79,9 +81,4 @@ void FirstPersonCameraController::SetMouseSensitivity(float x, float y)
 void FirstPersonCameraController::SetMoveSpeed(float speed)
 {
 	m_MoveSpeed = speed;
-}
-
-void FirstPersonCameraController::SetStrafeSpeed(float speed)
-{
-	m_StrafeSpeed = speed;
 }

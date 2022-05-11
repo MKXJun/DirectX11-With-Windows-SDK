@@ -10,8 +10,13 @@ ComPtr<ID3D11RasterizerState> RenderStates::RSCullClockWise		= nullptr;
 ComPtr<ID3D11RasterizerState> RenderStates::RSShadow		    = nullptr;
 
 ComPtr<ID3D11SamplerState> RenderStates::SSPointClamp			= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap16x	= nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap			= nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSLinearClamp          = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap16x    = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp2x    = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp4x    = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp8x    = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp16x   = nullptr;
 ComPtr<ID3D11SamplerState> RenderStates::SSShadowPCF			= nullptr;
 
 ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage		= nullptr;
@@ -76,18 +81,37 @@ void RenderStates::InitAll(ID3D11Device* device)
     sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
     HR(device->CreateSamplerState(&sampDesc, SSPointClamp.GetAddressOf()));
 
+    // 线性过滤与Clamp模式
+    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    HR(device->CreateSamplerState(&sampDesc, SSLinearClamp.GetAddressOf()));
+
+    // 2倍各向异性过滤与Clamp模式
+    sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    sampDesc.MaxAnisotropy = 2;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicClamp2x.GetAddressOf()));
+
+    // 4倍各向异性过滤与Clamp模式
+    sampDesc.MaxAnisotropy = 4;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicClamp4x.GetAddressOf()));
+
+    // 8倍各向异性过滤与Clamp模式
+    sampDesc.MaxAnisotropy = 8;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicClamp8x.GetAddressOf()));
+
+    // 16倍各向异性过滤与Clamp模式
+    sampDesc.MaxAnisotropy = 16;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicClamp16x.GetAddressOf()));
+
     // 线性过滤与Wrap模式
     sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.MaxAnisotropy = 0;
     HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.GetAddressOf()));
 
     // 16倍各向异性过滤与Wrap模式
     sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
     sampDesc.MaxAnisotropy = 16;
     HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap16x.GetAddressOf()));
 
@@ -195,8 +219,14 @@ void RenderStates::InitAll(ID3D11Device* device)
     RSWireframe->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSWireframe"));
     RSShadow->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("RSShadow"));
 
+    SSPointClamp->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSPointClamp"));
     SSLinearWrap->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSLinearWrap"));
+    SSLinearClamp->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSLinearClamp"));
     SSAnistropicWrap16x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicWrap16x"));
+    SSAnistropicClamp2x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicClamp2x"));
+    SSAnistropicClamp4x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicClamp4x"));
+    SSAnistropicClamp8x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicClamp8x"));
+    SSAnistropicClamp16x->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAnistropicClamp16x"));
     SSShadowPCF->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSShadowPCF"));
 
     BSAlphaToCoverage->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BSAlphaToCoverage"));

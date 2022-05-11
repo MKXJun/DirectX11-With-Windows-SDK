@@ -996,6 +996,17 @@ void EffectHelper::SetSamplerStateByName(std::string_view name, ID3D11SamplerSta
 		it->second.pSS = samplerState;
 }
 
+int EffectHelper::MapSamplerStateSlot(std::string_view name)
+{
+	auto it = std::find_if(pImpl->m_Samplers.begin(), pImpl->m_Samplers.end(),
+		[name](const std::pair<UINT, SamplerState>& p) {
+			return p.second.name == name;
+		});
+	if (it != pImpl->m_Samplers.end())
+		return static_cast<int>(it->first);
+	return -1;
+}
+
 void EffectHelper::SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv)
 {
 	auto it = pImpl->m_ShaderResources.find(slot);
@@ -1011,6 +1022,17 @@ void EffectHelper::SetShaderResourceByName(std::string_view name, ID3D11ShaderRe
 		});
 	if (it != pImpl->m_ShaderResources.end())
 		it->second.pSRV = srv;
+}
+
+int EffectHelper::MapShaderResourceSlot(std::string_view name)
+{
+	auto it = std::find_if(pImpl->m_ShaderResources.begin(), pImpl->m_ShaderResources.end(),
+		[name](const std::pair<UINT, ShaderResource>& p) {
+			return p.second.name == name;
+		});
+	if (it != pImpl->m_ShaderResources.end())
+		return static_cast<int>(it->first);
+	return -1;
 }
 
 void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount)
@@ -1035,6 +1057,17 @@ void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11Unorder
 		it->second.pUAV = uav;
 		it->second.initialCount = initialCount;
 	}
+}
+
+int EffectHelper::MapUnorderedAccessSlot(std::string_view name)
+{
+	auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
+		[name](const std::pair<UINT, RWResource>& p) {
+			return p.second.name == name;
+		});
+	if (it != pImpl->m_RWResources.end())
+		return static_cast<int>(it->first);
+	return -1;
 }
 
 void EffectHelper::SetDebugObjectName(std::string name)

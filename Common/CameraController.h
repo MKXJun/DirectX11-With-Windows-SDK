@@ -20,9 +20,6 @@ public:
 	CameraController& operator=(const CameraController&) = delete;
 	virtual ~CameraController() {}
 	virtual void Update(float deltaTime) = 0;
-
-	// Helper function
-	static void ApplyMomentum(float& oldValue, float& newValue, float deltaTime);
 };
 
 class FirstPersonCameraController : public CameraController
@@ -40,15 +37,11 @@ public:
 
 	void SetMouseSensitivity(float x, float y);
 	void SetMoveSpeed(float speed);
-	void SetStrafeSpeed(float speed);
-
-	
 
 private:
 	FirstPersonCamera* m_pCamera = nullptr;
 
 	float m_MoveSpeed = 5.0f;
-	float m_StrafeSpeed = 5.0f;
 	float m_MouseSensitivityX = 0.005f;
 	float m_MouseSensitivityY = 0.005f;
 
@@ -61,6 +54,12 @@ private:
 
 	float m_LastForward = 0.0f;
 	float m_LastStrafe = 0.0f;
+
+	DirectX::XMFLOAT3 m_MoveDir{};
+	float m_MoveVelocity = 0.0f;
+	float m_VelocityDrag = 0.0f;
+	float m_TotalDragTimeToZero = 0.25f;
+	float m_DragTimer = 0.0f;
 };
 
 

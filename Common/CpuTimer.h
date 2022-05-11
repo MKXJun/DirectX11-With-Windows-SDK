@@ -4,8 +4,8 @@
 
 #pragma once
 
-#ifndef GAMETIMER_H
-#define GAMETIMER_H
+#ifndef CPU_TIMER_H
+#define CPU_TIMER_H
 
 class CpuTimer
 {

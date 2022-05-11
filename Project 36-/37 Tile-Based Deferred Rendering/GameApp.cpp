@@ -345,7 +345,6 @@ bool GameApp::InitResource()
 
 	m_FPSCameraController.InitCamera(camera.get());
 	m_FPSCameraController.SetMoveSpeed(10.0f);
-	m_FPSCameraController.SetStrafeSpeed(10.0f);
 	// 仅当开启垂直同步的时候才适合使用动量，否则容易出现突然加速的情况
 	m_FPSCameraController.EnableMomentum(false);
 	// ******************

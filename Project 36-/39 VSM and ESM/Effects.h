@@ -53,24 +53,38 @@ public:
 	//
 	// ForwardEffect
 	//
+	
+	// 0: Cascaded Shadow Map
+	// 1: Variance Shadow Map
+	// 2: Exponmential Shadow Map
+	void SetShadowType(int type);
+
+	// 通用
 
 	void SetCascadeLevels(int cascadeLevels);
-	void SetPCFDerivativesOffsetEnabled(bool enable);
 	void SetCascadeBlendEnabled(bool enable);
 	void SetCascadeIntervalSelectionEnabled(bool enable);
-
 	void SetCascadeVisulization(bool enable);
+
 	void SetCascadeOffsets(const DirectX::XMFLOAT4 offsets[8]);
 	void SetCascadeScales(const DirectX::XMFLOAT4 scales[8]);
 	void SetCascadeFrustumsEyeSpaceDepths(const float depths[8]);
 	void SetCascadeBlendArea(float blendArea);
-
-	void SetPCFKernelSize(int size);
-	void SetPCFDepthOffset(float bias);
-	
 	void SetShadowSize(int size);
 	void XM_CALLCONV SetShadowViewMatrix(DirectX::FXMMATRIX ShadowView);
 	void SetShadowTextureArray(ID3D11ShaderResourceView* shadow);
+
+	void SetCascadeSampler(ID3D11SamplerState* sampler);
+
+	// CSM
+	void SetPCFKernelSize(int size);
+	void SetPCFDepthBias(float bias);
+
+	// VSM
+	void SetMagicPower(float power);
+
+
+
 
 	void SetLightDir(const DirectX::XMFLOAT3& dir);
 
@@ -132,8 +146,11 @@ public:
 	// 默认状态来绘制
 	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
-	// Alpha裁剪绘制(处理具有透明度的物体)
-	void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, float alphaClipValue);
+	// 绘制方差阴影
+	void SetRenderVarianceShadow(ID3D11DeviceContext* deviceContext);
+
+	// 绘制指数阴影
+	void SetRenderExponentialShadow(ID3D11DeviceContext* deviceContext, float power);
 
 	// 绘制深度图到纹理
 	void RenderDepthToTexture(ID3D11DeviceContext* deviceContext, 
@@ -147,6 +164,56 @@ public:
 private:
 	class Impl;
 	std::unique_ptr<Impl> pImpl;
+};
+
+class FullScreenEffect : public IEffect
+{
+public:
+	FullScreenEffect();
+	virtual ~FullScreenEffect() override;
+
+	FullScreenEffect(FullScreenEffect&& moveFrom) noexcept;
+	FullScreenEffect& operator=(FullScreenEffect&& moveFrom) noexcept;
+
+	// 获取单例
+	static FullScreenEffect& Get();
+
+	// 初始化所需资源
+	bool InitAll(ID3D11Device* device);
+
+	// 
+	// FullScreenEffect
+	//
+
+	// input和output纹理宽高要求一致
+	// kernel_size: 奇数, 3-15
+	void BlurX(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* input, ID3D11RenderTargetView* output, const D3D11_VIEWPORT& vp, int kernel_size);
+	// input和output纹理宽高要求一致
+	// kernel_size: 奇数, 3-15
+	void BlurY(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* input, ID3D11RenderTargetView* output, const D3D11_VIEWPORT& vp, int kernel_size);
+
+	// input和output纹理宽高要求一致
+	// kernel_size: 奇数, 3-15
+	void GaussianBlurX(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* input, ID3D11RenderTargetView* output, const D3D11_VIEWPORT& vp, int kernel_size);
+	// input和output纹理宽高要求一致
+	// kernel_size: 奇数, 3-15
+	void GaussianBlurY(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* input, ID3D11RenderTargetView* output, const D3D11_VIEWPORT& vp, int kernel_size);
+
+	// input和output纹理宽高要求一致
+	// kernel_size: 奇数, 3-15
+	void LogGaussianBlur(ID3D11DeviceContext* deviceContext, ID3D11ShaderResourceView* input, ID3D11RenderTargetView* output, const D3D11_VIEWPORT& vp, int kernel_size, float sigma);
+
+	//
+	// IEffect
+	//
+
+	// 应用常量缓冲区和纹理资源的变更
+	void Apply(ID3D11DeviceContext* deviceContext) override;
+
+private:
+	class Impl;
+	std::unique_ptr<Impl> pImpl;
+
 };
 
 class SkyboxToneMapEffect : public IEffect, public IEffectTransform,

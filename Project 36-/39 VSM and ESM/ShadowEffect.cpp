@@ -102,21 +102,31 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 		device, "ShadowPS", "ps_5_0"));
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("DebugPS", L"Shaders\\Shadow.hlsl",
 		device, "DebugPS", "ps_5_0"));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("VarianceShadowPS", L"Shaders\\Shadow.hlsl",
+		device, "VarianceShadowPS", "ps_5_0"));
+	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ExponentialShadowPS", L"Shaders\\Shadow.hlsl",
+		device, "ExponentialShadowPS", "ps_5_0"));
 
 	// ******************
 	// 创建通道
 	//
 	EffectPassDesc passDesc;
 	passDesc.nameVS = "ShadowVS";
+	passDesc.namePS = "ShadowPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("Shadow", device, &passDesc));
 	auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Shadow");
 	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
 
 	passDesc.nameVS = "ShadowVS";
-	passDesc.namePS = "ShadowPS";
-	HR(pImpl->m_pEffectHelper->AddEffectPass("ShadowAlphaClip", device, &passDesc));
-	pImpl->m_pEffectHelper->GetEffectPass("ShadowAlphaClip")->SetRasterizerState(RenderStates::RSNoCull.Get());
-	pPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowAlphaClip");
+	passDesc.namePS = "VarianceShadowPS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("VarianceShadow", device, &passDesc));
+	pPass = pImpl->m_pEffectHelper->GetEffectPass("VarianceShadow");
+	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
+
+	passDesc.nameVS = "ShadowVS";
+	passDesc.namePS = "ExponentialShadowPS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("ExponentialShadow", device, &passDesc));
+	pPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
 	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
 
 	passDesc.nameVS = "FullScreenTriangleTexcoordVS";
@@ -141,11 +151,18 @@ void ShadowEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void ShadowEffect::SetRenderAlphaClip(ID3D11DeviceContext* deviceContext, float alphaClipValue)
+void ShadowEffect::SetRenderVarianceShadow(ID3D11DeviceContext* deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
-	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ShadowAlphaClip");
-	pImpl->m_pCurrEffectPass->PSGetParamByName("clipValue")->SetFloat(alphaClipValue);
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("VarianceShadow");
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+void ShadowEffect::SetRenderExponentialShadow(ID3D11DeviceContext* deviceContext, float power)
+{
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
+	pImpl->m_pCurrEffectPass->PSGetParamByName("c")->SetFloat(power);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
@@ -164,10 +181,8 @@ void ShadowEffect::RenderDepthToTexture(
 	deviceContext->RSSetViewports(1, &vp);
 	deviceContext->Draw(3, 0);
 
-	// 清空
-	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_DiffuseMap");
-	input = nullptr;
-	deviceContext->PSSetShaderResources(slot, 1, &input);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", nullptr);
+	pImpl->m_pCurrEffectPass->Apply(deviceContext);
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 

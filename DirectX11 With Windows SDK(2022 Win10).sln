@@ -123,6 +123,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "38 Cascaded Shadow Mapping(
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "39 VSM and ESM(2022 Win10)", "Project 36-\39 VSM and ESM\39 VSM and ESM(2022 Win10).vcxproj", "{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -419,6 +421,14 @@ Global
 		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x64.Build.0 = Release|x64
 		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x86.ActiveCfg = Release|Win32
 		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x86.Build.0 = Release|Win32
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x64.ActiveCfg = Debug|x64
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x64.Build.0 = Debug|x64
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x86.ActiveCfg = Debug|Win32
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x86.Build.0 = Debug|Win32
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x64.ActiveCfg = Release|x64
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x64.Build.0 = Release|x64
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x86.ActiveCfg = Release|Win32
+		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

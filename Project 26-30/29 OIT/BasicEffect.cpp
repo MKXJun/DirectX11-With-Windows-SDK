@@ -66,7 +66,7 @@ public:
 
 public:
 	// 需要16字节对齐的优先放在前面
-	XMMATRIX m_View{}, m_Proj{};
+	XMMATRIX m_World{}, m_View{}, m_Proj{};
 	CBufferObject<0, CBChangesEveryInstanceDrawing>	m_CBInstDrawing;		// 每次实例绘制的常量缓冲区
 	CBufferObject<1, CBChangesEveryObjectDrawing>	m_CBObjDrawing;		    // 每次对象绘制的常量缓冲区
 	CBufferObject<2, CBChangesEveryFrame>			m_CBFrame;			    // 每帧绘制的常量缓冲区
@@ -240,8 +240,7 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext, RenderTyp
 void XM_CALLCONV BasicEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {
 	auto& cBuffer = pImpl->m_CBInstDrawing;
-	cBuffer.data.world = XMMatrixTranspose(W);
-	cBuffer.data.worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
+	pImpl->m_World = W;
 	pImpl->m_IsDirty = cBuffer.isDirty = true;
 }
 

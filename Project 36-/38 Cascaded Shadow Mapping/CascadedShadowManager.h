@@ -7,8 +7,8 @@
 //***************************************************************************************
 #pragma once
 
-#ifndef CASCADEDSHADOWMANAGER_H
-#define CASCADEDSHADOWMANAGER_H
+#ifndef CASCADED_SHADOW_MANAGER_H
+#define CASCADED_SHADOW_MANAGER_H
 
 #include "WinMin.h"
 #include <d3d11_1.h>

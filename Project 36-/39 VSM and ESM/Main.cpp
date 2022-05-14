@@ -12,7 +12,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE prevInstance,
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-	GameApp theApp(hInstance, L"Variance Shadow Mapping", 1280, 720);
+	GameApp theApp(hInstance, L"VSM and ESM", 1280, 720);
 	
 	if( !theApp.Init() )
 		return 0;

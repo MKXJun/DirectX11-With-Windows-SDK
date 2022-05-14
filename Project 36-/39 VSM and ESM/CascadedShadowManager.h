@@ -106,7 +106,7 @@ public:
     // 级联相关的配置
     //
     ShadowType  m_ShadowType    = ShadowType::ShadowType_VSM;
-    int         m_ShadowSize    = 2048;
+    int         m_ShadowSize    = 1024;
     int         m_CascadeLevels = 4;
     int         m_MsaaSamples   = 1;                    // 仅VSM有效
     

@@ -91,7 +91,7 @@ public:
     // 级联相关的配置
     //
 
-    int         m_ShadowSize    = 2048;
+    int         m_ShadowSize    = 1024;
     int         m_CascadeLevels = 4;
 
     float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比

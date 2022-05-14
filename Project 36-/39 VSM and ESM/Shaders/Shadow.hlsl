@@ -3,10 +3,13 @@
 
 #include "FullScreenTriangle.hlsl"
 
-cbuffer CB : register(b0)
-{
-    matrix g_WorldViewProj;
-}
+#ifndef MSAA_SAMPLES
+#define MSAA_SAMPLES 1
+#endif
+
+#ifndef BLUR_KERNEL_SIZE
+#define BLUR_KERNEL_SIZE 3
+#endif
 
 struct VertexPosNormalTex
 {
@@ -15,50 +18,123 @@ struct VertexPosNormalTex
     float2 texCoord : TEXCOORD;
 };
 
-struct VertexPosHTex
+
+static const int BLUR_KERNEL_BEGIN = BLUR_KERNEL_SIZE / -2;
+static const int BLUR_KERNEL_END = BLUR_KERNEL_SIZE / 2 + 1;
+static const float FLOAT_BLUR_KERNEL_SIZE = (float) BLUR_KERNEL_SIZE;
+
+cbuffer CBTransform : register(b0)
 {
-    float4 posH : SV_POSITION;
-    float2 texCoord : TEXCOORD;
-};
-
-VertexPosHTex ShadowVS(VertexPosNormalTex vIn)
-{
-    VertexPosHTex vOut;
-
-    vOut.posH = mul(float4(vIn.posL, 1.0f), g_WorldViewProj);
-    vOut.texCoord = vIn.texCoord;
-
-    return vOut;
+    matrix g_WorldViewProj;
 }
 
-Texture2D g_DiffuseMap : register(t0);
-SamplerState g_Sam : register(s0);
-
-
-float ShadowPS(VertexPosHTex pIn) : SV_Target
+cbuffer CBBlur : register(b1)
 {
-    return pIn.posH.z;
+    float4 g_BlurWeightsArray[4];
+    static float g_BlurWeights[16] = (float[16]) g_BlurWeightsArray;
 }
 
-float2 VarianceShadowPS(VertexPosHTex pIn) : SV_Target
+
+Texture2DMS<float, MSAA_SAMPLES> g_ShadowMap : register(t0);   // 用于VSM生成
+Texture2D g_TextureShadow : register(t1);                      // 用于模糊
+SamplerState g_SamplerPointClamp : register(s0);
+
+
+//
+// ShadowMap
+//
+
+void ShadowVS(VertexPosNormalTex vIn,
+              out float4 posH : SV_Position,
+              out float2 texCoord : TEXCOORD)
 {
-    float2 res;
-    res.x = pIn.posH.z;
-    res.y = res.x * res.x;
-    return res;
+    posH = mul(float4(vIn.posL, 1.0f), g_WorldViewProj);
+    texCoord = vIn.texCoord;
 }
 
-float ExponentialShadowPS(VertexPosHTex pIn, uniform float c) : SV_Target
+
+float ShadowPS(float4 posH : SV_Position,
+               float2 texCoord : TEXCOORD) : SV_Target
 {
-    return c * pIn.posH.z;
+    return posH.z;
 }
 
-float4 DebugPS(VertexPosHTex pIn) : SV_Target
+float2 VarianceShadowPS(float4 posH : SV_Position,
+                        float2 texCoord : TEXCOORD) : SV_Target
 {
-    float depth = g_DiffuseMap.Sample(g_Sam, pIn.texCoord).r;
+    float sampleWeight = 1.0f / float(MSAA_SAMPLES);
+    uint2 coords = uint2(posH.xy);
+    
+    float2 avg = float2(0.0f, 0.0f);
+    
+    [unroll]
+    for (int i = 0; i < MSAA_SAMPLES; ++i)
+    {
+        float depth = g_ShadowMap.Load(coords, i);
+        avg.x += depth * sampleWeight;
+        avg.y += depth * depth * sampleWeight;
+    }
+    return avg;
+}
+
+float ExponentialShadowPS(float4 posH : SV_Position,
+                          float2 texCoord : TEXCOORD, 
+                          uniform float c) : SV_Target
+{
+    uint2 coords = uint2(posH.xy);
+    return c * g_ShadowMap.Load(coords, 0);
+}
+
+float4 DebugPS(float4 posH : SV_Position,
+               float2 texCoord : TEXCOORD) : SV_Target
+{
+    float depth = g_TextureShadow.Sample(g_SamplerPointClamp, texCoord).r;
     return float4(depth.rrr, 1.0f);
 }
 
+float2 VSMVerticalBlurPS(float4 posH : SV_Position,
+                         float2 texcoord : TEXCOORD) : SV_Target
+{
+    float2 depths = 0.0f;
+    [unroll]
+    for (int x = BLUR_KERNEL_BEGIN; x < BLUR_KERNEL_END; ++x)
+    {
+        depths += g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(x, 0));
+    }
+    depths /= FLOAT_BLUR_KERNEL_SIZE;
+    return depths;
+}
 
+float2 VSMHorizontialBlurPS(float4 posH : SV_Position,
+                            float2 texcoord : TEXCOORD) : SV_Target
+{
+    float2 depths = 0.0f;
+    [unroll]
+    for (int y = BLUR_KERNEL_BEGIN; y < BLUR_KERNEL_END; ++y)
+    {
+        depths += g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(0, y));
+    }
+    depths /= FLOAT_BLUR_KERNEL_SIZE;
+    return depths;
+}
+
+float ESMLogGaussianBlurPS(float4 posH : SV_Position,
+                           float2 texcoord : TEXCOORD) : SV_Target
+{
+    float cd0 = g_TextureShadow.Sample(g_SamplerPointClamp, texcoord);
+    float sum = g_BlurWeights[FLOAT_BLUR_KERNEL_SIZE / 2] * g_BlurWeights[FLOAT_BLUR_KERNEL_SIZE / 2];
+    [unroll]
+    for (int i = BLUR_KERNEL_BEGIN; i < BLUR_KERNEL_END; ++i)
+    {
+        for (int j = BLUR_KERNEL_BEGIN; j < BLUR_KERNEL_END; ++j)
+        {
+            float cdk = g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(i, j)) * (float) (i != 0 || j != 0);
+            sum += g_BlurWeights[i - BLUR_KERNEL_BEGIN] * g_BlurWeights[j - BLUR_KERNEL_BEGIN] * exp(cdk - cd0);
+        }
+    }
+    sum = log(sum) + cd0;
+    sum = isinf(sum) ? 84.0f : sum;  // 防止溢出
+    return sum;
+}
 
 #endif

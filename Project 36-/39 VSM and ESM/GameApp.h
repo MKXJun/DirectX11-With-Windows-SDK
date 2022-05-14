@@ -49,14 +49,10 @@ private:
 	// MSAA
 	int m_MsaaSamples = 1;
 	
-	uint64_t m_FrameCounter = 0;
+	int m_DebugShadowIndex = 1;
 
 	// 阴影
-	int m_ShadowType = 1;
-	int m_ShadowComponent = 2;
 	CascadedShadowManager m_CSManager;
-	int m_CascadeLevels = 4;
-	int m_ShadowSize = 1024;
 	bool m_DebugShadow = false;
 
 	// 各种资源
@@ -75,7 +71,6 @@ private:
 	std::unique_ptr<ForwardEffect> m_pForwardEffect;				// 前向渲染特效
 	std::unique_ptr<ShadowEffect> m_pShadowEffect;					// 阴影特效
 	std::unique_ptr<SkyboxToneMapEffect> m_pSkyboxEffect;			// 天空盒特效
-	std::unique_ptr<FullScreenEffect> m_pFullScreenEffect;			// 全屏特效
 	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;				// 天空盒纹理
 
 	// 摄像机

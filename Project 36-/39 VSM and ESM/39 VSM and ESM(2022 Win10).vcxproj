@@ -186,7 +186,6 @@
     <ClCompile Include="..\..\Common\WICTextureLoader.cpp" />
     <ClCompile Include="CascadedShadowManager.cpp" />
     <ClCompile Include="ForwardEffect.cpp" />
-    <ClCompile Include="FullScreenEffect.cpp" />
     <ClCompile Include="GameApp.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ShadowEffect.cpp" />
@@ -240,11 +239,6 @@
       <FileType>Document</FileType>
     </ClInclude>
     <ClInclude Include="Shaders\SkyboxToneMap.hlsl">
-      <FileType>Document</FileType>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Shaders\FullScreenShaders.hlsl">
       <FileType>Document</FileType>
     </ClInclude>
   </ItemGroup>

@@ -2,21 +2,16 @@
 
 using namespace DirectX;
 
-HRESULT CascadedShadowManager::InitResource(ID3D11Device* device, int cascadeLevels, int shadowSize)
+HRESULT CascadedShadowManager::InitResource(ID3D11Device* device)
 {
-    if (cascadeLevels == m_CascadeLevels && shadowSize == m_ShadowSize)
-        return S_OK;
 
-    m_CascadeLevels = cascadeLevels;
-    m_ShadowSize = shadowSize;
-    
-    m_pCSMTextureArray = std::make_unique<Depth2D>(device, shadowSize, shadowSize,
-        D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, (UINT)cascadeLevels);
+    m_pCSMTextureArray = std::make_unique<Depth2D>(device, m_ShadowSize, m_ShadowSize,
+        D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, (UINT)m_CascadeLevels);
 
     m_ShadowViewport.TopLeftX = 0;
     m_ShadowViewport.TopLeftY = 0;
-    m_ShadowViewport.Width = (float)shadowSize;
-    m_ShadowViewport.Height = (float)shadowSize;
+    m_ShadowViewport.Width = (float)m_ShadowSize;
+    m_ShadowViewport.Height = (float)m_ShadowSize;
     m_ShadowViewport.MinDepth = 0.0f;
     m_ShadowViewport.MaxDepth = 1.0f;
 

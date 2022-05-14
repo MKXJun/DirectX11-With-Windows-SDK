@@ -49,6 +49,37 @@ static const float4 s_CascadeColorsMultiplier[8] =
     float4(0.5f, 3.5f, 0.75f, 1.0f)
 };
 
+
+
+
+float Linstep(float a, float b, float v)
+{
+    return saturate((v - a) / (b - a));
+}
+
+// 令[0, amount]的部分归零并将(amount, 1]重新映射到(0, 1]
+float ReduceLightBleeding(float pMax, float amount)
+{
+    return Linstep(amount, 1.0f, pMax);
+}
+
+float ChebyshevUpperBound(float2 moments,
+                          float receiverDepth,
+                          float minVariance,
+                          float lightBleedingReduction)
+{
+    float variance = moments.y - (moments.x * moments.x);
+    variance = max(variance, minVariance); // 防止0除
+    
+    float d = receiverDepth - moments.x;
+    float p_max = variance / (variance + d * d);
+    
+    p_max = ReduceLightBleeding(p_max, lightBleedingReduction);
+    
+    // 单边切比雪夫
+    return (receiverDepth <= moments.x ? 1.0f : p_max);
+}
+
 //--------------------------------------------------------------------------------------
 // 使用PCF采样深度图并返回着色百分比
 //--------------------------------------------------------------------------------------
@@ -91,38 +122,20 @@ float CalculateVarianceShadow(float4 shadowTexCoord,
 {
     float percentLit = 0.0f;
     
-    float2 mapDepth = 0.0f;
+    float2 moments = 0.0f;
     
     // 为了将求导从动态流控制中拉出来，我们计算观察空间坐标的偏导
     // 从而得到投影纹理空间坐标的偏导
-    float3 shadowTexCoordDDX = ddx(shadowTexCoordViewSpace);
-    float3 shadowTexCoordDDY = ddy(shadowTexCoordViewSpace);
+    float3 shadowTexCoordDDX = ddx(shadowTexCoordViewSpace).xyz;
+    float3 shadowTexCoordDDY = ddy(shadowTexCoordViewSpace).xyz;
     shadowTexCoordDDX *= g_CascadeScale[currentCascadeIndex].xyz;
     shadowTexCoordDDY *= g_CascadeScale[currentCascadeIndex].xyz;
     
-    mapDepth += g_TextureShadow.SampleGrad(g_SamplerShadow, 
+    moments += g_TextureShadow.SampleGrad(g_SamplerShadow,
                    float3(shadowTexCoord.xy, (float) currentCascadeIndex),
-                   shadowTexCoordDDX.xy, shadowTexCoordDDY.xy);
+                   shadowTexCoordDDX.xy, shadowTexCoordDDY.xy).xy;
     
-    float avgZ = mapDepth.x;  // 各项异性过滤后的Z值
-    float avgZ2 = mapDepth.y; // 各项异性过滤后的Z的平方
-    
-    if (shadowTexCoord.z <= avgZ)
-    {
-        percentLit = 1.0f;
-    }
-    else
-    {
-        float variance = avgZ2 - (avgZ * avgZ);
-        variance = clamp(variance + 0.00001f, 0.0f, 1.0f);
-        
-        float mean = avgZ;
-        float d = shadowTexCoord.z - mean;
-        float p_max = variance / (variance + d * d);
-        
-        // 为了处理漏光问题，给p_max套上指数(你可以尝试0.1到100的值)
-        percentLit = pow(p_max, g_MagicPower);
-    }
+    percentLit = ChebyshevUpperBound(moments, shadowTexCoord.z, 0.00001f, g_LightBleedingReduction);
     
     return percentLit;
 }
@@ -138,21 +151,16 @@ float CalculateExponentialShadow(float4 shadowTexCoord,
     
     float occluder = 0.0f;
     
-    // 为了将求导从动态流控制中拉出来，我们计算观察空间坐标的偏导
-    // 从而得到投影纹理空间坐标的偏导
-    float3 shadowTexCoordDDX = ddx(shadowTexCoordViewSpace);
-    float3 shadowTexCoordDDY = ddy(shadowTexCoordViewSpace);
+    float3 shadowTexCoordDDX = ddx(shadowTexCoordViewSpace).xyz;
+    float3 shadowTexCoordDDY = ddy(shadowTexCoordViewSpace).xyz;
     shadowTexCoordDDX *= g_CascadeScale[currentCascadeIndex].xyz;
     shadowTexCoordDDY *= g_CascadeScale[currentCascadeIndex].xyz;
     
     occluder += g_TextureShadow.SampleGrad(g_SamplerShadow,
-                   float3(shadowTexCoord.xy, (float) currentCascadeIndex),
-                   shadowTexCoordDDX.xy, shadowTexCoordDDY.xy);
+                    float3(shadowTexCoord.xy, (float) currentCascadeIndex),
+                    shadowTexCoordDDX.xy, shadowTexCoordDDY.xy).x;
     
-    if (occluder - g_MagicPower * shadowTexCoord.z > 0.0f)
-        percentLit = 1.0f;
-    else
-        percentLit = saturate(exp(occluder - g_MagicPower * shadowTexCoord.z));
+    percentLit = saturate(exp(occluder - g_MagicPower * shadowTexCoord.z));
     
     return percentLit;
 }

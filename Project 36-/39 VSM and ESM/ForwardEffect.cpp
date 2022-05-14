@@ -283,6 +283,11 @@ void ForwardEffect::SetShadowTextureArray(ID3D11ShaderResourceView* shadow)
 	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", shadow);
 }
 
+void ForwardEffect::SetLightBleedingReduction(float value)
+{
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_LightBleedingReduction")->SetFloat(value);
+}
+
 void ForwardEffect::SetCascadeSampler(ID3D11SamplerState* sampler)
 {
 	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerShadow", sampler);

@@ -9,8 +9,7 @@ GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWi
 	: D3DApp(hInstance, windowName, initWidth, initHeight),
 	m_pForwardEffect(std::make_unique<ForwardEffect>()),
 	m_pSkyboxEffect(std::make_unique<SkyboxToneMapEffect>()),
-	m_pShadowEffect(std::make_unique<ShadowEffect>()),
-	m_pFullScreenEffect(std::make_unique<FullScreenEffect>())
+	m_pShadowEffect(std::make_unique<ShadowEffect>())
 {
 }
 
@@ -43,9 +42,6 @@ bool GameApp::Init()
 		return false;
 
 	if (!m_pSkyboxEffect->InitAll(m_pd3dDevice.Get()))
-		return false;
-
-	if (!m_pFullScreenEffect->InitAll(m_pd3dDevice.Get()))
 		return false;
 
 	if (!InitResource())
@@ -92,11 +88,10 @@ void GameApp::UpdateScene(float dt)
 			"VSM",
 			"ESM"
 		};
-		if (ImGui::Combo("Type", &m_ShadowType, shadow_modes, ARRAYSIZE(shadow_modes)))
+		if (ImGui::Combo("Shadow Type", reinterpret_cast<int*>(&m_CSManager.m_ShadowType), shadow_modes, ARRAYSIZE(shadow_modes)))
 		{
-			m_ShadowComponent = (m_ShadowType == 1 ? 2 : 1);
-			m_pForwardEffect->SetShadowType(m_ShadowType);
-			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowComponent, m_ShadowSize);
+			m_pForwardEffect->SetShadowType(static_cast<int>(m_CSManager.m_ShadowType));
+			m_CSManager.InitResource(m_pd3dDevice.Get());
 			need_gpu_timer_reset = true;
 		}
 
@@ -118,16 +113,11 @@ void GameApp::UpdateScene(float dt)
 			"4x MSAA",
 			"8x MSAA"
 		};
-		static int curr_msaa_item = 0;
-		if (ImGui::Combo("MSAA", &curr_msaa_item, msaa_modes, ARRAYSIZE(msaa_modes)))
+		static int curr_scene_msaa_item = 0;
+		if (ImGui::Combo("Scene MSAA", &curr_scene_msaa_item, msaa_modes, ARRAYSIZE(msaa_modes)))
 		{
-			switch (curr_msaa_item)
-			{
-			case 0: m_MsaaSamples = 1; break;
-			case 1: m_MsaaSamples = 2; break;
-			case 2: m_MsaaSamples = 4; break;
-			case 3: m_MsaaSamples = 8; break;
-			}
+			m_MsaaSamples = (1 << curr_scene_msaa_item);
+			
 			DXGI_SAMPLE_DESC sampleDesc;
 			sampleDesc.Count = m_MsaaSamples;
 			sampleDesc.Quality = 0;
@@ -141,54 +131,67 @@ void GameApp::UpdateScene(float dt)
 		
 		
 		static int texture_level = 10;
-		ImGui::Text("Texture Size: %d", m_ShadowSize);
-		if (ImGui::SliderInt("##0", &texture_level, 9, 13, ""))
+		ImGui::Text("Texture Size: %d", m_CSManager.m_ShadowSize);
+		if (ImGui::SliderInt("##1", &texture_level, 9, 13, ""))
 		{
-			m_ShadowSize = (1 << texture_level);
-			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowComponent, m_ShadowSize);
-			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
+			m_CSManager.m_ShadowSize = (1 << texture_level);
+			m_CSManager.InitResource(m_pd3dDevice.Get());
+			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), 
+				m_CSManager.m_ShadowSize, m_CSManager.m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
 			need_gpu_timer_reset = true;
 		}
 		
-
+		ImGui::Separator();
+		// =======================================================================================
+		
 		static int blur_size = 2;
 		ImGui::Text("Blur Size: %d", m_CSManager.m_BlurKernelSize);
-		if (ImGui::SliderInt("Blur Size", &blur_size, 0, 7, ""))
+		if (ImGui::SliderInt("##2", &blur_size, 0, 7, ""))
 		{
 			m_CSManager.m_BlurKernelSize = 2 * blur_size + 1;
 			m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_BlurKernelSize);
 			need_gpu_timer_reset = true;
 		}
 		
-		if (m_ShadowType == 0)
+		if (m_CSManager.m_ShadowType == ShadowType::ShadowType_CSM && ImGui::SliderFloat("Depth Bias", &m_CSManager.m_PCFDepthBias, 0.0f, 0.05f))
 		{
-			if (ImGui::SliderFloat("Depth Bias", &m_CSManager.m_PCFDepthBias, 0.0f, 0.05f))
-			{
-				m_pForwardEffect->SetPCFDepthBias(m_CSManager.m_PCFDepthBias);
-			}
+			m_pForwardEffect->SetPCFDepthBias(m_CSManager.m_PCFDepthBias);
 		}
-		else
-		{
-			if (m_ShadowType == 2)
-			{
-				ImGui::SliderFloat("Blur Sigma", &m_CSManager.m_GaussianBlurSigma, 0.1f, 10.0f, "%.1f");
-			}
 
-			if (ImGui::SliderFloat("Magic Power", &m_CSManager.m_MagicPower, 0.1f, 200.0f, "%.1f"))
+		if (m_CSManager.m_ShadowType == ShadowType::ShadowType_VSM)
+		{
+			static int curr_shadow_msaa_item = 0;
+			if (ImGui::Combo("Shadow MSAA", &curr_shadow_msaa_item, msaa_modes, ARRAYSIZE(msaa_modes)))
 			{
-				m_pForwardEffect->SetMagicPower(m_CSManager.m_MagicPower);
+				m_CSManager.m_MsaaSamples = (1 << curr_shadow_msaa_item);
+				m_CSManager.InitResource(m_pd3dDevice.Get());
 				need_gpu_timer_reset = true;
 			}
 
-			static const char* sampler_strs[] = {
+			if (ImGui::SliderFloat("Light Bleeding", &m_CSManager.m_LightBleedingReduction, 0.0f, 1.0f, "%.2f"))
+			{
+				m_pForwardEffect->SetLightBleedingReduction(m_CSManager.m_LightBleedingReduction);
+			}
+
+			if (ImGui::Checkbox("Enable Mipmap", &m_CSManager.m_GenerateMips))
+			{
+				m_CSManager.InitResource(m_pd3dDevice.Get());
+				need_gpu_timer_reset = true;
+			}
+		}
+
+
+		static const char* sampler_strs[] = {
 				"Point",
 				"Linear",
 				"2x Anisotropic",
 				"4x Anisotropic",
 				"8x Anisotropic",
 				"16x Anisotropic"
-			};
-			static int sampler_idx = 5;
+		};
+		static int sampler_idx = 5;
+		if (m_CSManager.m_ShadowType == ShadowType::ShadowType_VSM)
+		{
 			if (ImGui::Combo("Sampler", &sampler_idx, sampler_strs, ARRAYSIZE(sampler_strs)))
 			{
 				switch (sampler_idx)
@@ -204,6 +207,20 @@ void GameApp::UpdateScene(float dt)
 			}
 		}
 
+
+		if (m_CSManager.m_ShadowType == ShadowType::ShadowType_ESM)
+		{
+			ImGui::SliderFloat("Blur Sigma", &m_CSManager.m_GaussianBlurSigma, 0.1f, 10.0f, "%.1f");
+			if (ImGui::SliderFloat("Magic Power", &m_CSManager.m_MagicPower, 0.1f, 400.0f, "%.1f"))
+			{
+				m_pForwardEffect->SetMagicPower(m_CSManager.m_MagicPower);
+			}
+		}
+
+
+		ImGui::Separator();
+		// =======================================================================================
+
 		if (ImGui::Checkbox("Cascade Blur", &m_CSManager.m_BlendBetweenCascades))
 		{
 			m_pForwardEffect->SetCascadeBlendEnabled(m_CSManager.m_BlendBetweenCascades);
@@ -211,7 +228,7 @@ void GameApp::UpdateScene(float dt)
 		}
 
 
-		if (ImGui::SliderFloat("##2", &m_CSManager.m_BlendBetweenCascadesRange, 0.0f, 0.5f))
+		if (ImGui::SliderFloat("##3", &m_CSManager.m_BlendBetweenCascadesRange, 0.0f, 0.5f))
 		{
 			m_pForwardEffect->SetCascadeBlendArea(m_CSManager.m_BlendBetweenCascadesRange);
 		}
@@ -228,7 +245,7 @@ void GameApp::UpdateScene(float dt)
 			"Fit Projection To Cascade",
 			"Fit Projection To Scene"
 		};
-		if (ImGui::Combo("##3", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadesFit), fit_projection_strs, ARRAYSIZE(fit_projection_strs)))
+		if (ImGui::Combo("##4", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadesFit), fit_projection_strs, ARRAYSIZE(fit_projection_strs)))
 			need_gpu_timer_reset = true;
 
 		static const char* camera_strs[] = {
@@ -244,9 +261,9 @@ void GameApp::UpdateScene(float dt)
 			"Cascade Camera 8"
 		};
 		static int camera_idx = 0;
-		if (camera_idx > m_CascadeLevels + 2)
-			camera_idx = m_CascadeLevels + 2;
-		if (ImGui::Combo("##4", &camera_idx, camera_strs, m_CascadeLevels + 2))
+		if (camera_idx > m_CSManager.m_CascadeLevels + 2)
+			camera_idx = m_CSManager.m_CascadeLevels + 2;
+		if (ImGui::Combo("##5", &camera_idx, camera_strs, m_CSManager.m_CascadeLevels + 2))
 		{
 			m_CSManager.m_SelectedCamera = static_cast<CameraSelection>(camera_idx);
 			if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
@@ -268,14 +285,14 @@ void GameApp::UpdateScene(float dt)
 			"Scene AABB Intersection NearFar"
 		};
 		
-		if (ImGui::Combo("##5", reinterpret_cast<int*>(&m_CSManager.m_SelectedNearFarFit), fit_near_far_strs, ARRAYSIZE(fit_near_far_strs)))
+		if (ImGui::Combo("##6", reinterpret_cast<int*>(&m_CSManager.m_SelectedNearFarFit), fit_near_far_strs, ARRAYSIZE(fit_near_far_strs)))
 			need_gpu_timer_reset = true;
 
 		static const char* cascade_selection_strs[] = {
 			"Map-based Selection",
 			"Interval-based Selection",
 		};
-		if (ImGui::Combo("##6", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadeSelection), cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
+		if (ImGui::Combo("##7", reinterpret_cast<int*>(&m_CSManager.m_SelectedCascadeSelection), cascade_selection_strs, ARRAYSIZE(cascade_selection_strs)))
 		{
 			m_pForwardEffect->SetCascadeIntervalSelectionEnabled(static_cast<bool>(m_CSManager.m_SelectedCascadeSelection));
 			need_gpu_timer_reset = true;
@@ -291,17 +308,17 @@ void GameApp::UpdateScene(float dt)
 			"7 Levels",
 			"8 Levels"
 		};
-		static int cascade_level_idx = m_CascadeLevels - 1;
+		static int cascade_level_idx = m_CSManager.m_CascadeLevels - 1;
 		if (ImGui::Combo("Cascade", &cascade_level_idx, cascade_level_strs, ARRAYSIZE(cascade_level_strs)))
 		{
-			m_CascadeLevels = cascade_level_idx + 1;
-			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowComponent, m_ShadowSize);
-			m_pForwardEffect->SetCascadeLevels(m_CascadeLevels);
+			m_CSManager.m_CascadeLevels = cascade_level_idx + 1;
+			m_CSManager.InitResource(m_pd3dDevice.Get());
+			m_pForwardEffect->SetCascadeLevels(m_CSManager.m_CascadeLevels);
 			need_gpu_timer_reset = true;
 		}
 
 		char level_str[] = "Level1";
-		for (int i = 0; i < m_CascadeLevels; ++i)
+		for (int i = 0; i < m_CSManager.m_CascadeLevels; ++i)
 		{
 			level_str[5] = '1' + i;
 			ImGui::SliderFloat(level_str, m_CSManager.m_CascadePartitionsPercentage + i, 0.0f, 1.0f, "");
@@ -309,7 +326,7 @@ void GameApp::UpdateScene(float dt)
 			ImGui::Text("%.1f%%", m_CSManager.m_CascadePartitionsPercentage[i] * 100);
 			if (i && m_CSManager.m_CascadePartitionsPercentage[i] < m_CSManager.m_CascadePartitionsPercentage[i - 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i - 1];
-			if (i < m_CascadeLevels - 1 && m_CSManager.m_CascadePartitionsPercentage[i] > m_CSManager.m_CascadePartitionsPercentage[i + 1])
+			if (i < m_CSManager.m_CascadeLevels - 1 && m_CSManager.m_CascadePartitionsPercentage[i] > m_CSManager.m_CascadePartitionsPercentage[i + 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i + 1];
 			if (m_CSManager.m_CascadePartitionsPercentage[i] > 1.0f)
 				m_CSManager.m_CascadePartitionsPercentage[i] = 1.0f;
@@ -422,9 +439,9 @@ void GameApp::DrawScene()
 				"Level 8"
 			};
 			static int curr_level_idx = 0;
-			ImGui::Combo("##1", &curr_level_idx, cascade_level_strs, m_CascadeLevels);
-			if (curr_level_idx >= m_CascadeLevels)
-				curr_level_idx = m_CascadeLevels - 1;
+			ImGui::Combo("##1", &curr_level_idx, cascade_level_strs, m_CSManager.m_CascadeLevels);
+			if (curr_level_idx >= m_CSManager.m_CascadeLevels)
+				curr_level_idx = m_CSManager.m_CascadeLevels - 1;
 
 			D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
 			m_pShadowEffect->RenderDepthToTexture(m_pd3dImmediateContext.Get(),
@@ -482,14 +499,15 @@ bool GameApp::InitResource()
 	m_pForwardEffect->SetViewMatrix(viewerCamera->GetViewMatrixXM());
 	m_pForwardEffect->SetProjMatrix(viewerCamera->GetProjMatrixXM(true));
 
-	m_pForwardEffect->SetShadowType(m_ShadowType);
-	m_pForwardEffect->SetShadowSize(m_ShadowSize);
+	m_pForwardEffect->SetShadowType(static_cast<int>(m_CSManager.m_ShadowType));
+	m_pForwardEffect->SetShadowSize(m_CSManager.m_ShadowSize);
 	m_pForwardEffect->SetCascadeBlendEnabled(m_CSManager.m_BlendBetweenCascades);
 	m_pForwardEffect->SetCascadeBlendArea(m_CSManager.m_BlendBetweenCascadesRange);
-	m_pForwardEffect->SetCascadeLevels(m_CascadeLevels);
+	m_pForwardEffect->SetCascadeLevels(m_CSManager.m_CascadeLevels);
 	m_pForwardEffect->SetCascadeIntervalSelectionEnabled(static_cast<bool>(m_CSManager.m_SelectedCascadeSelection));
 	m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_BlurKernelSize);
 	m_pForwardEffect->SetPCFDepthBias(m_CSManager.m_PCFDepthBias);
+	m_pForwardEffect->SetLightBleedingReduction(m_CSManager.m_LightBleedingReduction);
 	m_pForwardEffect->SetMagicPower(m_CSManager.m_MagicPower);
 
 	m_pShadowEffect->SetViewMatrix(lightCamera->GetViewMatrixXM());
@@ -515,8 +533,8 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化阴影
 	//
-	m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowComponent, m_ShadowSize);
-	m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
+	m_CSManager.InitResource(m_pd3dDevice.Get());
+	m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_CSManager.m_ShadowSize, m_CSManager.m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
 	
 	// ******************
 	// 设置调试对象名
@@ -530,24 +548,28 @@ void GameApp::RenderShadowForAllCascades()
 {
 	m_GpuTimer_Shadow.Start();
 	{
-		switch (m_ShadowType)
-		{
-		case 0: m_pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get()); break;
-		case 1: m_pShadowEffect->SetRenderVarianceShadow(m_pd3dImmediateContext.Get()); break;
-		case 2: m_pShadowEffect->SetRenderExponentialShadow(m_pd3dImmediateContext.Get(), m_CSManager.m_MagicPower); break;
-		}
+		//
+		// 绘制深度图
+		//
+		
 		D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
 		m_pd3dImmediateContext->RSSetViewports(1, &vp);
-		float zeros[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
-		for (size_t cascadeIdx = 0; cascadeIdx < m_CascadeLevels; ++cascadeIdx)
+		float clearColor[4] = { 1.0f, 1.0f, 0.0f, 0.0f };
+		for (size_t cascadeIdx = 0; cascadeIdx < m_CSManager.m_CascadeLevels; ++cascadeIdx)
 		{
-			/*if (m_FrameCounter % m_CSManager.m_CascadeUpdateIntervals[cascadeIdx] != 0)
-				continue;*/
+			switch (m_CSManager.m_ShadowType)
+			{
+			case ShadowType::ShadowType_CSM: m_pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get()); break;
+			case ShadowType::ShadowType_VSM:
+			case ShadowType::ShadowType_ESM: m_pShadowEffect->SetRenderDepthOnly(m_pd3dImmediateContext.Get()); break;
+			}
 
 			ID3D11DepthStencilView* depthDSV = m_CSManager.GetDepthBufferDSV();
 			ID3D11RenderTargetView* depthRTV = m_CSManager.GetCascadeRenderTargetView(cascadeIdx);
-			m_pd3dImmediateContext->ClearRenderTargetView(depthRTV, zeros);
+			m_pd3dImmediateContext->ClearRenderTargetView(depthRTV, clearColor);
 			m_pd3dImmediateContext->ClearDepthStencilView(depthDSV, D3D11_CLEAR_DEPTH, 1.0f, 0);
+			if (m_CSManager.m_ShadowType != ShadowType::ShadowType_CSM)
+				depthRTV = nullptr;
 			m_pd3dImmediateContext->OMSetRenderTargets(1, &depthRTV, depthDSV);
 
 			XMMATRIX shadowProj = m_CSManager.GetShadowProjectionXM(cascadeIdx);
@@ -562,50 +584,62 @@ void GameApp::RenderShadowForAllCascades()
 			
 			m_Cube.CubeCulling(obb);
 			m_Cube.Draw(m_pd3dImmediateContext.Get(), m_pShadowEffect.get());
-		}
 
-		if (m_ShadowType > 0 && m_CSManager.m_BlurKernelSize > 1)
-		{
-			
-			ID3D11RenderTargetView* pRTV = m_CSManager.GetTempTextureRTV();
-			for (size_t cascadeIdx = 0; cascadeIdx < m_CascadeLevels; ++cascadeIdx)
+			m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+
+			if (m_CSManager.m_ShadowType == ShadowType::ShadowType_VSM)
 			{
-				/*if (m_FrameCounter % m_CSManager.m_CascadeUpdateIntervals[cascadeIdx] != 0)
-					continue;*/
-				if (m_ShadowType == 1)
+				m_pShadowEffect->RenderVarianceShadow(m_pd3dImmediateContext.Get(),
+					m_CSManager.GetDepthBufferSRV(),
+					m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
+					m_CSManager.GetShadowViewport());
+				if (m_CSManager.m_BlurKernelSize > 1)
 				{
-					m_pFullScreenEffect->BlurX(m_pd3dImmediateContext.Get(),
+					m_pShadowEffect->VarianceShadowHorizontialBlur(m_pd3dImmediateContext.Get(),
 						m_CSManager.GetCascadeOutput(cascadeIdx),
 						m_CSManager.GetTempTextureRTV(),
 						m_CSManager.GetShadowViewport(),
 						m_CSManager.m_BlurKernelSize);
-					m_pFullScreenEffect->BlurY(m_pd3dImmediateContext.Get(),
+					m_pShadowEffect->VarianceShadowVerticalBlur(m_pd3dImmediateContext.Get(),
 						m_CSManager.GetTempTextureOutput(),
 						m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
 						m_CSManager.GetShadowViewport(),
 						m_CSManager.m_BlurKernelSize);
 				}
-				else
+			}
+			else if (m_CSManager.m_ShadowType == ShadowType::ShadowType_ESM)
+			{
+				if (m_CSManager.m_BlurKernelSize > 1)
 				{
-					m_pFullScreenEffect->LogGaussianBlur(m_pd3dImmediateContext.Get(),
-						m_CSManager.GetCascadeOutput(cascadeIdx),
+					m_pShadowEffect->RenderExponentialShadow(m_pd3dImmediateContext.Get(),
+						m_CSManager.GetDepthBufferSRV(),
 						m_CSManager.GetTempTextureRTV(),
+						m_CSManager.GetShadowViewport(),
+						m_CSManager.m_MagicPower);
+					m_pShadowEffect->ExponentialShadowLogGaussianBlur(m_pd3dImmediateContext.Get(),
+						m_CSManager.GetTempTextureOutput(),
+						m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
 						m_CSManager.GetShadowViewport(),
 						m_CSManager.m_BlurKernelSize,
 						m_CSManager.m_GaussianBlurSigma);
-					ComPtr<ID3D11Resource> pDest, pSrc;
-					m_CSManager.GetCascadesOutput()->GetResource(pDest.GetAddressOf());
-					m_CSManager.GetTempTextureRTV()->GetResource(pSrc.GetAddressOf());
-					m_pd3dImmediateContext->CopySubresourceRegion(pDest.Get(), (UINT)cascadeIdx,
-						0, 0, 0, pSrc.Get(), 0, nullptr);
+				}
+				else
+				{
+					m_pShadowEffect->RenderExponentialShadow(m_pd3dImmediateContext.Get(),
+						m_CSManager.GetDepthBufferSRV(),
+						m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
+						m_CSManager.GetShadowViewport(),
+						m_CSManager.m_MagicPower);
 				}
 			}
 		}
-	
-		m_FrameCounter++;
 	}
 
-	
+	if (m_CSManager.m_ShadowType == ShadowType::ShadowType_VSM && m_CSManager.m_GenerateMips)
+	{
+		m_pd3dImmediateContext->GenerateMips(m_CSManager.GetCascadesOutput());
+	}
+
 	m_GpuTimer_Shadow.Stop();
 }
 
@@ -661,7 +695,7 @@ void GameApp::RenderForward()
 			0.5f, 0.5f, 0.0f, 1.0f);
 		XMFLOAT4 scales[8]{};
 		XMFLOAT4 offsets[8]{};
-		for (size_t cascadeIndex = 0; cascadeIndex < m_CascadeLevels; ++cascadeIndex)
+		for (size_t cascadeIndex = 0; cascadeIndex < m_CSManager.m_CascadeLevels; ++cascadeIndex)
 		{
 			XMMATRIX ShadowTexture = m_CSManager.GetShadowProjectionXM(cascadeIndex) * T;
 			scales[cascadeIndex].x = XMVectorGetX(ShadowTexture.r[0]);

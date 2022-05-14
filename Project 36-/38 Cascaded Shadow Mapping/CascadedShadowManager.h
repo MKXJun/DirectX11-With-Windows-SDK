@@ -66,9 +66,7 @@ public:
     CascadedShadowManager(CascadedShadowManager&&) = default;
     CascadedShadowManager& operator=(CascadedShadowManager&&) = default;
 
-    HRESULT InitResource(ID3D11Device* device, 
-        int cascadeLevels, 
-        int shadowSize);
+    HRESULT InitResource(ID3D11Device* device);
 
     void UpdateFrame(const Camera& viewerCamera,
         const Camera& lightCamera,
@@ -93,11 +91,14 @@ public:
     // 级联相关的配置
     //
 
+    int         m_ShadowSize    = 2048;
+    int         m_CascadeLevels = 4;
+
     float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
-        0.05f, 0.15f, 0.3f, 0.5f, 0.7f, 1.0f, 1.0f, 1.0f
+        0.04f, 0.10f, 0.25f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
     };    
     int		    m_PCFKernelSize = 5;                    // PCF核大小(奇数)
-    float       m_PCFDepthOffset = 0.002f;              // PCF深度偏移值
+    float       m_PCFDepthOffset = 0.001f;              // PCF深度偏移值
     bool        m_DerivativeBasedOffset = false;        // 是否进行基于偏导的偏移
     bool        m_BlendBetweenCascades = true;          // 是否在两个级联间混合
     float       m_BlendBetweenCascadesRange = 0.2f;     // 级联混合地带的范围
@@ -117,9 +118,6 @@ private:
         DirectX::XMVECTOR pointsInCameraView[]);
 
 private:
-    int         m_CascadeLevels = 0;                    // 级联数
-    int         m_ShadowSize = 0;                       // 阴影大小
-
     float	                        m_CascadePartitionsFrustum[8]{};    // 级联远平面Z值
     DirectX::XMFLOAT4X4             m_ShadowProj[8]{};                  // 阴影正交矩阵
     DirectX::BoundingBox            m_ShadowProjBoundingBox[8]{};       // 正交矩阵对应的默认AABB

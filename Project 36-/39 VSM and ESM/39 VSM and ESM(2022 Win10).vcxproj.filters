@@ -90,9 +90,6 @@
     <ClCompile Include="CascadedShadowManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FullScreenEffect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\Texture2D.h">
@@ -195,9 +192,6 @@
       <Filter>着色器</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\SkyboxToneMap.hlsl">
-      <Filter>着色器</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\FullScreenShaders.hlsl">
       <Filter>着色器</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\CascadedShadow.hlsl">

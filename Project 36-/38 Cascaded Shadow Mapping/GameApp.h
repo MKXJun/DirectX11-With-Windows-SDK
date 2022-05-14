@@ -51,8 +51,6 @@ private:
 
 	// 阴影
 	CascadedShadowManager m_CSManager;
-	int m_CascadeLevels = 5;
-	int m_ShadowSize = 1024;
 	bool m_DebugShadow = false;
 
 	// 各种资源

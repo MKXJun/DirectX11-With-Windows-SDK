@@ -117,9 +117,9 @@ bool DeferredEffect::InitAll(ID3D11Device * device)
 			"RequiresPerSampleShading_" + msaaSamplesStr + "xMSAA_PS",
 			"BasicDeferred_" + msaaSamplesStr + "xMSAA_PS",
 			"BasicDeferredPerSample_" + msaaSamplesStr + "xMSAA_PS",
-			"DebugNormal" + msaaSamplesStr + "xMSAA_PS",
-			"DebugPosZGrad" + msaaSamplesStr + "xMSAA_PS",
-			"ComputeShaderTileDeferred" + msaaSamplesStr + "xMSAA_CS"
+			"DebugNormal_" + msaaSamplesStr + "xMSAA_PS",
+			"DebugPosZGrad_" + msaaSamplesStr + "xMSAA_PS",
+			"ComputeShaderTileDeferred_" + msaaSamplesStr + "xMSAA_CS"
 		};
 
 		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(shaderNames[0], L"Shaders\\GBuffer.hlsl",

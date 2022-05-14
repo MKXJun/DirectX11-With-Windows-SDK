@@ -122,12 +122,12 @@ void GameApp::UpdateScene(float dt)
 		
 		
 		static int texture_level = 10;
-		ImGui::Text("Texture Size: %d", m_ShadowSize);
+		ImGui::Text("Texture Size: %d", m_CSManager.m_ShadowSize);
 		if (ImGui::SliderInt("##0", &texture_level, 9, 13, ""))
 		{
-			m_ShadowSize = (1 << texture_level);
-			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
-			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
+			m_CSManager.m_ShadowSize = (1 << texture_level);
+			m_CSManager.InitResource(m_pd3dDevice.Get());
+			m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_CSManager.m_ShadowSize, m_CSManager.m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
 			need_gpu_timer_reset = true;
 		}
 
@@ -188,9 +188,9 @@ void GameApp::UpdateScene(float dt)
 			"Cascade Camera 8"
 		};
 		static int camera_idx = 0;
-		if (camera_idx > m_CascadeLevels + 2)
-			camera_idx = m_CascadeLevels + 2;
-		if (ImGui::Combo("##5", &camera_idx, camera_strs, m_CascadeLevels + 2))
+		if (camera_idx > m_CSManager.m_CascadeLevels + 2)
+			camera_idx = m_CSManager.m_CascadeLevels + 2;
+		if (ImGui::Combo("##5", &camera_idx, camera_strs, m_CSManager.m_CascadeLevels + 2))
 		{
 			m_CSManager.m_SelectedCamera = static_cast<CameraSelection>(camera_idx);
 			if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
@@ -235,17 +235,17 @@ void GameApp::UpdateScene(float dt)
 			"7 Levels",
 			"8 Levels"
 		};
-		static int cascade_level_idx = m_CascadeLevels - 1;
+		static int cascade_level_idx = m_CSManager.m_CascadeLevels - 1;
 		if (ImGui::Combo("Cascade", &cascade_level_idx, cascade_levels, ARRAYSIZE(cascade_levels)))
 		{
-			m_CascadeLevels = cascade_level_idx + 1;
-			m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
-			m_pForwardEffect->SetCascadeLevels(m_CascadeLevels);
+			m_CSManager.m_CascadeLevels = cascade_level_idx + 1;
+			m_CSManager.InitResource(m_pd3dDevice.Get());
+			m_pForwardEffect->SetCascadeLevels(m_CSManager.m_CascadeLevels);
 			need_gpu_timer_reset = true;
 		}
 
 		char level_str[] = "Level1";
-		for (int i = 0; i < m_CascadeLevels; ++i)
+		for (int i = 0; i < m_CSManager.m_CascadeLevels; ++i)
 		{
 			level_str[5] = '1' + i;
 			ImGui::SliderFloat(level_str, m_CSManager.m_CascadePartitionsPercentage + i, 0.0f, 1.0f, "");
@@ -253,7 +253,7 @@ void GameApp::UpdateScene(float dt)
 			ImGui::Text("%.1f%%", m_CSManager.m_CascadePartitionsPercentage[i] * 100);
 			if (i && m_CSManager.m_CascadePartitionsPercentage[i] < m_CSManager.m_CascadePartitionsPercentage[i - 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i - 1];
-			if (i < m_CascadeLevels - 1 && m_CSManager.m_CascadePartitionsPercentage[i] > m_CSManager.m_CascadePartitionsPercentage[i + 1])
+			if (i < m_CSManager.m_CascadeLevels - 1 && m_CSManager.m_CascadePartitionsPercentage[i] > m_CSManager.m_CascadePartitionsPercentage[i + 1])
 				m_CSManager.m_CascadePartitionsPercentage[i] = m_CSManager.m_CascadePartitionsPercentage[i + 1];
 			if (m_CSManager.m_CascadePartitionsPercentage[i] > 1.0f)
 				m_CSManager.m_CascadePartitionsPercentage[i] = 1.0f;
@@ -366,9 +366,9 @@ void GameApp::DrawScene()
 				"Level 8"
 			};
 			static int curr_level_idx = 0;
-			ImGui::Combo("##1", &curr_level_idx, cascade_level_strs, m_CascadeLevels);
-			if (curr_level_idx >= m_CascadeLevels)
-				curr_level_idx = m_CascadeLevels - 1;
+			ImGui::Combo("##1", &curr_level_idx, cascade_level_strs, m_CSManager.m_CascadeLevels);
+			if (curr_level_idx >= m_CSManager.m_CascadeLevels)
+				curr_level_idx = m_CSManager.m_CascadeLevels - 1;
 
 			D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
 			m_pShadowEffect->RenderDepthToTexture(m_pd3dImmediateContext.Get(),
@@ -427,10 +427,10 @@ bool GameApp::InitResource()
 	m_pForwardEffect->SetProjMatrix(viewerCamera->GetProjMatrixXM(true));
 	m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_PCFKernelSize);
 	m_pForwardEffect->SetPCFDepthOffset(m_CSManager.m_PCFDepthOffset);
-	m_pForwardEffect->SetShadowSize(m_ShadowSize);
+	m_pForwardEffect->SetShadowSize(m_CSManager.m_ShadowSize);
 	m_pForwardEffect->SetCascadeBlendEnabled(m_CSManager.m_BlendBetweenCascades);
 	m_pForwardEffect->SetCascadeBlendArea(m_CSManager.m_BlendBetweenCascadesRange);
-	m_pForwardEffect->SetCascadeLevels(m_CascadeLevels);
+	m_pForwardEffect->SetCascadeLevels(m_CSManager.m_CascadeLevels);
 	m_pForwardEffect->SetCascadeIntervalSelectionEnabled(static_cast<bool>(m_CSManager.m_SelectedCascadeSelection));
 	
 	m_pForwardEffect->SetPCFDerivativesOffsetEnabled(m_CSManager.m_DerivativeBasedOffset);
@@ -456,8 +456,8 @@ bool GameApp::InitResource()
 	// ******************
 	// 初始化阴影
 	//
-	m_CSManager.InitResource(m_pd3dDevice.Get(), m_CascadeLevels, m_ShadowSize);
-	m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ShadowSize, m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
+	m_CSManager.InitResource(m_pd3dDevice.Get());
+	m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_CSManager.m_ShadowSize, m_CSManager.m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
 	
 	// ******************
 	// 设置调试对象名
@@ -475,7 +475,7 @@ void GameApp::RenderShadowForAllCascades()
 		D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
 		m_pd3dImmediateContext->RSSetViewports(1, &vp);
 
-		for (size_t cascadeIdx = 0; cascadeIdx < m_CascadeLevels; ++cascadeIdx)
+		for (size_t cascadeIdx = 0; cascadeIdx < m_CSManager.m_CascadeLevels; ++cascadeIdx)
 		{
 			ID3D11RenderTargetView* nullRTV = nullptr;
 			ID3D11DepthStencilView* depthDSV = m_CSManager.GetCascadeDepthStencilView(cascadeIdx);
@@ -545,7 +545,7 @@ void GameApp::RenderForward()
 			0.5f, 0.5f, 0.0f, 1.0f);
 		XMFLOAT4 scales[8]{};
 		XMFLOAT4 offsets[8]{};
-		for (size_t cascadeIndex = 0; cascadeIndex < m_CascadeLevels; ++cascadeIndex)
+		for (size_t cascadeIndex = 0; cascadeIndex < m_CSManager.m_CascadeLevels; ++cascadeIndex)
 		{
 			XMMATRIX ShadowTexture = m_CSManager.GetShadowProjectionXM(cascadeIndex) * T;
 			scales[cascadeIndex].x = XMVectorGetX(ShadowTexture.r[0]);

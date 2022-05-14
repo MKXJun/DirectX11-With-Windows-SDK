@@ -27,7 +27,7 @@ public:
 	std::shared_ptr<IEffectPass> m_pCurrEffectPass;
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
-	XMFLOAT4X4 m_World, m_View, m_Proj;
+	XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
 };
 
 //
@@ -98,12 +98,15 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	// 创建像素着色器
 	//
 
+	const char* msaa_strs[] = { "1", "2", "4", "8" };
+	D3D_SHADER_MACRO defines[] = {
+		"MSAA_SAMPLES", "1",
+		nullptr, nullptr
+	};
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ShadowPS", L"Shaders\\Shadow.hlsl",
 		device, "ShadowPS", "ps_5_0"));
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("DebugPS", L"Shaders\\Shadow.hlsl",
 		device, "DebugPS", "ps_5_0"));
-	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("VarianceShadowPS", L"Shaders\\Shadow.hlsl",
-		device, "VarianceShadowPS", "ps_5_0"));
 	HR(pImpl->m_pEffectHelper->CreateShaderFromFile("ExponentialShadowPS", L"Shaders\\Shadow.hlsl",
 		device, "ExponentialShadowPS", "ps_5_0"));
 
@@ -112,28 +115,80 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	//
 	EffectPassDesc passDesc;
 	passDesc.nameVS = "ShadowVS";
+	HR(pImpl->m_pEffectHelper->AddEffectPass("DepthOnly", device, &passDesc));
+	auto pPass = pImpl->m_pEffectHelper->GetEffectPass("DepthOnly");
+	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
+
 	passDesc.namePS = "ShadowPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("Shadow", device, &passDesc));
-	auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Shadow");
+	pPass = pImpl->m_pEffectHelper->GetEffectPass("Shadow");
 	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
 
-	passDesc.nameVS = "ShadowVS";
-	passDesc.namePS = "VarianceShadowPS";
-	HR(pImpl->m_pEffectHelper->AddEffectPass("VarianceShadow", device, &passDesc));
-	pPass = pImpl->m_pEffectHelper->GetEffectPass("VarianceShadow");
-	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
+	std::string psName = "VarianceShadowPS_1xMSAA";
+	std::string passName = "VarianceShadow_1xMSAA";
+	for (const char * str : msaa_strs)
+	{
+		defines[0].Definition = str;
+		passName[15] = *str;
+		psName[17] = *str;
 
-	passDesc.nameVS = "ShadowVS";
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders\\Shadow.hlsl",
+			device, "VarianceShadowPS", "ps_5_0", defines));
+
+		passDesc.nameVS = "FullScreenTriangleTexcoordVS";
+		passDesc.namePS = psName;
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
+	}
+
+	passDesc.nameVS = "FullScreenTriangleTexcoordVS";
 	passDesc.namePS = "ExponentialShadowPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("ExponentialShadow", device, &passDesc));
-	pPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
-	pPass->SetRasterizerState(RenderStates::RSShadow.Get());
 
 	passDesc.nameVS = "FullScreenTriangleTexcoordVS";
 	passDesc.namePS = "DebugPS";
 	HR(pImpl->m_pEffectHelper->AddEffectPass("Debug", device, &passDesc));
 
-	pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
+	const char* kernel_strs[] = {
+		"3", "5", "7", "9", "11", "13", "15"
+	};
+
+	passDesc.nameVS = "FullScreenTriangleTexcoordVS";
+	defines[0].Name = "BLUR_KERNEL_SIZE";
+	for (const char* str : kernel_strs)
+	{
+		defines[0].Definition = str;
+
+		psName = "VSMVerticalBlurPS_";
+		psName += str;
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders\\Shadow.hlsl",
+			device, "VSMVerticalBlurPS", "ps_5_0", defines));
+		passDesc.namePS = psName;
+		passName = "VSMVerticalBlur_";
+		passName += str;
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
+
+
+		psName = "VSMHorizontialBlurPS_";
+		psName += str;
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders\\Shadow.hlsl",
+			device, "VSMHorizontialBlurPS", "ps_5_0", defines));
+		passDesc.namePS = psName;
+		passName = "VSMHorizontialBlur_";
+		passName += str;
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
+
+
+		psName = "ESMLogGaussianBlurPS_";
+		psName += str;
+		HR(pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders\\Shadow.hlsl",
+			device, "ESMLogGaussianBlurPS", "ps_5_0", defines));
+		passDesc.namePS = psName;
+		passName = "ESMLogGaussianBlur_";
+		passName += str;
+		HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
+	}
+	
+	pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerPointClamp", RenderStates::SSPointClamp.Get());
 
 	// 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
@@ -144,6 +199,13 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
 	return true;
 }
 
+void ShadowEffect::SetRenderDepthOnly(ID3D11DeviceContext* deviceContext)
+{
+	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("DepthOnly");
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
 void ShadowEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
 {
 	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
@@ -151,19 +213,55 @@ void ShadowEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void ShadowEffect::SetRenderVarianceShadow(ID3D11DeviceContext* deviceContext)
+void ShadowEffect::RenderVarianceShadow(ID3D11DeviceContext* deviceContext, 
+	ID3D11ShaderResourceView* input, 
+	ID3D11RenderTargetView* output, 
+	const D3D11_VIEWPORT& vp)
 {
-	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
-	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("VarianceShadow");
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTex;
+	D3D11_TEXTURE2D_DESC texDesc;
+	input->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.GetAddressOf()));
+	pTex->GetDesc(&texDesc);
+
+	std::string passName = "VarianceShadow_1xMSAA";
+	passName[15] = '0' + texDesc.SampleDesc.Count;
+
+	deviceContext->IASetInputLayout(nullptr);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", input);
+	pImpl->m_pCurrEffectPass->Apply(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &output, nullptr);
+	deviceContext->RSSetViewports(1, &vp);
+	deviceContext->Draw(3, 0);
+
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_ShadowMap");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
-void ShadowEffect::SetRenderExponentialShadow(ID3D11DeviceContext* deviceContext, float power)
+void ShadowEffect::RenderExponentialShadow(
+	ID3D11DeviceContext* deviceContext, 
+	ID3D11ShaderResourceView* input, 
+	ID3D11RenderTargetView* output, 
+	const D3D11_VIEWPORT& vp,
+	float magic_power)
 {
-	deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
-	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
-	pImpl->m_pCurrEffectPass->PSGetParamByName("c")->SetFloat(power);
+	deviceContext->IASetInputLayout(nullptr);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", input);
+	pImpl->m_pCurrEffectPass->PSGetParamByName("c")->SetFloat(magic_power);
+	pImpl->m_pCurrEffectPass->Apply(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &output, nullptr);
+	deviceContext->RSSetViewports(1, &vp);
+	deviceContext->Draw(3, 0);
+
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_ShadowMap");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
 void ShadowEffect::RenderDepthToTexture(
@@ -175,18 +273,107 @@ void ShadowEffect::RenderDepthToTexture(
 	deviceContext->IASetInputLayout(nullptr);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Debug");
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", input);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
 	pImpl->m_pCurrEffectPass->Apply(deviceContext);
 	deviceContext->OMSetRenderTargets(1, &output, nullptr);
 	deviceContext->RSSetViewports(1, &vp);
 	deviceContext->Draw(3, 0);
 
-	pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", nullptr);
-	pImpl->m_pCurrEffectPass->Apply(deviceContext);
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
 	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 
+void ShadowEffect::VarianceShadowHorizontialBlur(
+	ID3D11DeviceContext* deviceContext, 
+	ID3D11ShaderResourceView* input, 
+	ID3D11RenderTargetView* output, 
+	const D3D11_VIEWPORT& vp, 
+	int kernel_size)
+{
+	deviceContext->IASetInputLayout(nullptr);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	std::string passName = "VSMHorizontialBlur_" + std::to_string(kernel_size);
+	auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
+	pPass->Apply(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &output, nullptr);
+	deviceContext->RSSetViewports(1, &vp);
+	deviceContext->Draw(3, 0);
 
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
+
+void ShadowEffect::VarianceShadowVerticalBlur(
+	ID3D11DeviceContext* deviceContext, 
+	ID3D11ShaderResourceView* input, 
+	ID3D11RenderTargetView* output, 
+	const D3D11_VIEWPORT& vp, 
+	int kernel_size)
+{
+	deviceContext->IASetInputLayout(nullptr);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	std::string passName = "VSMVerticalBlur_" + std::to_string(kernel_size);
+	auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
+	pPass->Apply(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &output, nullptr);
+	deviceContext->RSSetViewports(1, &vp);
+	deviceContext->Draw(3, 0);
+
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
+
+void ShadowEffect::ExponentialShadowLogGaussianBlur(
+	ID3D11DeviceContext* deviceContext, 
+	ID3D11ShaderResourceView* input, 
+	ID3D11RenderTargetView* output, 
+	const D3D11_VIEWPORT& vp, 
+	int kernel_size, 
+	float sigma)
+{
+	float weights[16]{};
+	float twoSigmaSq = 2.0f * sigma * sigma;
+	int radius = kernel_size / 2;
+	float sum = 0.0f;
+	for (int i = -radius; i <= radius; ++i)
+	{
+		float x = (float)i;
+
+		weights[radius + i] = expf(-x * x / twoSigmaSq);
+
+		sum += weights[radius + i];
+	}
+
+	// 标准化权值使得权值和为1.0
+	for (int i = 0; i <= kernel_size; ++i)
+	{
+		weights[i] /= sum;
+	}
+
+	deviceContext->IASetInputLayout(nullptr);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	std::string passName = "ESMLogGaussianBlur_" + std::to_string(kernel_size);
+	auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
+	pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
+	pImpl->m_pEffectHelper->GetConstantBufferVariable("g_BlurWeightsArray")->SetRaw(weights);
+	pPass->Apply(deviceContext);
+	deviceContext->OMSetRenderTargets(1, &output, nullptr);
+	deviceContext->RSSetViewports(1, &vp);
+	deviceContext->Draw(3, 0);
+
+	int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
+	input = nullptr;
+	deviceContext->PSSetShaderResources(slot, 1, &input);
+	deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
 
 void XM_CALLCONV ShadowEffect::SetWorldMatrix(DirectX::FXMMATRIX W)
 {

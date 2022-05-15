@@ -36,22 +36,22 @@ extern "C" __declspec(dllimport) int __stdcall WideCharToMultiByte(unsigned int 
 
 inline std::wstring UTF8ToWString(std::string_view utf8str)
 {
-	if (utf8str.empty()) return std::wstring();
-	int cbMultiByte = static_cast<int>(utf8str.size());
-	int req = MultiByteToWideChar(65001, 0, utf8str.data(), cbMultiByte, nullptr, 0);
-	std::wstring res(req, 0);
-	MultiByteToWideChar(65001, 0, utf8str.data(), cbMultiByte, &res[0], req);
-	return res;
+    if (utf8str.empty()) return std::wstring();
+    int cbMultiByte = static_cast<int>(utf8str.size());
+    int req = MultiByteToWideChar(65001, 0, utf8str.data(), cbMultiByte, nullptr, 0);
+    std::wstring res(req, 0);
+    MultiByteToWideChar(65001, 0, utf8str.data(), cbMultiByte, &res[0], req);
+    return res;
 }
 
 inline std::string WStringToUTF8(std::wstring_view wstr)
 {
-	if (wstr.empty()) return std::string();
-	int cbMultiByte = static_cast<int>(wstr.size());
-	int req = WideCharToMultiByte(65001, 0, wstr.data(), cbMultiByte, nullptr, 0, nullptr, nullptr);
-	std::string res(req, 0);
-	WideCharToMultiByte(65001, 0, wstr.data(), cbMultiByte, &res[0], req, nullptr, nullptr);
-	return res;
+    if (wstr.empty()) return std::string();
+    int cbMultiByte = static_cast<int>(wstr.size());
+    int req = WideCharToMultiByte(65001, 0, wstr.data(), cbMultiByte, nullptr, 0, nullptr, nullptr);
+    std::string res(req, 0);
+    WideCharToMultiByte(65001, 0, wstr.data(), cbMultiByte, &res[0], req, nullptr, nullptr);
+    return res;
 }
 
 //
@@ -61,8 +61,8 @@ inline std::string WStringToUTF8(std::wstring_view wstr)
 using XID = size_t;
 inline XID StringToID(std::string_view str)
 {
-	static std::hash<std::string_view> hash;
-	return hash(str);
+    static std::hash<std::string_view> hash;
+    return hash(str);
 }
 
 //
@@ -71,30 +71,30 @@ inline XID StringToID(std::string_view str)
 
 namespace XMath
 {
-	// ------------------------------
-	// InverseTranspose函数
-	// ------------------------------
-	inline DirectX::XMMATRIX XM_CALLCONV InverseTranspose(DirectX::FXMMATRIX M)
-	{
-		using namespace DirectX;
+    // ------------------------------
+    // InverseTranspose函数
+    // ------------------------------
+    inline DirectX::XMMATRIX XM_CALLCONV InverseTranspose(DirectX::FXMMATRIX M)
+    {
+        using namespace DirectX;
 
-		// 世界矩阵的逆的转置仅针对法向量，我们也不需要世界矩阵的平移分量
-		// 而且不去掉的话，后续再乘上观察矩阵之类的就会产生错误的变换结果
-		XMMATRIX A = M;
-		A.r[3] = g_XMIdentityR3;
+        // 世界矩阵的逆的转置仅针对法向量，我们也不需要世界矩阵的平移分量
+        // 而且不去掉的话，后续再乘上观察矩阵之类的就会产生错误的变换结果
+        XMMATRIX A = M;
+        A.r[3] = g_XMIdentityR3;
 
-		return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
-	}
+        return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
+    }
 
-	inline float Lerp(float a, float b, float t)
-	{
-		return (1.0f - t) * a + t * b;
-	}
+    inline float Lerp(float a, float b, float t)
+    {
+        return (1.0f - t) * a + t * b;
+    }
 
-	inline float Clamp(float val, float minVal, float maxVal)
-	{
-		return (std::min)((std::max)(val, minVal), maxVal);
-	}
+    inline float Clamp(float val, float minVal, float maxVal)
+    {
+        return (std::min)((std::max)(val, minVal), maxVal);
+    }
 }
 
 

@@ -9,7 +9,7 @@ void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)
     //                       /\
     // ____________ =>  ____/  \____
     // i0         i1   i0  v0  v2  i1
-	
+    
     VertexPosColor v0, v1, v2;
     v0.Color = lerp(input[0].Color, input[1].Color, 0.25f);
     v1.Color = lerp(input[0].Color, input[1].Color, 0.5f);

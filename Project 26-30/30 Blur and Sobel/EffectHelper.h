@@ -18,108 +18,108 @@
 template<class DerivedType>
 struct AlignedType
 {
-	static void* operator new(size_t size)
-	{
-		const size_t alignedSize = __alignof(DerivedType);
+    static void* operator new(size_t size)
+    {
+        const size_t alignedSize = __alignof(DerivedType);
 
-		static_assert(alignedSize > 8, "AlignedNew is only useful for types with > 8 byte alignment! Did you forget a __declspec(align) on DerivedType?");
+        static_assert(alignedSize > 8, "AlignedNew is only useful for types with > 8 byte alignment! Did you forget a __declspec(align) on DerivedType?");
 
-		void* ptr = _aligned_malloc(size, alignedSize);
+        void* ptr = _aligned_malloc(size, alignedSize);
 
-		if (!ptr)
-			throw std::bad_alloc();
+        if (!ptr)
+            throw std::bad_alloc();
 
-		return ptr;
-	}
+        return ptr;
+    }
 
-	static void operator delete(void * ptr)
-	{
-		_aligned_free(ptr);
-	}
+    static void operator delete(void * ptr)
+    {
+        _aligned_free(ptr);
+    }
 };
 
 struct CBufferBase
 {
-	template<class T>
-	using ComPtr = Microsoft::WRL::ComPtr<T>;
+    template<class T>
+    using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-	CBufferBase() : isDirty() {}
-	~CBufferBase() = default;
+    CBufferBase() : isDirty() {}
+    ~CBufferBase() = default;
 
-	BOOL isDirty;
-	ComPtr<ID3D11Buffer> cBuffer;
+    BOOL isDirty;
+    ComPtr<ID3D11Buffer> cBuffer;
 
-	virtual HRESULT CreateBuffer(ID3D11Device * device) = 0;
-	virtual void UpdateBuffer(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindVS(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindHS(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindDS(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindGS(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindCS(ID3D11DeviceContext * deviceContext) = 0;
-	virtual void BindPS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual HRESULT CreateBuffer(ID3D11Device * device) = 0;
+    virtual void UpdateBuffer(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindVS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindHS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindDS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindGS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindCS(ID3D11DeviceContext * deviceContext) = 0;
+    virtual void BindPS(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 template<UINT startSlot, class T>
 struct CBufferObject : CBufferBase
 {
-	T data;
+    T data;
 
-	CBufferObject() : CBufferBase(), data() {}
+    CBufferObject() : CBufferBase(), data() {}
 
-	HRESULT CreateBuffer(ID3D11Device * device) override
-	{
-		if (cBuffer != nullptr)
-			return S_OK;
-		D3D11_BUFFER_DESC cbd;
-		ZeroMemory(&cbd, sizeof(cbd));
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.ByteWidth = sizeof(T);
-		return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
-	}
+    HRESULT CreateBuffer(ID3D11Device * device) override
+    {
+        if (cBuffer != nullptr)
+            return S_OK;
+        D3D11_BUFFER_DESC cbd;
+        ZeroMemory(&cbd, sizeof(cbd));
+        cbd.Usage = D3D11_USAGE_DYNAMIC;
+        cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        cbd.ByteWidth = sizeof(T);
+        return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
+    }
 
-	void UpdateBuffer(ID3D11DeviceContext * deviceContext) override
-	{
-		if (isDirty)
-		{
-			isDirty = false;
-			D3D11_MAPPED_SUBRESOURCE mappedData;
-			deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-			memcpy_s(mappedData.pData, sizeof(T), &data, sizeof(T));
-			deviceContext->Unmap(cBuffer.Get(), 0);
-		}
-	}
+    void UpdateBuffer(ID3D11DeviceContext * deviceContext) override
+    {
+        if (isDirty)
+        {
+            isDirty = false;
+            D3D11_MAPPED_SUBRESOURCE mappedData;
+            deviceContext->Map(cBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+            memcpy_s(mappedData.pData, sizeof(T), &data, sizeof(T));
+            deviceContext->Unmap(cBuffer.Get(), 0);
+        }
+    }
 
-	void BindVS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->VSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindVS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->VSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 
-	void BindHS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->HSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindHS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->HSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 
-	void BindDS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->DSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindDS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->DSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 
-	void BindGS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->GSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindGS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->GSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 
-	void BindCS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->CSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindCS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->CSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 
-	void BindPS(ID3D11DeviceContext * deviceContext) override
-	{
-		deviceContext->PSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
-	}
+    void BindPS(ID3D11DeviceContext * deviceContext) override
+    {
+        deviceContext->PSSetConstantBuffers(startSlot, 1, cBuffer.GetAddressOf());
+    }
 };
 
 

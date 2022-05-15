@@ -4,6 +4,10 @@
 
 #include "Rendering.hlsl"
 
+#ifndef MSAA_SAMPLES
+#define MSAA_SAMPLES 1
+#endif
+
 //--------------------------------------------------------------------------------------
 // GBuffer、相关常用工具和结构
 struct GBuffer

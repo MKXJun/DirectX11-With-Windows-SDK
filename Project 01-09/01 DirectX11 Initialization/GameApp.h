@@ -4,13 +4,13 @@
 class GameApp : public D3DApp
 {
 public:
-	GameApp(HINSTANCE hInstance);
-	~GameApp();
+    GameApp(HINSTANCE hInstance);
+    ~GameApp();
 
-	bool Init();
-	void OnResize();
-	void UpdateScene(float dt);
-	void DrawScene();
+    bool Init();
+    void OnResize();
+    void UpdateScene(float dt);
+    void DrawScene();
 };
 
 

@@ -19,5 +19,5 @@ VertexPosHVNormalVTex VS(InstancePosNormalTex vIn)
     
     vOut.Tex = vIn.Tex;
     
-	return vOut;
+    return vOut;
 }

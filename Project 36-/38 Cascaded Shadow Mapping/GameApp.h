@@ -18,62 +18,62 @@
 class GameApp : public D3DApp
 {
 public:
-	// 摄像机模式
-	enum class CameraMode { FirstPerson, ThirdPerson, Free };
+    // 摄像机模式
+    enum class CameraMode { FirstPerson, ThirdPerson, Free };
 
 public:
-	GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth = 1280, int initHeight = 720);
-	~GameApp();
+    GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth = 1280, int initHeight = 720);
+    ~GameApp();
 
-	bool Init();
-	void OnResize();
-	void UpdateScene(float dt);
-	void DrawScene();
-
-private:
-	bool InitResource();
-
-	void RenderShadowForAllCascades();
-	void RenderForward();
-	void RenderSkyboxAndToneMap();
-	
-
+    bool Init();
+    void OnResize();
+    void UpdateScene(float dt);
+    void DrawScene();
 
 private:
-	
-	// GPU计时
-	GpuTimer m_GpuTimer_Shadow;
-	GpuTimer m_GpuTimer_Lighting;
-	GpuTimer m_GpuTimer_Skybox;
+    bool InitResource();
 
-	// MSAA
-	int m_MsaaSamples = 1;
+    void RenderShadowForAllCascades();
+    void RenderForward();
+    void RenderSkyboxAndToneMap();
+    
 
-	// 阴影
-	CascadedShadowManager m_CSManager;
-	bool m_DebugShadow = false;
 
-	// 各种资源
-	TextureManager m_TextureManager;                                // 纹理读取管理
-	ModelManager m_ModelManager;									// 模型读取管理
-	std::unique_ptr<Texture2D> m_pLitBuffer;                        // 场景渲染缓冲区
-	std::unique_ptr<Depth2D> m_pDepthBuffer;                        // 深度缓冲区
-	std::unique_ptr<Texture2D> m_pDebugShadowBuffer;				// 调试用shadow map纹理
+private:
+    
+    // GPU计时
+    GpuTimer m_GpuTimer_Shadow;
+    GpuTimer m_GpuTimer_Lighting;
+    GpuTimer m_GpuTimer_Skybox;
 
-	// 模型
-	GameObject m_Powerplant;										// 发电厂模型
-	GameObject m_Skybox;											// 天空盒模型
+    // MSAA
+    int m_MsaaSamples = 1;
 
-	// 特效
-	std::unique_ptr<ForwardEffect> m_pForwardEffect;				// 前向渲染特效
-	std::unique_ptr<ShadowEffect> m_pShadowEffect;					// 阴影特效
-	std::unique_ptr<SkyboxToneMapEffect> m_pSkyboxEffect;			// 天空盒特效
-	ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;				// 天空盒纹理
+    // 阴影
+    CascadedShadowManager m_CSManager;
+    bool m_DebugShadow = false;
 
-	// 摄像机
-	std::shared_ptr<Camera> m_pViewerCamera;						// 用户摄像机
-	std::shared_ptr<Camera> m_pLightCamera;							// 光源摄像机
-	FirstPersonCameraController m_FPSCameraController;				// 摄像机控制器
+    // 各种资源
+    TextureManager m_TextureManager;                                // 纹理读取管理
+    ModelManager m_ModelManager;									// 模型读取管理
+    std::unique_ptr<Texture2D> m_pLitBuffer;                        // 场景渲染缓冲区
+    std::unique_ptr<Depth2D> m_pDepthBuffer;                        // 深度缓冲区
+    std::unique_ptr<Texture2D> m_pDebugShadowBuffer;				// 调试用shadow map纹理
+
+    // 模型
+    GameObject m_Powerplant;										// 发电厂模型
+    GameObject m_Skybox;											// 天空盒模型
+
+    // 特效
+    std::unique_ptr<ForwardEffect> m_pForwardEffect;				// 前向渲染特效
+    std::unique_ptr<ShadowEffect> m_pShadowEffect;					// 阴影特效
+    std::unique_ptr<SkyboxToneMapEffect> m_pSkyboxEffect;			// 天空盒特效
+    ComPtr<ID3D11ShaderResourceView> m_pTextureCubeSRV;				// 天空盒纹理
+
+    // 摄像机
+    std::shared_ptr<Camera> m_pViewerCamera;						// 用户摄像机
+    std::shared_ptr<Camera> m_pLightCamera;							// 光源摄像机
+    FirstPersonCameraController m_FPSCameraController;				// 摄像机控制器
 
 };
 

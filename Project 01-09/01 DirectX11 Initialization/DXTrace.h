@@ -31,13 +31,13 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
 #if defined(DEBUG) | defined(_DEBUG)
 #ifndef HR
 #define HR(x)												\
-	{															\
-		HRESULT hr = (x);										\
-		if(FAILED(hr))											\
-		{														\
-			DXTraceW(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
-		}														\
-	}
+    {															\
+        HRESULT hr = (x);										\
+        if(FAILED(hr))											\
+        {														\
+            DXTraceW(__FILEW__, (DWORD)__LINE__, hr, L#x, true);\
+        }														\
+    }
 #endif
 #else
 #ifndef HR

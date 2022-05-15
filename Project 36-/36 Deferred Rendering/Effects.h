@@ -14,215 +14,215 @@
 #include "MeshData.h"
 
 class ForwardEffect : public IEffect, public IEffectTransform,
-	public IEffectMaterial, public IEffectMeshData
+    public IEffectMaterial, public IEffectMeshData
 {
 public:
-	ForwardEffect();
-	virtual ~ForwardEffect() override;
+    ForwardEffect();
+    virtual ~ForwardEffect() override;
 
-	ForwardEffect(ForwardEffect&& moveFrom) noexcept;
-	ForwardEffect& operator=(ForwardEffect&& moveFrom) noexcept;
+    ForwardEffect(ForwardEffect&& moveFrom) noexcept;
+    ForwardEffect& operator=(ForwardEffect&& moveFrom) noexcept;
 
-	// 获取单例
-	static ForwardEffect& Get();
+    // 获取单例
+    static ForwardEffect& Get();
 
-	// 初始化所需资源
-	bool InitAll(ID3D11Device* device);
+    // 初始化所需资源
+    bool InitAll(ID3D11Device* device);
 
-	//
-	// IEffectTransform
-	//
+    //
+    // IEffectTransform
+    //
 
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+    void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+    void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+    void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
-	//
-	// IEffectMaterial
-	//
+    //
+    // IEffectMaterial
+    //
 
-	void SetMaterial(const Material& material) override;
+    void SetMaterial(const Material& material) override;
 
-	//
-	// IEffectMeshData
-	//
+    //
+    // IEffectMeshData
+    //
 
-	MeshDataInput GetInputData(const MeshData& meshData) override;
+    MeshDataInput GetInputData(const MeshData& meshData) override;
 
 
-	//
-	// ForwardEffect
-	//
+    //
+    // ForwardEffect
+    //
 
-	void SetLightBuffer(ID3D11ShaderResourceView* lightBuffer);
+    void SetLightBuffer(ID3D11ShaderResourceView* lightBuffer);
 
-	void SetLightingOnly(bool enable);
-	void SetFaceNormals(bool enable);
-	void SetVisualizeLightCount(bool enable);
+    void SetLightingOnly(bool enable);
+    void SetFaceNormals(bool enable);
+    void SetVisualizeLightCount(bool enable);
 
-	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    // 默认状态来绘制
+    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
-	// 进行Pre-Z通道绘制
-	void SetRenderPreZPass(ID3D11DeviceContext* deviceContext);
+    // 进行Pre-Z通道绘制
+    void SetRenderPreZPass(ID3D11DeviceContext* deviceContext);
 
-	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext) override;
+    // 应用常量缓冲区和纹理资源的变更
+    void Apply(ID3D11DeviceContext* deviceContext) override;
 
 private:
-	class Impl;
-	std::unique_ptr<Impl> pImpl;
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 class SkyboxToneMapEffect : public IEffect, public IEffectTransform,
-	public IEffectMeshData, public IEffectMaterial
+    public IEffectMeshData, public IEffectMaterial
 {
 public:
-	SkyboxToneMapEffect();
-	virtual ~SkyboxToneMapEffect() override;
+    SkyboxToneMapEffect();
+    virtual ~SkyboxToneMapEffect() override;
 
-	SkyboxToneMapEffect(SkyboxToneMapEffect&& moveFrom) noexcept;
-	SkyboxToneMapEffect& operator=(SkyboxToneMapEffect&& moveFrom) noexcept;
+    SkyboxToneMapEffect(SkyboxToneMapEffect&& moveFrom) noexcept;
+    SkyboxToneMapEffect& operator=(SkyboxToneMapEffect&& moveFrom) noexcept;
 
-	// 获取单例
-	static SkyboxToneMapEffect& Get();
+    // 获取单例
+    static SkyboxToneMapEffect& Get();
 
-	// 初始化所需资源
-	bool InitAll(ID3D11Device* device);
+    // 初始化所需资源
+    bool InitAll(ID3D11Device* device);
 
 
-	//
-	// IEffectTransform
-	//
+    //
+    // IEffectTransform
+    //
 
-	// 无用
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+    // 无用
+    void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
 
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+    void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+    void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
-	//
-	// IEffectMaterial
-	//
+    //
+    // IEffectMaterial
+    //
 
-	void SetMaterial(const Material& material) override;
+    void SetMaterial(const Material& material) override;
 
-	//
-	// IEffectMeshData
-	//
+    //
+    // IEffectMeshData
+    //
 
-	MeshDataInput GetInputData(const MeshData& meshData) override;
+    MeshDataInput GetInputData(const MeshData& meshData) override;
 
-	// 
-	// SkyboxToneMapEffect
-	//
+    // 
+    // SkyboxToneMapEffect
+    //
 
-	// 默认状态来绘制
-	void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    // 默认状态来绘制
+    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
-	// 设置深度图
-	void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);
-	// 设置场景渲染图
-	void SetLitTexture(ID3D11ShaderResourceView* litTexture);
+    // 设置深度图
+    void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);
+    // 设置场景渲染图
+    void SetLitTexture(ID3D11ShaderResourceView* litTexture);
 
-	// 设置MSAA采样等级
-	void SetMsaaSamples(UINT msaaSamples);
+    // 设置MSAA采样等级
+    void SetMsaaSamples(UINT msaaSamples);
 
-	//
-	// IEffect
-	//
+    //
+    // IEffect
+    //
 
-	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext) override;
+    // 应用常量缓冲区和纹理资源的变更
+    void Apply(ID3D11DeviceContext* deviceContext) override;
 
 private:
-	class Impl;
-	std::unique_ptr<Impl> pImpl;
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 class DeferredEffect : public IEffect, public IEffectTransform,
-	public IEffectMaterial, public IEffectMeshData
+    public IEffectMaterial, public IEffectMeshData
 {
 public:
 
-	DeferredEffect();
-	virtual ~DeferredEffect() override;
+    DeferredEffect();
+    virtual ~DeferredEffect() override;
 
-	DeferredEffect(DeferredEffect&& moveFrom) noexcept;
-	DeferredEffect& operator=(DeferredEffect&& moveFrom) noexcept;
+    DeferredEffect(DeferredEffect&& moveFrom) noexcept;
+    DeferredEffect& operator=(DeferredEffect&& moveFrom) noexcept;
 
-	// 获取单例
-	static DeferredEffect& Get();
+    // 获取单例
+    static DeferredEffect& Get();
 
-	// 初始化所需资源
-	bool InitAll(ID3D11Device* device);
+    // 初始化所需资源
+    bool InitAll(ID3D11Device* device);
 
-	//
-	// IEffectTransform
-	//
+    //
+    // IEffectTransform
+    //
 
-	void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
-	void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
-	void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
+    void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) override;
+    void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) override;
+    void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) override;
 
-	//
-	// IEffectMaterial
-	//
+    //
+    // IEffectMaterial
+    //
 
-	void SetMaterial(const Material& material) override;
+    void SetMaterial(const Material& material) override;
 
-	//
-	// IEffectMeshData
-	//
+    //
+    // IEffectMeshData
+    //
 
-	MeshDataInput GetInputData(const MeshData& meshData) override;
+    MeshDataInput GetInputData(const MeshData& meshData) override;
 
-	// 
-	// BasicDeferredEffect
-	//
+    // 
+    // BasicDeferredEffect
+    //
 
-	void SetMsaaSamples(UINT msaaSamples);
+    void SetMsaaSamples(UINT msaaSamples);
 
-	void SetLightingOnly(bool enable);
-	void SetFaceNormals(bool enable);
-	void SetVisualizeLightCount(bool enable);
-	void SetVisualizeShadingFreq(bool enable);
+    void SetLightingOnly(bool enable);
+    void SetFaceNormals(bool enable);
+    void SetVisualizeLightCount(bool enable);
+    void SetVisualizeShadingFreq(bool enable);
 
-	void SetCameraNearFar(float nearZ, float farZ);
+    void SetCameraNearFar(float nearZ, float farZ);
 
-	// 绘制G缓冲区
-	void SetRenderGBuffer(ID3D11DeviceContext* deviceContext);
+    // 绘制G缓冲区
+    void SetRenderGBuffer(ID3D11DeviceContext* deviceContext);
 
-	// 将法线G-Buffer渲染到目标纹理
-	void DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
-		ID3D11RenderTargetView* rtv,
-		ID3D11ShaderResourceView* normalGBuffer,
-		D3D11_VIEWPORT viewport);
+    // 将法线G-Buffer渲染到目标纹理
+    void DebugNormalGBuffer(ID3D11DeviceContext* deviceContext,
+        ID3D11RenderTargetView* rtv,
+        ID3D11ShaderResourceView* normalGBuffer,
+        D3D11_VIEWPORT viewport);
 
-	// 将深度值梯度的G-Buffer渲染到到目标纹理
-	void DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
-		ID3D11RenderTargetView* rtv,
-		ID3D11ShaderResourceView* posZGradGBuffer,
-		D3D11_VIEWPORT viewport);
+    // 将深度值梯度的G-Buffer渲染到到目标纹理
+    void DebugPosZGradGBuffer(ID3D11DeviceContext* deviceContext,
+        ID3D11RenderTargetView* rtv,
+        ID3D11ShaderResourceView* posZGradGBuffer,
+        D3D11_VIEWPORT viewport);
 
-	// 传统延迟渲染
-	void ComputeLightingDefault(ID3D11DeviceContext* deviceContext,
-		ID3D11RenderTargetView* litBufferRTV,
-		ID3D11DepthStencilView* depthBufferReadOnlyDSV,
-		ID3D11ShaderResourceView* lightBufferSRV,
-		ID3D11ShaderResourceView* GBuffers[4],
-		D3D11_VIEWPORT viewport);
+    // 传统延迟渲染
+    void ComputeLightingDefault(ID3D11DeviceContext* deviceContext,
+        ID3D11RenderTargetView* litBufferRTV,
+        ID3D11DepthStencilView* depthBufferReadOnlyDSV,
+        ID3D11ShaderResourceView* lightBufferSRV,
+        ID3D11ShaderResourceView* GBuffers[4],
+        D3D11_VIEWPORT viewport);
 
-	//
-	// IEffect
-	//
+    //
+    // IEffect
+    //
 
-	// 应用常量缓冲区和纹理资源的变更
-	void Apply(ID3D11DeviceContext* deviceContext) override;
+    // 应用常量缓冲区和纹理资源的变更
+    void Apply(ID3D11DeviceContext* deviceContext) override;
 
 private:
-	class Impl;
-	std::unique_ptr<Impl> pImpl;
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif

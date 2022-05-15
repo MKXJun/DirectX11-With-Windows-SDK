@@ -9,8 +9,8 @@
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
-#include <d3d11_1.h>			// 已包含Windows.h
-#include <DirectXCollision.h>	// 已包含DirectXMath.h
+#include <d3d11_1.h>            // 已包含Windows.h
+#include <DirectXCollision.h>   // 已包含DirectXMath.h
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
@@ -39,16 +39,16 @@
 // D3D11SetDebugObjectName函数
 // ------------------------------
 // 为D3D设备创建出来的对象在图形调试器中设置对象名
-// [In]resource				D3D11设备创建出的对象
-// [In]name					对象名
+// [In]resource             D3D11设备创建出的对象
+// [In]name                 对象名
 template<UINT TNameLength>
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -56,17 +56,17 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 // D3D11SetDebugObjectName函数
 // ------------------------------
 // 为D3D设备创建出来的对象在图形调试器中设置对象名
-// [In]resource				D3D11设备创建出的对象
-// [In]name					对象名
-// [In]length				字符串长度
+// [In]resource             D3D11设备创建出的对象
+// [In]name                 对象名
+// [In]length               字符串长度
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ LPCSTR name, _In_ UINT length)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(length);
 #endif
 }
 
@@ -74,15 +74,15 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ LPCST
 // D3D11SetDebugObjectName函数
 // ------------------------------
 // 为D3D设备创建出来的对象在图形调试器中设置对象名
-// [In]resource				D3D11设备创建出的对象
-// [In]name					对象名
+// [In]resource             D3D11设备创建出的对象
+// [In]name                 对象名
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -90,13 +90,13 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 // D3D11SetDebugObjectName函数
 // ------------------------------
 // 为D3D设备创建出来的对象在图形调试器中清空对象名
-// [In]resource				D3D11设备创建出的对象
+// [In]resource             D3D11设备创建出的对象
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::nullptr_t)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
 #else
-	UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(resource);
 #endif
 }
 
@@ -104,16 +104,16 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::
 // DXGISetDebugObjectName函数
 // ------------------------------
 // 为DXGI对象在图形调试器中设置对象名
-// [In]object				DXGI对象
-// [In]name					对象名
+// [In]object               DXGI对象
+// [In]name                 对象名
 template<UINT TNameLength>
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&name)[TNameLength])
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -121,17 +121,17 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&na
 // DXGISetDebugObjectName函数
 // ------------------------------
 // 为DXGI对象在图形调试器中设置对象名
-// [In]object				DXGI对象
-// [In]name					对象名
-// [In]length				字符串长度
+// [In]object               DXGI对象
+// [In]name                 对象名
+// [In]length               字符串长度
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ LPCSTR name, _In_ UINT length)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(length);
 #endif
 }
 
@@ -139,15 +139,15 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ LPCSTR name, _
 // DXGISetDebugObjectName函数
 // ------------------------------
 // 为DXGI对象在图形调试器中设置对象名
-// [In]object				DXGI对象
-// [In]name					对象名
+// [In]object               DXGI对象
+// [In]name                 对象名
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -155,13 +155,13 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const std::str
 // DXGISetDebugObjectName函数
 // ------------------------------
 // 为DXGI对象在图形调试器中清空对象名
-// [In]object				DXGI对象
+// [In]object               DXGI对象
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::nullptr_t)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
 #else
-	UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(object);
 #endif
 }
 
@@ -178,11 +178,11 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::nullptr_t
 // [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
 // [Out]ppBlobOut       输出着色器二进制信息
 HRESULT CreateShaderFromFile(
-	const WCHAR* csoFileNameInOut,
-	const WCHAR* hlslFileName,
-	LPCSTR entryPoint,
-	LPCSTR shaderModel,
-	ID3DBlob** ppBlobOut);
+    const WCHAR* csoFileNameInOut,
+    const WCHAR* hlslFileName,
+    LPCSTR entryPoint,
+    LPCSTR shaderModel,
+    ID3DBlob** ppBlobOut);
 
 
 

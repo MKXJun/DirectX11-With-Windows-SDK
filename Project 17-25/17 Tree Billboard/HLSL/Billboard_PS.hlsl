@@ -2,7 +2,7 @@
 
 float4 PS(BillboardVertex pIn) : SV_Target
 {
-	// 每4棵树一个循环，尽量保证出现不同的树
+    // 每4棵树一个循环，尽量保证出现不同的树
     float4 texColor = g_TexArray.Sample(g_Sam, float3(pIn.Tex, pIn.PrimID % 4));
     // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
     clip(texColor.a - 0.05f);

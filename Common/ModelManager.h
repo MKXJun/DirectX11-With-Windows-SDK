@@ -20,33 +20,33 @@
 
 struct Model
 {
-	std::vector<Material> materials;
-	std::vector<MeshData> meshdatas;
-	DirectX::BoundingBox boundingbox;
+    std::vector<Material> materials;
+    std::vector<MeshData> meshdatas;
+    DirectX::BoundingBox boundingbox;
 };
 
 
 class ModelManager
 {
 public:
-	ModelManager();
-	~ModelManager();
-	ModelManager(ModelManager&) = delete;
-	ModelManager& operator=(const ModelManager&) = delete;
-	ModelManager(ModelManager&&) = default;
-	ModelManager& operator=(ModelManager&&) = default;
+    ModelManager();
+    ~ModelManager();
+    ModelManager(ModelManager&) = delete;
+    ModelManager& operator=(const ModelManager&) = delete;
+    ModelManager(ModelManager&&) = default;
+    ModelManager& operator=(ModelManager&&) = default;
 
-	static ModelManager& Get();
-	void Init(ID3D11Device* device);
-	const Model* CreateFromFile(std::string_view filename);
-	bool CreateFromGeometry(std::string_view name, const Geometry::MeshData& data);
+    static ModelManager& Get();
+    void Init(ID3D11Device* device);
+    const Model* CreateFromFile(std::string_view filename);
+    bool CreateFromGeometry(std::string_view name, const Geometry::MeshData& data);
 
-	const Model* GetModel(std::string_view name) const;
-	Model* GetModel(std::string_view name);
+    const Model* GetModel(std::string_view name) const;
+    Model* GetModel(std::string_view name);
 private:
-	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
-	std::unordered_map<size_t, Model> m_Models;
+    Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
+    Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;
+    std::unordered_map<size_t, Model> m_Models;
 };
 
 

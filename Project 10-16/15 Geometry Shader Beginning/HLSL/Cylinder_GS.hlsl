@@ -7,10 +7,10 @@ void GS(line VertexPosHWNormalColor input[2], inout TriangleStream<VertexPosHWNo
     // ***************************
     // 要求圆线是顺时针的，然后自底向上构造圆柱侧面           
     //   -->      v2____v3
-	//  ______     |\   |
-	// /      \    | \  |
-	// \______/    |  \ |
-	//   <--       |___\|
+    //  ______     |\   |
+    // /      \    | \  |
+    // \______/    |  \ |
+    //   <--       |___\|
     //           v1(i1) v0(i0)
 
     float3 upDir = normalize(cross(input[0].NormalW, (input[1].PosW - input[0].PosW)));

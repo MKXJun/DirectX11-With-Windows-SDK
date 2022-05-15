@@ -1,6 +1,6 @@
 
-#ifndef BASICDEFERRED_HLSL
-#define BASICDEFERRED_HLSL
+#ifndef BASIC_DEFERRED_HLSL
+#define BASIC_DEFERRED_HLSL
 
 #include "GBuffer.hlsl"
 

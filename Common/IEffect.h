@@ -20,49 +20,49 @@ struct MeshData;
 
 struct MeshDataInput
 {
-	std::vector<ID3D11Buffer*> pVertexBuffers;
-	ID3D11Buffer* pIndexBuffer = nullptr;
-	std::vector<uint32_t> strides;
-	std::vector<uint32_t> offsets;
-	uint32_t indexCount = 0;
+    std::vector<ID3D11Buffer*> pVertexBuffers;
+    ID3D11Buffer* pIndexBuffer = nullptr;
+    std::vector<uint32_t> strides;
+    std::vector<uint32_t> offsets;
+    uint32_t indexCount = 0;
 };
 
 class IEffect
 {
 public:
-	enum RenderType { RenderObject, RenderInstance };
-	enum RSFillMode { Solid, WireFrame };
+    enum RenderType { RenderObject, RenderInstance };
+    enum RSFillMode { Solid, WireFrame };
 
-	IEffect() = default;
-	virtual ~IEffect() = default;
-	// 不允许拷贝，允许移动
-	IEffect(const IEffect&) = delete;
-	IEffect& operator=(const IEffect&) = delete;
-	IEffect(IEffect&&) = default;
-	IEffect& operator=(IEffect&&) = default;
+    IEffect() = default;
+    virtual ~IEffect() = default;
+    // 不允许拷贝，允许移动
+    IEffect(const IEffect&) = delete;
+    IEffect& operator=(const IEffect&) = delete;
+    IEffect(IEffect&&) = default;
+    IEffect& operator=(IEffect&&) = default;
 
-	// 更新并绑定常量缓冲区
-	virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
+    // 更新并绑定常量缓冲区
+    virtual void Apply(ID3D11DeviceContext * deviceContext) = 0;
 };
 
 class IEffectTransform
 {
 public:
-	virtual void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) = 0;
-	virtual void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) = 0;
-	virtual void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) = 0;
+    virtual void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W) = 0;
+    virtual void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V) = 0;
+    virtual void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P) = 0;
 };
 
 class IEffectMaterial
 {
 public:
-	virtual void SetMaterial(const Material& material) = 0;
+    virtual void SetMaterial(const Material& material) = 0;
 };
 
 class IEffectMeshData
 {
 public:
-	virtual MeshDataInput GetInputData(const MeshData& meshData) = 0;
+    virtual MeshDataInput GetInputData(const MeshData& meshData) = 0;
 };
 
 

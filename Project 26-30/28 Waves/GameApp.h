@@ -11,46 +11,46 @@
 class GameApp : public D3DApp
 {
 public:
-	// 摄像机模式
-	enum class CameraMode { FirstPerson, ThirdPerson, Free };
+    // 摄像机模式
+    enum class CameraMode { FirstPerson, ThirdPerson, Free };
 
 public:
-	GameApp(HINSTANCE hInstance);
-	~GameApp();
+    GameApp(HINSTANCE hInstance);
+    ~GameApp();
 
-	bool Init();
-	void OnResize();
-	void UpdateScene(float dt);
-	void DrawScene();
-
-private:
-	bool InitResource();
+    bool Init();
+    void OnResize();
+    void UpdateScene(float dt);
+    void DrawScene();
 
 private:
-	
-	ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
-	ComPtr<IDWriteFont> m_pFont;								// 字体
-	ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
+    bool InitResource();
 
-	std::mt19937 m_RandEngine;									// 随机数生成器
-	std::uniform_int_distribution<UINT> m_RowRange;				// 行索引范围
-	std::uniform_int_distribution<UINT> m_ColRange;				// 列索引范围
-	std::uniform_real_distribution<float> m_MagnitudeRange;		// 振幅范围
+private:
+    
+    ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
+    ComPtr<IDWriteFont> m_pFont;								// 字体
+    ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
 
-	BasicEffect m_BasicEffect;									// 对象渲染特效管理
+    std::mt19937 m_RandEngine;									// 随机数生成器
+    std::uniform_int_distribution<UINT> m_RowRange;				// 行索引范围
+    std::uniform_int_distribution<UINT> m_ColRange;				// 列索引范围
+    std::uniform_real_distribution<float> m_MagnitudeRange;		// 振幅范围
 
-	GameObject m_Land;											// 地面对象
-	GameObject m_WireFence;										// 篱笆盒
+    BasicEffect m_BasicEffect;									// 对象渲染特效管理
 
-	std::unique_ptr<CpuWavesRender> m_pCpuWavesRender;			// CPU波浪渲染器
-	std::unique_ptr<GpuWavesRender> m_pGpuWavesRender;			// GPU波浪渲染器
+    GameObject m_Land;											// 地面对象
+    GameObject m_WireFence;										// 篱笆盒
 
-	float m_BaseTime;											// 控制水波生成的基准时间
+    std::unique_ptr<CpuWavesRender> m_pCpuWavesRender;			// CPU波浪渲染器
+    std::unique_ptr<GpuWavesRender> m_pGpuWavesRender;			// GPU波浪渲染器
 
-	bool m_EnabledFog;											// 开启雾效
-	bool m_EnabledGpuWaves;										// 开启GPU波浪绘制
+    float m_BaseTime;											// 控制水波生成的基准时间
 
-	std::shared_ptr<Camera> m_pCamera;						    // 摄像机
+    bool m_EnabledFog;											// 开启雾效
+    bool m_EnabledGpuWaves;										// 开启GPU波浪绘制
+
+    std::shared_ptr<Camera> m_pCamera;						    // 摄像机
 };
 
 

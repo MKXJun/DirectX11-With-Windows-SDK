@@ -1,6 +1,9 @@
 
 #pragma once
 
+#ifndef WINMAIN_H
+#define WINMAIN_H
+
 // 定义下面这些宏以去掉Windows中那些没用的组件
 
 #ifndef FULL_WINTARD
@@ -44,3 +47,4 @@
 
 #include <Windows.h>
 
+#endif

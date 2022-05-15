@@ -42,13 +42,13 @@ SamplerState g_SamLinear : register(s0);
 
 float3 RandUnitVec3(float offset)
 {
-	// 使用游戏时间加上偏移值来采样随机纹理
+    // 使用游戏时间加上偏移值来采样随机纹理
     float u = (g_GameTime + offset);
-	
-	// 采样值在[-1,1]
+    
+    // 采样值在[-1,1]
     float3 v = g_RandomTex.SampleLevel(g_SamLinear, u, 0).xyz;
-	
-	// 投影到单位球
+    
+    // 投影到单位球
     return normalize(v);
 }
 

@@ -3,7 +3,7 @@
 [maxvertexcount(9)]
 void GS(triangle VertexPosColor input[3], inout TriangleStream<VertexPosColor> output)
 {
-	//
+    //
     // 将一个三角形分裂成三个三角形，即没有v3v4v5的三角形
     //       v1
     //       /\

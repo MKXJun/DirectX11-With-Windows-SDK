@@ -1,6 +1,6 @@
 
-#ifndef CONSTANTBUFFERS_HLSL
-#define CONSTANTBUFFERS_HLSL
+#ifndef CONSTANT_BUFFERS_HLSL
+#define CONSTANT_BUFFERS_HLSL
 
 cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {

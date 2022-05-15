@@ -2,5 +2,5 @@
 
 VertexPosColor VS(VertexPosColor vIn)
 {
-	return vIn;
+    return vIn;
 }

@@ -9,12 +9,12 @@ cbuffer ConstantBuffer : register(b0)
 
 struct VertexIn
 {
-	float3 posL : POSITION;
-	float4 color : COLOR;
+    float3 posL : POSITION;
+    float4 color : COLOR;
 };
 
 struct VertexOut
 {
-	float4 posH : SV_POSITION;
-	float4 color : COLOR;
+    float4 posH : SV_POSITION;
+    float4 color : COLOR;
 };

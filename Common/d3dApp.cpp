@@ -139,7 +139,7 @@ void D3DApp::OnResize()
 
 	// 重设交换链并且重新创建渲染目标视图
 	for (UINT i = 0; i < m_BackBufferCount; ++i)
-		m_pRenderTargetViews->Reset();
+		m_pRenderTargetViews[i].Reset();
 	HR(m_pSwapChain->ResizeBuffers(m_BackBufferCount, m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 
 		m_IsDxgiFlipModel ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0));
 	m_FrameCount = 0;

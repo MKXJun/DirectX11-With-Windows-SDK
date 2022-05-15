@@ -6,79 +6,79 @@ using namespace DirectX;
 
 void FirstPersonCameraController::Update(float deltaTime)
 {
-	ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
-	float yaw = 0.0f, pitch = 0.0f;
-	if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
-	{
+    float yaw = 0.0f, pitch = 0.0f;
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
+    {
 
-		yaw += io.MouseDelta.x * m_MouseSensitivityX;
-		pitch += io.MouseDelta.y * m_MouseSensitivityY;
-	}
+        yaw += io.MouseDelta.x * m_MouseSensitivityX;
+        pitch += io.MouseDelta.y * m_MouseSensitivityY;
+    }
 
-	int forward = (
-		(ImGui::IsKeyDown('W') ? 1 : 0) +
-		(ImGui::IsKeyDown('S') ? -1 : 0)
-		);
-	int strafe = (
-		(ImGui::IsKeyDown('A') ? -1 : 0) +
-		(ImGui::IsKeyDown('D') ? 1 : 0)
-		);
+    int forward = (
+        (ImGui::IsKeyDown('W') ? 1 : 0) +
+        (ImGui::IsKeyDown('S') ? -1 : 0)
+        );
+    int strafe = (
+        (ImGui::IsKeyDown('A') ? -1 : 0) +
+        (ImGui::IsKeyDown('D') ? 1 : 0)
+        );
 
-	if (forward || strafe)
-	{
-		XMVECTOR dir = m_pCamera->GetLookAxisXM() * (float)forward + m_pCamera->GetRightAxisXM() * (float)strafe;
-		XMStoreFloat3(&m_MoveDir, dir);
-		m_MoveVelocity = m_MoveSpeed;
-		m_DragTimer = m_TotalDragTimeToZero;
-		m_VelocityDrag = m_MoveSpeed / m_DragTimer;
-	}
-	else
-	{
-		if (m_DragTimer > 0.0f)
-		{
-			m_DragTimer -= deltaTime;
-			m_MoveVelocity -= m_VelocityDrag * deltaTime;
-		}
-		else
-		{
-			m_MoveVelocity = 0.0f;
-		}
-	}
+    if (forward || strafe)
+    {
+        XMVECTOR dir = m_pCamera->GetLookAxisXM() * (float)forward + m_pCamera->GetRightAxisXM() * (float)strafe;
+        XMStoreFloat3(&m_MoveDir, dir);
+        m_MoveVelocity = m_MoveSpeed;
+        m_DragTimer = m_TotalDragTimeToZero;
+        m_VelocityDrag = m_MoveSpeed / m_DragTimer;
+    }
+    else
+    {
+        if (m_DragTimer > 0.0f)
+        {
+            m_DragTimer -= deltaTime;
+            m_MoveVelocity -= m_VelocityDrag * deltaTime;
+        }
+        else
+        {
+            m_MoveVelocity = 0.0f;
+        }
+    }
 
-	m_pCamera->RotateY(yaw);
-	m_pCamera->Pitch(pitch);
+    m_pCamera->RotateY(yaw);
+    m_pCamera->Pitch(pitch);
 
-	m_pCamera->Translate(m_MoveDir, m_MoveVelocity * deltaTime);
+    m_pCamera->Translate(m_MoveDir, m_MoveVelocity * deltaTime);
 }
 
 void FirstPersonCameraController::InitCamera(FirstPersonCamera* pCamera)
 {
-	m_pCamera = pCamera;
+    m_pCamera = pCamera;
 }
 
 void FirstPersonCameraController::SlowMovement(bool enable)
 {
-	m_FineMovement = enable;
+    m_FineMovement = enable;
 }
 
 void FirstPersonCameraController::SlowRotation(bool enable)
 {
-	m_FineRotation = enable;
+    m_FineRotation = enable;
 }
 
 void FirstPersonCameraController::EnableMomentum(bool enable)
 {
-	m_Momentum = enable;
+    m_Momentum = enable;
 }
 
 void FirstPersonCameraController::SetMouseSensitivity(float x, float y)
 {
-	m_MouseSensitivityX = x;
-	m_MouseSensitivityY = y;
+    m_MouseSensitivityX = x;
+    m_MouseSensitivityY = y;
 }
 
 void FirstPersonCameraController::SetMoveSpeed(float speed)
 {
-	m_MoveSpeed = speed;
+    m_MoveSpeed = speed;
 }

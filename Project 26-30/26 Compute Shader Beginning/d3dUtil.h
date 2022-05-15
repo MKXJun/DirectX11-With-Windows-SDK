@@ -51,10 +51,10 @@ template<UINT TNameLength>
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -68,11 +68,11 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ LPCSTR name, _In_ UINT length)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(length);
 #endif
 }
 
@@ -85,10 +85,10 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ LPCST
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
 #else
-	UNREFERENCED_PARAMETER(resource);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -100,9 +100,9 @@ inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const
 inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ std::nullptr_t)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	resource->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+    resource->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
 #else
-	UNREFERENCED_PARAMETER(resource);
+    UNREFERENCED_PARAMETER(resource);
 #endif
 }
 
@@ -116,10 +116,10 @@ template<UINT TNameLength>
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&name)[TNameLength])
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -133,11 +133,11 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const char(&na
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ LPCSTR name, _In_ UINT length)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, length, name);
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
-	UNREFERENCED_PARAMETER(length);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(length);
 #endif
 }
 
@@ -150,10 +150,10 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ LPCSTR name, _
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const std::string& name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
 #else
-	UNREFERENCED_PARAMETER(object);
-	UNREFERENCED_PARAMETER(name);
+    UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(name);
 #endif
 }
 
@@ -165,9 +165,9 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ const std::str
 inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::nullptr_t)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-	object->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
+    object->SetPrivateData(WKPDID_D3DDebugObjectName, 0, nullptr);
 #else
-	UNREFERENCED_PARAMETER(object);
+    UNREFERENCED_PARAMETER(object);
 #endif
 }
 
@@ -184,11 +184,11 @@ inline void DXGISetDebugObjectName(_In_ IDXGIObject* object, _In_ std::nullptr_t
 // [In]shaderModel      着色器模型，格式为"*s_5_0"，*可以为c,d,g,h,p,v之一
 // [Out]ppBlobOut       输出着色器二进制信息
 HRESULT CreateShaderFromFile(
-	const WCHAR* csoFileNameInOut,
-	const WCHAR* hlslFileName,
-	LPCSTR entryPoint,
-	LPCSTR shaderModel,
-	ID3DBlob** ppBlobOut);
+    const WCHAR* csoFileNameInOut,
+    const WCHAR* hlslFileName,
+    LPCSTR entryPoint,
+    LPCSTR shaderModel,
+    ID3DBlob** ppBlobOut);
 
 //
 // 缓冲区相关函数
@@ -204,13 +204,13 @@ HRESULT CreateShaderFromFile(
 // [InOpt]dynamic			是否需要CPU经常更新
 // [InOpt]streamOutput		是否还用于流输出阶段(不能与dynamic同时设为true)
 HRESULT CreateVertexBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	ID3D11Buffer ** vertexBuffer,
-	/* 可选扩展部分 */
-	bool dynamic = false,
-	bool streamOutput = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    ID3D11Buffer ** vertexBuffer,
+    /* 可选扩展部分 */
+    bool dynamic = false,
+    bool streamOutput = false);
 
 // ------------------------------
 // CreateIndexBuffer函数
@@ -221,12 +221,12 @@ HRESULT CreateVertexBuffer(
 // [Out]indexBuffer			输出的索引缓冲区
 // [InOpt]dynamic			是否需要CPU经常更新
 HRESULT CreateIndexBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	ID3D11Buffer ** indexBuffer,
-	/* 可选扩展部分 */
-	bool dynamic = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    ID3D11Buffer ** indexBuffer,
+    /* 可选扩展部分 */
+    bool dynamic = false);
 
 // ------------------------------
 // CreateConstantBuffer函数
@@ -238,13 +238,13 @@ HRESULT CreateIndexBuffer(
 // [InOpt]cpuUpdates		是否允许CPU更新
 // [InOpt]gpuUpdates		是否允许GPU更新
 HRESULT CreateConstantBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	ID3D11Buffer ** constantBuffer,
-	/* 可选扩展部分 */
-	bool cpuUpdates = true,
-	bool gpuUpdates = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    ID3D11Buffer ** constantBuffer,
+    /* 可选扩展部分 */
+    bool cpuUpdates = true,
+    bool gpuUpdates = false);
 
 // ------------------------------
 // CreateTypedBuffer函数
@@ -256,13 +256,13 @@ HRESULT CreateConstantBuffer(
 // [InOpt]cpuUpdates		是否允许CPU更新
 // [InOpt]gpuUpdates		是否允许使用RWBuffer
 HRESULT CreateTypedBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	ID3D11Buffer ** typedBuffer,
-	/* 可选扩展部分 */
-	bool cpuUpdates = false,
-	bool gpuUpdates = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    ID3D11Buffer ** typedBuffer,
+    /* 可选扩展部分 */
+    bool cpuUpdates = false,
+    bool gpuUpdates = false);
 
 // ------------------------------
 // CreateStructuredBuffer函数
@@ -276,14 +276,14 @@ HRESULT CreateTypedBuffer(
 // [InOpt]cpuUpdates		是否允许CPU更新
 // [InOpt]gpuUpdates		是否允许使用RWStructuredBuffer
 HRESULT CreateStructuredBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	UINT structuredByteStride,
-	ID3D11Buffer ** structuredBuffer,
-	/* 可选扩展部分 */
-	bool cpuUpdates = false,
-	bool gpuUpdates = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    UINT structuredByteStride,
+    ID3D11Buffer ** structuredBuffer,
+    /* 可选扩展部分 */
+    bool cpuUpdates = false,
+    bool gpuUpdates = false);
 
 // ------------------------------
 // CreateRawBuffer函数
@@ -295,13 +295,13 @@ HRESULT CreateStructuredBuffer(
 // [InOpt]cpuUpdates		是否允许CPU更新
 // [InOpt]gpuUpdates		是否允许使用RWByteAddressBuffer
 HRESULT CreateRawBuffer(
-	ID3D11Device * d3dDevice,
-	void * data,
-	UINT byteWidth,
-	ID3D11Buffer ** rawBuffer,
-	/* 可选扩展部分 */
-	bool cpuUpdates = false,
-	bool gpuUpdates = false);
+    ID3D11Device * d3dDevice,
+    void * data,
+    UINT byteWidth,
+    ID3D11Buffer ** rawBuffer,
+    /* 可选扩展部分 */
+    bool cpuUpdates = false,
+    bool gpuUpdates = false);
 
 //
 // 纹理数组相关函数
@@ -315,9 +315,9 @@ HRESULT CreateRawBuffer(
 // [OutOpt]texture		    输出的纹理资源
 // [OutOpt]textureView      输出的纹理资源视图
 HRESULT CreateRandomTexture1D(
-	ID3D11Device* d3dDevice,
-	ID3D11Texture1D** texture,
-	ID3D11ShaderResourceView** textureView);
+    ID3D11Device* d3dDevice,
+    ID3D11Texture1D** texture,
+    ID3D11ShaderResourceView** textureView);
 
 
 //
@@ -335,12 +335,12 @@ HRESULT CreateRandomTexture1D(
 // [OutOpt]textureArrayView 输出的纹理数组资源视图
 // [In]generateMips			是否生成mipmaps
 HRESULT CreateTexture2DArrayFromFile(
-	ID3D11Device* d3dDevice,
-	ID3D11DeviceContext* d3dDeviceContext,
-	const std::vector<std::wstring>& fileNames,
-	ID3D11Texture2D** textureArray,
-	ID3D11ShaderResourceView** textureArrayView,
-	bool generateMips = false);
+    ID3D11Device* d3dDevice,
+    ID3D11DeviceContext* d3dDeviceContext,
+    const std::vector<std::wstring>& fileNames,
+    ID3D11Texture2D** textureArray,
+    ID3D11ShaderResourceView** textureArrayView,
+    bool generateMips = false);
 
 //
 // 纹理立方体相关函数
@@ -362,12 +362,12 @@ HRESULT CreateTexture2DArrayFromFile(
 // [OutOpt]textureCubeView	输出的纹理立方体资源视图
 // [In]generateMips			是否生成mipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
-	ID3D11Device * d3dDevice,
-	ID3D11DeviceContext * d3dDeviceContext,
-	const std::wstring& cubeMapFileName,
-	ID3D11Texture2D** textureArray,
-	ID3D11ShaderResourceView** textureCubeView,
-	bool generateMips = false);
+    ID3D11Device * d3dDevice,
+    ID3D11DeviceContext * d3dDeviceContext,
+    const std::wstring& cubeMapFileName,
+    ID3D11Texture2D** textureArray,
+    ID3D11ShaderResourceView** textureCubeView,
+    bool generateMips = false);
 
 // ------------------------------
 // CreateWICTexture2DCubeFromFile函数
@@ -382,12 +382,12 @@ HRESULT CreateWICTexture2DCubeFromFile(
 // [OutOpt]textureCubeView	输出的纹理立方体资源视图
 // [In]generateMips			是否生成mipmaps
 HRESULT CreateWICTexture2DCubeFromFile(
-	ID3D11Device * d3dDevice,
-	ID3D11DeviceContext * d3dDeviceContext,
-	const std::vector<std::wstring>& cubeMapFileNames,
-	ID3D11Texture2D** textureArray,
-	ID3D11ShaderResourceView** textureCubeView,
-	bool generateMips = false);
+    ID3D11Device * d3dDevice,
+    ID3D11DeviceContext * d3dDeviceContext,
+    const std::vector<std::wstring>& cubeMapFileNames,
+    ID3D11Texture2D** textureArray,
+    ID3D11ShaderResourceView** textureCubeView,
+    bool generateMips = false);
 
 //
 // 数学相关函数
@@ -398,14 +398,14 @@ HRESULT CreateWICTexture2DCubeFromFile(
 // ------------------------------
 inline DirectX::XMMATRIX XM_CALLCONV InverseTranspose(DirectX::FXMMATRIX M)
 {
-	using namespace DirectX;
+    using namespace DirectX;
 
-	// 世界矩阵的逆的转置仅针对法向量，我们也不需要世界矩阵的平移分量
-	// 而且不去掉的话，后续再乘上观察矩阵之类的就会产生错误的变换结果
-	XMMATRIX A = M;
-	A.r[3] = g_XMIdentityR3;
+    // 世界矩阵的逆的转置仅针对法向量，我们也不需要世界矩阵的平移分量
+    // 而且不去掉的话，后续再乘上观察矩阵之类的就会产生错误的变换结果
+    XMMATRIX A = M;
+    A.r[3] = g_XMIdentityR3;
 
-	return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
+    return XMMatrixTranspose(XMMatrixInverse(nullptr, A));
 }
 
 #endif

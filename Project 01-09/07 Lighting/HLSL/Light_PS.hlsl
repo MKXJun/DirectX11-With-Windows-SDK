@@ -30,8 +30,8 @@ float4 PS(VertexOut pIn) : SV_Target
     spec += S;
 
     float4 litColor = pIn.Color * (ambient + diffuse) + spec;
-	
+    
     litColor.a = g_Material.Diffuse.a * pIn.Color.a;
-	
+    
     return litColor;
 }

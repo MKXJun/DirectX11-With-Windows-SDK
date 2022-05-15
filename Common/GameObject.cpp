@@ -7,109 +7,109 @@ using namespace DirectX;
 
 struct InstancedData
 {
-	XMMATRIX world;
-	XMMATRIX worldInvTranspose;
+    XMMATRIX world;
+    XMMATRIX worldInvTranspose;
 };
 
 Transform& GameObject::GetTransform()
 {
-	return m_Transform;
+    return m_Transform;
 }
 
 const Transform& GameObject::GetTransform() const
 {
-	return m_Transform;
+    return m_Transform;
 }
 
 void GameObject::FrustumCulling(const BoundingFrustum& frustumInWorld)
 {
-	size_t sz = m_pModel->meshdatas.size();
-	m_InFrustum = false;
-	m_SubModelInFrustum.resize(sz);
-	for (size_t i = 0; i < sz; ++i)
-	{
-		BoundingOrientedBox box;
-		BoundingOrientedBox::CreateFromBoundingBox(box, m_pModel->meshdatas[i].m_BoundingBox);
-		box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
-		m_SubModelInFrustum[i] = frustumInWorld.Intersects(box);
-		m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
-	}
+    size_t sz = m_pModel->meshdatas.size();
+    m_InFrustum = false;
+    m_SubModelInFrustum.resize(sz);
+    for (size_t i = 0; i < sz; ++i)
+    {
+        BoundingOrientedBox box;
+        BoundingOrientedBox::CreateFromBoundingBox(box, m_pModel->meshdatas[i].m_BoundingBox);
+        box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+        m_SubModelInFrustum[i] = frustumInWorld.Intersects(box);
+        m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
+    }
 }
 
 void GameObject::CubeCulling(const DirectX::BoundingOrientedBox& obbInWorld)
 {
-	size_t sz = m_pModel->meshdatas.size();
-	m_InFrustum = false;
-	m_SubModelInFrustum.resize(sz);
-	for (size_t i = 0; i < sz; ++i)
-	{
-		BoundingOrientedBox box;
-		BoundingOrientedBox::CreateFromBoundingBox(box, m_pModel->meshdatas[i].m_BoundingBox);
-		box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
-		m_SubModelInFrustum[i] = obbInWorld.Intersects(box);
-		m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
-	}
+    size_t sz = m_pModel->meshdatas.size();
+    m_InFrustum = false;
+    m_SubModelInFrustum.resize(sz);
+    for (size_t i = 0; i < sz; ++i)
+    {
+        BoundingOrientedBox box;
+        BoundingOrientedBox::CreateFromBoundingBox(box, m_pModel->meshdatas[i].m_BoundingBox);
+        box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+        m_SubModelInFrustum[i] = obbInWorld.Intersects(box);
+        m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
+    }
 }
 
 void GameObject::CubeCulling(const DirectX::BoundingBox& aabbInWorld)
 {
-	size_t sz = m_pModel->meshdatas.size();
-	m_InFrustum = false;
-	m_SubModelInFrustum.resize(sz);
-	for (size_t i = 0; i < sz; ++i)
-	{
-		BoundingBox box;
-		m_pModel->meshdatas[i].m_BoundingBox.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
-		m_SubModelInFrustum[i] = aabbInWorld.Intersects(box);
-		m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
-	}
+    size_t sz = m_pModel->meshdatas.size();
+    m_InFrustum = false;
+    m_SubModelInFrustum.resize(sz);
+    for (size_t i = 0; i < sz; ++i)
+    {
+        BoundingBox box;
+        m_pModel->meshdatas[i].m_BoundingBox.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+        m_SubModelInFrustum[i] = aabbInWorld.Intersects(box);
+        m_InFrustum = m_InFrustum || m_SubModelInFrustum[i];
+    }
 }
 
 void GameObject::SetModel(const Model* pModel)
 {
-	m_pModel = pModel;
+    m_pModel = pModel;
 }
 
 const Model* GameObject::GetModel() const
 {
-	return m_pModel;
+    return m_pModel;
 }
 
 void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
 {
-	if (!m_InFrustum)
-		return;
-	size_t sz = m_pModel->meshdatas.size();
-	size_t fsz = m_SubModelInFrustum.size();
-	for (size_t i = 0; i < sz; ++i)
-	{
-		if (i < fsz && !m_SubModelInFrustum[i])
-			continue;
+    if (!m_InFrustum)
+        return;
+    size_t sz = m_pModel->meshdatas.size();
+    size_t fsz = m_SubModelInFrustum.size();
+    for (size_t i = 0; i < sz; ++i)
+    {
+        if (i < fsz && !m_SubModelInFrustum[i])
+            continue;
 
-		IEffectMeshData* pEffectMeshData = dynamic_cast<IEffectMeshData*>(effect);
-		if (!pEffectMeshData)
-			continue;
+        IEffectMeshData* pEffectMeshData = dynamic_cast<IEffectMeshData*>(effect);
+        if (!pEffectMeshData)
+            continue;
 
-		IEffectMaterial* pEffectMaterial = dynamic_cast<IEffectMaterial*>(effect);
-		if (pEffectMaterial)
-			pEffectMaterial->SetMaterial(m_pModel->materials[m_pModel->meshdatas[i].m_MaterialIndex]);
+        IEffectMaterial* pEffectMaterial = dynamic_cast<IEffectMaterial*>(effect);
+        if (pEffectMaterial)
+            pEffectMaterial->SetMaterial(m_pModel->materials[m_pModel->meshdatas[i].m_MaterialIndex]);
 
-		IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(effect);
-		if (pEffectTransform)
-			pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
+        IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(effect);
+        if (pEffectTransform)
+            pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
 
-		effect->Apply(deviceContext);
+        effect->Apply(deviceContext);
 
-		MeshDataInput input = pEffectMeshData->GetInputData(m_pModel->meshdatas[i]);
-		{
-			deviceContext->IASetVertexBuffers(0, (uint32_t)input.pVertexBuffers.size(), 
-				input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
-			deviceContext->IASetIndexBuffer(input.pIndexBuffer, input.indexCount > 65535 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
+        MeshDataInput input = pEffectMeshData->GetInputData(m_pModel->meshdatas[i]);
+        {
+            deviceContext->IASetVertexBuffers(0, (uint32_t)input.pVertexBuffers.size(), 
+                input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
+            deviceContext->IASetIndexBuffer(input.pIndexBuffer, input.indexCount > 65535 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
 
-			deviceContext->DrawIndexed(input.indexCount, 0, 0);
-		}
-		
-	}
+            deviceContext->DrawIndexed(input.indexCount, 0, 0);
+        }
+        
+    }
 }
 
 

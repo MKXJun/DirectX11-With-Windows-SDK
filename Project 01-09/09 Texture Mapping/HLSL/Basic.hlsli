@@ -18,9 +18,9 @@ cbuffer PSConstantBuffer : register(b1)
     PointLight g_PointLight[10];
     SpotLight g_SpotLight[10];
     Material g_Material;
-	int g_NumDirLight;
-	int g_NumPointLight;
-	int g_NumSpotLight;
+    int g_NumDirLight;
+    int g_NumPointLight;
+    int g_NumSpotLight;
     float g_Pad1;
 
     float3 g_EyePosW;
@@ -30,9 +30,9 @@ cbuffer PSConstantBuffer : register(b1)
 
 struct VertexPosNormalTex
 {
-	float3 PosL : POSITION;
+    float3 PosL : POSITION;
     float3 NormalL : NORMAL;
-	float2 Tex : TEXCOORD;
+    float2 Tex : TEXCOORD;
 };
 
 struct VertexPosTex
@@ -43,10 +43,10 @@ struct VertexPosTex
 
 struct VertexPosHWNormalTex
 {
-	float4 PosH : SV_POSITION;
+    float4 PosH : SV_POSITION;
     float3 PosW : POSITION;     // 在世界中的位置
     float3 NormalW : NORMAL;    // 法向量在世界中的方向
-	float2 Tex : TEXCOORD;
+    float2 Tex : TEXCOORD;
 };
 
 struct VertexPosHTex

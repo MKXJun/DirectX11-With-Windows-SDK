@@ -13,7 +13,7 @@ void GS(triangle VertexPosNormalColor input[3], inout TriangleStream<VertexPosNo
     //   /  \xx/  \
     //  /____\/____\
     // v0    v5    v2
-	
+    
     VertexPosNormalColor vertexes[6];
 
     matrix viewProj = mul(g_View, g_Proj);

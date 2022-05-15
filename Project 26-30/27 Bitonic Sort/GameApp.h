@@ -19,39 +19,39 @@
 class GameApp : public D3DApp
 {
 public:
-	struct CB
-	{
-		UINT level;
-		UINT descendMask;
-		UINT matrixWidth;
-		UINT matrixHeight;
-	};
+    struct CB
+    {
+        UINT level;
+        UINT descendMask;
+        UINT matrixWidth;
+        UINT matrixHeight;
+    };
 
 public:
-	GameApp(HINSTANCE hInstance);
-	~GameApp();
+    GameApp(HINSTANCE hInstance);
+    ~GameApp();
 
-	bool Init();
-	void Compute();
+    bool Init();
+    void Compute();
 
 private:
-	bool InitResource();
-	void SetConstants(UINT level, UINT descendMask, UINT matrixWidth, UINT matrixHeight);
-	void GPUSort();
+    bool InitResource();
+    void SetConstants(UINT level, UINT descendMask, UINT matrixWidth, UINT matrixHeight);
+    void GPUSort();
 private:
-	ComPtr<ID3D11Buffer> m_pConstantBuffer;				// 常量缓冲区
-	ComPtr<ID3D11Buffer> m_pTypedBuffer1;				// 有类型缓冲区1
-	ComPtr<ID3D11Buffer> m_pTypedBuffer2;				// 有类型缓冲区2
-	ComPtr<ID3D11Buffer> m_pTypedBufferCopy;			// 用于拷贝的有类型缓冲区
-	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV1;		// 有类型缓冲区1对应的无序访问视图
-	ComPtr<ID3D11UnorderedAccessView> m_pDataUAV2;		// 有类型缓冲区2对应的无序访问视图
-	ComPtr<ID3D11ShaderResourceView> m_pDataSRV1;		// 有类型缓冲区1对应的着色器资源视图
-	ComPtr<ID3D11ShaderResourceView> m_pDataSRV2;		// 有类型缓冲区2对应的着色器资源视图
+    ComPtr<ID3D11Buffer> m_pConstantBuffer;				// 常量缓冲区
+    ComPtr<ID3D11Buffer> m_pTypedBuffer1;				// 有类型缓冲区1
+    ComPtr<ID3D11Buffer> m_pTypedBuffer2;				// 有类型缓冲区2
+    ComPtr<ID3D11Buffer> m_pTypedBufferCopy;			// 用于拷贝的有类型缓冲区
+    ComPtr<ID3D11UnorderedAccessView> m_pDataUAV1;		// 有类型缓冲区1对应的无序访问视图
+    ComPtr<ID3D11UnorderedAccessView> m_pDataUAV2;		// 有类型缓冲区2对应的无序访问视图
+    ComPtr<ID3D11ShaderResourceView> m_pDataSRV1;		// 有类型缓冲区1对应的着色器资源视图
+    ComPtr<ID3D11ShaderResourceView> m_pDataSRV2;		// 有类型缓冲区2对应的着色器资源视图
 
-	std::vector<UINT> m_RandomNums;
-	UINT m_RandomNumsCount;
-	ComPtr<ID3D11ComputeShader> m_pBitonicSort_CS;
-	ComPtr<ID3D11ComputeShader> m_pMatrixTranspose_CS;
+    std::vector<UINT> m_RandomNums;
+    UINT m_RandomNumsCount;
+    ComPtr<ID3D11ComputeShader> m_pBitonicSort_CS;
+    ComPtr<ID3D11ComputeShader> m_pMatrixTranspose_CS;
 };
 
 

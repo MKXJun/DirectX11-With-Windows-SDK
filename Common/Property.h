@@ -14,6 +14,6 @@ template<class T, class... ALL_V>
 struct IsVariantMember<T, std::variant<ALL_V...>> : public std::disjunction<std::is_same<T, ALL_V>...> {};
 
 using Property = std::variant<
-	int, uint32_t, float, DirectX::XMFLOAT4, DirectX::XMFLOAT4X4>;
+    int, uint32_t, float, DirectX::XMFLOAT4, DirectX::XMFLOAT4X4>;
 
 #endif

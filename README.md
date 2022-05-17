@@ -38,7 +38,7 @@ QQ群号：727623616
 - HLSL Shader Model 5.0
 
 目前项目使用了下述代码库或文件：
-- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-38章。</br>
+- [ocornut/imgui](https://github.com/ocornut/imgui)：当前已经为这些项目使用ImGui：第7、10、15、16、17、20、23、30-39章。</br>
 - [nothings/stb](https://github.com/nothings/stb)：使用其stb_image</br>
 - [assimp/assimp](https://github.com/assimp/assimp)：模型加载</br>
 - [DirectXTex/DDSTextureLoader](https://github.com/Microsoft/DirectXTex/tree/master/DDSTextureLoader)</br>

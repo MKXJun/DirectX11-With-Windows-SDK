@@ -57,21 +57,6 @@ void FirstPersonCameraController::InitCamera(FirstPersonCamera* pCamera)
     m_pCamera = pCamera;
 }
 
-void FirstPersonCameraController::SlowMovement(bool enable)
-{
-    m_FineMovement = enable;
-}
-
-void FirstPersonCameraController::SlowRotation(bool enable)
-{
-    m_FineRotation = enable;
-}
-
-void FirstPersonCameraController::EnableMomentum(bool enable)
-{
-    m_Momentum = enable;
-}
-
 void FirstPersonCameraController::SetMouseSensitivity(float x, float y)
 {
     m_MouseSensitivityX = x;

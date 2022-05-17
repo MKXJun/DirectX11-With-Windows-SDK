@@ -1,0 +1,12 @@
+# Rules in this file were initially inferred by Visual Studio IntelliCode from the E:\Code\C++\DirectX11 With Windows SDK codebase based on best match to current usage at 2022/5/15 星期日
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+
+[*.{cpp,h,hlsl,hlsli}]
+indent_size = 4
+indent_style = space
+trim_trailing_whit_space = true
+end_of_line = crlf
+
+[*.{cpp,h}]
+charset = utf-8

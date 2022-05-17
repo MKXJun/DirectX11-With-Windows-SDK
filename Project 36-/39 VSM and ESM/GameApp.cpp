@@ -86,7 +86,9 @@ void GameApp::UpdateScene(float dt)
         static const char* shadow_modes[] = {
             "CSM",
             "VSM",
-            "ESM"
+            "ESM",
+            "EVSM2",
+            "EVSM4"
         };
         if (ImGui::Combo("Shadow Type", reinterpret_cast<int*>(&m_CSManager.m_ShadowType), shadow_modes, ARRAYSIZE(shadow_modes)))
         {
@@ -150,9 +152,18 @@ void GameApp::UpdateScene(float dt)
         {
             m_CSManager.m_BlurKernelSize = 2 * blur_size + 1;
             m_pForwardEffect->SetPCFKernelSize(m_CSManager.m_BlurKernelSize);
+            m_pShadowEffect->SetBlurKernelSize(m_CSManager.m_BlurKernelSize);
             need_gpu_timer_reset = true;
         }
         
+        if (m_CSManager.m_ShadowType >= ShadowType::ShadowType_CSM)
+        {
+            if (ImGui::SliderFloat("Blur Sigma", &m_CSManager.m_GaussianBlurSigma, 0.1f, 10.0f, "%.1f"))
+            {
+                m_pShadowEffect->SetBlurSigma(m_CSManager.m_GaussianBlurSigma);
+            }
+        }
+
         if (m_CSManager.m_ShadowType == ShadowType::ShadowType_CSM && ImGui::SliderFloat("Depth Bias", &m_CSManager.m_PCFDepthBias, 0.0f, 0.05f))
         {
             m_pForwardEffect->SetPCFDepthBias(m_CSManager.m_PCFDepthBias);
@@ -168,11 +179,6 @@ void GameApp::UpdateScene(float dt)
                 need_gpu_timer_reset = true;
             }
 
-            if (ImGui::SliderFloat("Light Bleeding", &m_CSManager.m_LightBleedingReduction, 0.0f, 1.0f, "%.2f"))
-            {
-                m_pForwardEffect->SetLightBleedingReduction(m_CSManager.m_LightBleedingReduction);
-            }
-
             if (ImGui::Checkbox("Enable Mipmap", &m_CSManager.m_GenerateMips))
             {
                 m_CSManager.InitResource(m_pd3dDevice.Get());
@@ -180,6 +186,13 @@ void GameApp::UpdateScene(float dt)
             }
         }
 
+        if (m_CSManager.m_ShadowType == ShadowType::ShadowType_VSM || m_CSManager.m_ShadowType >= ShadowType::ShadowType_EVSM2)
+        {
+            if (ImGui::SliderFloat("Light Bleeding", &m_CSManager.m_LightBleedingReduction, 0.0f, 1.0f, "%.2f"))
+            {
+                m_pForwardEffect->SetLightBleedingReduction(m_CSManager.m_LightBleedingReduction);
+            }
+        }
 
         static const char* sampler_strs[] = {
                 "Point",
@@ -210,10 +223,26 @@ void GameApp::UpdateScene(float dt)
 
         if (m_CSManager.m_ShadowType == ShadowType::ShadowType_ESM)
         {
-            ImGui::SliderFloat("Blur Sigma", &m_CSManager.m_GaussianBlurSigma, 0.1f, 10.0f, "%.1f");
+            
             if (ImGui::SliderFloat("Magic Power", &m_CSManager.m_MagicPower, 0.1f, 400.0f, "%.1f"))
             {
                 m_pForwardEffect->SetMagicPower(m_CSManager.m_MagicPower);
+            }
+        }
+
+        if (m_CSManager.m_ShadowType >= ShadowType::ShadowType_EVSM2)
+        {
+            if (ImGui::SliderFloat("Pos Exp", &m_CSManager.m_PosExp, 0.1f, 42.0f, "%.1f"))
+            {
+                m_pForwardEffect->SetPosExponent(m_CSManager.m_PosExp);
+            }
+        }
+
+        if (m_CSManager.m_ShadowType == ShadowType::ShadowType_EVSM4)
+        {
+            if (ImGui::SliderFloat("Neg Exp", &m_CSManager.m_NegExp, 0.1f, 42.0f, "%.1f"))
+            {
+                m_pForwardEffect->SetNegExponent(m_CSManager.m_NegExp);
             }
         }
 
@@ -490,8 +519,6 @@ bool GameApp::InitResource()
 
     m_FPSCameraController.InitCamera(viewerCamera.get());
     m_FPSCameraController.SetMoveSpeed(10.0f);
-    // 仅当开启垂直同步的时候才适合使用动量，否则容易出现突然加速的情况
-    m_FPSCameraController.EnableMomentum(false);
     // ******************
     // 初始化特效
     //
@@ -509,8 +536,14 @@ bool GameApp::InitResource()
     m_pForwardEffect->SetPCFDepthBias(m_CSManager.m_PCFDepthBias);
     m_pForwardEffect->SetLightBleedingReduction(m_CSManager.m_LightBleedingReduction);
     m_pForwardEffect->SetMagicPower(m_CSManager.m_MagicPower);
+    m_pForwardEffect->SetPosExponent(m_CSManager.m_PosExp);
+    m_pForwardEffect->SetNegExponent(m_CSManager.m_NegExp);
+
 
     m_pShadowEffect->SetViewMatrix(lightCamera->GetViewMatrixXM());
+    m_pShadowEffect->SetBlurKernelSize(m_CSManager.m_BlurKernelSize);
+    m_pShadowEffect->SetBlurSigma(m_CSManager.m_GaussianBlurSigma);
+
     m_pSkyboxEffect->SetMsaaSamples(1);
 
     
@@ -561,7 +594,9 @@ void GameApp::RenderShadowForAllCascades()
             {
             case ShadowType::ShadowType_CSM: m_pShadowEffect->SetRenderDefault(m_pd3dImmediateContext.Get()); break;
             case ShadowType::ShadowType_VSM:
-            case ShadowType::ShadowType_ESM: m_pShadowEffect->SetRenderDepthOnly(m_pd3dImmediateContext.Get()); break;
+            case ShadowType::ShadowType_ESM: 
+            case ShadowType::ShadowType_EVSM2:
+            case ShadowType::ShadowType_EVSM4: m_pShadowEffect->SetRenderDepthOnly(m_pd3dImmediateContext.Get()); break;
             }
 
             ID3D11DepthStencilView* depthDSV = m_CSManager.GetDepthBufferDSV();
@@ -595,16 +630,14 @@ void GameApp::RenderShadowForAllCascades()
                     m_CSManager.GetShadowViewport());
                 if (m_CSManager.m_BlurKernelSize > 1)
                 {
-                    m_pShadowEffect->VarianceShadowHorizontialBlur(m_pd3dImmediateContext.Get(),
+                    m_pShadowEffect->GaussianBlurX(m_pd3dImmediateContext.Get(),
                         m_CSManager.GetCascadeOutput(cascadeIdx),
                         m_CSManager.GetTempTextureRTV(),
-                        m_CSManager.GetShadowViewport(),
-                        m_CSManager.m_BlurKernelSize);
-                    m_pShadowEffect->VarianceShadowVerticalBlur(m_pd3dImmediateContext.Get(),
+                        m_CSManager.GetShadowViewport());
+                    m_pShadowEffect->GaussianBlurY(m_pd3dImmediateContext.Get(),
                         m_CSManager.GetTempTextureOutput(),
                         m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
-                        m_CSManager.GetShadowViewport(),
-                        m_CSManager.m_BlurKernelSize);
+                        m_CSManager.GetShadowViewport());
                 }
             }
             else if (m_CSManager.m_ShadowType == ShadowType::ShadowType_ESM)
@@ -616,12 +649,10 @@ void GameApp::RenderShadowForAllCascades()
                         m_CSManager.GetTempTextureRTV(),
                         m_CSManager.GetShadowViewport(),
                         m_CSManager.m_MagicPower);
-                    m_pShadowEffect->ExponentialShadowLogGaussianBlur(m_pd3dImmediateContext.Get(),
+                    m_pShadowEffect->LogGaussianBlur(m_pd3dImmediateContext.Get(),
                         m_CSManager.GetTempTextureOutput(),
                         m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
-                        m_CSManager.GetShadowViewport(),
-                        m_CSManager.m_BlurKernelSize,
-                        m_CSManager.m_GaussianBlurSigma);
+                        m_CSManager.GetShadowViewport());
                 }
                 else
                 {
@@ -630,6 +661,25 @@ void GameApp::RenderShadowForAllCascades()
                         m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
                         m_CSManager.GetShadowViewport(),
                         m_CSManager.m_MagicPower);
+                }
+            }
+            else if (m_CSManager.m_ShadowType >= ShadowType::ShadowType_EVSM2)
+            {
+                m_pShadowEffect->RenderExponentialVarianceShadow(m_pd3dImmediateContext.Get(),
+                    m_CSManager.GetDepthBufferSRV(),
+                    m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
+                    m_CSManager.GetShadowViewport(), m_CSManager.m_PosExp,
+                    m_CSManager.m_ShadowType == ShadowType::ShadowType_EVSM4 ? &m_CSManager.m_NegExp : nullptr);
+                if (m_CSManager.m_BlurKernelSize > 1)
+                {
+                    m_pShadowEffect->GaussianBlurX(m_pd3dImmediateContext.Get(),
+                        m_CSManager.GetCascadeOutput(cascadeIdx),
+                        m_CSManager.GetTempTextureRTV(),
+                        m_CSManager.GetShadowViewport());
+                    m_pShadowEffect->GaussianBlurY(m_pd3dImmediateContext.Get(),
+                        m_CSManager.GetTempTextureOutput(),
+                        m_CSManager.GetCascadeRenderTargetView(cascadeIdx),
+                        m_CSManager.GetShadowViewport());
                 }
             }
         }

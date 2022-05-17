@@ -30,10 +30,6 @@ public:
     void Update(float deltaTime) override;
 
     void InitCamera(FirstPersonCamera* pCamera);
-    
-    void SlowMovement(bool enable);
-    void SlowRotation(bool enable);
-    void EnableMomentum(bool enable);
 
     void SetMouseSensitivity(float x, float y);
     void SetMoveSpeed(float speed);
@@ -47,13 +43,6 @@ private:
 
     float m_CurrentYaw = 0.0f;
     float m_CurrentPitch = 0.0f;
-
-    bool m_FineMovement = false;
-    bool m_FineRotation = false;
-    bool m_Momentum = true;
-
-    float m_LastForward = 0.0f;
-    float m_LastStrafe = 0.0f;
 
     DirectX::XMFLOAT3 m_MoveDir{};
     float m_MoveVelocity = 0.0f;

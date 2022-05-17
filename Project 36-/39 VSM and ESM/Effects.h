@@ -57,6 +57,8 @@ public:
     // 0: Cascaded Shadow Map
     // 1: Variance Shadow Map
     // 2: Exponmential Shadow Map
+    // 3: Exponential Variance Shadow Map 2-Component
+    // 4: Exponential Variance Shadow Map 4-Component
     void SetShadowType(int type);
 
     // 通用
@@ -74,8 +76,12 @@ public:
     void XM_CALLCONV SetShadowViewMatrix(DirectX::FXMMATRIX ShadowView);
     void SetShadowTextureArray(ID3D11ShaderResourceView* shadow);
 
+    void SetPosExponent(float posExp);
+    void SetNegExponent(float negExp);
     void SetLightBleedingReduction(float value);
     void SetCascadeSampler(ID3D11SamplerState* sampler);
+
+    
 
     // CSM
     void SetPCFKernelSize(int size);
@@ -163,39 +169,45 @@ public:
         const D3D11_VIEWPORT& vp,
         float magic_power);
 
+    // 生成指数方差阴影
+    // 提供NegExp时，将会带负指数项
+    void RenderExponentialVarianceShadow(ID3D11DeviceContext* deviceContext,
+        ID3D11ShaderResourceView* input,
+        ID3D11RenderTargetView* output,
+        const D3D11_VIEWPORT& vp,
+        float posExp, float* optNegExp = nullptr);
+
     // 绘制深度图到纹理
     void RenderDepthToTexture(ID3D11DeviceContext* deviceContext, 
         ID3D11ShaderResourceView* input, 
         ID3D11RenderTargetView* output, 
         const D3D11_VIEWPORT& vp);
 
-    // input和output纹理宽高要求一致
-    // kernel_size: 奇数, 3-15
-    void VarianceShadowHorizontialBlur(
-        ID3D11DeviceContext* deviceContext, 
-        ID3D11ShaderResourceView* input, 
-        ID3D11RenderTargetView* output, 
-        const D3D11_VIEWPORT& vp, 
-        int kernel_size);
+    // size: 奇数, 3-15
+    void SetBlurKernelSize(int size);
+
+    void SetBlurSigma(float sigma);
 
     // input和output纹理宽高要求一致
-    // kernel_size: 奇数, 3-15
-    void VarianceShadowVerticalBlur(
+    void GaussianBlurX(
         ID3D11DeviceContext* deviceContext, 
         ID3D11ShaderResourceView* input, 
         ID3D11RenderTargetView* output, 
-        const D3D11_VIEWPORT& vp, 
-        int kernel_size);
+        const D3D11_VIEWPORT& vp);
 
     // input和output纹理宽高要求一致
-    // kernel_size: 奇数, 3-15
-    void ExponentialShadowLogGaussianBlur(
+    void GaussianBlurY(
         ID3D11DeviceContext* deviceContext, 
         ID3D11ShaderResourceView* input, 
         ID3D11RenderTargetView* output, 
-        const D3D11_VIEWPORT& vp, 
-        int kernel_size, 
-        float sigma);
+        const D3D11_VIEWPORT& vp);
+
+    // input和output纹理宽高要求一致
+    void LogGaussianBlur(
+        ID3D11DeviceContext* deviceContext, 
+        ID3D11ShaderResourceView* input, 
+        ID3D11RenderTargetView* output, 
+        const D3D11_VIEWPORT& vp);
 
 
     // 应用常量缓冲区和纹理资源的变更

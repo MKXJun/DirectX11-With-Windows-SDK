@@ -23,7 +23,8 @@ enum class ShadowType
     ShadowType_CSM,
     ShadowType_VSM,
     ShadowType_ESM,
-    ShadowType_EVSM
+    ShadowType_EVSM2,
+    ShadowType_EVSM4
 };
 
 enum class CascadeSelection
@@ -125,6 +126,8 @@ public:
     float       m_PCFDepthBias = 0.001f;                // 阴影偏移(PCF)
     float       m_LightBleedingReduction = 0.8f;        // 处理漏光用的参数(VSM)
     float       m_MagicPower = 160.0f;                  // 处理漏光用的指数(ESM)
+    float       m_PosExp = 40.0f;                       // 处理漏光用的正项指数(EVSM)
+    float       m_NegExp = 5.0f;                        // 处理漏光用的负项指数(EVSM)
 
     bool        m_FixedSizeFrustumAABB = true;          // 是否固定视锥体产生的AABB宽高
     bool        m_MoveLightTexelSize = true;            // 是否进行逐光照texel移动

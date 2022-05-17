@@ -26,6 +26,7 @@ static const float FLOAT_BLUR_KERNEL_SIZE = (float) BLUR_KERNEL_SIZE;
 cbuffer CBTransform : register(b0)
 {
     matrix g_WorldViewProj;
+    float2 g_EvsmExponents;
 }
 
 cbuffer CBBlur : register(b1)
@@ -39,6 +40,16 @@ Texture2DMS<float, MSAA_SAMPLES> g_ShadowMap : register(t0);   // 用于VSM生成
 Texture2D g_TextureShadow : register(t1);                      // 用于模糊
 SamplerState g_SamplerPointClamp : register(s0);
 
+
+// 输入的depth需要在[0, 1]的范围
+float2 ApplyEvsmExponents(float depth, float2 exponents)
+{
+    depth = 2.0f * depth - 1.0f;
+    float2 expDepth;
+    expDepth.x = exp(exponents.x * depth);
+    expDepth.y = -exp(-exponents.y * depth);
+    return expDepth;
+}
 
 //
 // ShadowMap
@@ -85,6 +96,24 @@ float ExponentialShadowPS(float4 posH : SV_Position,
     return c * g_ShadowMap.Load(coords, 0);
 }
 
+float2 EVSM2CompPS(float4 posH : SV_Position,
+                   float2 texCoord : TEXCOORD) : SV_Target
+{
+    uint2 coords = uint2(posH.xy);
+    float2 depth = ApplyEvsmExponents(g_ShadowMap.Load(coords, 0).x, g_EvsmExponents);
+    float2 outDepth = float2(depth.x, depth.x * depth.x);
+    return outDepth;
+}
+
+float4 EVSM4CompPS(float4 posH : SV_Position,
+                   float2 texCoord : TEXCOORD) : SV_Target
+{
+    uint2 coords = uint2(posH.xy);
+    float2 depth = ApplyEvsmExponents(g_ShadowMap.Load(coords, 0).x, g_EvsmExponents);
+    float4 outDepth = float4(depth, depth * depth).xzyw;
+    return outDepth;
+}
+
 float4 DebugPS(float4 posH : SV_Position,
                float2 texCoord : TEXCOORD) : SV_Target
 {
@@ -92,33 +121,31 @@ float4 DebugPS(float4 posH : SV_Position,
     return float4(depth.rrr, 1.0f);
 }
 
-float2 VSMVerticalBlurPS(float4 posH : SV_Position,
+float4 GaussianBlurXPS(float4 posH : SV_Position,
                          float2 texcoord : TEXCOORD) : SV_Target
 {
-    float2 depths = 0.0f;
+    float4 depths = 0.0f;
     [unroll]
     for (int x = BLUR_KERNEL_BEGIN; x < BLUR_KERNEL_END; ++x)
     {
-        depths += g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(x, 0));
+        depths += g_BlurWeights[x - BLUR_KERNEL_BEGIN] * g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(x, 0));
     }
-    depths /= FLOAT_BLUR_KERNEL_SIZE;
     return depths;
 }
 
-float2 VSMHorizontialBlurPS(float4 posH : SV_Position,
+float4 GaussianBlurYPS(float4 posH : SV_Position,
                             float2 texcoord : TEXCOORD) : SV_Target
 {
-    float2 depths = 0.0f;
+    float4 depths = 0.0f;
     [unroll]
     for (int y = BLUR_KERNEL_BEGIN; y < BLUR_KERNEL_END; ++y)
     {
-        depths += g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(0, y));
+        depths += g_BlurWeights[y - BLUR_KERNEL_BEGIN] * g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(0, y));
     }
-    depths /= FLOAT_BLUR_KERNEL_SIZE;
     return depths;
 }
 
-float ESMLogGaussianBlurPS(float4 posH : SV_Position,
+float LogGaussianBlurPS(float4 posH : SV_Position,
                            float2 texcoord : TEXCOORD) : SV_Target
 {
     float cd0 = g_TextureShadow.Sample(g_SamplerPointClamp, texcoord);
@@ -128,7 +155,7 @@ float ESMLogGaussianBlurPS(float4 posH : SV_Position,
     {
         for (int j = BLUR_KERNEL_BEGIN; j < BLUR_KERNEL_END; ++j)
         {
-            float cdk = g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(i, j)) * (float) (i != 0 || j != 0);
+            float cdk = g_TextureShadow.Sample(g_SamplerPointClamp, texcoord, int2(i, j)).x * (float) (i != 0 || j != 0);
             sum += g_BlurWeights[i - BLUR_KERNEL_BEGIN] * g_BlurWeights[j - BLUR_KERNEL_BEGIN] * exp(cdk - cd0);
         }
     }

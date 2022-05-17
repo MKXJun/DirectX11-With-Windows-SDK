@@ -122,7 +122,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     passDesc.nameVS = "GeometryVS";
     pImpl->m_pEffectHelper->AddEffectPass("PreZ_Forward", device, &passDesc);
 
-    for (int shadowType = 0; shadowType < 3; ++shadowType)
+    for (int shadowType = 0; shadowType < 5; ++shadowType)
     {
         psName[0] = passName[0] = '0' + shadowType;
         defines[0].Definition = numStrs[shadowType];
@@ -213,7 +213,7 @@ MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)
 
 void ForwardEffect::SetShadowType(int type)
 {
-    if (type > 2 || type < 0)
+    if (type > 4 || type < 0)
         return;
     pImpl->m_ShadowType = type;
 }
@@ -281,6 +281,16 @@ void XM_CALLCONV ForwardEffect::SetShadowViewMatrix(DirectX::FXMMATRIX ShadowVie
 void ForwardEffect::SetShadowTextureArray(ID3D11ShaderResourceView* shadow)
 {
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", shadow);
+}
+
+void ForwardEffect::SetPosExponent(float posExp)
+{
+    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EvsmPosExp")->SetFloat(posExp);
+}
+
+void ForwardEffect::SetNegExponent(float negExp)
+{
+    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EvsmNegExp")->SetFloat(negExp);
 }
 
 void ForwardEffect::SetLightBleedingReduction(float value)

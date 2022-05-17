@@ -34,7 +34,7 @@ cbuffer CBCascadedShadow : register(b1)
     float  g_LightBleedingReduction;    // VSM漏光控制项
     float  g_EvsmPosExp;                // EVSM的正指数项
     float  g_EvsmNegExp;                // EVSM的负指数项
-    int    g_Pad;
+    int    g_16BitShadow;               // 是否16位阴影格式
     
     float4 g_CascadeFrustumsEyeSpaceDepthsData[2]; // 不同子视锥体远平面的Z值，将级联分开
     // 这严格来说是不属于cbuffer内的，不应该在外部去访问

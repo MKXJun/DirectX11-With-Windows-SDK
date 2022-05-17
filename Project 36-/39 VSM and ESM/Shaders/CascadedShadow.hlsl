@@ -13,12 +13,6 @@
 #define SHADOW_TYPE 1
 #endif
 
-// 允许在不同级联之间对阴影值混合。当shadow maps比较小
-// 且artifacts在两个级联之间可见的时候最为有效
-#ifndef BLEND_BETWEEN_CASCADE_LAYERS_FLAG
-#define BLEND_BETWEEN_CASCADE_LAYERS_FLAG 0
-#endif
-
 // 有两种方法为当前像素片元选择合适的级联：
 // Interval-based Selection 将视锥体的深度分区与像素片元的深度进行比较
 // Map-based Selection 找到纹理坐标在shadow map范围中的最小级联
@@ -60,6 +54,16 @@ float Linstep(float a, float b, float v)
 float ReduceLightBleeding(float pMax, float amount)
 {
     return Linstep(amount, 1.0f, pMax);
+}
+
+float2 GetEVSMExponents(float positiveExponent, float negativeExponent, int is16BitShadow)
+{
+    const float maxExponent = (is16BitShadow ? 5.54f : 42.0f);
+
+    float2 exponents = float2(positiveExponent, negativeExponent);
+
+    // 限制指数范围防止出现溢出
+    return min(exponents, maxExponent);
 }
 
 // 输入的depth需要在[0, 1]的范围
@@ -183,7 +187,8 @@ float CalculateExponentialVarianceShadow(float4 shadowTexCoord,
 {
     float percentLit = 0.0f;
     
-    float2 expDepth = ApplyEvsmExponents(shadowTexCoord.z, float2(g_EvsmPosExp, g_EvsmNegExp));
+    float2 exponents = GetEVSMExponents(g_EvsmPosExp, g_EvsmNegExp, g_16BitShadow);
+    float2 expDepth = ApplyEvsmExponents(shadowTexCoord.z, exponents);
     float4 moments = 0.0f;
     
     float3 shadowTexCoordDDX = ddx(shadowTexCoordViewSpace).xyz;
@@ -387,18 +392,16 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     //
     // 在两个级联之间进行混合
     //
-    if (BLEND_BETWEEN_CASCADE_LAYERS_FLAG)
-    {
-        // 为下一个级联重复进行投影纹理坐标的计算
-        // 下一级联的索引用于在两个级联之间模糊
-        nextCascadeIndex = min(CASCADE_COUNT_FLAG - 1, currentCascadeIndex + 1);
-    }
+    
+    // 为下一个级联重复进行投影纹理坐标的计算
+    // 下一级联的索引用于在两个级联之间模糊
+    nextCascadeIndex = min(CASCADE_COUNT_FLAG - 1, currentCascadeIndex + 1);
     
     blendBetweenCascadesAmount = 1.0f;
     float currentPixelsBlendBandLocation = 1.0f;
     if (SELECT_CASCADE_BY_INTERVAL_FLAG)
     {
-        if (BLEND_BETWEEN_CASCADE_LAYERS_FLAG && CASCADE_COUNT_FLAG > 1)
+        if (CASCADE_COUNT_FLAG > 1)
         {
             CalculateBlendAmountForInterval(currentCascadeIndex, currentPixelDepth,
                 currentPixelsBlendBandLocation, blendBetweenCascadesAmount);
@@ -406,14 +409,14 @@ float CalculateCascadedShadow(float4 shadowMapTexCoordViewSpace,
     }
     else
     {
-        if (BLEND_BETWEEN_CASCADE_LAYERS_FLAG && CASCADE_COUNT_FLAG > 1)
+        if (CASCADE_COUNT_FLAG > 1)
         {
             CalculateBlendAmountForMap(shadowMapTexCoord,
                 currentPixelsBlendBandLocation, blendBetweenCascadesAmount);
         }
     }
     
-    if (BLEND_BETWEEN_CASCADE_LAYERS_FLAG && CASCADE_COUNT_FLAG > 1)
+    if (CASCADE_COUNT_FLAG > 1)
     {
         if (currentPixelsBlendBandLocation < g_CascadeBlendArea)
         {

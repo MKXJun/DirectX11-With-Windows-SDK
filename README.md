@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.36.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.36.2-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -8,9 +8,10 @@
 
 ## 最近更新
 
-2022/5/14 Ver1.36.1
+2022/5/17 Ver1.36.2
 
-- 调整项目38-39代码
+- 项目39添加EVSM2和EVSM4，砍掉MSAA
+- 修复Common/d3dApp.cpp的问题([#8](https://github.com/MKXJun/DirectX11-With-Windows-SDK/issues/8))
 
 **[历史更新记录](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
 
@@ -107,5 +108,4 @@ QQ群号：727623616
 ## 使用Direct3D 11.x(Windows SDK)编写的魔方
 
 **[点此查看](https://github.com/MKXJun/Rubik-Cube)**
-
 

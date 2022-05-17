@@ -266,13 +266,13 @@ void ShadowEffect::RenderVarianceShadow(ID3D11DeviceContext* deviceContext,
     deviceContext->IASetInputLayout(nullptr);
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", input);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
     pImpl->m_pCurrEffectPass->Apply(deviceContext);
     deviceContext->OMSetRenderTargets(1, &output, nullptr);
     deviceContext->RSSetViewports(1, &vp);
     deviceContext->Draw(3, 0);
 
-    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_ShadowMap");
+    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
     input = nullptr;
     deviceContext->PSSetShaderResources(slot, 1, &input);
     deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -288,14 +288,14 @@ void ShadowEffect::RenderExponentialShadow(
     deviceContext->IASetInputLayout(nullptr);
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("ExponentialShadow");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", input);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
     pImpl->m_pCurrEffectPass->PSGetParamByName("c")->SetFloat(magic_power);
     pImpl->m_pCurrEffectPass->Apply(deviceContext);
     deviceContext->OMSetRenderTargets(1, &output, nullptr);
     deviceContext->RSSetViewports(1, &vp);
     deviceContext->Draw(3, 0);
 
-    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_ShadowMap");
+    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
     input = nullptr;
     deviceContext->PSSetShaderResources(slot, 1, &input);
     deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -321,13 +321,13 @@ void ShadowEffect::RenderExponentialVarianceShadow(
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("EVSM2Comp");
     
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EvsmExponents")->SetFloatVector(2, exps);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", input);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", input);
     pImpl->m_pCurrEffectPass->Apply(deviceContext);
     deviceContext->OMSetRenderTargets(1, &output, nullptr);
     deviceContext->RSSetViewports(1, &vp);
     deviceContext->Draw(3, 0);
 
-    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_ShadowMap");
+    int slot = pImpl->m_pEffectHelper->MapShaderResourceSlot("g_TextureShadow");
     input = nullptr;
     deviceContext->PSSetShaderResources(slot, 1, &input);
     deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
@@ -352,6 +352,12 @@ void ShadowEffect::RenderDepthToTexture(
     input = nullptr;
     deviceContext->PSSetShaderResources(slot, 1, &input);
     deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+}
+
+void ShadowEffect::Set16BitFormatShadow(bool enable)
+{
+    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_16BitShadow")->SetSInt(enable);
+    
 }
 
 void ShadowEffect::SetBlurKernelSize(int size)

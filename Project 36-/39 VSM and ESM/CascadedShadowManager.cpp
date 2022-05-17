@@ -6,24 +6,38 @@ HRESULT CascadedShadowManager::InitResource(ID3D11Device* device)
 {
 
     DXGI_FORMAT format = DXGI_FORMAT_R32_FLOAT;
-    switch (m_ShadowType)
+    if (m_ShadowBits == 4)
     {
-    case ShadowType::ShadowType_ESM:
-    case ShadowType::ShadowType_CSM: format = DXGI_FORMAT_R32_FLOAT; break;
-    case ShadowType::ShadowType_VSM:
-    case ShadowType::ShadowType_EVSM2: format = DXGI_FORMAT_R32G32_FLOAT; break;
-    case ShadowType::ShadowType_EVSM4: format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+        switch (m_ShadowType)
+        {
+        case ShadowType::ShadowType_ESM:
+        case ShadowType::ShadowType_CSM: format = DXGI_FORMAT_R32_FLOAT; break;
+        case ShadowType::ShadowType_VSM:
+        case ShadowType::ShadowType_EVSM2: format = DXGI_FORMAT_R32G32_FLOAT; break;
+        case ShadowType::ShadowType_EVSM4: format = DXGI_FORMAT_R32G32B32A32_FLOAT; break;
+        }
     }
+    else if (m_ShadowBits == 2)
+    {
+        switch (m_ShadowType)
+        {
+        case ShadowType::ShadowType_ESM: format = DXGI_FORMAT_R16_FLOAT; break;
+        case ShadowType::ShadowType_CSM: format = DXGI_FORMAT_R16_UNORM; break;
+        case ShadowType::ShadowType_VSM:format = DXGI_FORMAT_R16G16_UNORM; break;
+        case ShadowType::ShadowType_EVSM2: format = DXGI_FORMAT_R16G16_FLOAT; break;
+        case ShadowType::ShadowType_EVSM4: format = DXGI_FORMAT_R16G16B16A16_FLOAT; break;
+        }
+    }
+    
 
-    DXGI_SAMPLE_DESC sampleDesc{ 
-        m_ShadowType == ShadowType::ShadowType_VSM ? (UINT)m_MsaaSamples : 1,
-        0 };
     m_pCSMTextureArray = std::make_unique<Texture2D>(device, m_ShadowSize, m_ShadowSize, format,
         D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, m_GenerateMips ? (int)log2f((float)m_ShadowSize) + 1 : 1, (UINT)m_CascadeLevels);
     m_pCSMTempTexture = std::make_unique<Texture2D>(device, m_ShadowSize, m_ShadowSize, format,
         D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, m_GenerateMips ? (int)log2f((float)m_ShadowSize) + 1 : 1);
+    
+    // 固定32位
     m_pCSMDepthBuffer = std::make_unique<Depth2D>(device, m_ShadowSize, m_ShadowSize,
-        D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, sampleDesc);
+        D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
 
     m_ShadowViewport.TopLeftX = 0;
     m_ShadowViewport.TopLeftY = 0;

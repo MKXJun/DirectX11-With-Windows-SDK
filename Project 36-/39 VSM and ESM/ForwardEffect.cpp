@@ -35,7 +35,6 @@ public:
     XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
     int m_ShadowType = 0;
     int m_CascadeLevel = 0;
-    int m_CascadeBlend = 0;
     int m_CascadeSelection = 0;
     int m_PCFKernelSize = 1;
     int m_ShadowSize = 1024;
@@ -113,9 +112,9 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
     // 前四位代表
-    // [阴影类别][级联级别][级联间混合][级联选择]
-    std::string psName = "0000_ForwardPS";
-    std::string passName = "0000_Forward";
+    // [阴影类别][级联级别][级联选择]
+    std::string psName = "000_ForwardPS";
+    std::string passName = "000_Forward";
     EffectPassDesc passDesc;
     
     // 创建通道
@@ -131,24 +130,19 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
             psName[1] = passName[1] = '0' + cascadeCount;
             defines[1].Definition = numStrs[cascadeCount];
 
-            for (int blendIdx = 0; blendIdx < 2; ++blendIdx)
+            for (int intervalIdx = 0; intervalIdx < 2; ++intervalIdx)
             {
-                psName[2] = passName[2] = '0' + blendIdx;
-                defines[2].Definition = numStrs[blendIdx];
-                for (int intervalIdx = 0; intervalIdx < 2; ++intervalIdx)
-                {
-                    psName[3] = passName[3] = '0' + intervalIdx;
-                    defines[3].Definition = numStrs[intervalIdx];
+                psName[2] = passName[2] = '0' + intervalIdx;
+                defines[2].Definition = numStrs[intervalIdx];
 
-                    // 创建像素着色器
-                    pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/Rendering.hlsl", device,
-                        "ForwardPS", "ps_5_0", defines);
+                // 创建像素着色器
+                pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/Rendering.hlsl", device,
+                    "ForwardPS", "ps_5_0", defines);
 
-                    // 创建通道
-                    passDesc.nameVS = "GeometryVS";
-                    passDesc.namePS = psName;
-                    pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
-                }
+                // 创建通道
+                passDesc.nameVS = "GeometryVS";
+                passDesc.namePS = psName;
+                pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
             }
         }
     }
@@ -223,11 +217,6 @@ void ForwardEffect::SetCascadeLevels(int cascadeLevels)
     pImpl->m_CascadeLevel = cascadeLevels;
 }
 
-void ForwardEffect::SetCascadeBlendEnabled(bool enable)
-{
-    pImpl->m_CascadeBlend = enable;
-}
-
 void ForwardEffect::SetCascadeIntervalSelectionEnabled(bool enable)
 {
     pImpl->m_CascadeSelection = enable;
@@ -236,6 +225,11 @@ void ForwardEffect::SetCascadeIntervalSelectionEnabled(bool enable)
 void ForwardEffect::SetCascadeVisulization(bool enable)
 {
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_VisualizeCascades")->SetSInt(enable);
+}
+
+void ForwardEffect::Set16BitFormatShadow(bool enable)
+{
+    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_16BitShadow")->SetSInt(enable);
 }
 
 void ForwardEffect::SetCascadeOffsets(const DirectX::XMFLOAT4 offsets[8])
@@ -327,11 +321,10 @@ void ForwardEffect::SetLightDir(const DirectX::XMFLOAT3& dir)
 
 void ForwardEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext, bool reversedZ)
 {
-    std::string passName = "0000_Forward";
+    std::string passName = "000_Forward";
     passName[0] = '0' + pImpl->m_ShadowType;
     passName[1] = '0' + pImpl->m_CascadeLevel;
-    passName[2] = '0' + pImpl->m_CascadeBlend;
-    passName[3] = '0' + pImpl->m_CascadeSelection;
+    passName[2] = '0' + pImpl->m_CascadeSelection;
     deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
     pImpl->m_pCurrEffectPass->SetDepthStencilState(reversedZ ? RenderStates::DSSGreaterEqual.Get() : nullptr, 0);

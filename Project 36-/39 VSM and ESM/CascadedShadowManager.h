@@ -104,15 +104,18 @@ public:
 
 public:
     //
-    // 级联相关的配置
+    // 级联创建相关的配置
     //
+
     ShadowType  m_ShadowType    = ShadowType::ShadowType_VSM;
     int         m_ShadowSize    = 1024;
+    int         m_ShadowBits    = 4;
     int         m_CascadeLevels = 4;
-    int         m_MsaaSamples   = 1;                    // 仅VSM有效
-    
     bool        m_GenerateMips = false;
 
+    //
+    // 级联每帧相关的配置
+    //
     float		m_CascadePartitionsPercentage[8]{       // 0到100的值表示视锥体所占百分比
         0.04f, 0.10f, 0.25f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
     };
@@ -121,12 +124,11 @@ public:
     };
     int		    m_BlurKernelSize = 5;                   // 卷积核大小(奇数)
     float       m_GaussianBlurSigma = 3.0f;             // 高斯模糊sigma(ESM)
-    bool        m_BlendBetweenCascades = true;          // 是否在两个级联间混合
     float       m_BlendBetweenCascadesRange = 0.2f;     // 级联混合地带的范围
     float       m_PCFDepthBias = 0.001f;                // 阴影偏移(PCF)
     float       m_LightBleedingReduction = 0.8f;        // 处理漏光用的参数(VSM)
     float       m_MagicPower = 160.0f;                  // 处理漏光用的指数(ESM)
-    float       m_PosExp = 40.0f;                       // 处理漏光用的正项指数(EVSM)
+    float       m_PosExp = 5.0f;                        // 处理漏光用的正项指数(EVSM)
     float       m_NegExp = 5.0f;                        // 处理漏光用的负项指数(EVSM)
 
     bool        m_FixedSizeFrustumAABB = true;          // 是否固定视锥体产生的AABB宽高

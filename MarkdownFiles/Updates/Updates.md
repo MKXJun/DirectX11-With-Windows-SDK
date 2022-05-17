@@ -4,6 +4,11 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+2022/5/17 Ver1.36.2
+
+- 项目39添加EVSM2和EVSM4，砍掉MSAA
+- 修复Common/d3dApp.cpp的问题([#8](https://github.com/MKXJun/DirectX11-With-Windows-SDK/issues/8))
+
 2022/5/14 Ver1.36.1
 
 - 调整项目38-39代码

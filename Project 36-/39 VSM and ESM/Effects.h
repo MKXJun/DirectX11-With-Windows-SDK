@@ -64,9 +64,9 @@ public:
     // 通用
 
     void SetCascadeLevels(int cascadeLevels);
-    void SetCascadeBlendEnabled(bool enable);
     void SetCascadeIntervalSelectionEnabled(bool enable);
     void SetCascadeVisulization(bool enable);
+    void Set16BitFormatShadow(bool enable);
 
     void SetCascadeOffsets(const DirectX::XMFLOAT4 offsets[8]);
     void SetCascadeScales(const DirectX::XMFLOAT4 scales[8]);
@@ -183,9 +183,10 @@ public:
         ID3D11RenderTargetView* output, 
         const D3D11_VIEWPORT& vp);
 
+    void Set16BitFormatShadow(bool enable);
+
     // size: 奇数, 3-15
     void SetBlurKernelSize(int size);
-
     void SetBlurSigma(float sigma);
 
     // input和output纹理宽高要求一致

@@ -1,29 +1,21 @@
-//***************************************************************************************
-// CpuTimer.cpp by Frank Luna (C) 2011 All Rights Reserved.
-//***************************************************************************************
-
 #include "WinMin.h"
 #include "CpuTimer.h"
 
 CpuTimer::CpuTimer()
-: m_SecondsPerCount(0.0), m_DeltaTime(-1.0), m_BaseTime(0), m_StopTime(0),
-  m_PausedTime(0), m_PrevTime(0), m_CurrTime(0), m_Stopped(false)
 {
-    __int64 countsPerSec;
+    __int64 countsPerSec{};
     QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
     m_SecondsPerCount = 1.0 / (double)countsPerSec;
 }
 
-// Returns the total time elapsed since Reset() was called, NOT counting any
-// time when the clock is stopped.
+
 float CpuTimer::TotalTime()const
 {
-    // If we are stopped, do not count the time that has passed since we stopped.
-    // Moreover, if we previously already had a pause, the distance 
-    // m_StopTime - m_BaseTime includes paused time, which we do not want to count.
-    // To correct this, we can subtract the paused time from m_StopTime:  
+    // 如果调用了Stop()，暂停中的这段时间我们不需要计入。此外
+    // m_StopTime - m_BaseTime可能会包含之前的暂停时间，为
+    // 此我们可以从m_StopTime减去之前累积的暂停的时间
     //
-    //                     |<--paused time-->|
+    //                     |<-- 暂停的时间 -->|
     // ----*---------------*-----------------*------------*------------*------> time
     //  m_BaseTime       m_StopTime        startTime     m_StopTime    m_CurrTime
 
@@ -32,13 +24,12 @@ float CpuTimer::TotalTime()const
         return (float)(((m_StopTime - m_PausedTime)-m_BaseTime)*m_SecondsPerCount);
     }
 
-    // The distance m_CurrTime - m_BaseTime includes paused time,
-    // which we do not want to count.  To correct this, we can subtract 
-    // the paused time from m_CurrTime:  
+    // m_CurrTime - m_BaseTime包含暂停时间，但我们不想将它计入。
+    // 为此我们可以从m_CurrTime减去之前累积的暂停的时间
     //
     //  (m_CurrTime - m_PausedTime) - m_BaseTime 
     //
-    //                     |<--paused time-->|
+    //                     |<-- 暂停的时间 -->|
     // ----*---------------*-----------------*------------*------> time
     //  m_BaseTime       m_StopTime        startTime     m_CurrTime
     
@@ -55,7 +46,7 @@ float CpuTimer::DeltaTime()const
 
 void CpuTimer::Reset()
 {
-    __int64 currTime;
+    __int64 currTime{};
     QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
 
     m_BaseTime = currTime;
@@ -67,11 +58,11 @@ void CpuTimer::Reset()
 
 void CpuTimer::Start()
 {
-    __int64 startTime;
+    __int64 startTime{};
     QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
 
 
-    // Accumulate the time elapsed between stop and start pairs.
+    // 累积暂停开始到暂停结束的这段时间
     //
     //                     |<-------d------->|
     // ----*---------------*-----------------*------------> time
@@ -91,7 +82,7 @@ void CpuTimer::Stop()
 {
     if( !m_Stopped )
     {
-        __int64 currTime;
+        __int64 currTime{};
         QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
 
         m_StopTime = currTime;
@@ -107,19 +98,23 @@ void CpuTimer::Tick()
         return;
     }
 
-    __int64 currTime;
+    __int64 currTime{};
     QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
     m_CurrTime = currTime;
 
-    // Time difference between this frame and the previous.
+    // 当前Tick与上一Tick的帧间隔
     m_DeltaTime = (m_CurrTime - m_PrevTime)*m_SecondsPerCount;
 
-    // Prepare for next frame.
     m_PrevTime = m_CurrTime;
 
     if(m_DeltaTime < 0.0)
     {
         m_DeltaTime = 0.0;
     }
+}
+
+bool CpuTimer::IsStopped() const
+{
+    return m_Stopped;
 }
 

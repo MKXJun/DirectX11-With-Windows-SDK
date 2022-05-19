@@ -29,9 +29,9 @@ bool GameApp::Init()
     m_TextureManager.Init(m_pd3dDevice.Get());
     m_ModelManager.Init(m_pd3dDevice.Get());
 
-    m_GpuTimer_Shadow.Init(m_pd3dDevice.Get());
-    m_GpuTimer_Lighting.Init(m_pd3dDevice.Get());
-    m_GpuTimer_Skybox.Init(m_pd3dDevice.Get());
+    m_GpuTimer_Shadow.Init(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get());
+    m_GpuTimer_Lighting.Init(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get());
+    m_GpuTimer_Skybox.Init(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get());
 
     // 务必先初始化所有渲染状态，以供下面的特效使用
     RenderStates::InitAll(m_pd3dDevice.Get());
@@ -264,9 +264,9 @@ void GameApp::UpdateScene(float dt)
 
     if (need_gpu_timer_reset)
     {
-        m_GpuTimer_Lighting.Reset();
-        m_GpuTimer_Shadow.Reset();
-        m_GpuTimer_Skybox.Reset();
+        m_GpuTimer_Lighting.Reset(m_pd3dImmediateContext.Get());
+        m_GpuTimer_Shadow.Reset(m_pd3dImmediateContext.Get());
+        m_GpuTimer_Skybox.Reset(m_pd3dImmediateContext.Get());
     }
 
     if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
@@ -417,8 +417,6 @@ bool GameApp::InitResource()
 
     m_FPSCameraController.InitCamera(viewerCamera.get());
     m_FPSCameraController.SetMoveSpeed(10.0f);
-    // 仅当开启垂直同步的时候才适合使用动量，否则容易出现突然加速的情况
-    m_FPSCameraController.EnableMomentum(false);
     // ******************
     // 初始化特效
     //

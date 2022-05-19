@@ -1,18 +1,19 @@
 #include "GpuTimer.h"
 
-void GpuTimer::Init(ID3D11Device* device, size_t recentCount)
+void GpuTimer::Init(ID3D11Device* device, ID3D11DeviceContext* deviceContext, size_t recentCount)
 {
     m_pDevice = device;
-    m_pDevice->GetImmediateContext(m_pImmediateContext.ReleaseAndGetAddressOf());
+    m_pImmediateContext = deviceContext;
     m_RecentCount = recentCount;
     m_AccumTime = 0.0;
     m_AccumCount = 0;
 }
 
-void GpuTimer::Reset(size_t recentCount)
+void GpuTimer::Reset(ID3D11DeviceContext* deviceContext, size_t recentCount)
 {
     m_Queries.clear();
     m_DeltaTimes.clear();
+    m_pImmediateContext = deviceContext;
     m_AccumTime = 0.0;
     m_AccumCount = 0;
     if (recentCount)
@@ -24,6 +25,7 @@ HRESULT GpuTimer::Start()
     if (!m_Queries.empty() && !m_Queries.back().isStopped)
         return E_FAIL;
 
+    // 创建查询
     GpuTimerInfo& info = m_Queries.emplace_back();
     CD3D11_QUERY_DESC queryDesc(D3D11_QUERY_TIMESTAMP);
     m_pDevice->CreateQuery(&queryDesc, info.startQuery.GetAddressOf());
@@ -31,6 +33,7 @@ HRESULT GpuTimer::Start()
     queryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
     m_pDevice->CreateQuery(&queryDesc, info.disjointQuery.GetAddressOf());
 
+    // 插入时间戳、开始连续性/频率查询
     m_pImmediateContext->Begin(info.disjointQuery.Get());
     m_pImmediateContext->End(info.startQuery.Get());
     return S_OK;
@@ -51,6 +54,7 @@ bool GpuTimer::TryGetTime(double* pOut)
 
     GpuTimerInfo& info = m_Queries.front();
     if (!info.isStopped) return false;
+    
     if (info.disjointQuery && !GetQueryDataHelper(m_pImmediateContext.Get(), false, info.disjointQuery.Get(), &info.disjointData, sizeof(info.disjointData)))
         return false;
     info.disjointQuery.Reset();
@@ -138,6 +142,7 @@ bool GpuTimer::GetQueryDataHelper(ID3D11DeviceContext* pContext, bool loopUntilD
     int attempts = 0;
     do
     {
+        // 尝试GPU回读
         hr = pContext->GetData(query, data, dataSize, 0);
         if (hr == S_OK)
             return true;

@@ -91,13 +91,14 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 
     pImpl->m_pEffectHelper = std::make_unique<EffectHelper>();
 
-    // 为了对每个着色器编译出最优版本，需要对同一个文件编译出80种版本的着色器。
+    // 为了对每个着色器编译出最优版本，需要对同一个文件编译出64种版本的着色器。
     
     const char* numStrs[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8"};
     D3D_SHADER_MACRO defines[] =
     {
         { "SHADOW_TYPE", "0" },
         { "CASCADE_COUNT_FLAG", "1" },
+        { "BLEND_BETWEEN_CASCADE_LAYERS_FLAG", "0" },
         { "SELECT_CASCADE_BY_INTERVAL_FLAG", "0" },
         { nullptr, nullptr }
     };

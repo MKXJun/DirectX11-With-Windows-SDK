@@ -107,7 +107,7 @@ public:
     // 级联创建相关的配置
     //
 
-    ShadowType  m_ShadowType    = ShadowType::ShadowType_VSM;
+    ShadowType  m_ShadowType    = ShadowType::ShadowType_CSM;
     int         m_ShadowSize    = 1024;
     int         m_ShadowBits    = 4;
     int         m_CascadeLevels = 4;

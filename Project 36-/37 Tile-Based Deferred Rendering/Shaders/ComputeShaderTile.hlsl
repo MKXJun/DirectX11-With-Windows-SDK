@@ -11,17 +11,17 @@ RWStructuredBuffer<TileInfo> g_TilebufferRW : register(u0);
 
 RWStructuredBuffer<uint2> g_Framebuffer : register(u1);
 
-groupshared uint s_MinZ;
-groupshared uint s_MaxZ;
+groupshared uint gs_MinZ;
+groupshared uint gs_MaxZ;
 
 // 当前tile的光照列表
-groupshared uint s_TileLightIndices[MAX_LIGHTS >> 3];
-groupshared uint s_TileNumLights;
+groupshared uint gs_TileLightIndices[MAX_LIGHTS >> 3];
+groupshared uint gs_TileNumLights;
 
 // 当前tile中需要逐样本着色的像素列表
 // 我们将两个16位x/y坐标编码进一个uint来节省共享内存空间
-groupshared uint s_PerSamplePixels[COMPUTE_SHADER_TILE_GROUP_SIZE];
-groupshared uint s_NumPerSamplePixels;
+groupshared uint gs_PerSamplePixels[COMPUTE_SHADER_TILE_GROUP_SIZE];
+groupshared uint gs_NumPerSamplePixels;
 
 //--------------------------------------------------------------------------------------
 // 用于写入我们的1D MSAA UAV
@@ -118,10 +118,10 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
     // 初始化共享内存中的光照列表和Z边界
     if (groupIndex == 0)
     {
-        s_TileNumLights = 0;
-        s_NumPerSamplePixels = 0;
-        s_MinZ = 0x7F7FFFFF; // 最大浮点数
-        s_MaxZ = 0;
+        gs_TileNumLights = 0;
+        gs_NumPerSamplePixels = 0;
+        gs_MinZ = 0x7F7FFFFF; // 最大浮点数
+        gs_MaxZ = 0;
     }
 
     GroupMemoryBarrierWithGroupSync();
@@ -133,14 +133,14 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
     // 只有少量实际合法样本的像素在其中。
     if (maxZSample >= minZSample)
     {
-        InterlockedMin(s_MinZ, asuint(minZSample));
-        InterlockedMax(s_MaxZ, asuint(maxZSample));
+        InterlockedMin(gs_MinZ, asuint(minZSample));
+        InterlockedMax(gs_MaxZ, asuint(maxZSample));
     }
 
     GroupMemoryBarrierWithGroupSync();
     
-    float minTileZ = asfloat(s_MinZ);
-    float maxTileZ = asfloat(s_MaxZ);
+    float minTileZ = asfloat(gs_MinZ);
+    float maxTileZ = asfloat(gs_MaxZ);
     float4 frustumPlanes[6];
     ConstructFrustumPlanes(groupId, minTileZ, maxTileZ, frustumPlanes);
     
@@ -175,14 +175,14 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
         {
             // 将光照追加到列表中
             uint listIndex;
-            InterlockedAdd(s_TileNumLights, 1, listIndex);
-            s_TileLightIndices[listIndex] = lightIndex;
+            InterlockedAdd(gs_TileNumLights, 1, listIndex);
+            gs_TileLightIndices[listIndex] = lightIndex;
         }
     }
 
     GroupMemoryBarrierWithGroupSync();
     
-    uint numLights = s_TileNumLights;
+    uint numLights = gs_TileNumLights;
     //
     // 只处理在屏幕区域的像素(单个分块可能超出屏幕边缘)
     // 
@@ -194,7 +194,7 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
             [unroll]
             for (uint sample = 0; sample < MSAA_SAMPLES; ++sample)
             {
-                WriteSample(globalCoords, sample, (float(s_TileNumLights) / 255.0f).xxxx);
+                WriteSample(globalCoords, sample, (float(gs_TileNumLights) / 255.0f).xxxx);
             }
         }
         else if (numLights > 0)
@@ -215,7 +215,7 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
                 float3 lit = float3(0.0f, 0.0f, 0.0f);
                 for (uint tileLightIndex = 0; tileLightIndex < numLights; ++tileLightIndex)
                 {
-                    PointLight light = g_Light[s_TileLightIndices[tileLightIndex]];
+                    PointLight light = g_Light[gs_TileLightIndices[tileLightIndex]];
                     AccumulateColor(surfaceSamples[0], light, lit);
                 }
 
@@ -228,8 +228,8 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
 #if DEFER_PER_SAMPLE
                     // 创建需要进行逐样本着色的像素列表
                     uint listIndex;
-                    InterlockedAdd(s_NumPerSamplePixels, 1, listIndex);
-                    s_PerSamplePixels[listIndex] = PackCoords(globalCoords);
+                    InterlockedAdd(gs_NumPerSamplePixels, 1, listIndex);
+                    gs_PerSamplePixels[listIndex] = PackCoords(globalCoords);
 #else
                     // 对当前像素的其它样本进行着色
                     for (uint sample = 1; sample < MSAA_SAMPLES; ++sample)
@@ -237,7 +237,7 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
                         float3 litSample = float3(0.0f, 0.0f, 0.0f);
                         for (uint tileLightIndex = 0; tileLightIndex < numLights; ++tileLightIndex)
                         {
-                            PointLight light = g_Light[s_TileLightIndices[tileLightIndex]];
+                            PointLight light = g_Light[gs_TileLightIndices[tileLightIndex]];
                             AccumulateColor(surfaceSamples[sample], light, litSample);
                         }
                         WriteSample(globalCoords, sample, float4(litSample, 1.0f));
@@ -272,18 +272,18 @@ void ComputeShaderTileDeferredCS(uint3 groupId : SV_GroupID,
     // 现在处理那些需要逐样本着色的像素
     // 注意：每个像素需要额外的MSAA_SAMPLES - 1次着色passes
     const uint shadingPassesPerPixel = MSAA_SAMPLES - 1;
-    uint globalSamples = s_NumPerSamplePixels * shadingPassesPerPixel;
+    uint globalSamples = gs_NumPerSamplePixels * shadingPassesPerPixel;
 
     for (uint globalSample = groupIndex; globalSample < globalSamples; globalSample += COMPUTE_SHADER_TILE_GROUP_SIZE) {
         uint listIndex = globalSample / shadingPassesPerPixel;
         uint sampleIndex = globalSample % shadingPassesPerPixel + 1;        // 样本0已经被处理过了 
 
-        uint2 sampleCoords = UnpackCoords(s_PerSamplePixels[listIndex]);
+        uint2 sampleCoords = UnpackCoords(gs_PerSamplePixels[listIndex]);
         SurfaceData surface = ComputeSurfaceDataFromGBufferSample(sampleCoords, sampleIndex);
 
         float3 lit = float3(0.0f, 0.0f, 0.0f);
         for (uint tileLightIndex = 0; tileLightIndex < numLights; ++tileLightIndex) {
-            PointLight light = g_Light[s_TileLightIndices[tileLightIndex]];
+            PointLight light = g_Light[gs_TileLightIndices[tileLightIndex]];
             AccumulateColor(surface, light, lit);
         }
         WriteSample(sampleCoords, sampleIndex, float4(lit, 1.0f));
@@ -331,10 +331,10 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
     // 初始化共享内存中的光照列表和Z边界
     if (groupIndex == 0)
     {
-        s_TileNumLights = 0;
-        s_NumPerSamplePixels = 0;
-        s_MinZ = 0x7F7FFFFF; // 最大浮点数
-        s_MaxZ = 0;
+        gs_TileNumLights = 0;
+        gs_NumPerSamplePixels = 0;
+        gs_MinZ = 0x7F7FFFFF; // 最大浮点数
+        gs_MaxZ = 0;
     }
 
     GroupMemoryBarrierWithGroupSync();
@@ -346,14 +346,14 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
     // 只有少量实际合法样本的像素在其中。
     if (maxZSample >= minZSample)
     {
-        InterlockedMin(s_MinZ, asuint(minZSample));
-        InterlockedMax(s_MaxZ, asuint(maxZSample));
+        InterlockedMin(gs_MinZ, asuint(minZSample));
+        InterlockedMax(gs_MaxZ, asuint(maxZSample));
     }
 
     GroupMemoryBarrierWithGroupSync();
 
-    float minTileZ = asfloat(s_MinZ);
-    float maxTileZ = asfloat(s_MaxZ);
+    float minTileZ = asfloat(gs_MinZ);
+    float maxTileZ = asfloat(gs_MaxZ);
     float4 frustumPlanes[6];
     ConstructFrustumPlanes(groupId, minTileZ, maxTileZ, frustumPlanes);
     
@@ -388,7 +388,7 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
         {
             // 将光照追加到列表中
             uint listIndex;
-            InterlockedAdd(s_TileNumLights, 1, listIndex);
+            InterlockedAdd(gs_TileNumLights, 1, listIndex);
             g_TilebufferRW[tilebufferIndex].tileLightIndices[listIndex] = lightIndex;
         }
     }
@@ -397,7 +397,7 @@ void ComputeShaderTileForwardCS(uint3 groupId : SV_GroupID,
     
     if (groupIndex == 0)
     {
-        g_TilebufferRW[tilebufferIndex].tileNumLights = s_TileNumLights;
+        g_TilebufferRW[tilebufferIndex].tileNumLights = gs_TileNumLights;
     }
 }
 

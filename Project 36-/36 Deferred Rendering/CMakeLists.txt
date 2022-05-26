@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
@@ -22,9 +22,7 @@ add_executable(36_Deferred_Rendering WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_
 target_link_libraries(36_Deferred_Rendering d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
 # Assimp
-target_link_libraries(36_Deferred_Rendering "${Assimp_INSTALLED_DIR}/lib/assimp-vc${MSVC_TOOLSET_VERSION}-mt$<$<CONFIG:Debug>:d>.lib")
-include_directories(${Assimp_INSTALLED_DIR}/include)
-set_target_properties(36_Deferred_Rendering PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${Assimp_INSTALLED_DIR}/bin")
+target_link_libraries(36_Deferred_Rendering assimp)
 
 # ImGui
 target_link_libraries(36_Deferred_Rendering ImGui)

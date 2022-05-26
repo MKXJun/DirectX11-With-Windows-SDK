@@ -106,31 +106,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "35 Particle System(2022 Win
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "36 Deferred Rendering(2022 Win10)", "Project 36-\36 Deferred Rendering\36 Deferred Rendering(2022 Win10).vcxproj", "{09D9793E-6AA6-49ED-86EB-D7743F03B734}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "37 Tile-Based Deferred Rendering(2022 Win10)", "Project 36-\37 Tile-Based Deferred Rendering\37 Tile-Based Deferred Rendering(2022 Win10).vcxproj", "{FE960566-AC64-4AB5-9944-438582D0EB5A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "ImGui\ImGui.vcxproj", "{2B0863F6-DFF1-48D5-8016-8EEE63859162}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "38 Cascaded Shadow Mapping(2022 Win10)", "Project 36-\38 Cascaded Shadow Mapping\38 Cascaded Shadow Mapping(2022 Win10).vcxproj", "{70C36DAA-3138-442A-9D19-AAA0C644D7E1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2B0863F6-DFF1-48D5-8016-8EEE63859162} = {2B0863F6-DFF1-48D5-8016-8EEE63859162}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "39 VSM and ESM(2022 Win10)", "Project 36-\39 VSM and ESM\39 VSM and ESM(2022 Win10).vcxproj", "{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{906E7EBB-9C8C-476B-A6F7-06FCB7F5B11D}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "40 FXAA(2022 Win10)", "Project 36-\40 FXAA\40 FXAA(2022 Win10).vcxproj", "{05B4329E-E777-4395-8A3D-9230A075207C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,30 +248,10 @@ Global
 		{3E99168D-19BF-4584-AC53-B2D98A9BCC75}.Debug|x64.Build.0 = Debug|x64
 		{3E99168D-19BF-4584-AC53-B2D98A9BCC75}.Release|x64.ActiveCfg = Release|x64
 		{3E99168D-19BF-4584-AC53-B2D98A9BCC75}.Release|x64.Build.0 = Release|x64
-		{09D9793E-6AA6-49ED-86EB-D7743F03B734}.Debug|x64.ActiveCfg = Debug|x64
-		{09D9793E-6AA6-49ED-86EB-D7743F03B734}.Debug|x64.Build.0 = Debug|x64
-		{09D9793E-6AA6-49ED-86EB-D7743F03B734}.Release|x64.ActiveCfg = Release|x64
-		{09D9793E-6AA6-49ED-86EB-D7743F03B734}.Release|x64.Build.0 = Release|x64
-		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Debug|x64.ActiveCfg = Debug|x64
-		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Debug|x64.Build.0 = Debug|x64
-		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Release|x64.ActiveCfg = Release|x64
-		{FE960566-AC64-4AB5-9944-438582D0EB5A}.Release|x64.Build.0 = Release|x64
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162}.Debug|x64.ActiveCfg = Debug|x64
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162}.Debug|x64.Build.0 = Debug|x64
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162}.Release|x64.ActiveCfg = Release|x64
 		{2B0863F6-DFF1-48D5-8016-8EEE63859162}.Release|x64.Build.0 = Release|x64
-		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x64.ActiveCfg = Debug|x64
-		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Debug|x64.Build.0 = Debug|x64
-		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x64.ActiveCfg = Release|x64
-		{70C36DAA-3138-442A-9D19-AAA0C644D7E1}.Release|x64.Build.0 = Release|x64
-		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x64.ActiveCfg = Debug|x64
-		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Debug|x64.Build.0 = Debug|x64
-		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x64.ActiveCfg = Release|x64
-		{BBCD9AEE-AD9F-443B-87DE-EB3FA708D865}.Release|x64.Build.0 = Release|x64
-		{05B4329E-E777-4395-8A3D-9230A075207C}.Debug|x64.ActiveCfg = Debug|x64
-		{05B4329E-E777-4395-8A3D-9230A075207C}.Debug|x64.Build.0 = Debug|x64
-		{05B4329E-E777-4395-8A3D-9230A075207C}.Release|x64.ActiveCfg = Release|x64
-		{05B4329E-E777-4395-8A3D-9230A075207C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

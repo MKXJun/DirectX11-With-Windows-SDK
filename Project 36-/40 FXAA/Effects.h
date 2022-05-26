@@ -303,7 +303,6 @@ public:
     void SetQualitySubPix(float val);
     void SetQualityEdgeThreshold(float threshold);
     void SetQualityEdgeThresholdMin(float thresholdMin);
-    void SetEarlyOut(bool enabled);
     
     void RenderFXAA(
         ID3D11DeviceContext* deviceContext,

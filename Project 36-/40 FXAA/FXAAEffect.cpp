@@ -165,11 +165,6 @@ void FXAAEffect::SetQualityEdgeThresholdMin(float thresholdMin)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_QualityEdgeThresholdMin")->SetFloat(thresholdMin);
 }
 
-void FXAAEffect::SetEarlyOut(bool enabled)
-{
-    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_QualityEdgeThresholdMin")->SetSInt(enabled);
-}
-
 void FXAAEffect::RenderFXAA(
     ID3D11DeviceContext* deviceContext, 
     ID3D11ShaderResourceView* input, 

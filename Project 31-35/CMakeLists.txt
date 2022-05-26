@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 add_subdirectory("31 Shadow Mapping")
 add_subdirectory("32 SSAO")

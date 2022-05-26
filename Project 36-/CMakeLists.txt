@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 add_subdirectory("36 Deferred Rendering")
 add_subdirectory("37 Tile-Based Deferred Rendering")

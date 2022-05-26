@@ -100,7 +100,7 @@
 然后新建一个CMakeLists.txt。下面提供一个DX项目模板的cmake：
 
 ```cmake
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 # ------------------------------------------------------------------------------
 # 用户配置

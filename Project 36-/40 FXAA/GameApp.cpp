@@ -146,15 +146,7 @@ void GameApp::UpdateScene(float dt)
                 m_pFXAAEffect->SetQualityEdgeThresholdMin(thresholdMinLevelArray[thresholdMinLevel]);
             }
             ImGui::SameLine();
-            ImGui::Text("%.4f", thresholdMinLevelArray[thresholdMinLevel]);
-
-            static bool earlyOut = true;
-            if (ImGui::Checkbox("Early out", &earlyOut))
-            {
-                need_gpu_timer_reset = true;
-                m_pFXAAEffect->SetEarlyOut(earlyOut);
-            }
-                
+            ImGui::Text("%.4f", thresholdMinLevelArray[thresholdMinLevel]);               
         }
 
         static const char* msaa_mode_strs[] = {
@@ -384,7 +376,6 @@ bool GameApp::InitResource()
 
     m_pSkyboxEffect->SetMsaaSamples(1);
 
-    m_pFXAAEffect->SetEarlyOut(true);
     m_pFXAAEffect->SetQualitySubPix(0.75f);
     m_pFXAAEffect->SetQualityEdgeThreshold(0.125f);
     m_pFXAAEffect->SetQualityEdgeThresholdMin(0.0625f);

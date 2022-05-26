@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 
 set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
@@ -23,9 +23,7 @@ add_executable(40_FXAA WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_FILES} ${COMMO
 target_link_libraries(40_FXAA d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
 # Assimp
-target_link_libraries(40_FXAA "${Assimp_INSTALLED_DIR}/lib/assimp-vc${MSVC_TOOLSET_VERSION}-mt$<$<CONFIG:Debug>:d>.lib")
-include_directories(${Assimp_INSTALLED_DIR}/include)
-set_target_properties(40_FXAA PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${Assimp_INSTALLED_DIR}/bin")
+target_link_libraries(40_FXAA assimp)
 
 # ImGui
 target_link_libraries(40_FXAA ImGui)

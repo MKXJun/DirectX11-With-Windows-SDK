@@ -34,310 +34,9 @@
 #ifndef FXAA_HLSL
 #define FXAA_HLSL
 
+#include "FXAA.hlsli"
 #include "FullScreenTriangle.hlsl"
 
-// 计算线性空间颜色的相对亮度
-inline float luminance(float3 linearRGB)
-{
-    // 模拟sRGB空间的相对亮度，从而提升对比程度
-    float luma = dot(linearRGB, float3(0.2126f, 0.7152f, 0.0722f));
-    return log2(1 + luma * 15) / 4;
-    
-    // 或者使用这个
-    //return sqrt(dot(rgb, float3(0.299f, 0.587f, 0.114f)));
-}
-
-#ifndef FXAA_QUALITY__PRESET
-#define FXAA_QUALITY__PRESET 39
-#endif
-
-/*============================================================================
-
-                           FXAA 质量 - 预设
-
-============================================================================*/
-
-/*============================================================================
-                     FXAA 质量 - 低质量，中等抖动
-============================================================================*/
-#if (FXAA_QUALITY__PRESET == 10)
-#define FXAA_QUALITY__PS 3
-#define FXAA_QUALITY__P0 1.5
-#define FXAA_QUALITY__P1 3.0
-#define FXAA_QUALITY__P2 12.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 11)
-#define FXAA_QUALITY__PS 4
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 3.0
-#define FXAA_QUALITY__P3 12.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 12)
-#define FXAA_QUALITY__PS 5
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 4.0
-#define FXAA_QUALITY__P4 12.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 13)
-#define FXAA_QUALITY__PS 6
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 4.0
-#define FXAA_QUALITY__P5 12.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 14)
-#define FXAA_QUALITY__PS 7
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 4.0
-#define FXAA_QUALITY__P6 12.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 15)
-#define FXAA_QUALITY__PS 8
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 4.0
-#define FXAA_QUALITY__P7 12.0
-#endif
-
-/*============================================================================
-                     FXAA 质量 - 中等，较少抖动
-============================================================================*/
-#if (FXAA_QUALITY__PRESET == 20)
-#define FXAA_QUALITY__PS 3
-#define FXAA_QUALITY__P0 1.5
-#define FXAA_QUALITY__P1 2.0
-#define FXAA_QUALITY__P2 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 21)
-#define FXAA_QUALITY__PS 4
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 22)
-#define FXAA_QUALITY__PS 5
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 23)
-#define FXAA_QUALITY__PS 6
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 24)
-#define FXAA_QUALITY__PS 7
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 3.0
-#define FXAA_QUALITY__P6 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 25)
-#define FXAA_QUALITY__PS 8
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 4.0
-#define FXAA_QUALITY__P7 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 26)
-#define FXAA_QUALITY__PS 9
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 2.0
-#define FXAA_QUALITY__P7 4.0
-#define FXAA_QUALITY__P8 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 27)
-#define FXAA_QUALITY__PS 10
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 2.0
-#define FXAA_QUALITY__P7 2.0
-#define FXAA_QUALITY__P8 4.0
-#define FXAA_QUALITY__P9 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 28)
-#define FXAA_QUALITY__PS 11
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 2.0
-#define FXAA_QUALITY__P7 2.0
-#define FXAA_QUALITY__P8 2.0
-#define FXAA_QUALITY__P9 4.0
-#define FXAA_QUALITY__P10 8.0
-#endif
-/*--------------------------------------------------------------------------*/
-#if (FXAA_QUALITY__PRESET == 29)
-#define FXAA_QUALITY__PS 12
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.5
-#define FXAA_QUALITY__P2 2.0
-#define FXAA_QUALITY__P3 2.0
-#define FXAA_QUALITY__P4 2.0
-#define FXAA_QUALITY__P5 2.0
-#define FXAA_QUALITY__P6 2.0
-#define FXAA_QUALITY__P7 2.0
-#define FXAA_QUALITY__P8 2.0
-#define FXAA_QUALITY__P9 2.0
-#define FXAA_QUALITY__P10 4.0
-#define FXAA_QUALITY__P11 8.0
-#endif
-
-/*============================================================================
-                     FXAA 质量 - 高
-============================================================================*/
-#if (FXAA_QUALITY__PRESET == 39)
-#define FXAA_QUALITY__PS 12
-#define FXAA_QUALITY__P0 1.0
-#define FXAA_QUALITY__P1 1.0
-#define FXAA_QUALITY__P2 1.0
-#define FXAA_QUALITY__P3 1.0
-#define FXAA_QUALITY__P4 1.0
-#define FXAA_QUALITY__P5 1.5
-#define FXAA_QUALITY__P6 2.0
-#define FXAA_QUALITY__P7 2.0
-#define FXAA_QUALITY__P8 2.0
-#define FXAA_QUALITY__P9 2.0
-#define FXAA_QUALITY__P10 4.0
-#define FXAA_QUALITY__P11 8.0
-#endif
-
-#ifndef FXAA_QUALITY__P3
-#define FXAA_QUALITY__P3 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P4
-#define FXAA_QUALITY__P4 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P5
-#define FXAA_QUALITY__P5 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P6
-#define FXAA_QUALITY__P6 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P7
-#define FXAA_QUALITY__P7 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P8
-#define FXAA_QUALITY__P8 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P9
-#define FXAA_QUALITY__P9 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P10
-#define FXAA_QUALITY__P10 0.0
-#endif
-
-#ifndef FXAA_QUALITY__P11
-#define FXAA_QUALITY__P11 0.0
-#endif
-
-static const float s_QualityP[12] =
-{
-    FXAA_QUALITY__P0,
-    FXAA_QUALITY__P1,
-    FXAA_QUALITY__P2,
-    FXAA_QUALITY__P3,
-    FXAA_QUALITY__P4,
-    FXAA_QUALITY__P5,
-    FXAA_QUALITY__P6,
-    FXAA_QUALITY__P7,
-    FXAA_QUALITY__P8,
-    FXAA_QUALITY__P9,
-    FXAA_QUALITY__P10,
-    FXAA_QUALITY__P11
-};
-
-cbuffer CBPerFrame : register(b0)
-{
-    float2 g_TexelSize;
-    
-    // 影响锐利程度
-    // 1.00 - 柔和
-    // 0.75 - 默认滤波值
-    // 0.50 - 更锐利，移除更少的亚像素走样
-    // 0.25 - 几乎关掉
-    // 0.00 - 完全关掉
-    float  g_QualitySubPix;
-    
-    // 所需局部对比度的阈值控制
-    // 0.333 - 非常低（更快）
-    // 0.250 - 低质量
-    // 0.166 - 默认
-    // 0.125 - 高质量
-    // 0.063 - 非常高（更慢）
-    float  g_QualityEdgeThreshold;
-    
-    // 对暗部区域不进行处理的阈值
-    // 0.0833 - 默认
-    // 0.0625 - 稍快
-    // 0.0312 - 更慢
-    float  g_QualityEdgeThresholdMin;
-    
-    // 是否开启提早退出
-    bool   g_EarlyOut;
-};
-
-SamplerState g_SamplerLinearClamp : register(s0);
-Texture2D g_TextureInput : register(t0);
 
 /*--------------------------------------------------------------------------*/
 float4 PS(
@@ -351,11 +50,11 @@ float4 PS(
     //   N
     // W M E
     //   S
-    float lumaM = luminance(color.rgb);
-    float lumaS = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, 1)).rgb);
-    float lumaE = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 0)).rgb);
-    float lumaN = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, -1)).rgb);
-    float lumaW = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 0)).rgb);
+    float lumaM = RGBToLogLuminance(color.rgb);
+    float lumaS = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, 1)).rgb);
+    float lumaE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 0)).rgb);
+    float lumaN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, -1)).rgb);
+    float lumaW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 0)).rgb);
 
     //
     // 计算对比度，确定是否应用抗锯齿
@@ -369,7 +68,7 @@ float4 PS(
     bool earlyExit = lumaRange < max(g_QualityEdgeThresholdMin, lumaRangeMax * g_QualityEdgeThreshold);
 
     // 未达到阈值就提前结束
-    if (g_EarlyOut && earlyExit)
+    if (earlyExit)
         return color;
 
     //
@@ -382,10 +81,10 @@ float4 PS(
     //  WS S SE     
     //  edgeHorz = |(NW - W) - (W - WS)| + 2|(N - M) - (M - S)| + |(NE - E) - (E - SE)|
     //  edgeVert = |(NE - N) - (N - NW)| + 2|(E - M) - (M - W)| + |(SE - S) - (S - WS)|
-    float lumaNW = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, -1)).rgb);
-    float lumaSE = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 1)).rgb);
-    float lumaNE = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, -1)).rgb);
-    float lumaSW = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 1)).rgb);
+    float lumaNW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, -1)).rgb);
+    float lumaSE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 1)).rgb);
+    float lumaNE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, -1)).rgb);
+    float lumaSW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 1)).rgb);
 
     float lumaNS = lumaN + lumaS;
     float lumaWE = lumaW + lumaE;
@@ -451,13 +150,13 @@ float4 PS(
     offset.x = (!horzSpan) ? 0.0 : g_TexelSize.x;
     offset.y = (horzSpan) ? 0.0 : g_TexelSize.y;
     // 负方向偏移
-    float2 posN = posB - offset * FXAA_QUALITY__P0;
+    float2 posN = posB - offset * s_SampleDistances[0];
     // 正方向偏移
-    float2 posP = posB + offset * FXAA_QUALITY__P0;
+    float2 posP = posB + offset * s_SampleDistances[0];
     
     // 对偏移后的点获取luma值，然后计算与中间点luma的差异
-    float lumaEndN = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN, 0).rgb);
-    float lumaEndP = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP, 0).rgb);
+    float lumaEndN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN, 0).rgb);
+    float lumaEndP = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP, 0).rgb);
     lumaEndN -= lumaLocalAvg;
     lumaEndP -= lumaLocalAvg;
     
@@ -468,9 +167,9 @@ float4 PS(
     
     // 如果没有到达非边缘点，继续沿着该方向延伸
     if (!doneN)
-        posN -= offset * FXAA_QUALITY__P1;
+        posN -= offset * s_SampleDistances[1];
     if (!doneP)
-        posP += offset * FXAA_QUALITY__P1;
+        posP += offset * s_SampleDistances[1];
 
     // 继续迭代直到两边都到达边缘的一侧，或者达到迭代次数
     if (!doneNP)
@@ -479,18 +178,18 @@ float4 PS(
         for (int i = 2; i < FXAA_QUALITY__PS; ++i)
         {
             if (!doneN)
-                lumaEndN = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN.xy, 0).rgb) - lumaLocalAvg;
+                lumaEndN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN.xy, 0).rgb) - lumaLocalAvg;
             if (!doneP)
-                lumaEndP = luminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP.xy, 0).rgb) - lumaLocalAvg;
+                lumaEndP = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP.xy, 0).rgb) - lumaLocalAvg;
             
             doneN = abs(lumaEndN) >= gradientScaled;
             doneP = abs(lumaEndP) >= gradientScaled;
             doneNP = doneN && doneP;
         
             if (!doneN)
-                posN -= offset * s_QualityP[i];
+                posN -= offset * s_SampleDistances[i];
             if (!doneP)
-                posP += offset * s_QualityP[i];
+                posP += offset * s_SampleDistances[i];
         }
     }
     
@@ -543,6 +242,6 @@ float4 PS(
         posM.y += pixelOffsetSubpix * lengthSign;
     return float4(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0).xyz, lumaM);
 }
-/*==========================================================================*/
+
 
 #endif

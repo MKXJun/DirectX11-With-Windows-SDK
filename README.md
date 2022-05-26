@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.37.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.37.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x
 
@@ -8,10 +8,10 @@
 
 ## 最近更新
 
-2022/5/25 Ver1.37.0
+2022/5/27 Ver1.37.1
 
-- **添加项目FXAA**
-- 删除Win32(x86)项目配置
+- cmake现支持assimp，不需要额外配置，最低要求cmake 3.14
+- 项目36-40删除VS项目文件，请使用cmake生成项目
 
 **[历史更新记录](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
 
@@ -49,29 +49,38 @@ QQ群号：727623616
 
 作为教程演示项目，这里并不是以实现一个软引擎为目标。建议读者在跟随教程学习的同时要动手实践。
 
-## 安装Assimp
+## 下载教程项目
 
-打开36章之后的项目需要先安装并配置好Assimp，具体过程 **[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+在命令行，选择合适的位置，然后使用git执行如下命令：
+
+```
+git clone --recursive https://github.com/MKXJun/DirectX11-With-Windows-SDK
+```
+
+这样就会连同assimp一起克隆到本地
+
+如果assimp文件夹是空的，你也可以去[assimp官网](https://github.com/assimp/assimp)下载最新的release版本，解压后将里面的文件放入assimp文件夹内，并确保CMakeLists.txt暴露在assimp文件夹内
+
+如果不去官网下载的话，cmake也会尝试去下载，但网络不行的话会在这一步卡住。可以去Q群获取项目源码和assimp。
+
+## CMake构建项目
+
+首先需要安装Assimp，**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
+
+安装好后，使用`cmake-gui.exe`填写源码路径和构建路径，然后只需要关注下面两个变量：
+
+![004](file://E:/Code/C++/DirectX11%20With%20Windows%20SDK/MarkdownFiles/004.png?lastModify=1653587311)
+
+- `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
+- `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启
+
+然后就可以点`Generate`生成项目，生成的解决方案位于build文件夹内，或者点`Open Project`打开
 
 ## 打开教程项目
 
-**对于Win10系统，直接打开DirectX11 With Windows SDK(2022 Win10).sln**
+现在默认给的sln只包含前35章的项目，且只支持VS2017-2022打开。36章及之后的项目需要使用cmake生成。
 
-**对于Win7和Win8.x的系统，请阅读 cmake构建项目一节**
-
-如果你使用的是**VS2017**或**VS2019**，则需要全选项目然后右键属性：
-
-![](MarkdownFiles/005.png)
-
-然后修改平台工具集为你当前有的版本：
-
-![](MarkdownFiles/006.png)
-
-如果是VS2017，还需要选择当前你所拥有的Windows SDK版本：
-
-![](MarkdownFiles/007.png)
-
-建议使用**Debug x64或Release x64**的属性配置来生成项目，**Release x64会更快**。36章之后的项目需要先按照Assimp的配置。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
+建议使用**Debug x64或Release x64**的属性配置来生成项目，**Release x64会更快**。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
 
 ![](MarkdownFiles/001.png)
 
@@ -79,19 +88,7 @@ QQ群号：727623616
 > 1. **目前教程仅支持VS2017(平台工具集v141)及更高版本！**
 > 2. 如果需要使用Direct2D/DWrite，Win7系统需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
 
-## CMake构建项目
 
-首先需要安装Assimp，**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Assimp/README.md)**
-
-安装好后，使用`cmake-gui.exe`填写源码路径和构建路径，然后会弹出下述变量：
-
-![004](MarkdownFiles/004.png)
-
-- `Assimp_INSTALLED_DIR`：需要填写，项目36之后的会用到Assimp
-- `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
-- `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启
-
-再次点击`Configure`会看到`Assimp_DIR`的出现，说明找到了Assimp，然后就可以点`Generate`生成项目，生成的项目位于build文件夹内，或者点`Open Project`打开
 
 ## 创建自己的项目
 

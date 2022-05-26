@@ -69,7 +69,7 @@ git clone --recursive https://github.com/MKXJun/DirectX11-With-Windows-SDK
 
 安装好后，使用`cmake-gui.exe`填写源码路径和构建路径，然后只需要关注下面两个变量：
 
-![004](file://E:/Code/C++/DirectX11%20With%20Windows%20SDK/MarkdownFiles/004.png?lastModify=1653587311)
+![004](MarkdownFiles/004.png)
 
 - `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
 - `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启

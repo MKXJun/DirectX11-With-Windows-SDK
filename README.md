@@ -4,13 +4,15 @@
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
+![000](MarkdownFiles/000.png)
+
 ## 博客教程
 
 - [**Github在线版（优先保证最新）**](https://mkxjun.github.io/DirectX11-With-Windows-SDK-Book) 
 
 - **[博客园](https://www.cnblogs.com/X-Jun/p/9028764.html)**
 
-**因更新麻烦，CSDN目前考虑停更**
+**CSDN目前停更**
 
 ## QQ群交流
 
@@ -20,7 +22,7 @@
 
 ## 获取教程项目源码
 
-[点此获取，注意不要选择Source code](https://github.com/MKXJun/DirectX11-With-Windows-SDK/releases)
+[**点此获取，注意不要选择Source code**](https://github.com/MKXJun/DirectX11-With-Windows-SDK/releases)
 
 下载不了也可以进Q群获取
 
@@ -48,10 +50,6 @@
 > **注意：** 
 > 1. **目前教程仅支持VS2017(或平台工具集v141)及更高版本！**
 > 2. 如果需要使用Direct2D/DWrite，Win7系统需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
-
-## 创建自己的项目
-
-如果有想要把源码copy到自己的VS项目，又或者是想在VSCode来编写的，**[点此查看](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/How-To-Build-Your-Project/README.md)**
 
 ## 项目概况
 

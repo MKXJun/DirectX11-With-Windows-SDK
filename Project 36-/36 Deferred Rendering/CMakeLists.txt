@@ -23,6 +23,7 @@ target_link_libraries(36_Deferred_Rendering d3d11.lib dxgi.lib dxguid.lib D3DCom
 
 # Assimp
 target_link_libraries(36_Deferred_Rendering assimp)
+set_target_properties(36_Deferred_Rendering PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 
 # ImGui
 target_link_libraries(36_Deferred_Rendering ImGui)

@@ -118,69 +118,10 @@ cbuffer CB : register(b0)
     // 0.0625 - 稍快
     // 0.0312 - 更慢
     float g_QualityEdgeThresholdMin;
-    
-    //
-    // FXAA_CS使用
-    //
-    
-    uint   g_LastQueueIndex;
-    uint2  g_StartPixel;
 }
 
 SamplerState g_SamplerLinearClamp : register(s0);
-
-//
-// FXAA_CS使用
-//
-
-RWByteAddressBuffer g_WorkCountRW : register(u0);
-RWByteAddressBuffer g_WorkQueueRW : register(u1);
-RWBuffer<float4> g_ColorQueueRW : register(u2);
-
-ByteAddressBuffer g_WorkCount : register(t0);
-ByteAddressBuffer g_WorkQueue : register(t1);
-Buffer<float4> g_ColorQueue : register(t2);
-
-
-#if SUPPORT_TYPED_UAV_LOADS == 1
-RWTexture2D<float4> g_ColorOutput : register(u3); // Pass2使用
-Texture2D<float4> g_ColorInput : register(t3); // R8G8B8A8_UNORM
-float3 FetchColor(int2 st) { return g_Color[st].rgb; }
-#else
-RWTexture2D<uint> g_ColorOutput : register(u3);
-Texture2D<uint> g_ColorInput : register(t3);
-
-uint PackColor(float4 color)
-{
-    uint R = uint(color.r * 255);
-    uint G = uint(color.g * 255) << 8;
-    uint B = uint(color.b * 255) << 16;
-    uint A = uint(color.a * 255) << 24;
-    uint packedColor = R | G | B | A;
-    return packedColor;
-}
-
-float4 FetchColor(int2 st) 
-{
-    uint packedColor = g_ColorInput[st];
-    return float4((packedColor & 0xFF),
-                  ((packedColor >> 8) & 0xFF),
-                  ((packedColor >> 16) & 0xFF),
-                  ((packedColor >> 24) & 0xFF)) / 255.0f;
-}
-#endif
-
-// 如果使用预计算的luma，则作为纹理读取，否则输出给pass2使用
-#if USE_LUMA_INPUT_BUFFER == 1
-Texture2D<float> g_Luma : register(t4);
-#else
-RWTexture2D<float> g_Luma : register(u4);
-#endif
-
-//
-// FXAA使用
-//
-Texture2D g_TextureInput : register(t5);
+Texture2D<float4> g_TextureInput : register(t0);
 
 
 
@@ -189,15 +130,12 @@ Texture2D g_TextureInput : register(t5);
 //
 
 
-float RGBToLuminance(float3 LinearRGB)
+float LinearRGBToLuminance(float3 LinearRGB)
 {
-    return sqrt(dot(LinearRGB, float3(0.299f, 0.587f, 0.114f)));
-}
-
-float RGBToLogLuminance(float3 LinearRGB)
-{
-    float Luma = dot(LinearRGB, float3(0.212671, 0.715160, 0.072169));
-    return log2(1 + Luma * 15) / 4;
+    // return dot(LinearRGB, float3(0.299f, 0.587f, 0.114f));
+    return dot(LinearRGB, float3(0.212671f, 0.715160, 0.072169));
+    // return sqrt(dot(LinearRGB, float3(0.212671f, 0.715160, 0.072169)));
+    // return log2(1 + dot(LinearRGB, float3(0.212671, 0.715160, 0.072169)) * 15) / 4;
 }
 
 #endif

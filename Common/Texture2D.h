@@ -41,9 +41,14 @@ public:
     Texture2D(Texture2D&&) = default;
     Texture2D& operator=(Texture2D&&) = default;
 
+    uint32_t GetWidth() const { return m_Width; }
+    uint32_t GetHeight() const { return m_Height; }
+    uint32_t GetMipLevels() const { return m_MipLevels; }
+    uint32_t GetArraySize() const { return m_ArraySize; }
+
     ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx = 0) { return m_pRenderTargetElements[arrayIdx].Get(); }
-    ID3D11UnorderedAccessView* GetUnorderedAccres(size_t arrayIdx = 0) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
+    ID3D11UnorderedAccessView* GetUnorderedAccess(size_t arrayIdx = 0) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
     // 获取访问完整资源的视图
     ID3D11ShaderResourceView* GetShaderResource() { return m_pTextureSRV.Get(); }
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -62,6 +67,7 @@ private:
 
     ComPtr<ID3D11Texture2D> m_pTexture;
     ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
+    uint32_t m_Width{}, m_Height{}, m_MipLevels{}, m_ArraySize{};
 
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
     std::vector<ComPtr<ID3D11UnorderedAccessView>> m_pUnorderedAccessElements;

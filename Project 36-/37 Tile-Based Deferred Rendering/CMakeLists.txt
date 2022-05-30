@@ -23,6 +23,7 @@ target_link_libraries(37_Tile_Based_Deferred_Rendering d3d11.lib dxgi.lib dxguid
 
 # Assimp
 target_link_libraries(37_Tile_Based_Deferred_Rendering assimp)
+set_target_properties(37_Tile_Based_Deferred_Rendering PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 
 # ImGui
 target_link_libraries(37_Tile_Based_Deferred_Rendering ImGui)

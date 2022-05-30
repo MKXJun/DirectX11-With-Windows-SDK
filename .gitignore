@@ -4,6 +4,7 @@ x64/
 .git/
 .vs/
 build/
+backup/
 lib/
 *.cso
 *.mbo

@@ -30,10 +30,10 @@ public:
 
     int m_Major = 2;
     int m_Minor = 9;
+    int m_EnableDebug = 0;
     float m_QualitySubPix = 0.75f;
     float m_QualityEdgeThreshold = 0.166f;
     float m_QualityEdgeThresholdMin = 0.0833f;
-    int   m_EarlyOut = false;
 };
 
 //
@@ -96,6 +96,7 @@ bool FXAAEffect::InitAll(ID3D11Device * device)
     D3D_SHADER_MACRO defines[] =
     {
         { "FXAA_QUALITY__PRESET", "39" },
+        { nullptr, nullptr },
         { nullptr, nullptr }
     };
 
@@ -105,10 +106,10 @@ bool FXAAEffect::InitAll(ID3D11Device * device)
         "FullScreenTriangleTexcoordVS", "vs_5_0");
     
 
-    // 前四位代表
-    // [阴影类别][级联级别][级联选择]
-    std::string psName = "00_PS";
-    std::string passName = "00_FXAA";
+    // 前三位代表
+    // [质量主级别][质量次级别][调试模式]
+    std::string psName = "000_PS";
+    std::string passName = "000_FXAA";
     EffectPassDesc passDesc;
     
     // 创建通道
@@ -119,11 +120,24 @@ bool FXAAEffect::InitAll(ID3D11Device * device)
     {
         psName[0] = passName[0] = str[0];
         psName[1] = passName[1] = str[1];
-
+        psName[2] = passName[2] = '1';
+        defines[1].Name = "DEBUG_OUTPUT";
+        defines[1].Definition = "";
         // 创建像素着色器
         pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/FXAA.hlsl", device,
             "PS", "ps_5_0", defines);
 
+        // 创建通道
+        passDesc.namePS = psName;
+        pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
+
+        psName[2] = passName[2] = '0';
+        defines[1].Name = nullptr;
+        defines[1].Definition = nullptr;
+
+        // 创建像素着色器
+        pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/FXAA.hlsl", device,
+            "PS", "ps_5_0", defines);
         // 创建通道
         passDesc.namePS = psName;
         pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
@@ -165,6 +179,11 @@ void FXAAEffect::SetQualityEdgeThresholdMin(float thresholdMin)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_QualityEdgeThresholdMin")->SetFloat(thresholdMin);
 }
 
+void FXAAEffect::EnableDebug(bool enabled)
+{
+    pImpl->m_EnableDebug = !!enabled;
+}
+
 void FXAAEffect::RenderFXAA(
     ID3D11DeviceContext* deviceContext, 
     ID3D11ShaderResourceView* input, 
@@ -174,9 +193,10 @@ void FXAAEffect::RenderFXAA(
     deviceContext->IASetInputLayout(nullptr);
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-    std::string passName = "00_FXAA";
+    std::string passName = "000_FXAA";
     passName[0] = '0' + pImpl->m_Major;
     passName[1] = '0' + pImpl->m_Minor;
+    passName[2] = '0' + pImpl->m_EnableDebug;
     auto pass = pImpl->m_pEffectHelper->GetEffectPass(passName);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureInput", input);
     float texelSizes[2] = { 1.0f / vp.Width, 1.0f / vp.Height };

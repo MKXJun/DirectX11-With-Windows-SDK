@@ -50,11 +50,11 @@ float4 PS(
     //   N
     // W M E
     //   S
-    float lumaM = RGBToLogLuminance(color.rgb);
-    float lumaS = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, 1)).rgb);
-    float lumaE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 0)).rgb);
-    float lumaN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, -1)).rgb);
-    float lumaW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 0)).rgb);
+    float lumaM = LinearRGBToLuminance(color.rgb);
+    float lumaS = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, 1)).rgb);
+    float lumaE = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 0)).rgb);
+    float lumaN = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(0, -1)).rgb);
+    float lumaW = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 0)).rgb);
 
     //
     // 计算对比度，确定是否应用抗锯齿
@@ -81,10 +81,10 @@ float4 PS(
     //  WS S SE     
     //  edgeHorz = |(NW - W) - (W - WS)| + 2|(N - M) - (M - S)| + |(NE - E) - (E - SE)|
     //  edgeVert = |(NE - N) - (N - NW)| + 2|(E - M) - (M - W)| + |(SE - S) - (S - WS)|
-    float lumaNW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, -1)).rgb);
-    float lumaSE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 1)).rgb);
-    float lumaNE = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, -1)).rgb);
-    float lumaSW = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 1)).rgb);
+    float lumaNW = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, -1)).rgb);
+    float lumaSE = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, 1)).rgb);
+    float lumaNE = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(1, -1)).rgb);
+    float lumaSW = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0, int2(-1, 1)).rgb);
 
     float lumaNS = lumaN + lumaS;
     float lumaWE = lumaW + lumaE;
@@ -155,8 +155,8 @@ float4 PS(
     float2 posP = posB + offset * s_SampleDistances[0];
     
     // 对偏移后的点获取luma值，然后计算与中间点luma的差异
-    float lumaEndN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN, 0).rgb);
-    float lumaEndP = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP, 0).rgb);
+    float lumaEndN = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN, 0).rgb);
+    float lumaEndP = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP, 0).rgb);
     lumaEndN -= lumaLocalAvg;
     lumaEndP -= lumaLocalAvg;
     
@@ -178,9 +178,9 @@ float4 PS(
         for (int i = 2; i < FXAA_QUALITY__PS; ++i)
         {
             if (!doneN)
-                lumaEndN = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN.xy, 0).rgb) - lumaLocalAvg;
+                lumaEndN = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posN.xy, 0).rgb) - lumaLocalAvg;
             if (!doneP)
-                lumaEndP = RGBToLogLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP.xy, 0).rgb) - lumaLocalAvg;
+                lumaEndP = LinearRGBToLuminance(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posP.xy, 0).rgb) - lumaLocalAvg;
             
             doneN = abs(lumaEndN) >= gradientScaled;
             doneP = abs(lumaEndP) >= gradientScaled;
@@ -190,6 +190,9 @@ float4 PS(
                 posN -= offset * s_SampleDistances[i];
             if (!doneP)
                 posP += offset * s_SampleDistances[i];
+            // 两边都到达边缘的一侧就停下
+            if (doneNP)
+                break;
         }
     }
     
@@ -240,8 +243,18 @@ float4 PS(
         posM.x += pixelOffsetSubpix * lengthSign;
     if (horzSpan)
         posM.y += pixelOffsetSubpix * lengthSign;
+#ifdef DEBUG_OUTPUT
+    return float4(1.0f - 2.0f * pixelOffsetSubpix, 2.0f * pixelOffsetSubpix, 0.0f, 1.0f);
+#else
     return float4(g_TextureInput.SampleLevel(g_SamplerLinearClamp, posM, 0).xyz, lumaM);
+#endif
 }
 
+float4 PassThroughPS(float4 posH : SV_Position,
+    float2 texCoord : TEXCOORD) : SV_TARGET
+{
+    uint2 pos = posH.xy;
+    return g_TextureInput[pos];
+}
 
 #endif

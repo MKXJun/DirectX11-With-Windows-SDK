@@ -99,6 +99,11 @@ void GameApp::UpdateScene(float dt)
         
         if (m_EnableFXAA)
         {
+            if (ImGui::Checkbox("Enable FXAA Debug", &m_DebugFXAA))
+            {
+                m_pFXAAEffect->EnableDebug(m_DebugFXAA);
+            }
+
             static int majorQuality = 3;
             static int minorQuality = 9;
             if (ImGui::SliderInt("Major Quality", &majorQuality, 1, 3))
@@ -120,7 +125,7 @@ void GameApp::UpdateScene(float dt)
                 m_pFXAAEffect->SetQuality(majorQuality, minorQuality);
             }
 
-            static int subpixLevel = 2;
+            static int subpixLevel = 3;
             if (ImGui::SliderInt("SubPixel:", &subpixLevel, 0, 4, ""))
             {
                 m_pFXAAEffect->SetQualitySubPix(0.25f * subpixLevel);
@@ -172,9 +177,6 @@ void GameApp::UpdateScene(float dt)
             m_pSkyboxEffect->SetMsaaSamples(m_MsaaSamples);
             need_gpu_timer_reset = true;
         }
-        
-        ImGui::Separator();
-        // =======================================================================================  
 
         ImGui::PopItemWidth();
     }
@@ -279,38 +281,6 @@ void GameApp::DrawScene()
     }
     ImGui::End();
 
-    if (m_DebugShadow)
-    {
-        if (ImGui::Begin("Debug Shadow"))
-        {
-            static const char* cascade_level_strs[] = {
-                "Level 1",
-                "Level 2",
-                "Level 3",
-                "Level 4",
-                "Level 5",
-                "Level 6",
-                "Level 7",
-                "Level 8"
-            };
-            static int curr_level_idx = 0;
-            ImGui::Combo("##1", &curr_level_idx, cascade_level_strs, m_CSManager.m_CascadeLevels);
-            if (curr_level_idx >= m_CSManager.m_CascadeLevels)
-                curr_level_idx = m_CSManager.m_CascadeLevels - 1;
-
-            D3D11_VIEWPORT vp = m_CSManager.GetShadowViewport();
-            m_pShadowEffect->RenderDepthToTexture(m_pd3dImmediateContext.Get(),
-                m_CSManager.GetCascadeOutput(curr_level_idx),
-                m_pDebugShadowBuffer->GetRenderTarget(),
-                vp);
-
-            ImVec2 winSize = ImGui::GetWindowSize();
-            float smaller = (std::min)(winSize.x - 20, winSize.y - 60);
-            ImGui::Image(m_pDebugShadowBuffer->GetShaderResource(), ImVec2(smaller, smaller));
-        }
-        ImGui::End();
-    }
-
     D3D11_VIEWPORT vp = m_pViewerCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &vp);
     ImGui::Render();
@@ -377,8 +347,8 @@ bool GameApp::InitResource()
     m_pSkyboxEffect->SetMsaaSamples(1);
 
     m_pFXAAEffect->SetQualitySubPix(0.75f);
-    m_pFXAAEffect->SetQualityEdgeThreshold(0.125f);
-    m_pFXAAEffect->SetQualityEdgeThresholdMin(0.0625f);
+    m_pFXAAEffect->SetQualityEdgeThreshold(0.166f);
+    m_pFXAAEffect->SetQualityEdgeThresholdMin(0.0833f);
     m_pFXAAEffect->SetQuality(3, 9);
     
 

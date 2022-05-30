@@ -24,14 +24,13 @@ target_link_libraries(40_FXAA d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winm
 
 # Assimp
 target_link_libraries(40_FXAA assimp)
-
+set_target_properties(40_FXAA PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 # ImGui
 target_link_libraries(40_FXAA ImGui)
 file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Common
 include_directories(../../Common)
-
 
 source_group("Common" FILES ${COMMON_FILES})
 source_group("Shaders" FILES ${SHADER_FILES})

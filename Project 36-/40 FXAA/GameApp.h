@@ -49,13 +49,15 @@ private:
 
     // MSAA
     int m_MsaaSamples = 1;
+
+    // FXAA
     bool m_EnableFXAA = true;
+    bool m_DebugFXAA = false;
 
     int m_DebugShadowIndex = 1;
 
     // 阴影
     CascadedShadowManager m_CSManager;
-    bool m_DebugShadow = false;
 
     // 各种资源
     TextureManager m_TextureManager;                                // 纹理读取管理

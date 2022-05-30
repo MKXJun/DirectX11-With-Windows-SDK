@@ -24,6 +24,7 @@ target_link_libraries(38_Cascaded_Shadow_Mapping d3d11.lib dxgi.lib dxguid.lib D
 
 # Assimp
 target_link_libraries(38_Cascaded_Shadow_Mapping assimp)
+set_target_properties(38_Cascaded_Shadow_Mapping PROPERTIES VS_DEBUGGER_ENVIRONMENT "PATH=${ASSIMP_LIBRARY_OUTPUT_DIRECTORY}/$<IF:$<CONFIG:Debug>,Debug,Release>")
 
 # ImGui
 target_link_libraries(38_Cascaded_Shadow_Mapping ImGui)

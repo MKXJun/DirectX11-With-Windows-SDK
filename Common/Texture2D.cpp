@@ -84,6 +84,11 @@ void Texture2D::InternalConstruct(ID3D11Device* d3dDevice,
     m_pShaderResourceElements.clear();
     m_pUnorderedAccessElements.clear();
 
+    m_Width = width;
+    m_Height = height;
+    m_MipLevels = mipLevels;
+    m_ArraySize = arraySize;
+
     CD3D11_TEXTURE2D_DESC desc(
         format,
         width, height, arraySize, mipLevels,

@@ -42,7 +42,7 @@ uint2 UnpackCoords(uint coords)
 }
 
 
-void ConstructFrustumPlanes(uint3 groupId, float minTileZ, float maxTileZ, 
+void ConstructFrustumPlanes(uint3 groupId, float minTileZ, float maxTileZ,
                             out float4 frustumPlanes[6])
 {
     // 注意：下面的计算每个分块都是统一的(例如：不需要每个线程都执行)，但代价低廉。
@@ -51,13 +51,13 @@ void ConstructFrustumPlanes(uint3 groupId, float minTileZ, float maxTileZ,
     // 然后我们就只需要计算近/远平面来贴紧我们实际的几何体。
     // 不管怎样，组同步/局部数据共享(Local Data Share, LDS)或全局内存寻找的开销可能和这小段数学一样多，但值得尝试。
     
-    // 从[0, 1]中找出缩放/偏移
-    float2 tileScale = float2(g_FramebufferDimensions.xy) * rcp(float(2 * COMPUTE_SHADER_TILE_GROUP_DIM));
-    float2 tileBias = tileScale - float2(groupId.xy);
+    // 原Intel样例程序计算的Scale和Bias有误，这里重新推导了一遍
+    float2 tileScale = float2(g_FramebufferDimensions.xy) / COMPUTE_SHADER_TILE_GROUP_DIM;
+    float2 tileBias = tileScale - 1.0f - 2.0f * float2(groupId.xy);
 
     // 计算当前分块视锥体的投影矩阵
     float4 c1 = float4(g_Proj._11 * tileScale.x, 0.0f, tileBias.x, 0.0f);
-    float4 c2 = float4(0.0f, -g_Proj._22 * tileScale.y, tileBias.y, 0.0f);
+    float4 c2 = float4(0.0f, g_Proj._22 * tileScale.y, -tileBias.y, 0.0f);
     float4 c4 = float4(0.0f, 0.0f, 1.0f, 0.0f);
 
     // Gribb/Hartmann法提取视锥体平面

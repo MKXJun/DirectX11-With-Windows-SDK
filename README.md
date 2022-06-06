@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.37.2-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-1.37.3-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -20,41 +20,32 @@
 
 欢迎大家来交流，以及项目有什么问题也可以在这里提出。
 
-## 获取教程项目源码
-
-[**点此获取，注意不要选择Source code**](https://github.com/MKXJun/DirectX11-With-Windows-SDK/releases)
-
-下载不了也可以进Q群获取
-
 ## CMake构建项目
 
-使用`cmake-gui.exe`填写源码路径和构建路径，然后只需要关注下面两个变量：
+使用`cmake-gui.exe`填写源码路径和构建路径，然后只需要关注下面一个变量：
 
 ![004](MarkdownFiles/004.png)
 
-- `USE_IMGUI`：默认开启，关闭后35之前的部分项目使用Direct2D的UI
-- `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选，但建议保持`USE_IMGUI`开启
+- `WIN_SYSTEM_SUPPORT`：默认关闭，仅Win7用户需要勾选
 
 然后就可以点`Generate`生成项目，生成的解决方案位于build文件夹内，或者点`Open Project`打开
 
 ## 打开教程项目
 
-如果是从`DirectX11 With Windows SDK(2022 Win10).sln`打开的，现在只包含前35章的项目，且只支持VS2017-2022打开。
+> 注意：默认提供的项目会在后续更新中考虑去除。
 
-从CMake生成的解决方案则包含36章之后的项目。
-
-建议使用**Release x64**。生成完成后，若要指定运行哪个项目，需要对项目右键-设为启动项。
+打开CMake生成的项目，建议切换成**Release x64**。若要指定运行哪个项目，需要对项目右键-设为启动项。然后就可以生成并运行了
 
 ![](MarkdownFiles/001.png)
 
 > **注意：** 
 > 1. **目前教程仅支持VS2017(或平台工具集v141)及更高版本！**
-> 2. 如果需要使用Direct2D/DWrite，Win7系统需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
+> 2. Win7打开需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
 
 ## 项目概况
 
 语言:</br>
-- C++14/17</br>
+- C++17</br>
 - HLSL Shader Model 5.0
 
 目前项目使用了下述代码库或文件：
@@ -80,9 +71,9 @@
 
 ## 最近更新
 
-2022/5/30 Ver1.37.2
+2022/6/6 Ver1.37.3
 
-- assimp的cmake编译从静态库改回动态库
-- 调整项目FXAA
+- assimp内嵌进项目中
+- 调整TBDR项目中子视锥体的计算问题
 
-**[历史更新记录](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)**
+**[历史更新记录](MarkdownFiles/Updates/Updates.md)**

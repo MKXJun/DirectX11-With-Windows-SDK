@@ -29,11 +29,11 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return g_pd3dApp->MsgProc(hwnd, msg, wParam, lParam);
 }
 
-D3DApp::D3DApp(HINSTANCE hInstance)
-    : m_hAppInst(hInstance),
-    m_MainWndCaption(L"Mouse and Keyboard"),
-    m_ClientWidth(1280),
-    m_ClientHeight(720),
+D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
+	: m_hAppInst(hInstance),
+	m_MainWndCaption(windowName),
+	m_ClientWidth(initWidth),
+	m_ClientHeight(initHeight),
     m_hMainWnd(nullptr),
     m_AppPaused(false),
     m_Minimized(false),

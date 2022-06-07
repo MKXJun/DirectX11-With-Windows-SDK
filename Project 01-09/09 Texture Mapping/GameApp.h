@@ -32,7 +32,7 @@ public:
     enum class ShowMode { WoodCrate, FireAnim };
 
 public:
-    GameApp(HINSTANCE hInstance);
+    GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp();
 
     bool Init();

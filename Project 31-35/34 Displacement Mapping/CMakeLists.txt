@@ -8,7 +8,7 @@ endif()
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 aux_source_directory(. DIR_SRCS)
-file(GLOB HLSL_FILES HLSL/*.hlsl)
+file(GLOB HLSL_FILES HLSL/*.hlsl HLSL/*.hlsli)
 file(GLOB HEADER_FILES ./*.h)
 
 foreach(HLSL_FILE ${HLSL_FILES})

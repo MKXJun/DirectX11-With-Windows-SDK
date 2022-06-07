@@ -3,27 +3,28 @@
 
 #include <wrl/client.h>
 #include <string>
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <DirectXMath.h>
-#include "GameTimer.h"
+#include "CpuTimer.h"
 
 class D3DApp
 {
 public:
-    D3DApp(HINSTANCE hInstance);              // 在构造函数的初始化列表应当设置好初始参数
+    D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     virtual ~D3DApp();
 
-    HINSTANCE AppInst()const;                 // 获取应用实例的句柄
-    HWND      MainWnd()const;                 // 获取主窗口句柄
-    float     AspectRatio()const;             // 获取屏幕宽高比
+    HINSTANCE AppInst()const;                   // 获取应用实例的句柄
+    HWND      MainWnd()const;                   // 获取主窗口句柄
+    float     AspectRatio()const;               // 获取屏幕宽高比
 
-    int Run();                                // 运行程序，进行游戏主循环
+    int Run();                                  // 运行程序，进行游戏主循环
 
-                                              // 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
-    virtual bool Init();                      // 该父类方法需要初始化窗口和Direct3D部分
-    virtual void OnResize();                  // 该父类方法需要在窗口大小变动的时候调用
-    virtual void UpdateScene(float dt) = 0;   // 子类需要实现该方法，完成每一帧的更新
-    virtual void DrawScene() = 0;             // 子类需要实现该方法，完成每一帧的绘制
+    // 框架方法。客户派生类需要重载这些方法以实现特定的应用需求
+    virtual bool Init();                        // 该父类方法需要初始化窗口和Direct3D部分
+    virtual void OnResize();                    // 该父类方法需要在窗口大小变动的时候调用
+    virtual void UpdateScene(float dt) = 0;     // 子类需要实现该方法，完成每一帧的更新
+    virtual void DrawScene() = 0;               // 子类需要实现该方法，完成每一帧的绘制
     virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     // 窗口的消息回调函数
 protected:
@@ -44,7 +45,7 @@ protected:
     UINT      m_4xMsaaQuality;   // MSAA支持的质量等级
 
 
-    GameTimer m_Timer;           // 计时器
+    CpuTimer m_Timer;            // 计时器
 
     // 使用模板别名(C++11)简化类型名
     template <class T>

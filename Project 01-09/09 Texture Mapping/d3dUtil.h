@@ -9,6 +9,7 @@
 #ifndef D3DUTIL_H
 #define D3DUTIL_H
 
+#include "WinMin.h"
 #include <d3d11_1.h>			// 已包含Windows.h
 #include <DirectXCollision.h>	// 已包含DirectXMath.h
 #include <DirectXPackedVector.h>
@@ -16,8 +17,8 @@
 #include <d3dcompiler.h>
 #include <vector>
 #include <string>
-#include "DDSTextureLoader.h"	
-#include "WICTextureLoader.h"
+#include "DDSTextureLoader11.h"	
+#include "WICTextureLoader11.h"
 
 //
 // 宏相关

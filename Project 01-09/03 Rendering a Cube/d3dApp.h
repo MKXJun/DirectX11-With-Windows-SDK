@@ -3,14 +3,15 @@
 
 #include <wrl/client.h>
 #include <string>
+#include "WinMin.h"
 #include <d3d11_1.h>
 #include <DirectXMath.h>
-#include "GameTimer.h"
+#include "CpuTimer.h"
 
 class D3DApp
 {
 public:
-    D3DApp(HINSTANCE hInstance);    // 在构造函数的初始化列表应当设置好初始参数
+    D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     virtual ~D3DApp();
 
     HINSTANCE AppInst()const;       // 获取应用实例的句柄
@@ -44,7 +45,7 @@ protected:
     UINT      m_4xMsaaQuality;   // MSAA支持的质量等级
 
 
-    GameTimer m_Timer;           // 计时器
+    CpuTimer  m_Timer;           // 计时器
 
     // 使用模板别名(C++11)简化类型名
     template <class T>

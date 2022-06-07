@@ -2,8 +2,8 @@
 #include "d3dUtil.h"
 #include "DXTrace.h"
 
-GameApp::GameApp(HINSTANCE hInstance)
-    : D3DApp(hInstance)
+GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
+    : D3DApp(hInstance, windowName, initWidth, initHeight)
 {
 }
 
@@ -26,7 +26,6 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-
 }
 
 void GameApp::DrawScene()

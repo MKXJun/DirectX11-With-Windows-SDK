@@ -8,8 +8,8 @@ const D3D11_INPUT_ELEMENT_DESC GameApp::VertexPosColor::inputLayout[2] = {
     { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
-GameApp::GameApp(HINSTANCE hInstance)
-    : D3DApp(hInstance)
+GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
+    : D3DApp(hInstance, windowName, initWidth, initHeight)
 {
 }
 

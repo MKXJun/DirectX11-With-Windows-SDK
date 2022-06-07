@@ -64,11 +64,8 @@ add_subdirectory("ImGui")
 set_target_properties(ImGui PROPERTIES FOLDER "ImGui")
 
 add_subdirectory("Project 01-09")
-add_subdirectory("Project 10-16")
-add_subdirectory("Project 17-25")
-add_subdirectory("Project 26-30")
-add_subdirectory("Project 31-35")
-add_subdirectory("Project 36-")
+add_subdirectory("Project 10-17")
+add_subdirectory("Project 19-")
 
 
 

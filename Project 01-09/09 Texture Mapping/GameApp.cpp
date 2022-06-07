@@ -5,8 +5,8 @@ using namespace DirectX;
 
 
 
-GameApp::GameApp(HINSTANCE hInstance)
-    : D3DApp(hInstance),
+GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
+    : D3DApp(hInstance, windowName, initWidth, initHeight),
     m_IndexCount(),	
     m_CurrFrame(),
     m_CurrMode(ShowMode::WoodCrate),

@@ -29,11 +29,11 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return g_pd3dApp->MsgProc(hwnd, msg, wParam, lParam);
 }
 
-D3DApp::D3DApp(HINSTANCE hInstance)
+D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
     : m_hAppInst(hInstance),
-    m_MainWndCaption(L"DirectX11 Initialization"),
-    m_ClientWidth(1280),
-    m_ClientHeight(720),
+    m_MainWndCaption(windowName),
+    m_ClientWidth(initWidth),
+    m_ClientHeight(initHeight),
     m_hMainWnd(nullptr),
     m_AppPaused(false),
     m_Minimized(false),
@@ -196,12 +196,6 @@ void D3DApp::OnResize()
     m_ScreenViewport.MaxDepth = 1.0f;
 
     m_pd3dImmediateContext->RSSetViewports(1, &m_ScreenViewport);
-
-    // 设置调试对象名
-    D3D11SetDebugObjectName(m_pDepthStencilBuffer.Get(), "DepthStencilBuffer");
-    D3D11SetDebugObjectName(m_pDepthStencilView.Get(), "DepthStencilView");
-    D3D11SetDebugObjectName(m_pRenderTargetView.Get(), "BackBufferRTV[0]");
-
 }
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

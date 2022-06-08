@@ -36,7 +36,7 @@ using namespace Microsoft::WRL;
             auto& pCBData = it->second->pParamData;\
             if (pCBData)\
             {\
-                pEffectPass->p##ShaderType##ParamData = std::make_unique<CBufferData>(pCBData->cbufferName.c_str(), pCBData->startSlot, (UINT)pCBData->cbufferData.size()); \
+                pEffectPass->p##ShaderType##ParamData = std::make_unique<CBufferData>(pCBData->cbufferName.c_str(), pCBData->startSlot, (uint32_t)pCBData->cbufferData.size()); \
                 it->second->pParamData->CreateBuffer(device);\
             }\
         }\
@@ -50,7 +50,7 @@ using namespace Microsoft::WRL;
     for (auto& it : pImpl->m_##FullShaderType##s)\
     {\
         std::string name##ShaderType = std::string(name) + "." + it.second->name;\
-        it.second->p##ShaderType->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name##ShaderType.size(), name##ShaderType.c_str());\
+        it.second->p##ShaderType->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)name##ShaderType.size(), name##ShaderType.c_str());\
     }\
 }
 
@@ -61,14 +61,14 @@ using namespace Microsoft::WRL;
 
 #define EFFECTPASS_SET_CONSTANTBUFFER(ShaderType)\
 {\
-    UINT slot = 0, mask = p##ShaderType##Info->cbUseMask;\
+    uint32_t slot = 0, mask = p##ShaderType##Info->cbUseMask;\
     while (mask) {\
         if ((mask & 1) == 0) {\
             ++slot, mask >>= 1;\
             continue;\
         }\
-        UINT zero_bit = ((mask + 1) | mask) ^ mask;\
-        UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));\
+        uint32_t zero_bit = ((mask + 1) | mask) ^ mask;\
+        uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));\
         if (count == 1) {\
             CBufferData& cbData = cBuffers.at(slot);\
             cbData.UpdateBuffer(deviceContext);\
@@ -77,7 +77,7 @@ using namespace Microsoft::WRL;
         }\
         else {\
             std::vector<ID3D11Buffer*> constantBuffers(count);\
-            for (UINT i = 0; i < count; ++i) {\
+            for (uint32_t i = 0; i < count; ++i) {\
                 CBufferData& cbData = cBuffers.at(slot + i);\
                 cbData.UpdateBuffer(deviceContext);\
                 constantBuffers[i] = cbData.cBuffer.Get();\
@@ -108,21 +108,21 @@ using namespace Microsoft::WRL;
 
 #define EFFECTPASS_SET_SAMPLER(ShaderType)\
 {\
-    UINT slot = 0, mask = p##ShaderType##Info->ssUseMask;\
+    uint32_t slot = 0, mask = p##ShaderType##Info->ssUseMask;\
     while (mask) {\
         if ((mask & 1) == 0) {\
             ++slot, mask >>= 1;\
             continue;\
         }\
-        UINT zero_bit = ((mask + 1) | mask) ^ mask;\
-        UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));\
+        uint32_t zero_bit = ((mask + 1) | mask) ^ mask;\
+        uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));\
         if (count == 1) {\
             deviceContext->ShaderType##SetSamplers(slot, 1, samplers.at(slot).pSS.GetAddressOf());\
             ++slot, mask >>= 1;\
         }\
         else {\
             std::vector<ID3D11SamplerState*> samplerStates(count);\
-            for (UINT i = 0; i < count; ++i)\
+            for (uint32_t i = 0; i < count; ++i)\
                 samplerStates[i] = samplers.at(slot + i).pSS.Get();\
             deviceContext->ShaderType##SetSamplers(slot, count, samplerStates.data()); \
             slot += count + 1, mask >>= (count + 1);\
@@ -132,23 +132,23 @@ using namespace Microsoft::WRL;
 
 #define EFFECTPASS_SET_SHADERRESOURCE(ShaderType)\
 {\
-    UINT slot = 0;\
-    for (UINT i = 0; i < 4; ++i, slot = i * 32){\
-        UINT mask = p##ShaderType##Info->srUseMasks[i];\
+    uint32_t slot = 0;\
+    for (uint32_t i = 0; i < 4; ++i, slot = i * 32){\
+        uint32_t mask = p##ShaderType##Info->srUseMasks[i];\
         while (mask) {\
             if ((mask & 1) == 0) {\
                 ++slot, mask >>= 1; \
                 continue; \
             }\
-            UINT zero_bit = ((mask + 1) | mask) ^ mask; \
-            UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit)); \
+            uint32_t zero_bit = ((mask + 1) | mask) ^ mask; \
+            uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit)); \
             if (count == 1) {\
                 deviceContext->ShaderType##SetShaderResources(slot, 1, shaderResources.at(slot).pSRV.GetAddressOf()); \
                 ++slot, mask >>= 1; \
             }\
             else {\
                 std::vector<ID3D11ShaderResourceView*> srvs(count); \
-                for (UINT i = 0; i < count; ++i)\
+                for (uint32_t i = 0; i < count; ++i)\
                     srvs[i] = shaderResources.at(slot + i).pSRV.Get(); \
                 deviceContext->ShaderType##SetShaderResources(slot, count, srvs.data()); \
                 slot += count + 1, mask >>= (count + 1); \
@@ -185,7 +185,7 @@ struct RWResource
     std::string name;
     D3D11_UAV_DIMENSION dim;
     ComPtr<ID3D11UnorderedAccessView> pUAV;
-    UINT initialCount;
+    uint32_t initialCount;
     bool enableCounter;
 };
 
@@ -203,10 +203,10 @@ struct CBufferData
     ComPtr<ID3D11Buffer> cBuffer;
     std::vector<uint8_t> cbufferData;
     std::string cbufferName;
-    UINT startSlot = 0;
+    uint32_t startSlot = 0;
 
     CBufferData() = default;
-    CBufferData(const std::string& name, UINT startSlot, UINT byteWidth, BYTE* initData = nullptr) :
+    CBufferData(const std::string& name, uint32_t startSlot, uint32_t byteWidth, BYTE* initData = nullptr) :
         cbufferData(byteWidth), cbufferName(name), startSlot(startSlot)
     {
         if (initData)
@@ -222,7 +222,7 @@ struct CBufferData
         cbd.Usage = D3D11_USAGE_DYNAMIC;
         cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
         cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        cbd.ByteWidth = (UINT)cbufferData.size();
+        cbd.ByteWidth = (uint32_t)cbufferData.size();
         return device->CreateBuffer(&cbd, nullptr, cBuffer.GetAddressOf());
     }
 
@@ -274,72 +274,72 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
     ConstantBufferVariable() = default;
     ~ConstantBufferVariable() override {}
 
-    ConstantBufferVariable(std::string_view name_, UINT offset, UINT size, CBufferData* pData)
+    ConstantBufferVariable(std::string_view name_, uint32_t offset, uint32_t size, CBufferData* pData)
         : name(name_), startByteOffset(offset), byteWidth(size), pCBufferData(pData)
     {
     }
 
-    void SetUInt(UINT val) override
+    void SetUInt(uint32_t val) override
     {
         SetRaw(&val, 0, 4);
     }
 
-    void SetSInt(INT val) override
+    void SetSInt(int val) override
     {
         SetRaw(&val, 0, 4);
     }
 
-    void SetFloat(FLOAT val) override
+    void SetFloat(float val) override
     {
         SetRaw(&val, 0, 4);
     }
 
-    void SetUIntVector(UINT numComponents, const UINT data[4]) override
+    void SetUIntVector(uint32_t numComponents, const uint32_t data[4]) override
     {
         if (numComponents > 4)
             numComponents = 4;
-        UINT byteCount = numComponents * sizeof(UINT);
+        uint32_t byteCount = numComponents * sizeof(uint32_t);
         if (byteCount > byteWidth)
             byteCount = byteWidth;
         SetRaw(data, 0, byteCount);
     }
 
-    void SetSIntVector(UINT numComponents, const INT data[4]) override
+    void SetSIntVector(uint32_t numComponents, const int data[4]) override
     {
         if (numComponents > 4)
             numComponents = 4;
-        UINT byteCount = numComponents * sizeof(INT);
+        uint32_t byteCount = numComponents * sizeof(int);
         if (byteCount > byteWidth)
             byteCount = byteWidth;
         SetRaw(data, 0, byteCount);
     }
 
-    void SetFloatVector(UINT numComponents, const FLOAT data[4]) override
+    void SetFloatVector(uint32_t numComponents, const float data[4]) override
     {
         if (numComponents > 4)
             numComponents = 4;
-        UINT byteCount = numComponents * sizeof(FLOAT);
+        uint32_t byteCount = numComponents * sizeof(float);
         if (byteCount > byteWidth)
             byteCount = byteWidth;
         SetRaw(data, 0, byteCount);
     }
 
-    void SetUIntMatrix(UINT rows, UINT cols, const UINT* noPadData) override
+    void SetUIntMatrix(uint32_t rows, uint32_t cols, const uint32_t* noPadData) override
     {
         SetMatrixInBytes(rows, cols, reinterpret_cast<const BYTE*>(noPadData));
     }
 
-    void SetSIntMatrix(UINT rows, UINT cols, const INT* noPadData) override
+    void SetSIntMatrix(uint32_t rows, uint32_t cols, const int* noPadData) override
     {
         SetMatrixInBytes(rows, cols, reinterpret_cast<const BYTE*>(noPadData));
     }
 
-    void SetFloatMatrix(UINT rows, UINT cols, const FLOAT* noPadData) override
+    void SetFloatMatrix(uint32_t rows, uint32_t cols, const float* noPadData) override
     {
         SetMatrixInBytes(rows, cols, reinterpret_cast<const BYTE*>(noPadData));
     }
 
-    void SetRaw(const void* data, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) override
+    void SetRaw(const void* data, uint32_t byteOffset = 0, uint32_t byteCount = 0xFFFFFFFF) override
     {
         if (!data || byteOffset > byteWidth)
             return;
@@ -363,10 +363,13 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
         case 2: SetFloat(std::get<2>(prop)); break;
         case 3: SetFloatVector(4, (float*)&std::get<3>(prop)); break;
         case 4: SetFloatMatrix(4, 4, (float*)&std::get<4>(prop)); break;
+        case 5: SetRaw(std::get<5>(prop).data()); break;
+        case 6: SetRaw(std::get<6>(prop).data()); break;
+        case 7: SetRaw(std::get<7>(prop).data()); break;
         }
     }
 
-    HRESULT GetRaw(void* pOutput, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) override
+    HRESULT GetRaw(void* pOutput, uint32_t byteOffset = 0, uint32_t byteCount = 0xFFFFFFFF) override
     {
         if (byteOffset > byteWidth || byteCount > byteWidth - byteOffset)
             return E_BOUNDS;
@@ -375,32 +378,32 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
         memcpy_s(pOutput, byteCount, pCBufferData->cbufferData.data() + startByteOffset + byteOffset, byteCount);
         return S_OK;
     }
-
-    void SetMatrixInBytes(UINT rows, UINT cols, const BYTE* noPadData)
+    
+    void SetMatrixInBytes(uint32_t rows, uint32_t cols, const BYTE* noPadData)
     {
         // 仅允许1x1到4x4
         if (rows == 0 || rows > 4 || cols == 0 || cols > 4)
             return;
-        UINT remainBytes = byteWidth < 64 ? byteWidth : 64;
+        uint32_t remainBytes = byteWidth < 64 ? byteWidth : 64;
         BYTE* pData = pCBufferData->cbufferData.data() + startByteOffset;
         while (remainBytes > 0 && rows > 0)
         {
-            UINT rowPitch = sizeof(DWORD) * cols < remainBytes ? sizeof(DWORD) * cols : remainBytes;
+            uint32_t rowPitch = sizeof(uint32_t) * cols < remainBytes ? sizeof(uint32_t) * cols : remainBytes;
             // 仅当值不同时更新
             if (memcmp(pData, noPadData, rowPitch))
             {
                 memcpy_s(pData, rowPitch, noPadData, rowPitch);
                 pCBufferData->isDirty = true;
             }
-            noPadData += cols * sizeof(DWORD);
+            noPadData += cols * sizeof(uint32_t);
             pData += 16;
             remainBytes = remainBytes < 16 ? 0 : remainBytes - 16;
         }
     }
 
     std::string name;
-    UINT startByteOffset = 0;
-    UINT byteWidth = 0;
+    uint32_t startByteOffset = 0;
+    uint32_t byteWidth = 0;
     CBufferData* pCBufferData = nullptr;
 };
 
@@ -408,10 +411,10 @@ struct VertexShaderInfo
 {
     std::string name;
     ComPtr<ID3D11VertexShader> pVS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT unused = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t unused = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -420,10 +423,10 @@ struct DomainShaderInfo
 {
     std::string name;
     ComPtr<ID3D11DomainShader> pDS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT unused = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t unused = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -432,10 +435,10 @@ struct HullShaderInfo
 {
     std::string name;
     ComPtr<ID3D11HullShader> pHS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT unused = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t unused = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -444,10 +447,10 @@ struct GeometryShaderInfo
 {
     std::string name;
     ComPtr<ID3D11GeometryShader> pGS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT unused = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t unused = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -456,10 +459,10 @@ struct PixelShaderInfo
 {
     std::string name;
     ComPtr<ID3D11PixelShader> pPS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT rwUseMask = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t rwUseMask = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -468,10 +471,10 @@ struct ComputeShaderInfo
 {
     std::string name;
     ComPtr<ID3D11ComputeShader> pCS;
-    UINT cbUseMask = 0;
-    UINT ssUseMask = 0;
-    UINT rwUseMask = 0;
-    UINT srUseMasks[4] = {};
+    uint32_t cbUseMask = 0;
+    uint32_t ssUseMask = 0;
+    uint32_t rwUseMask = 0;
+    uint32_t srUseMasks[4] = {};
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -482,10 +485,10 @@ struct EffectPass : public IEffectPass
     EffectPass(
         EffectHelper* _pEffectHelper,
         std::string_view _passName,
-        std::unordered_map<UINT, CBufferData>& _cBuffers,
-        std::unordered_map<UINT, ShaderResource>& _shaderResources,
-        std::unordered_map<UINT, SamplerState>& _samplers,
-        std::unordered_map<UINT, RWResource>& _rwResources)
+        std::unordered_map<uint32_t, CBufferData>& _cBuffers,
+        std::unordered_map<uint32_t, ShaderResource>& _shaderResources,
+        std::unordered_map<uint32_t, SamplerState>& _samplers,
+        std::unordered_map<uint32_t, RWResource>& _rwResources)
         : pEffectHelper(_pEffectHelper), passName(_passName), cBuffers(_cBuffers), shaderResources(_shaderResources),
         samplers(_samplers), rwResources(_rwResources)
     {
@@ -493,8 +496,8 @@ struct EffectPass : public IEffectPass
     ~EffectPass() override {}
 
     void SetRasterizerState(ID3D11RasterizerState* pRS)  override;
-    void SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask) override;
-    void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilRef)  override;
+    void SetBlendState(ID3D11BlendState* pBS, const float blendFactor[4], uint32_t sampleMask) override;
+    void SetDepthStencilState(ID3D11DepthStencilState* pDSS, uint32_t stencilRef)  override;
     std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(std::string_view paramName) override;
     std::shared_ptr<IEffectConstantBufferVariable> DSGetParamByName(std::string_view paramName) override;
     std::shared_ptr<IEffectConstantBufferVariable> HSGetParamByName(std::string_view paramName) override;
@@ -511,13 +514,13 @@ struct EffectPass : public IEffectPass
 
     // 渲染状态
     ComPtr<ID3D11BlendState> pBlendState = nullptr;
-    FLOAT blendFactor[4] = {};
-    UINT sampleMask = 0xFFFFFFFF;
+    float blendFactor[4] = {};
+    uint32_t sampleMask = 0xFFFFFFFF;
 
     ComPtr<ID3D11RasterizerState> pRasterizerState = nullptr;
 
     ComPtr<ID3D11DepthStencilState> pDepthStencilState = nullptr;
-    UINT stencilRef = 0;
+    uint32_t stencilRef = 0;
     
 
     // 着色器相关信息
@@ -537,10 +540,10 @@ struct EffectPass : public IEffectPass
     std::unique_ptr<CBufferData> pCSParamData = nullptr;
 
     // 资源和采样器状态
-    std::unordered_map<UINT, CBufferData>& cBuffers;
-    std::unordered_map<UINT, ShaderResource>& shaderResources;
-    std::unordered_map<UINT, SamplerState>& samplers;
-    std::unordered_map<UINT, RWResource>& rwResources;
+    std::unordered_map<uint32_t, CBufferData>& cBuffers;
+    std::unordered_map<uint32_t, ShaderResource>& shaderResources;
+    std::unordered_map<uint32_t, SamplerState>& samplers;
+    std::unordered_map<uint32_t, RWResource>& rwResources;
 };
 
 class EffectHelper::Impl
@@ -550,21 +553,21 @@ public:
     ~Impl() = default;
 
     // 更新收集着色器反射信息
-    HRESULT UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag);
+    HRESULT UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, uint32_t shaderFlag);
     // 清空所有资源与反射信息
     void Clear();
     //根据Blob创建着色器并指定标识名
-    HRESULT CreateShaderFromBlob(std::string_view name, ID3D11Device* device, UINT shaderFlag,
+    HRESULT CreateShaderFromBlob(std::string_view name, ID3D11Device* device, uint32_t shaderFlag,
         ID3DBlob* blob);
 
 public:
     std::unordered_map<size_t, std::shared_ptr<EffectPass>> m_EffectPasses;			// 渲染通道
 
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> m_ConstantBufferVariables;  // 常量缓冲区的变量
-    std::unordered_map<UINT, CBufferData> m_CBuffers;											    // 常量缓冲区临时缓存的数据
-    std::unordered_map<UINT, ShaderResource> m_ShaderResources;									    // 着色器资源
-    std::unordered_map<UINT, SamplerState> m_Samplers;											    // 采样器
-    std::unordered_map<UINT, RWResource> m_RWResources;											    // 可读写资源
+    std::unordered_map<uint32_t, CBufferData> m_CBuffers;											    // 常量缓冲区临时缓存的数据
+    std::unordered_map<uint32_t, ShaderResource> m_ShaderResources;									    // 着色器资源
+    std::unordered_map<uint32_t, SamplerState> m_Samplers;											    // 采样器
+    std::unordered_map<uint32_t, RWResource> m_RWResources;											    // 可读写资源
 
     std::unordered_map<size_t, std::shared_ptr<VertexShaderInfo>> m_VertexShaders;	// 顶点着色器
     std::unordered_map<size_t, std::shared_ptr<HullShaderInfo>> m_HullShaders;		// 外壳着色器
@@ -582,7 +585,7 @@ public:
 //
 
 
-HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, UINT shaderFlag)
+HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11Device* device, ID3D11ShaderReflection* pShaderReflection, uint32_t shaderFlag)
 {
     HRESULT hr;
 
@@ -593,7 +596,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
 
     size_t nameID = StringToID(name);
 
-    for (UINT i = 0;; ++i)
+    for (uint32_t i = 0;; ++i)
     {
         D3D11_SHADER_INPUT_BIND_DESC sibDesc;
         hr = pShaderReflection->GetResourceBindingDesc(i, &sibDesc);
@@ -651,7 +654,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
             }
 
             // 记录内部变量
-            for (UINT j = 0; j < cbDesc.Variables; ++j)
+            for (uint32_t j = 0; j < cbDesc.Variables; ++j)
             {
                 ID3D11ShaderReflectionVariable* pSRVar = pSRCBuffer->GetVariableByIndex(j);
                 D3D11_SHADER_VARIABLE_DESC svDesc;
@@ -790,7 +793,7 @@ void EffectHelper::Impl::Clear()
     m_ComputeShaders.clear();
 }
 
-HRESULT EffectHelper::Impl::CreateShaderFromBlob(std::string_view name, ID3D11Device* device, UINT shaderFlag,
+HRESULT EffectHelper::Impl::CreateShaderFromBlob(std::string_view name, ID3D11Device* device, uint32_t shaderFlag,
     ID3DBlob* blob)
 {
     HRESULT hr = 0;
@@ -845,7 +848,7 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
     // 获取着色器类型
     D3D11_SHADER_DESC sd;
     pShaderReflection->GetDesc(&sd);
-    UINT shaderFlag = static_cast<ShaderFlag>(1 << D3D11_SHVER_GET_TYPE(sd.Version));
+    uint32_t shaderFlag = static_cast<ShaderFlag>(1 << D3D11_SHVER_GET_TYPE(sd.Version));
 
     // 创建着色器
     hr = pImpl->CreateShaderFromBlob(name, device, shaderFlag, blob);
@@ -870,7 +873,7 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wst
         return hr;
     if (memcmp(pBlobIn->GetBufferPointer(), dxbc_header, sizeof dxbc_header))
     {
-        DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+        uint32_t dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
         // 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
         // 但仍然允许着色器进行优化操作
@@ -928,7 +931,7 @@ HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(std::string_view name, I
     // 获取着色器类型并核验
     D3D11_SHADER_DESC sd;
     pShaderReflection->GetDesc(&sd);
-    UINT shaderFlag = static_cast<ShaderFlag>(1 << D3D11_SHVER_GET_TYPE(sd.Version));
+    uint32_t shaderFlag = static_cast<ShaderFlag>(1 << D3D11_SHVER_GET_TYPE(sd.Version));
 
     if (shaderFlag != GeometryShader)
         return E_INVALIDARG;
@@ -988,7 +991,7 @@ std::shared_ptr<IEffectConstantBufferVariable> EffectHelper::GetConstantBufferVa
         return nullptr;
 }
 
-void EffectHelper::SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerState)
+void EffectHelper::SetSamplerStateBySlot(uint32_t slot, ID3D11SamplerState* samplerState)
 {
     auto it = pImpl->m_Samplers.find(slot);
     if (it != pImpl->m_Samplers.end())
@@ -998,7 +1001,7 @@ void EffectHelper::SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerS
 void EffectHelper::SetSamplerStateByName(std::string_view name, ID3D11SamplerState* samplerState)
 {
     auto it = std::find_if(pImpl->m_Samplers.begin(), pImpl->m_Samplers.end(),
-        [name](const std::pair<UINT, SamplerState>& p) {
+        [name](const std::pair<uint32_t, SamplerState>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_Samplers.end())
@@ -1008,7 +1011,7 @@ void EffectHelper::SetSamplerStateByName(std::string_view name, ID3D11SamplerSta
 int EffectHelper::MapSamplerStateSlot(std::string_view name)
 {
     auto it = std::find_if(pImpl->m_Samplers.begin(), pImpl->m_Samplers.end(),
-        [name](const std::pair<UINT, SamplerState>& p) {
+        [name](const std::pair<uint32_t, SamplerState>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_Samplers.end())
@@ -1016,7 +1019,7 @@ int EffectHelper::MapSamplerStateSlot(std::string_view name)
     return -1;
 }
 
-void EffectHelper::SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv)
+void EffectHelper::SetShaderResourceBySlot(uint32_t slot, ID3D11ShaderResourceView* srv)
 {
     auto it = pImpl->m_ShaderResources.find(slot);
     if (it != pImpl->m_ShaderResources.end())
@@ -1026,7 +1029,7 @@ void EffectHelper::SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* 
 void EffectHelper::SetShaderResourceByName(std::string_view name, ID3D11ShaderResourceView* srv)
 {
     auto it = std::find_if(pImpl->m_ShaderResources.begin(), pImpl->m_ShaderResources.end(),
-        [name](const std::pair<UINT, ShaderResource>& p) {
+        [name](const std::pair<uint32_t, ShaderResource>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_ShaderResources.end())
@@ -1036,7 +1039,7 @@ void EffectHelper::SetShaderResourceByName(std::string_view name, ID3D11ShaderRe
 int EffectHelper::MapShaderResourceSlot(std::string_view name)
 {
     auto it = std::find_if(pImpl->m_ShaderResources.begin(), pImpl->m_ShaderResources.end(),
-        [name](const std::pair<UINT, ShaderResource>& p) {
+        [name](const std::pair<uint32_t, ShaderResource>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_ShaderResources.end())
@@ -1044,7 +1047,7 @@ int EffectHelper::MapShaderResourceSlot(std::string_view name)
     return -1;
 }
 
-void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount)
+void EffectHelper::SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t initialCount)
 {
     auto it = pImpl->m_RWResources.find(slot);
     if (it != pImpl->m_RWResources.end())
@@ -1055,10 +1058,10 @@ void EffectHelper::SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView
         
 }
 
-void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, UINT initialCount)
+void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t initialCount)
 {
     auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
-        [name](const std::pair<UINT, RWResource>& p) {
+        [name](const std::pair<uint32_t, RWResource>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_RWResources.end())
@@ -1071,7 +1074,7 @@ void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11Unorder
 int EffectHelper::MapUnorderedAccessSlot(std::string_view name)
 {
     auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
-        [name](const std::pair<UINT, RWResource>& p) {
+        [name](const std::pair<uint32_t, RWResource>& p) {
             return p.second.name == name;
         });
     if (it != pImpl->m_RWResources.end())
@@ -1085,7 +1088,7 @@ void EffectHelper::SetDebugObjectName(std::string name)
     for (auto& it : pImpl->m_CBuffers)
     {
         std::string cBufferName = name + "." + it.second.cbufferName;
-        it.second.cBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)cBufferName.size(), cBufferName.c_str());
+        it.second.cBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)cBufferName.size(), cBufferName.c_str());
     }
 
     EFFECTHELPER_SET_SHADER_DEBUG_NAME(VertexShader, VS);
@@ -1109,15 +1112,15 @@ void EffectPass::SetRasterizerState(ID3D11RasterizerState* pRS)
     pRasterizerState = pRS;
 }
 
-void EffectPass::SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask)
+void EffectPass::SetBlendState(ID3D11BlendState* pBS, const float blendFactor[4], uint32_t sampleMask)
 {
     pBlendState = pBS;
     if (blendFactor)
-        memcpy_s(this->blendFactor, sizeof(FLOAT[4]), blendFactor, sizeof(FLOAT[4]));
+        memcpy_s(this->blendFactor, sizeof(float[4]), blendFactor, sizeof(float[4]));
     this->sampleMask = sampleMask;
 }
 
-void EffectPass::SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilRef)
+void EffectPass::SetDepthStencilState(ID3D11DepthStencilState* pDSS, uint32_t stencilRef)
 {
     pDepthStencilState = pDSS;
     this->stencilRef = stencilRef;
@@ -1263,14 +1266,14 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
         EFFECTPASS_SET_PARAM(PS);
         EFFECTPASS_SET_SAMPLER(PS);
         EFFECTPASS_SET_SHADERRESOURCE(PS);
-        UINT slot = 0, mask = pPSInfo->rwUseMask;
+        uint32_t slot = 0, mask = pPSInfo->rwUseMask;
         while (mask) {
             if ((mask & 1) == 0) {
                 ++slot, mask >>= 1;
                 continue;
             }
-            UINT zero_bit = ((mask + 1) | mask) ^ mask;
-            UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));
+            uint32_t zero_bit = ((mask + 1) | mask) ^ mask;
+            uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));
             if (count == 1) {
                 auto& res = rwResources.at(slot);
                 deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
@@ -1280,8 +1283,8 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
             }
             else {
                 std::vector<ID3D11UnorderedAccessView*> uavs(count);
-                std::vector<UINT> initCounts(count);
-                for (UINT i = 0; i < count; ++i)
+                std::vector<uint32_t> initCounts(count);
+                for (uint32_t i = 0; i < count; ++i)
                 {
                     auto& res = rwResources.at(slot + i);
                     uavs[i] = res.pUAV.Get();
@@ -1305,7 +1308,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
         EFFECTPASS_SET_PARAM(CS);
         EFFECTPASS_SET_SAMPLER(CS);
         EFFECTPASS_SET_SHADERRESOURCE(CS);
-        for (UINT slot = 0, mask = pCSInfo->rwUseMask; mask; ++slot, mask >>= 1)
+        for (uint32_t slot = 0, mask = pCSInfo->rwUseMask; mask; ++slot, mask >>= 1)
         {
             if (mask & 1)
             {
@@ -1315,14 +1318,14 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
             }
         }
 
-        UINT slot = 0, mask = pCSInfo->rwUseMask;
+        uint32_t slot = 0, mask = pCSInfo->rwUseMask;
         while (mask) {
             if ((mask & 1) == 0) {
                 ++slot, mask >>= 1;
                 continue;
             }
-            UINT zero_bit = ((mask + 1) | mask) ^ mask;
-            UINT count = (zero_bit == 0 ? 32 : (UINT)log2((double)zero_bit));
+            uint32_t zero_bit = ((mask + 1) | mask) ^ mask;
+            uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));
             if (count == 1) {
                 auto& res = rwResources.at(slot);
                 deviceContext->CSSetUnorderedAccessViews(slot, 1, res.pUAV.GetAddressOf(),
@@ -1331,8 +1334,8 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
             }
             else {
                 std::vector<ID3D11UnorderedAccessView*> uavs(count);
-                std::vector<UINT> initCounts(count);
-                for (UINT i = 0; i < count; ++i)
+                std::vector<uint32_t> initCounts(count);
+                for (uint32_t i = 0; i < count; ++i)
                 {
                     auto& res = rwResources.at(slot + i);
                     uavs[i] = res.pUAV.Get();

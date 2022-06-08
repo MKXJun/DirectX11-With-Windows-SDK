@@ -48,45 +48,45 @@ struct EffectPassDesc
 struct IEffectConstantBufferVariable
 {
     // 设置无符号整数，也可以为bool设置
-    virtual void SetUInt(UINT val) = 0;
+    virtual void SetUInt(uint32_t val) = 0;
     // 设置有符号整数
-    virtual void SetSInt(INT val) = 0;
+    virtual void SetSInt(int val) = 0;
     // 设置浮点数
-    virtual void SetFloat(FLOAT val) = 0;
+    virtual void SetFloat(float val) = 0;
 
     // 设置无符号整数向量，允许设置1个到4个分量
     // 着色器变量类型为bool也可以使用
     // 根据要设置的分量数来读取data的前几个分量
-    virtual void SetUIntVector(UINT numComponents, const UINT data[4]) = 0;
+    virtual void SetUIntVector(uint32_t numComponents, const uint32_t data[4]) = 0;
 
     // 设置有符号整数向量，允许设置1个到4个分量
     // 根据要设置的分量数来读取data的前几个分量
-    virtual void SetSIntVector(UINT numComponents, const INT data[4]) = 0;
+    virtual void SetSIntVector(uint32_t numComponents, const int data[4]) = 0;
 
     // 设置浮点数向量，允许设置1个到4个分量
     // 根据要设置的分量数来读取data的前几个分量
-    virtual void SetFloatVector(UINT numComponents, const FLOAT data[4]) = 0;
+    virtual void SetFloatVector(uint32_t numComponents, const float data[4]) = 0;
 
     // 设置无符号整数矩阵，允许行列数在1-4
     // 要求传入数据没有填充，例如3x3矩阵可以直接传入UINT[3][3]类型
-    virtual void SetUIntMatrix(UINT rows, UINT cols, const UINT* noPadData) = 0;
+    virtual void SetUIntMatrix(uint32_t rows, uint32_t cols, const uint32_t* noPadData) = 0;
 
     // 设置有符号整数矩阵，允许行列数在1-4
     // 要求传入数据没有填充，例如3x3矩阵可以直接传入INT[3][3]类型
-    virtual void SetSIntMatrix(UINT rows, UINT cols, const INT* noPadData) = 0;
+    virtual void SetSIntMatrix(uint32_t rows, uint32_t cols, const int* noPadData) = 0;
 
     // 设置浮点数矩阵，允许行列数在1-4
     // 要求传入数据没有填充，例如3x3矩阵可以直接传入FLOAT[3][3]类型
-    virtual void SetFloatMatrix(UINT rows, UINT cols, const FLOAT* noPadData) = 0;
+    virtual void SetFloatMatrix(uint32_t rows, uint32_t cols, const float* noPadData) = 0;
 
     // 设置其余类型，允许指定设置范围
-    virtual void SetRaw(const void* data, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) = 0;
+    virtual void SetRaw(const void* data, uint32_t byteOffset = 0, uint32_t byteCount = 0xFFFFFFFF) = 0;
 
     // 设置属性
     virtual void Set(const Property& prop) = 0;
 
     // 获取最近一次设置的值，允许指定读取范围
-    virtual HRESULT GetRaw(void* pOutput, UINT byteOffset = 0, UINT byteCount = 0xFFFFFFFF) = 0;
+    virtual HRESULT GetRaw(void* pOutput, uint32_t byteOffset = 0, uint32_t byteCount = 0xFFFFFFFF) = 0;
 
     virtual ~IEffectConstantBufferVariable() {}
 };
@@ -99,9 +99,9 @@ struct IEffectPass
     // 设置光栅化状态
     virtual void SetRasterizerState(ID3D11RasterizerState* pRS) = 0;
     // 设置混合状态
-    virtual void SetBlendState(ID3D11BlendState* pBS, const FLOAT blendFactor[4], UINT sampleMask) = 0;
+    virtual void SetBlendState(ID3D11BlendState* pBS, const float blendFactor[4], uint32_t sampleMask) = 0;
     // 设置深度混合状态
-    virtual void SetDepthStencilState(ID3D11DepthStencilState* pDSS, UINT stencilValue) = 0;
+    virtual void SetDepthStencilState(ID3D11DepthStencilState* pDSS, uint32_t stencilValue) = 0;
 
     // 获取顶点着色器的uniform形参用于设置值
     virtual std::shared_ptr<IEffectConstantBufferVariable> VSGetParamByName(std::string_view paramName) = 0;
@@ -174,23 +174,23 @@ public:
     std::shared_ptr<IEffectConstantBufferVariable> GetConstantBufferVariable(std::string_view name);
 
     // 按槽设置采样器状态
-    void SetSamplerStateBySlot(UINT slot, ID3D11SamplerState* samplerState);
+    void SetSamplerStateBySlot(uint32_t slot, ID3D11SamplerState* samplerState);
     // 按名设置采样器状态(若存在同槽多名称则只能使用按槽设置)
     void SetSamplerStateByName(std::string_view name, ID3D11SamplerState* samplerState);
     // 按名映射采样器状态槽(找不到返回-1)
     int MapSamplerStateSlot(std::string_view name);
 
     // 按槽设置着色器资源
-    void SetShaderResourceBySlot(UINT slot, ID3D11ShaderResourceView* srv);
+    void SetShaderResourceBySlot(uint32_t slot, ID3D11ShaderResourceView* srv);
     // 按名设置着色器资源(若存在同槽多名称则只能使用按槽设置)
     void SetShaderResourceByName(std::string_view name, ID3D11ShaderResourceView* srv);
     // 按名映射着色器资源槽(找不到返回-1)
     int MapShaderResourceSlot(std::string_view name);
 
     // 按槽设置可读写资源
-    void SetUnorderedAccessBySlot(UINT slot, ID3D11UnorderedAccessView* uav, UINT initialCount);
+    void SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t initialCount);
     // 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
-    void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, UINT initialCount);
+    void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t initialCount);
     // 按名映射可读写资源槽(找不到返回-1)
     int MapUnorderedAccessSlot(std::string_view name);
 

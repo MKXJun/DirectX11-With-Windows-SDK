@@ -39,6 +39,8 @@ private:
     TextureManager m_TextureManager;
     ModelManager m_ModelManager;
 
+    BasicEffect m_BasicEffect;				                            // 对象渲染特效管理
+
     GpuTimer m_GpuTimer_Instancing;
 
     std::unique_ptr<Depth2D> m_pDepthBuffer;                            // 深度缓冲区
@@ -56,7 +58,7 @@ private:
     std::vector<BasicEffect::InstancedData> m_AcceptedData;             // 上传到实例缓冲区的数据
     std::unique_ptr<Buffer> m_pInstancedBuffer;                         // 实例缓冲区
 
-    std::unique_ptr<BasicEffect> m_pBasicEffect;				        // 对象渲染特效管理
+    
     bool m_EnableFrustumCulling = true;							        // 视锥体裁剪开启
     bool m_EnableInstancing = true;								        // 硬件实例化开启
 

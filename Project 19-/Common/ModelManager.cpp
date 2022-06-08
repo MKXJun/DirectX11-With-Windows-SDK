@@ -41,7 +41,7 @@ void ModelManager::Init(ID3D11Device* device)
     m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
 }
 
-const Model* ModelManager::CreateFromFile(std::string_view filename)
+Model* ModelManager::CreateFromFile(std::string_view filename)
 {
     XID modelID = StringToID(filename);
     if (m_Models.count(modelID))
@@ -217,16 +217,20 @@ const Model* ModelManager::CreateFromFile(std::string_view filename)
     return nullptr;
 }
 
-bool ModelManager::CreateFromGeometry(std::string_view name, const Geometry::MeshData& data)
+Model* ModelManager::CreateFromGeometry(std::string_view name, const Geometry::MeshData& data)
 {
     XID modelID = StringToID(name);
-    if (m_Models.count(modelID))
-        return false;
-
     auto& model = m_Models[modelID];
 
-    model.meshdatas.resize(1);
-    model.materials.resize(1);
+    // 默认材质
+    model.materials = { Material{} };
+    model.materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+    model.materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+    model.materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+    model.materials[0].Set<float>("$SpecularFactor", 10.0f);
+    model.materials[0].Set<std::string>("$Diffuse", "");
+
+    model.meshdatas = { MeshData{} };
     model.meshdatas[0].m_pTexcoordArrays.resize(1);
     model.meshdatas[0].m_IndexCount = (uint32_t)(!data.indices16.empty() ? data.indices16.size() : data.indices32.size());
     model.meshdatas[0].m_MaterialIndex = 0;
@@ -235,34 +239,43 @@ bool ModelManager::CreateFromGeometry(std::string_view name, const Geometry::Mes
 
     initData.pSysMem = data.vertices.data();
     bufferDesc.ByteWidth = (uint32_t)data.vertices.size() * sizeof(XMFLOAT3);
-    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pVertices.ReleaseAndGetAddressOf());
+    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pVertices.GetAddressOf());
+    
+    if (!data.normals.empty())
+    {
+        initData.pSysMem = data.normals.data();
+        bufferDesc.ByteWidth = (uint32_t)data.normals.size() * sizeof(XMFLOAT3);
+        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pNormals.GetAddressOf());
+    }
+    
+    if (!data.texcoords.empty())
+    {
+        initData.pSysMem = data.texcoords.data();
+        bufferDesc.ByteWidth = (uint32_t)data.texcoords.size() * sizeof(XMFLOAT2);
+        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTexcoordArrays[0].GetAddressOf());
+    }
 
-    initData.pSysMem = data.normals.data();
-    bufferDesc.ByteWidth = (uint32_t)data.normals.size() * sizeof(XMFLOAT3);
-    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pNormals.ReleaseAndGetAddressOf());
-
-    initData.pSysMem = data.texcoords.data();
-    bufferDesc.ByteWidth = (uint32_t)data.texcoords.size() * sizeof(XMFLOAT2);
-    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTexcoordArrays[0].ReleaseAndGetAddressOf());
-
-    initData.pSysMem = data.tangents.data();
-    bufferDesc.ByteWidth = (uint32_t)data.tangents.size() * sizeof(XMFLOAT4);
-    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTangents.ReleaseAndGetAddressOf());
+    if (!data.tangents.empty())
+    {
+        initData.pSysMem = data.tangents.data();
+        bufferDesc.ByteWidth = (uint32_t)data.tangents.size() * sizeof(XMFLOAT4);
+        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTangents.GetAddressOf());
+    }
 
     if (!data.indices16.empty())
     {
         initData.pSysMem = data.indices16.data();
         bufferDesc = CD3D11_BUFFER_DESC((uint16_t)data.indices16.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.ReleaseAndGetAddressOf());
+        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
     else
     {
         initData.pSysMem = data.indices32.data();
         bufferDesc = CD3D11_BUFFER_DESC((uint32_t)data.indices32.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.ReleaseAndGetAddressOf());
+        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
 
-    return true;
+    return &model;
 }
 
 

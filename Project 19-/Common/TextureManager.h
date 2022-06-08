@@ -18,6 +18,12 @@
 #include <d3d11_1.h>
 #include <wrl/client.h>
 
+struct TextureInfo
+{
+    uint32_t width;
+    uint32_t height;
+};
+
 class TextureManager
 {
 public:

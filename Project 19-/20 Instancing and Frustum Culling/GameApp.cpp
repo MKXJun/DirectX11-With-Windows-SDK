@@ -6,8 +6,7 @@ using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
     : D3DApp(hInstance, windowName, initWidth, initHeight),
-    m_CameraMode(CameraMode::Free),
-    m_pBasicEffect(std::make_unique<BasicEffect>())
+    m_CameraMode(CameraMode::Free)
 {
 }
 
@@ -28,7 +27,7 @@ bool GameApp::Init()
     // 务必先初始化所有渲染状态，以供下面的特效使用
     RenderStates::InitAll(m_pd3dDevice.Get());
 
-    if (!m_pBasicEffect->InitAll(m_pd3dDevice.Get()))
+    if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
     if (!InitResource())
@@ -49,7 +48,7 @@ void GameApp::OnResize()
     {
         m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
         m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
-        m_pBasicEffect->SetProjMatrix(m_pCamera->GetProjMatrixXM());
+        m_BasicEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
     }
 }
 
@@ -82,8 +81,8 @@ void GameApp::UpdateScene(float dt)
         XMVectorSet(-119.9f, 0.0f, -119.9f, 0.0f), XMVectorSet(119.9f, 99.9f, 119.9f, 0.0f)));
     cam1st->SetPosition(adjustedPos);
 
-    m_pBasicEffect->SetEyePos(m_pCamera->GetPosition());
-    m_pBasicEffect->SetViewMatrix(m_pCamera->GetViewMatrixXM());
+    m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+    m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
 
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
     {
@@ -173,20 +172,20 @@ void GameApp::DrawScene()
     {
         // 硬件实例化绘制
         const auto& refData = m_EnableFrustumCulling ? m_AcceptedData : instancedData;
-        m_pBasicEffect->DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, refData);
+        m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, refData);
     }
     else
     {
         // 遍历的形式逐个绘制
-        m_pBasicEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
         if (m_EnableFrustumCulling)
         {
             size_t sz = m_AcceptedIndices.size();
             for (size_t i = 0; i < sz; ++i)
             {
                 refObject.GetTransform() = refTransforms[m_AcceptedIndices[i]];
-                m_pBasicEffect->SetDiffuseColor(m_AcceptedData[i].color);
-                refObject.Draw(m_pd3dImmediateContext.Get(), m_pBasicEffect.get());
+                m_BasicEffect.SetDiffuseColor(m_AcceptedData[i].color);
+                refObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
             }
         }
         else
@@ -195,8 +194,8 @@ void GameApp::DrawScene()
             for (size_t i = 0; i < sz; ++i)
             {
                 refObject.GetTransform() = refTransforms[i];
-                m_pBasicEffect->SetDiffuseColor(instancedData[i].color);
-                refObject.Draw(m_pd3dImmediateContext.Get(), m_pBasicEffect.get());
+                m_BasicEffect.SetDiffuseColor(instancedData[i].color);
+                refObject.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
             }
         }
     }
@@ -205,8 +204,8 @@ void GameApp::DrawScene()
     // 绘制地面
     if (m_SceneMode == 0)
     {
-        m_pBasicEffect->SetRenderDefault(m_pd3dImmediateContext.Get());
-        m_Ground.Draw(m_pd3dImmediateContext.Get(), m_pBasicEffect.get());
+        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     }
 
     if (ImGui::Begin("Instancing and Frustum Culling"))
@@ -252,8 +251,8 @@ bool GameApp::InitResource()
     camera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
     camera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
     camera->LookTo(XMFLOAT3(), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
-    m_pBasicEffect->SetViewMatrix(camera->GetViewMatrixXM());
-    m_pBasicEffect->SetProjMatrix(camera->GetProjMatrixXM());
+    m_BasicEffect.SetViewMatrix(camera->GetViewMatrixXM());
+    m_BasicEffect.SetProjMatrix(camera->GetProjMatrixXM());
 
     // ******************
     // 初始化不会变化的值
@@ -272,7 +271,7 @@ bool GameApp::InitResource()
     dirLight[3] = dirLight[0];
     dirLight[3].direction = XMFLOAT3(-0.577f, -0.577f, -0.577f);
     for (int i = 0; i < 4; ++i)
-        m_pBasicEffect->SetDirLight(i, dirLight[i]);
+        m_BasicEffect.SetDirLight(i, dirLight[i]);
 
     return true;
 }
@@ -328,15 +327,8 @@ void GameApp::CreateRandomTrees()
 
 void GameApp::CreateRandomCubes()
 {
-    // 初始化树
-    m_ModelManager.CreateFromGeometry("Cube", Geometry::CreateBox());
-    Model* pModel = m_ModelManager.GetModel("Cube");
-    pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-    pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-    pModel->materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-    pModel->materials[0].Set<float>("$SpecularFactor", 10.0f);
-    pModel->materials[0].Set<std::string>("$Diffuse", "");
-    m_Cubes.SetModel(pModel);
+    // 初始化立方体
+    m_Cubes.SetModel(m_ModelManager.CreateFromGeometry("Cube", Geometry::CreateBox()));
 
     // 随机生成2048个立方体
     m_CubeInstancedData.resize(2048);

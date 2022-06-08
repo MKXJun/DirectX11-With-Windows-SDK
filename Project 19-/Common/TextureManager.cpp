@@ -1,10 +1,13 @@
 #define STBI_WINDOWS_UTF8
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "TextureManager.h"
 #include "XUtil.h"
 #include "DXTrace.h"
 #include <DDSTextureLoader11.h>
 #include <filesystem>
+
+using namespace Microsoft::WRL;
 
 namespace
 {
@@ -43,12 +46,13 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
         return m_TextureSRVs[fileID].Get();
 
     auto& res = m_TextureSRVs[fileID];
+    ComPtr<ID3D11Texture2D> pTex;
     std::wstring wstr = UTF8ToWString(filename);
     if (FAILED(DirectX::CreateDDSTextureFromFileEx(m_pDevice.Get(),
         enableMips ? m_pDeviceContext.Get() : nullptr,
         wstr.c_str(), 0, D3D11_USAGE_DEFAULT,
         D3D11_BIND_SHADER_RESOURCE, 0, 0, 
-        forceSRGB, nullptr, res.GetAddressOf())))
+        forceSRGB, nullptr, res.ReleaseAndGetAddressOf())))
     {
         int width, height, comp;
         
@@ -66,12 +70,12 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
             m_pDeviceContext->UpdateSubresource(tex.Get(), 0, nullptr, img_data, width * sizeof(uint32_t), 0);
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, 
                 forceSRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM);
-            HR(m_pDevice->CreateShaderResourceView(tex.Get(), &srvDesc, res.GetAddressOf()));
+            HR(m_pDevice->CreateShaderResourceView(tex.Get(), &srvDesc, res.ReleaseAndGetAddressOf()));
             if (enableMips)
                 m_pDeviceContext->GenerateMips(res.Get());
             
-            std::string fname = std::filesystem::path(filename).filename().string();
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+            std::string fname = std::filesystem::path(filename).filename().string();
             tex->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)fname.length(), fname.c_str());
 #endif
         }

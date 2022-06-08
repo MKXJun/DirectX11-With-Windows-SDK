@@ -38,8 +38,8 @@ public:
 
     static ModelManager& Get();
     void Init(ID3D11Device* device);
-    const Model* CreateFromFile(std::string_view filename);
-    bool CreateFromGeometry(std::string_view name, const Geometry::MeshData& data);
+    Model* CreateFromFile(std::string_view filename);
+    Model* CreateFromGeometry(std::string_view name, const Geometry::MeshData& data);
 
     const Model* GetModel(std::string_view name) const;
     Model* GetModel(std::string_view name);

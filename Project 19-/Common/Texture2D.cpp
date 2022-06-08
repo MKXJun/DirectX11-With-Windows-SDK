@@ -6,277 +6,532 @@
 
 using namespace Microsoft::WRL;
 
-Texture2D::Texture2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height, DXGI_FORMAT format,
-    UINT bindFlags,
-    UINT mipLevels)
-{
-    InternalConstruct(d3dDevice, width, height, format, bindFlags, mipLevels, 1, 1, 0,
-        D3D11_RTV_DIMENSION_TEXTURE2D, D3D11_UAV_DIMENSION_TEXTURE2D, D3D11_SRV_DIMENSION_TEXTURE2D);
-}
-
-Texture2D::Texture2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height, DXGI_FORMAT format,
-    UINT bindFlags,
-    const DXGI_SAMPLE_DESC& sampleDesc)
-{
-    // UAV's can't point to multisampled resources
-    InternalConstruct(d3dDevice, width, height, format, bindFlags, 1, 1, sampleDesc.Count, sampleDesc.Quality,
-        D3D11_RTV_DIMENSION_TEXTURE2DMS, D3D11_UAV_DIMENSION_UNKNOWN, D3D11_SRV_DIMENSION_TEXTURE2DMS);
-}
-
-Texture2D::Texture2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height, DXGI_FORMAT format,
-    UINT bindFlags,
-    UINT mipLevels, UINT arraySize)
-{
-    InternalConstruct(d3dDevice, width, height, format, bindFlags, mipLevels, arraySize, 1, 0,
-        D3D11_RTV_DIMENSION_TEXTURE2DARRAY, D3D11_UAV_DIMENSION_TEXTURE2DARRAY, D3D11_SRV_DIMENSION_TEXTURE2DARRAY);
-}
-
-Texture2D::Texture2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height, DXGI_FORMAT format,
-    UINT bindFlags,
-    UINT arraySize, const DXGI_SAMPLE_DESC& sampleDesc)
-{
-    // UAV不能指向多重采样资源
-    InternalConstruct(d3dDevice, width, height, format, bindFlags, 1, arraySize, sampleDesc.Count, sampleDesc.Quality,
-        D3D11_RTV_DIMENSION_TEXTURE2DMSARRAY, D3D11_UAV_DIMENSION_UNKNOWN, D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY);
-}
-
-void Texture2D::SetDebugObjectName(const std::string& name)
-{
-#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
-    std::string str = name + ".SRV";
-    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
-    for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
-    {
-        str = name + ".RTV[" + std::to_string(i) + "]";
-        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
-    }
-    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name + ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
-    }
-    for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
-    {
-        str = name + ".UAV[" + std::to_string(i) + "]";
-        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
-    }
-#else
-    UNREFERENCED_PARAMETER(name);
-#endif
-}
-
-void Texture2D::InternalConstruct(ID3D11Device* d3dDevice,
-    UINT width, UINT height, DXGI_FORMAT format,
-    UINT bindFlags, UINT mipLevels, UINT arraySize,
-    UINT sampleCount, UINT sampleQuality,
-    D3D11_RTV_DIMENSION rtvDimension,
-    D3D11_UAV_DIMENSION uavDimension,
-    D3D11_SRV_DIMENSION srvDimension)
+Texture2DBase::Texture2DBase(ID3D11Device* device, 
+    const CD3D11_TEXTURE2D_DESC& texDesc, const CD3D11_SHADER_RESOURCE_VIEW_DESC& srvDesc)
+    : m_Width(texDesc.Width), m_Height(texDesc.Height)
 {
     m_pTexture.Reset();
     m_pTextureSRV.Reset();
-    m_pRenderTargetElements.clear();
-    m_pShaderResourceElements.clear();
-    m_pUnorderedAccessElements.clear();
 
-    m_Width = width;
-    m_Height = height;
-    m_MipLevels = mipLevels;
-    m_ArraySize = arraySize;
-
-    CD3D11_TEXTURE2D_DESC desc(
-        format,
-        width, height, arraySize, mipLevels,
-        bindFlags,
-        D3D11_USAGE_DEFAULT, 0,
-        sampleCount, sampleQuality,
-        (mipLevels != 1 ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0));
-
-    d3dDevice->CreateTexture2D(&desc, 0, m_pTexture.GetAddressOf());
+    device->CreateTexture2D(&texDesc, nullptr, m_pTexture.GetAddressOf());
 
     // 用实际产生的mip等级等数据更新
+    D3D11_TEXTURE2D_DESC desc;
     m_pTexture->GetDesc(&desc);
 
-    if (bindFlags & D3D11_BIND_RENDER_TARGET) {
-        for (UINT i = 0; i < arraySize; ++i) {
+    if ((desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)) 
+    {
+        device->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pTextureSRV.GetAddressOf());
+    }
+}
+
+void Texture2DBase::SetDebugObjectName(std::string_view name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)name.length(), name.data());
+    std::string str = name.data();
+    str += ".SRV";
+    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+#endif
+}
+
+Texture2D::Texture2D(ID3D11Device* device, uint32_t width, uint32_t height,
+    DXGI_FORMAT format, uint32_t bindFlags, uint32_t mipLevels)
+    : Texture2DBase(device, CD3D11_TEXTURE2D_DESC(format, width, height, 1, mipLevels, bindFlags), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2D, format))
+{
+    D3D11_TEXTURE2D_DESC desc;
+    m_pTexture->GetDesc(&desc);
+    m_MipLevels = desc.MipLevels;
+    if (bindFlags & D3D11_BIND_RENDER_TARGET)
+    {
+        device->CreateRenderTargetView(m_pTexture.Get(), nullptr , m_pTextureRTV.GetAddressOf());
+    }
+}
+
+void Texture2D::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str = name.data();
+    str += ".RTV";
+    m_pTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+#endif
+}
+
+Texture2DMS::Texture2DMS(ID3D11Device* device, uint32_t width, uint32_t height, 
+    DXGI_FORMAT format, const DXGI_SAMPLE_DESC& sampleDesc, uint32_t bindFlags)
+    : Texture2DBase(device, 
+        CD3D11_TEXTURE2D_DESC(format, width, height, 1, 1, bindFlags, 
+            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, format)), 
+    m_MsaaSamples(sampleDesc.Count)
+{
+    if (bindFlags & D3D11_BIND_RENDER_TARGET)
+    {
+        device->CreateRenderTargetView(m_pTexture.Get(), nullptr, m_pTextureRTV.GetAddressOf());
+    }
+}
+
+void Texture2DMS::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str = name.data();
+    str += ".RTV";
+    m_pTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+#endif
+}
+
+TextureCube::TextureCube(ID3D11Device* device, uint32_t width, uint32_t height,
+    DXGI_FORMAT format, uint32_t mipLevels, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(format, width, height, 6, mipLevels, bindFlags, D3D11_USAGE_DEFAULT,
+            0, 1, 0, D3D11_RESOURCE_MISC_TEXTURECUBE),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURECUBE, format))
+{
+    D3D11_TEXTURE2D_DESC desc;
+    m_pTexture->GetDesc(&desc);
+    m_MipLevels = desc.MipLevels;
+    if (bindFlags & D3D11_BIND_RENDER_TARGET)
+    {
+        for (uint32_t i = 0; i < 6; ++i) {
             CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(
-                rtvDimension,
+                D3D11_RTV_DIMENSION_TEXTURE2D,
                 format,
                 0,          // Mips
                 i, 1        // Array
             );
 
             ComPtr<ID3D11RenderTargetView> pRTV;
-            d3dDevice->CreateRenderTargetView(m_pTexture.Get(), &rtvDesc, pRTV.GetAddressOf());
+            device->CreateRenderTargetView(m_pTexture.Get(), &rtvDesc, pRTV.GetAddressOf());
             m_pRenderTargetElements.push_back(pRTV);
         }
     }
 
-    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS) {
-        // UAV不能指向多重采样资源！ 
-        assert(uavDimension != D3D11_UAV_DIMENSION_UNKNOWN);
-
-        for (UINT i = 0; i < arraySize; ++i) {
+    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS) 
+    {
+        for (uint32_t i = 0; i < 6; ++i) {
             CD3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc(
-                uavDimension,
+                D3D11_UAV_DIMENSION_TEXTURE2D,
                 format,
                 0,          // Mips
                 i, 1        // Array
             );
 
             ComPtr<ID3D11UnorderedAccessView> pUAV;
-            d3dDevice->CreateUnorderedAccessView(m_pTexture.Get(), &uavDesc, pUAV.GetAddressOf());
+            device->CreateUnorderedAccessView(m_pTexture.Get(), &uavDesc, pUAV.GetAddressOf());
             m_pUnorderedAccessElements.push_back(pUAV);
         }
     }
 
-    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
-        // 整个资源
-        CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(
-            srvDimension,
-            format,
-            0, desc.MipLevels,  // Mips
-            0, desc.ArraySize   // Array
-        );
-
-        d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pTextureSRV.GetAddressOf());
-
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) 
+    {
         // 单个子资源
-        for (UINT i = 0; i < arraySize; ++i) {
+        for (uint32_t i = 0; i < 6; ++i) {
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
-                srvDimension,
+                D3D11_SRV_DIMENSION_TEXTURE2D,
                 format,
-                0, 1,  // Mips
+                0, (uint32_t)-1,
                 i, 1   // Array
             );
 
             ComPtr<ID3D11ShaderResourceView> pSRV;
-            d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
             m_pShaderResourceElements.push_back(pSRV);
         }
     }
+
 }
 
-Depth2D::Depth2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height,
-    UINT bindFlags,
-    bool stencil)
+void TextureCube::SetDebugObjectName(std::string_view name)
 {
-    InternalConstruct(d3dDevice, width, height, bindFlags, 1, 1, 0,
-        D3D11_DSV_DIMENSION_TEXTURE2D, D3D11_SRV_DIMENSION_TEXTURE2D, stencil);
-}
-
-Depth2D::Depth2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height,
-    UINT bindFlags,
-    const DXGI_SAMPLE_DESC& sampleDesc,
-    bool stencil)
-{
-    InternalConstruct(d3dDevice, width, height, bindFlags, 1, sampleDesc.Count, sampleDesc.Quality,
-        D3D11_DSV_DIMENSION_TEXTURE2DMS, D3D11_SRV_DIMENSION_TEXTURE2DMS, stencil);
-}
-
-Depth2D::Depth2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height,
-    UINT bindFlags,
-    UINT arraySize,
-    bool stencil)
-{
-    InternalConstruct(d3dDevice, width, height, bindFlags, arraySize, 1, 0,
-        D3D11_DSV_DIMENSION_TEXTURE2DARRAY, D3D11_SRV_DIMENSION_TEXTURE2DARRAY, stencil);
-}
-
-Depth2D::Depth2D(ID3D11Device* d3dDevice,
-    UINT width, UINT height,
-    UINT bindFlags,
-    UINT arraySize,
-    const DXGI_SAMPLE_DESC& sampleDesc,
-    bool stencil)
-{
-    InternalConstruct(d3dDevice, width, height, bindFlags, arraySize, sampleDesc.Count, sampleDesc.Quality,
-        D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY, D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, stencil);
-}
-
-void Depth2D::SetDebugObjectName(const std::string& name)
-{
+    Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
-    std::string str = name + ".SRV";
-    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
-    for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
+    std::string str;
+    for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
     {
-        str = name + ".DSV[" + std::to_string(i) + "]";
-        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)name.length(), name.c_str());
+        str = name.data();
+        str += ".RTV[" + std::to_string(i) + "]";
+        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".UAV[" + std::to_string(i) + "]";
+        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
     }
 #else
     UNREFERENCED_PARAMETER(name);
-#endif // GRAPHICS_DEBUGGER_OBJECT_NAME
+#endif
 }
 
-void Depth2D::InternalConstruct(ID3D11Device* d3dDevice,
-    UINT width, UINT height,
-    UINT bindFlags, UINT arraySize,
-    UINT sampleCount, UINT sampleQuality,
-    D3D11_DSV_DIMENSION dsvDimension,
-    D3D11_SRV_DIMENSION srvDimension,
-    bool stencil)
+Texture2DArray::Texture2DArray(ID3D11Device* device, uint32_t width, uint32_t height,
+    DXGI_FORMAT format, uint32_t arraySize, uint32_t mipLevels, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(format, width, height, arraySize, mipLevels, bindFlags),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, format)), 
+    m_ArraySize(arraySize)
 {
-    m_pTexture.Reset();
-    m_pTextureSRV.Reset();
-    m_pDepthStencilElements.clear();
-    m_pShaderResourceElements.clear();
-
-    CD3D11_TEXTURE2D_DESC desc(
-        stencil ? DXGI_FORMAT_R32G8X24_TYPELESS : DXGI_FORMAT_R32_TYPELESS,
-        width, height, arraySize, 1,
-        bindFlags,
-        D3D11_USAGE_DEFAULT, 0,
-        sampleCount, sampleQuality);
-
-    d3dDevice->CreateTexture2D(&desc, 0, m_pTexture.GetAddressOf());
-
-    if (bindFlags & D3D11_BIND_DEPTH_STENCIL) {
-        for (UINT i = 0; i < arraySize; ++i) {
-            CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc(
-                dsvDimension,
-                stencil ? DXGI_FORMAT_D32_FLOAT_S8X24_UINT : DXGI_FORMAT_D32_FLOAT,
+    D3D11_TEXTURE2D_DESC desc;
+    m_pTexture->GetDesc(&desc);
+    m_MipLevels = desc.MipLevels;
+    if (bindFlags & D3D11_BIND_RENDER_TARGET)
+    {
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(
+                D3D11_RTV_DIMENSION_TEXTURE2D,
+                format,
                 0,          // Mips
                 i, 1        // Array
             );
 
-            ComPtr<ID3D11DepthStencilView> pDSV;
-            d3dDevice->CreateDepthStencilView(m_pTexture.Get(), &depthStencilDesc, pDSV.GetAddressOf());
-            m_pDepthStencilElements.push_back(pDSV);
+            ComPtr<ID3D11RenderTargetView> pRTV;
+            device->CreateRenderTargetView(m_pTexture.Get(), &rtvDesc, pRTV.GetAddressOf());
+            m_pRenderTargetElements.push_back(pRTV);
         }
     }
 
-    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
-        CD3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceDesc(
-            srvDimension,
-            stencil ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_R32_FLOAT,
-            0, 1,           // Mips
-            0, arraySize    // Array
-        );
+    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
+    {
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc(
+                D3D11_UAV_DIMENSION_TEXTURE2D,
+                format,
+                0,          // Mips
+                i, 1        // Array
+            );
 
-        d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &shaderResourceDesc, m_pTextureSRV.GetAddressOf());
+            ComPtr<ID3D11UnorderedAccessView> pUAV;
+            device->CreateUnorderedAccessView(m_pTexture.Get(), &uavDesc, pUAV.GetAddressOf());
+            m_pUnorderedAccessElements.push_back(pUAV);
+        }
+    }
 
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+    {
         // 单个子资源
-        for (UINT i = 0; i < arraySize; ++i) {
+        for (uint32_t i = 0; i < arraySize; ++i) {
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
-                srvDimension,
-                stencil ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_R32_FLOAT,
-                0, 1,  // Mips
+                D3D11_SRV_DIMENSION_TEXTURE2D,
+                format,
+                0, (uint32_t)-1,
                 i, 1   // Array
             );
 
             ComPtr<ID3D11ShaderResourceView> pSRV;
-            d3dDevice->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
             m_pShaderResourceElements.push_back(pSRV);
         }
     }
+}
+
+void Texture2DArray::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str;
+    for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".RTV[" + std::to_string(i) + "]";
+        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".UAV[" + std::to_string(i) + "]";
+        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+#else
+    UNREFERENCED_PARAMETER(name);
+#endif
+}
+
+Texture2DMSArray::Texture2DMSArray(ID3D11Device* device, uint32_t width, uint32_t height,
+    DXGI_FORMAT format, uint32_t arraySize, const DXGI_SAMPLE_DESC& sampleDesc, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(format, width, height, arraySize, 1, bindFlags, 
+            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, format)), 
+    m_ArraySize(arraySize), m_MsaaSamples(sampleDesc.Count)
+{
+    if (bindFlags & D3D11_BIND_RENDER_TARGET)
+    {
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_RENDER_TARGET_VIEW_DESC rtvDesc(
+                D3D11_RTV_DIMENSION_TEXTURE2D,
+                format,
+                0,          // Mips
+                i, 1        // Array
+            );
+
+            ComPtr<ID3D11RenderTargetView> pRTV;
+            device->CreateRenderTargetView(m_pTexture.Get(), &rtvDesc, pRTV.GetAddressOf());
+            m_pRenderTargetElements.push_back(pRTV);
+        }
+    }
+
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+    {
+        // 单个子资源
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
+                D3D11_SRV_DIMENSION_TEXTURE2D,
+                format,
+                0, (uint32_t)-1,
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11ShaderResourceView> pSRV;
+            device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            m_pShaderResourceElements.push_back(pSRV);
+        }
+    }
+}
+
+void Texture2DMSArray::SetDebugObjectName(std::string_view name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str;
+    for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".RTV[" + std::to_string(i) + "]";
+        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+#else
+    UNREFERENCED_PARAMETER(name);
+#endif
+}
+
+static DXGI_FORMAT GetDepthTextureFormat(DepthStencilBitsFlag flag)
+{
+    switch (flag)
+    {
+    case DepthStencilBitsFlag::Depth_16Bits: return DXGI_FORMAT_R16_TYPELESS;
+    case DepthStencilBitsFlag::Depth_24Bits_Stencil_8Bits: return DXGI_FORMAT_R24G8_TYPELESS;
+    case DepthStencilBitsFlag::Depth_32Bits: return DXGI_FORMAT_R32_TYPELESS;
+    case DepthStencilBitsFlag::Depth_32Bits_Stencil_8Bits_Unused_24Bits: return DXGI_FORMAT_R32G8X24_TYPELESS;
+    default: return DXGI_FORMAT_UNKNOWN;
+    }
+}
+
+static DXGI_FORMAT GetDepthSRVFormat(DepthStencilBitsFlag flag)
+{
+    switch (flag)
+    {
+    case DepthStencilBitsFlag::Depth_16Bits: return DXGI_FORMAT_R16_FLOAT;
+    case DepthStencilBitsFlag::Depth_24Bits_Stencil_8Bits: return DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    case DepthStencilBitsFlag::Depth_32Bits: return DXGI_FORMAT_R32_FLOAT;
+    case DepthStencilBitsFlag::Depth_32Bits_Stencil_8Bits_Unused_24Bits: return DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS;
+    default: return DXGI_FORMAT_UNKNOWN;
+    }
+}
+
+static DXGI_FORMAT GetDepthDSVFormat(DepthStencilBitsFlag flag)
+{
+    switch (flag)
+    {
+    case DepthStencilBitsFlag::Depth_16Bits: return DXGI_FORMAT_D16_UNORM;
+    case DepthStencilBitsFlag::Depth_24Bits_Stencil_8Bits: return DXGI_FORMAT_D24_UNORM_S8_UINT;
+    case DepthStencilBitsFlag::Depth_32Bits: return DXGI_FORMAT_D32_FLOAT;
+    case DepthStencilBitsFlag::Depth_32Bits_Stencil_8Bits_Unused_24Bits: return DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+    default: return DXGI_FORMAT_UNKNOWN;
+    }
+}
+
+Depth2D::Depth2D(ID3D11Device* device, 
+    uint32_t width, uint32_t height, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, 1, 1, bindFlags),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2D, GetDepthSRVFormat(depthStencilBitsFlag)))
+{
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
+    {
+        CD3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc(D3D11_DSV_DIMENSION_TEXTURE2D, GetDepthDSVFormat(depthStencilBitsFlag));
+        device->CreateDepthStencilView(m_pTexture.Get(), &dsvDesc, m_pTextureDSV.GetAddressOf());
+    }
+}
+
+void Depth2D::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str = name.data();
+    str += ".DSV";
+    m_pTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+#endif
+}
+
+Depth2DMS::Depth2DMS(ID3D11Device* device, uint32_t width, uint32_t height,
+    const DXGI_SAMPLE_DESC& sampleDesc, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, 1, 1, bindFlags, 
+            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, GetDepthSRVFormat(depthStencilBitsFlag))), 
+    m_MsaaSamples(sampleDesc.Count)
+{
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
+    {
+        CD3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc(D3D11_DSV_DIMENSION_TEXTURE2D, GetDepthDSVFormat(depthStencilBitsFlag));
+        device->CreateDepthStencilView(m_pTexture.Get(), &dsvDesc, m_pTextureDSV.GetAddressOf());
+    }
+}
+
+void Depth2DMS::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str = name.data();
+    str += ".DSV";
+    m_pTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+#endif
+}
+
+Depth2DArray::Depth2DArray(ID3D11Device* device, uint32_t width, uint32_t height,
+    uint32_t arraySize, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, arraySize, 1, bindFlags),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, GetDepthSRVFormat(depthStencilBitsFlag))), 
+    m_ArraySize(arraySize)
+{
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
+    {
+        // 单个子资源
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_DEPTH_STENCIL_VIEW_DESC dsvElementDesc(
+                D3D11_DSV_DIMENSION_TEXTURE2D,
+                GetDepthDSVFormat(depthStencilBitsFlag),
+                0, 1,
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11DepthStencilView> pDSV;
+            device->CreateDepthStencilView(m_pTexture.Get(), &dsvElementDesc, pDSV.GetAddressOf());
+            m_pDepthStencilElements.push_back(pDSV);
+        }
+    }
+
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+    {
+        // 单个子资源
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
+                D3D11_SRV_DIMENSION_TEXTURE2D,
+                GetDepthSRVFormat(depthStencilBitsFlag),
+                0, 1,
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11ShaderResourceView> pSRV;
+            device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            m_pShaderResourceElements.push_back(pSRV);
+        }
+    }
+}
+
+void Depth2DArray::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str;
+    for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".DSV[" + std::to_string(i) + "]";
+        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+#else
+    UNREFERENCED_PARAMETER(name);
+#endif
+}
+
+Depth2DMSArray::Depth2DMSArray(ID3D11Device* device, uint32_t width, uint32_t height, uint32_t arraySize, 
+    const DXGI_SAMPLE_DESC& sampleDesc, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, arraySize, 1, bindFlags,
+            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, GetDepthSRVFormat(depthStencilBitsFlag))), 
+    m_ArraySize(arraySize), m_MsaaSamples(sampleDesc.Count)
+{
+    if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
+    {
+        // 单个子资源
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_DEPTH_STENCIL_VIEW_DESC dsvElementDesc(
+                D3D11_DSV_DIMENSION_TEXTURE2DMS,
+                GetDepthDSVFormat(depthStencilBitsFlag),
+                0, 1,
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11DepthStencilView> pDSV;
+            device->CreateDepthStencilView(m_pTexture.Get(), &dsvElementDesc, pDSV.GetAddressOf());
+            m_pDepthStencilElements.push_back(pDSV);
+        }
+    }
+
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+    {
+        // 单个子资源
+        for (uint32_t i = 0; i < arraySize; ++i) {
+            CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
+                D3D11_SRV_DIMENSION_TEXTURE2DMS,
+                GetDepthSRVFormat(depthStencilBitsFlag),
+                0, 1,
+                i, 1   // Array
+            );
+
+            ComPtr<ID3D11ShaderResourceView> pSRV;
+            device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
+            m_pShaderResourceElements.push_back(pSRV);
+        }
+    }
+}
+
+void Depth2DMSArray::SetDebugObjectName(std::string_view name)
+{
+    Texture2DBase::SetDebugObjectName(name);
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string str;
+    for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".DSV[" + std::to_string(i) + "]";
+        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+    for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
+    {
+        str = name.data();
+        str += ".SRV[" + std::to_string(i) + "]";
+        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    }
+#else
+    UNREFERENCED_PARAMETER(name);
+#endif
 }

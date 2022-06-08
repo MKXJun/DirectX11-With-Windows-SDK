@@ -54,12 +54,19 @@ public:
     void SetModel(const Model* pModel);
     const Model* GetModel() const;
 
+    DirectX::BoundingBox GetBoundingBox() const;
+    DirectX::BoundingBox GetBoundingBox(size_t idx) const;
+
+    DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
+    DirectX::BoundingOrientedBox GetBoundingOrientedBox(size_t idx) const;
     //
     // 绘制
     //
 
+    void SetVisible(bool visible) { m_InFrustum = visible; }
+
     // 绘制对象
-    void Draw(ID3D11DeviceContext* deviceContext, IEffect* effect);
+    void Draw(ID3D11DeviceContext* deviceContext, IEffect& effect);
 
 private:
     const Model* m_pModel = nullptr;

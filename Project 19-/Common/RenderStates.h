@@ -51,6 +51,7 @@ public:
 	static ComPtr<ID3D11BlendState> BSAdditive;			                // 混合状态：加法混合
 
 	static ComPtr<ID3D11DepthStencilState> DSSEqual;					// 深度/模板状态：仅允许绘制深度值相等的像素
+    static ComPtr<ID3D11DepthStencilState> DSSLessEqual;                // 深度/模板状态：用于传统方式天空盒绘制
 	static ComPtr<ID3D11DepthStencilState> DSSGreaterEqual;             // 深度/模板状态：用于反向Z绘制
 	static ComPtr<ID3D11DepthStencilState> DSSNoDepthTest;              // 深度/模板状态：关闭深度测试
 	static ComPtr<ID3D11DepthStencilState> DSSWriteStencil;		        // 深度/模板状态：无深度测试，写入模板值

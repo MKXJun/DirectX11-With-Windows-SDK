@@ -111,7 +111,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     std::string str = "BasicEffect.VertexPosNormalTexLayout";
-    pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+    pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("BasicEffect");
 
@@ -165,17 +165,17 @@ MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
     return input;
 }
 
-void BasicEffect::SetDirLight(size_t pos, const DirectionalLight& dirLight)
+void BasicEffect::SetDirLight(uint32_t pos, const DirectionalLight& dirLight)
 {
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_DirLight")->SetRaw(&dirLight, (sizeof dirLight) * pos, sizeof dirLight);
 }
 
-void BasicEffect::SetPointLight(size_t pos, const PointLight& pointLight)
+void BasicEffect::SetPointLight(uint32_t pos, const PointLight& pointLight)
 {
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_PointLight")->SetRaw(&pointLight, (sizeof pointLight) * pos, sizeof pointLight);
 }
 
-void BasicEffect::SetSpotLight(size_t pos, const SpotLight& spotLight)
+void BasicEffect::SetSpotLight(uint32_t pos, const SpotLight& spotLight)
 {
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_SpotLight")->SetRaw(&spotLight, (sizeof spotLight) * pos, sizeof spotLight);
 }

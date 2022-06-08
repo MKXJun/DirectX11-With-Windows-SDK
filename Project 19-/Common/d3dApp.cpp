@@ -9,7 +9,7 @@ extern "C"
 {
 	// 在具有多显卡的硬件设备中，优先使用NVIDIA或AMD的显卡运行
 	// 需要在.exe中使用
-	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001;
 	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x00000001;
 }
 

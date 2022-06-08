@@ -75,9 +75,40 @@ const Model* GameObject::GetModel() const
     return m_pModel;
 }
 
-void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
+BoundingBox GameObject::GetBoundingBox() const
 {
-    if (!m_InFrustum)
+    return m_pModel ? m_pModel->boundingbox : DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
+}
+
+BoundingBox GameObject::GetBoundingBox(size_t idx) const
+{
+    if (!m_pModel || m_pModel->meshdatas.size() >= idx)
+        return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
+    return m_pModel->meshdatas[idx].m_BoundingBox;
+}
+
+BoundingOrientedBox GameObject::GetBoundingOrientedBox() const
+{
+    if (!m_pModel)
+        return DirectX::BoundingOrientedBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3(), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+    BoundingOrientedBox obb;
+    BoundingOrientedBox::CreateFromBoundingBox(obb, m_pModel->boundingbox);
+    obb.Transform(obb, m_Transform.GetLocalToWorldMatrixXM());
+    return obb;
+}
+BoundingOrientedBox GameObject::GetBoundingOrientedBox(size_t idx) const
+{
+    if (!m_pModel || m_pModel->meshdatas.size() >= idx)
+        return DirectX::BoundingOrientedBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3(), DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+    BoundingOrientedBox obb;
+    BoundingOrientedBox::CreateFromBoundingBox(obb, m_pModel->meshdatas[idx].m_BoundingBox);
+    obb.Transform(obb, m_Transform.GetLocalToWorldMatrixXM());
+    return obb;
+}
+
+void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
+{
+    if (!m_InFrustum || !deviceContext)
         return;
     size_t sz = m_pModel->meshdatas.size();
     size_t fsz = m_SubModelInFrustum.size();
@@ -86,19 +117,19 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect * effect)
         if (i < fsz && !m_SubModelInFrustum[i])
             continue;
 
-        IEffectMeshData* pEffectMeshData = dynamic_cast<IEffectMeshData*>(effect);
+        IEffectMeshData* pEffectMeshData = dynamic_cast<IEffectMeshData*>(&effect);
         if (!pEffectMeshData)
             continue;
 
-        IEffectMaterial* pEffectMaterial = dynamic_cast<IEffectMaterial*>(effect);
+        IEffectMaterial* pEffectMaterial = dynamic_cast<IEffectMaterial*>(&effect);
         if (pEffectMaterial)
             pEffectMaterial->SetMaterial(m_pModel->materials[m_pModel->meshdatas[i].m_MaterialIndex]);
 
-        IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(effect);
+        IEffectTransform* pEffectTransform = dynamic_cast<IEffectTransform*>(&effect);
         if (pEffectTransform)
             pEffectTransform->SetWorldMatrix(m_Transform.GetLocalToWorldMatrixXM());
 
-        effect->Apply(deviceContext);
+        effect.Apply(deviceContext);
 
         MeshDataInput input = pEffectMeshData->GetInputData(m_pModel->meshdatas[i]);
         {

@@ -24,6 +24,7 @@ ComPtr<ID3D11BlendState> RenderStates::BSTransparent			= nullptr;
 ComPtr<ID3D11BlendState> RenderStates::BSAdditive				= nullptr;
 
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqual          = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSLessEqual      = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSGreaterEqual   = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest    = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil	= nullptr;
@@ -174,6 +175,11 @@ void RenderStates::InitAll(ID3D11Device* device)
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 	dsDesc.DepthFunc = D3D11_COMPARISON_EQUAL;
 	HR(device->CreateDepthStencilState(&dsDesc, DSSEqual.GetAddressOf()));
+
+    // LESS_EQUAL测试
+    dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    HR(device->CreateDepthStencilState(&dsDesc, DSSLessEqual.GetAddressOf()));
 
 	// 反向Z => GREATER_EQUAL测试
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;

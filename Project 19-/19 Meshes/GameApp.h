@@ -34,12 +34,12 @@ private:
     TextureManager m_TextureManager;
     ModelManager m_ModelManager;
 
+    BasicEffect m_BasicEffect;                                  // 对象渲染特效管理
+
     std::unique_ptr<Depth2D> m_pDepthBuffer;                    // 深度缓冲区
 
     GameObject m_House;										    // 房屋
     GameObject m_Ground;										// 地面
-
-    std::unique_ptr<BasicEffect> m_pBasicEffect;                // 对象渲染特效管理
 
     std::shared_ptr<ThirdPersonCamera> m_pCamera;				// 摄像机
     CameraMode m_CameraMode;									// 摄像机模式

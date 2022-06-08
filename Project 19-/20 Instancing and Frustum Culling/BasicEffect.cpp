@@ -140,6 +140,8 @@ bool BasicEffect::InitAll(ID3D11Device* device)
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
     std::string str = "BasicEffect.VertexPosNormalTexLayout";
     pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
+    str = "BasicEffect.InstancePosNormalTexLayout";
+    pImpl->m_pInstancePosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)str.length(), str.c_str());
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("BasicEffect");
 

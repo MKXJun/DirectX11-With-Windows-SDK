@@ -61,9 +61,9 @@ public:
     // 各种类型灯光允许的最大数目
     static const int maxLights = 5;
 
-    void SetDirLight(size_t pos, const DirectionalLight& dirLight);
-    void SetPointLight(size_t pos, const PointLight& pointLight);
-    void SetSpotLight(size_t pos, const SpotLight& spotLight);
+    void SetDirLight(uint32_t pos, const DirectionalLight& dirLight);
+    void SetPointLight(uint32_t pos, const PointLight& pointLight);
+    void SetSpotLight(uint32_t pos, const SpotLight& spotLight);
 
     void SetEyePos(const DirectX::XMFLOAT3& eyePos);
 

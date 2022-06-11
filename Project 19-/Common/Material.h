@@ -50,6 +50,13 @@ public:
         return true;
     }
 
+    template<class T>
+    const T* TryGet(std::string_view name) const
+    {
+        auto it = m_Properties.find(StringToID(name));
+        return &std::get<T&>(it->second);
+    }
+
     bool HasProperty(std::string_view name) const
     {
         return m_Properties.find(StringToID(name)) != m_Properties.end();

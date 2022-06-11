@@ -98,6 +98,7 @@ int D3DApp::Run()
 				ImGui::NewFrame();
 				UpdateScene(m_Timer.DeltaTime());
 				DrawScene();
+                m_FrameCount++;
 			}
 			else
 			{

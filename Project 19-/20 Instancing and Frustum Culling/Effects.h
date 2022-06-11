@@ -74,7 +74,7 @@ public:
     void SetRenderDefault(ID3D11DeviceContext* deviceContext);
 
     // 绘制实例
-    void DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& buffer, const GameObject& object, const std::vector<InstancedData>& instancedData);
+    void DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& buffer, const GameObject& object, uint32_t numObjects);
 
     // 各种类型灯光允许的最大数目
     static const int maxLights = 5;

@@ -1,4 +1,4 @@
-﻿//***************************************************************************************
+//***************************************************************************************
 // IEffects.h by X_Jun(MKXJun) (C) 2018-2022 All Rights Reserved.
 // Licensed under the MIT License.
 //
@@ -30,9 +30,6 @@ struct MeshDataInput
 class IEffect
 {
 public:
-    enum RenderType { RenderObject, RenderInstance };
-    enum RSFillMode { Solid, WireFrame };
-
     IEffect() = default;
     virtual ~IEffect() = default;
     // 不允许拷贝，允许移动

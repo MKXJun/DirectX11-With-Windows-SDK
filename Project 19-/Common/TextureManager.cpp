@@ -1,4 +1,3 @@
-#define STBI_WINDOWS_UTF8
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "TextureManager.h"
@@ -67,10 +66,13 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
                 enableMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0);
             Microsoft::WRL::ComPtr<ID3D11Texture2D> tex;
             HR(m_pDevice->CreateTexture2D(&texDesc, nullptr, tex.GetAddressOf()));
+            // 上传纹理数据
             m_pDeviceContext->UpdateSubresource(tex.Get(), 0, nullptr, img_data, width * sizeof(uint32_t), 0);
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvDesc(D3D11_SRV_DIMENSION_TEXTURE2D, 
                 forceSRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM);
+            // 创建SRV
             HR(m_pDevice->CreateShaderResourceView(tex.Get(), &srvDesc, res.ReleaseAndGetAddressOf()));
+            // 生成mipmap
             if (enableMips)
                 m_pDeviceContext->GenerateMips(res.Get());
             
@@ -89,6 +91,12 @@ bool TextureManager::AddTexture(std::string_view name, ID3D11ShaderResourceView*
 {
     XID nameID = StringToID(name);
     return m_TextureSRVs.try_emplace(nameID, texture).second;
+}
+
+void TextureManager::RemoveTexture(std::string_view name)
+{
+    XID nameID = StringToID(name);
+    m_TextureSRVs.erase(nameID);
 }
 
 ID3D11ShaderResourceView* TextureManager::GetTexture(std::string_view filename)

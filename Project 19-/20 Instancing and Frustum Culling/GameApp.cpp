@@ -5,8 +5,7 @@
 using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-    : D3DApp(hInstance, windowName, initWidth, initHeight),
-    m_CameraMode(CameraMode::Free)
+    : D3DApp(hInstance, windowName, initWidth, initHeight)
 {
 }
 
@@ -40,7 +39,7 @@ void GameApp::OnResize()
 {
     D3DApp::OnResize();
 
-    m_pDepthBuffer = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+    m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
 
 
     // 摄像机变更显示
@@ -111,9 +110,6 @@ void GameApp::UpdateScene(float dt)
 
 void GameApp::DrawScene()
 {
-    assert(m_pd3dImmediateContext);
-    assert(m_pSwapChain);
-
     // 创建后备缓冲区的渲染目标视图
     if (m_FrameCount < m_BackBufferCount)
     {
@@ -125,9 +121,9 @@ void GameApp::DrawScene()
 
     float gray[4] = { 0.6f, 0.6f, 0.6f, 1.0f };
     m_pd3dImmediateContext->ClearRenderTargetView(GetBackBufferRTV(), gray);
-    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     ID3D11RenderTargetView* pRTVs[1] = { GetBackBufferRTV() };
-    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
+    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthTexture->GetDepthStencil());
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
@@ -163,8 +159,6 @@ void GameApp::DrawScene()
                 
         }
     }
-    // 确定使用的数据集
-    
 
     m_GpuTimer_Instancing.Start();
     // 是否开启硬件实例化
@@ -172,7 +166,11 @@ void GameApp::DrawScene()
     {
         // 硬件实例化绘制
         const auto& refData = m_EnableFrustumCulling ? m_AcceptedData : instancedData;
-        m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, refData);
+        // 上传实例数据
+        memcpy_s(m_pInstancedBuffer->MapDiscard(m_pd3dImmediateContext.Get()), 
+            m_pInstancedBuffer->GetByteWidth(), refData.data(), refData.size() * sizeof(BasicEffect::InstancedData));
+        m_pInstancedBuffer->Unmap(m_pd3dImmediateContext.Get());
+        m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, refData.size());
     }
     else
     {

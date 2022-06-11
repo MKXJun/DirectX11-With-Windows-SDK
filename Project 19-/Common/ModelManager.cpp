@@ -92,7 +92,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                 m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pNormals.GetAddressOf());
             }
 
-            // 切线
+            // 切线和副切线
             if (pAiMesh->HasTangentsAndBitangents())
             {
                 std::vector<XMFLOAT4> tangents(numVertices, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
@@ -105,6 +105,13 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                 initData.pSysMem = tangents.data();
                 bufferDesc.ByteWidth = pAiMesh->mNumVertices * sizeof(XMFLOAT4);
                 m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pTangents.GetAddressOf());
+
+                for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i)
+                {
+                    memcpy_s(&tangents[i], sizeof(XMFLOAT3),
+                        pAiMesh->mBitangents + i, sizeof(XMFLOAT3));
+                }
+                m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pBiTangents.GetAddressOf());
             }
 
             // 纹理坐标
@@ -187,6 +194,8 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                 material.Set("$SpecularFactor", value);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, (float*)&vec, &num))
                 material.Set("$EmissiveColor", vec);
+            if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_OPACITY, value))
+                material.Set("$Opacity", value);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, (float*)&vec, &num))
                 material.Set("$TransparentColor", vec);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, (float*)&vec, &num))
@@ -228,7 +237,7 @@ Model* ModelManager::CreateFromGeometry(std::string_view name, const Geometry::M
     model.materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
     model.materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
     model.materials[0].Set<float>("$SpecularFactor", 10.0f);
-    model.materials[0].Set<std::string>("$Diffuse", "");
+    model.materials[0].Set<float>("$Opacity", 1.0f);
 
     model.meshdatas = { MeshData{} };
     model.meshdatas[0].m_pTexcoordArrays.resize(1);

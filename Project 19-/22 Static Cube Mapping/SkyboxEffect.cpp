@@ -41,14 +41,14 @@ public:
 
 namespace
 {
-    // SkyEffect单例
+    // SkyboxEffect单例
     static SkyboxEffect* g_pInstance = nullptr;
 }
 
 SkyboxEffect::SkyboxEffect()
 {
     if (g_pInstance)
-        throw std::exception("BasicEffect is a singleton!");
+        throw std::exception("SkyboxEffect is a singleton!");
     g_pInstance = this;
     pImpl = std::make_unique<SkyboxEffect::Impl>();
 }
@@ -71,7 +71,7 @@ SkyboxEffect& SkyboxEffect::operator=(SkyboxEffect&& moveFrom) noexcept
 SkyboxEffect& SkyboxEffect::Get()
 {
     if (!g_pInstance)
-        throw std::exception("BasicEffect needs an instance!");
+        throw std::exception("SkyboxEffect needs an instance!");
     return *g_pInstance;
 }
 

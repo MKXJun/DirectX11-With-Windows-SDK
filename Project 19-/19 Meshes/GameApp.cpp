@@ -38,7 +38,7 @@ void GameApp::OnResize()
 {
     D3DApp::OnResize();
 
-    m_pDepthBuffer = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+    m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -97,9 +97,9 @@ void GameApp::DrawScene()
 
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_pd3dImmediateContext->ClearRenderTargetView(GetBackBufferRTV(), black);
-    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     ID3D11RenderTargetView* pRTVs[1] = { GetBackBufferRTV() };
-    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
+    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthTexture->GetDepthStencil());
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 

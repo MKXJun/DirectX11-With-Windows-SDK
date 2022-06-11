@@ -36,7 +36,7 @@ private:
 
     BasicEffect m_BasicEffect;                                  // 对象渲染特效管理
 
-    std::unique_ptr<Depth2D> m_pDepthBuffer;                    // 深度缓冲区
+    std::unique_ptr<Depth2D> m_pDepthTexture;                   // 深度缓冲区
 
     GameObject m_House;										    // 房屋
     GameObject m_Ground;										// 地面

@@ -266,7 +266,7 @@ namespace Geometry
 
                     meshData.vertices[vIndex] = XMFLOAT3(radius * cosf(theta), y, radius * sinf(theta)), XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
                     meshData.normals[vIndex] = XMFLOAT3(cosf(theta), 0.0f, sinf(theta));
-                    meshData.tangents[i] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
+                    meshData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
                     meshData.texcoords[vIndex++] = XMFLOAT2(u * texU, v * texV);
                 }
             }

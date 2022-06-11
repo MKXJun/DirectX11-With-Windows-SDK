@@ -5,7 +5,7 @@
 #include <WinMin.h>
 #include "d3dApp.h"
 #include "Effects.h"
-#include <Camera.h>
+#include <CameraController.h>
 #include <RenderStates.h>
 #include <GameObject.h>
 #include <Texture2D.h>
@@ -43,7 +43,7 @@ private:
 
     GpuTimer m_GpuTimer_Instancing;
 
-    std::unique_ptr<Depth2D> m_pDepthBuffer;                            // 深度缓冲区
+    std::unique_ptr<Depth2D> m_pDepthTexture;                           // 深度缓冲区
 
     int m_SceneMode = 0;
     GameObject m_Trees;										            // 树
@@ -62,8 +62,7 @@ private:
     bool m_EnableFrustumCulling = true;							        // 视锥体裁剪开启
     bool m_EnableInstancing = true;								        // 硬件实例化开启
 
-    std::shared_ptr<Camera> m_pCamera;						            // 摄像机
-    CameraMode m_CameraMode;									        // 摄像机模式
+    std::shared_ptr<FirstPersonCamera> m_pCamera;                       // 摄像机
 };
 
 

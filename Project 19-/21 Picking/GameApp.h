@@ -39,7 +39,7 @@ private:
 
     BasicEffect m_BasicEffect;			                        // 对象渲染特效管理
 
-    std::unique_ptr<Depth2D> m_pDepthBuffer;                    // 深度缓冲区
+    std::unique_ptr<Depth2D> m_pDepthTexture;                   // 深度缓冲区
 
     GameObject m_Sphere;										// 球
     GameObject m_Cube;										    // 立方体

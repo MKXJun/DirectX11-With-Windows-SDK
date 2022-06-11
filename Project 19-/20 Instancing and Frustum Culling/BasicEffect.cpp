@@ -170,6 +170,7 @@ void BasicEffect::SetMaterial(const Material& material)
     PhongMaterial phongMat{};
     phongMat.ambient = material.Get<XMFLOAT4>("$AmbientColor");
     phongMat.diffuse = material.Get<XMFLOAT4>("$DiffuseColor");
+    phongMat.diffuse.w = material.Get<float>("$Opacity");
     phongMat.specular = material.Get<XMFLOAT4>("$SpecularColor");
     phongMat.specular.w = material.Has<float>("$SpecularFactor") ? material.Get<float>("$SpecularFactor") : 1.0f;
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
@@ -228,7 +229,7 @@ void BasicEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& instancedBuffer, const GameObject& object, const std::vector<InstancedData>& instancedData)
+void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& instancedBuffer, const GameObject& object, uint32_t numObjects)
 {
     deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTexLayout.Get());
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("BasicInstance");
@@ -240,11 +241,6 @@ void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& inst
     XMMATRIX VP = V * P;
     VP = XMMatrixTranspose(VP);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ViewProj")->SetFloatMatrix(4, 4, (FLOAT*)&VP);
-
-    // 上传实例数据
-    void* pData = instancedBuffer.MapDiscard(deviceContext);
-    memcpy_s(pData, instancedBuffer.GetByteWidth(), instancedData.data(), instancedData.size() * sizeof(InstancedData));
-    instancedBuffer.Unmap(deviceContext);
 
     const Model* pModel = object.GetModel();
     size_t sz = pModel->meshdatas.size();
@@ -259,7 +255,7 @@ void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& inst
             input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
         deviceContext->IASetIndexBuffer(input.pIndexBuffer, input.indexCount > 65535 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);
 
-        deviceContext->DrawIndexedInstanced(input.indexCount, (uint32_t)instancedData.size(), 0, 0, 0);
+        deviceContext->DrawIndexedInstanced(input.indexCount, numObjects, 0, 0, 0);
     }
     
 }

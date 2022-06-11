@@ -17,12 +17,7 @@
 #include "WinMin.h"
 #include <d3d11_1.h>
 #include <wrl/client.h>
-
-struct TextureInfo
-{
-    uint32_t width;
-    uint32_t height;
-};
+#include <XUtil.h>
 
 class TextureManager
 {
@@ -38,10 +33,10 @@ public:
     void Init(ID3D11Device* device);
     ID3D11ShaderResourceView* CreateTexture(std::string_view filename, bool enableMips = false, bool forceSRGB = false);
     bool AddTexture(std::string_view name, ID3D11ShaderResourceView* texture);
+    void RemoveTexture(std::string_view name);
     ID3D11ShaderResourceView* GetTexture(std::string_view filename);
 
 private:
-    using XID = size_t;
 
     Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceContext;

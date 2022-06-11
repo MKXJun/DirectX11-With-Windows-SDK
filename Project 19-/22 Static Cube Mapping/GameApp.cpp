@@ -32,8 +32,6 @@ bool GameApp::Init()
 	if (!InitResource())
 		return false;
 
-
-
 	return true;
 }
 
@@ -42,7 +40,7 @@ void GameApp::OnResize()
 
 	D3DApp::OnResize();
 	
-    m_pDepthBuffer = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+    m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
 
 	// 摄像机变更显示
 	if (m_pCamera != nullptr)
@@ -57,6 +55,7 @@ void GameApp::OnResize()
 void GameApp::UpdateScene(float dt)
 {
     m_CameraController.Update(dt);
+    
 
 	// 更新观察矩阵
 	m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
@@ -74,20 +73,20 @@ void GameApp::UpdateScene(float dt)
         };
         if (ImGui::Combo("Skybox", &skybox_item, skybox_strs, ARRAYSIZE(skybox_strs)))
         {
-            
+            Model* pModel = m_ModelManager.GetModel("Skybox");
             switch (skybox_item)
             {
             case 0: 
                 m_BasicEffect.SetTextureCube(m_TextureManager.GetTexture("Daylight"));
-                m_pSkyboxModel->materials[0].Set<std::string>("$Skybox", "Daylight");
+                pModel->materials[0].Set<std::string>("$Skybox", "Daylight");
                 break;
             case 1: 
                 m_BasicEffect.SetTextureCube(m_TextureManager.GetTexture("Sunset"));
-                m_pSkyboxModel->materials[0].Set<std::string>("$Skybox", "Sunset");
+                pModel->materials[0].Set<std::string>("$Skybox", "Sunset");
                 break;
             case 2: 
                 m_BasicEffect.SetTextureCube(m_TextureManager.GetTexture("Desert")); 
-                m_pSkyboxModel->materials[0].Set<std::string>("$Skybox", "Desert");
+                pModel->materials[0].Set<std::string>("$Skybox", "Desert");
                 break;
             }
         }
@@ -98,9 +97,6 @@ void GameApp::UpdateScene(float dt)
 
 void GameApp::DrawScene()
 {
-	assert(m_pd3dImmediateContext);
-	assert(m_pSwapChain);
-
     // 创建后备缓冲区的渲染目标视图
     if (m_FrameCount < m_BackBufferCount)
     {
@@ -112,9 +108,9 @@ void GameApp::DrawScene()
 
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_pd3dImmediateContext->ClearRenderTargetView(GetBackBufferRTV(), black);
-    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthBuffer->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     ID3D11RenderTargetView* pRTVs[1] = { GetBackBufferRTV() };
-    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthBuffer->GetDepthStencil());
+    m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthTexture->GetDepthStencil());
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
@@ -136,7 +132,7 @@ void GameApp::DrawScene()
 
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-	HR(m_pSwapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING));
+	HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
 bool GameApp::InitResource()
@@ -192,7 +188,6 @@ bool GameApp::InitResource()
     // Desert
     m_TextureManager.AddTexture("Desert", m_TextureManager.CreateTexture("..\\Texture\\desertcube1024.dds", false, true));
 
-
 	m_BasicEffect.SetTextureCube(m_TextureManager.GetTexture("Daylight"));
     
 	// ******************
@@ -217,7 +212,7 @@ bool GameApp::InitResource()
         m_TextureManager.CreateTexture("..\\Texture\\floor.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\floor.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-        pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+        pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
         pModel->materials[0].Set<float>("$SpecularPower", 16.0f);
         pModel->materials[0].Set<XMFLOAT4>("$ReflectColor", XMFLOAT4());
@@ -230,7 +225,7 @@ bool GameApp::InitResource()
         m_TextureManager.CreateTexture("..\\Texture\\bricks.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\bricks.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-        pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+        pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
         pModel->materials[0].Set<float>("$SpecularPower", 16.0f);
         pModel->materials[0].Set<XMFLOAT4>("$ReflectColor", XMFLOAT4());
@@ -238,9 +233,9 @@ bool GameApp::InitResource()
 		m_Cylinder.GetTransform().SetPosition(0.0f, -1.99f, 0.0f);
 	}
 	// 天空盒立方体
-    m_pSkyboxModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
-    m_pSkyboxModel->materials[0].Set<std::string>("$Skybox", "Daylight");
-    m_Skybox.SetModel(m_pSkyboxModel);
+    Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
+    pModel->materials[0].Set<std::string>("$Skybox", "Daylight");
+    m_Skybox.SetModel(pModel);
 	// ******************
 	// 初始化摄像机
 	//
@@ -263,7 +258,7 @@ bool GameApp::InitResource()
 	//
 
 	// 方向光
-	DirectionalLight dirLight[4];
+    DirectionalLight dirLight[4]{};
 	dirLight[0].ambient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 	dirLight[0].diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	dirLight[0].specular = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);

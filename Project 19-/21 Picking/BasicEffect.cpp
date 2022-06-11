@@ -141,6 +141,7 @@ void BasicEffect::SetMaterial(const Material& material)
     PhongMaterial phongMat{};
     phongMat.ambient = material.Get<XMFLOAT4>("$AmbientColor");
     phongMat.diffuse = material.Get<XMFLOAT4>("$DiffuseColor");
+    phongMat.diffuse.w = material.Get<float>("$Opacity");
     phongMat.specular = material.Get<XMFLOAT4>("$SpecularColor");
     phongMat.specular.w = material.Has<float>("$SpecularFactor") ? material.Get<float>("$SpecularFactor") : 1.0f;
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);

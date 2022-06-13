@@ -45,8 +45,15 @@ Texture2D::Texture2D(ID3D11Device* device, uint32_t width, uint32_t height,
     m_MipLevels = desc.MipLevels;
     if (bindFlags & D3D11_BIND_RENDER_TARGET)
     {
-        device->CreateRenderTargetView(m_pTexture.Get(), nullptr , m_pTextureRTV.GetAddressOf());
+        device->CreateRenderTargetView(m_pTexture.Get(), nullptr, m_pTextureRTV.GetAddressOf());
     }
+
+    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
+    {
+        CD3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc(D3D11_UAV_DIMENSION_TEXTURE2D, format);
+        device->CreateUnorderedAccessView(m_pTexture.Get(), nullptr, m_pTextureUAV.GetAddressOf());
+    }
+
 }
 
 void Texture2D::SetDebugObjectName(std::string_view name)

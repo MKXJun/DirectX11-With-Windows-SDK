@@ -26,6 +26,7 @@ ComPtr<ID3D11BlendState> RenderStates::BSAdditive				= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqual          = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSLessEqual      = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSGreaterEqual   = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite   = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest    = nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil	= nullptr;
 ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqualStencil   = nullptr;
@@ -185,6 +186,16 @@ void RenderStates::InitAll(ID3D11Device* device)
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
 	HR(device->CreateDepthStencilState(&dsDesc, DSSGreaterEqual.GetAddressOf()));
+
+    // 进行深度测试，但不写入深度值的状态
+    // 若绘制非透明物体时，应使用默认状态
+    // 绘制透明物体时，使用该状态可以有效确保混合状态的进行
+    // 并且确保较前的非透明物体可以阻挡较后的一切物体
+    dsDesc.DepthEnable = true;
+    dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    dsDesc.StencilEnable = false;
+    HR(device->CreateDepthStencilState(&dsDesc, DSSNoDepthWrite.GetAddressOf()));
 
 	// 关闭深度测试的深度/模板状态
 	// 若绘制非透明物体，务必严格按照绘制顺序

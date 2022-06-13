@@ -20,9 +20,18 @@
 
 struct Model
 {
+    Model() = default;
+    ~Model() = default;
+    Model(Model&) = delete;
+    Model& operator=(const Model&) = delete;
+    Model(Model&&) = default;
+    Model& operator=(Model&&) = default;
+
     std::vector<Material> materials;
     std::vector<MeshData> meshdatas;
     DirectX::BoundingBox boundingbox;
+    static void CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename);
+    static void CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic = false);
 };
 
 
@@ -39,7 +48,8 @@ public:
     static ModelManager& Get();
     void Init(ID3D11Device* device);
     Model* CreateFromFile(std::string_view filename);
-    Model* CreateFromGeometry(std::string_view name, const Geometry::MeshData& data);
+    Model* CreateFromFile(std::string_view name, std::string_view filename);
+    Model* CreateFromGeometry(std::string_view name, const GeometryData& data, bool isDynamic = false);
 
     const Model* GetModel(std::string_view name) const;
     Model* GetModel(std::string_view name);

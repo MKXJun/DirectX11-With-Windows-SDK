@@ -49,6 +49,7 @@ public:
     Texture2D& operator=(Texture2D&&) = default;
 
     ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureRTV.Get(); }
+    ID3D11UnorderedAccessView* GetUnorderedAccess() { return m_pTextureUAV.Get(); }
 
     uint32_t GetMipLevels() const { return m_MipLevels; }
 
@@ -58,6 +59,7 @@ public:
 protected:
     uint32_t m_MipLevels = 1;
     ComPtr<ID3D11RenderTargetView> m_pTextureRTV;
+    ComPtr<ID3D11UnorderedAccessView> m_pTextureUAV;
 };
 
 class Texture2DMS : public Texture2DBase

@@ -152,8 +152,9 @@ public:
     // 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
     // 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
     // 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
+    // 如果传入着色器字节码，则不需要填entryPoint之后的信息
     HRESULT CreateShaderFromFile(std::string_view shaderName, std::wstring_view filename, ID3D11Device* device,
-        LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines = nullptr, ID3DBlob** ppShaderByteCode = nullptr);
+        LPCSTR entryPoint = nullptr, LPCSTR shaderModel = nullptr, const D3D_SHADER_MACRO* pDefines = nullptr, ID3DBlob** ppShaderByteCode = nullptr);
 
     // 添加带流输出的几何着色器并为其设置标识名
     // 注意：

@@ -42,6 +42,12 @@ public:
     }
 
     template<class T>
+    T& Get(std::string_view name)
+    {
+        return const_cast<T&>(static_cast<const Material*>(this)->Get<T>(name));
+    }
+
+    template<class T>
     bool Has(std::string_view name) const
     {
         auto it = m_Properties.find(StringToID(name));
@@ -55,6 +61,12 @@ public:
     {
         auto it = m_Properties.find(StringToID(name));
         return &std::get<T&>(it->second);
+    }
+
+    template<class T>
+    T* TryGet(std::string_view name)
+    {
+        return const_cast<T*>(static_cast<const Material*>(this)->TryGet<T>(name));
     }
 
     bool HasProperty(std::string_view name) const

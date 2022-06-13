@@ -58,6 +58,7 @@ class StructuredBuffer : public Buffer
 public:
     StructuredBuffer(ID3D11Device* d3dDevice, uint32_t elements,
         uint32_t bindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE,
+        bool enableCounter = false,
         bool dynamic = false);
     ~StructuredBuffer() = default;
 
@@ -79,14 +80,16 @@ private:
 };
 
 template<class T>
-inline StructuredBuffer<T>::StructuredBuffer(ID3D11Device* d3dDevice, uint32_t elements, uint32_t bindFlags, bool dynamic)
+inline StructuredBuffer<T>::StructuredBuffer(ID3D11Device* d3dDevice, uint32_t elements, uint32_t bindFlags, bool enableCounter, bool dynamic)
     : m_Elements(elements), 
-    Buffer(d3dDevice, CD3D11_BUFFER_DESC(
-        sizeof(T) * elements, bindFlags,
+    Buffer(d3dDevice, 
+        CD3D11_BUFFER_DESC(sizeof(T) * elements, bindFlags,
         dynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
         dynamic ? D3D11_CPU_ACCESS_WRITE : 0,
         D3D11_RESOURCE_MISC_BUFFER_STRUCTURED,
-        sizeof(T)))
+        sizeof(T)), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_BUFFER, DXGI_FORMAT_UNKNOWN, 0, elements),
+        CD3D11_UNORDERED_ACCESS_VIEW_DESC(D3D11_UAV_DIMENSION_BUFFER, DXGI_FORMAT_UNKNOWN, 0, elements, 0, D3D11_BUFFER_UAV_FLAG_COUNTER))
 {
 }
 

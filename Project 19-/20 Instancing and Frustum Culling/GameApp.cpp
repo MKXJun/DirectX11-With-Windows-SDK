@@ -170,7 +170,7 @@ void GameApp::DrawScene()
         memcpy_s(m_pInstancedBuffer->MapDiscard(m_pd3dImmediateContext.Get()), 
             m_pInstancedBuffer->GetByteWidth(), refData.data(), refData.size() * sizeof(BasicEffect::InstancedData));
         m_pInstancedBuffer->Unmap(m_pd3dImmediateContext.Get());
-        m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, refData.size());
+        m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, refObject, (uint32_t)refData.size());
     }
     else
     {
@@ -239,7 +239,7 @@ bool GameApp::InitResource()
 
     // 初始化地面
     
-    m_Ground.SetModel(m_ModelManager.CreateFromFile("..\\Model\\ground_20.obj"));
+    m_Ground.SetModel(m_ModelManager.CreateFromFile("ground20", "..\\Model\\ground_20.obj"));
 
     // ******************
     // 初始化摄像机

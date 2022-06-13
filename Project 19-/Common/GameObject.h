@@ -68,7 +68,7 @@ public:
     // 绘制对象
     void Draw(ID3D11DeviceContext* deviceContext, IEffect& effect);
 
-private:
+protected:
     const Model* m_pModel = nullptr;
     std::vector<bool> m_SubModelInFrustum;
     Transform m_Transform = {};

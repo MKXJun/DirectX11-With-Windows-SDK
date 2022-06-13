@@ -270,7 +270,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[19] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateTexture(filenameStr));
+            pCubeTextures.push_back(m_TextureManager.CreateTexture(filenameStr, false, true));
         }
 
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -291,7 +291,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[17] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateTexture(filenameStr));
+            pCubeTextures.push_back(m_TextureManager.CreateTexture(filenameStr, false, true));
         }
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
         pTex->GetDesc(&texDesc);
@@ -478,7 +478,6 @@ void GameApp::DrawScene(bool drawCenterSphere, const Camera& camera, ID3D11Rende
     m_BasicEffect.SetReflectionEnabled(false);
     m_BasicEffect.SetRefractionEnabled(false);
     
-    m_Ground.FrustumCulling(frustum);
     m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
     // 绘制五个圆柱

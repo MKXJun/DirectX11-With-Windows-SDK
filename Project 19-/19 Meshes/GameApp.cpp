@@ -82,9 +82,6 @@ void GameApp::UpdateScene(float dt)
 
 void GameApp::DrawScene()
 {
-    assert(m_pd3dImmediateContext);
-    assert(m_pSwapChain);
-
     // 创建后备缓冲区的渲染目标视图
     if (m_FrameCount < m_BackBufferCount)
     {

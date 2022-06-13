@@ -187,6 +187,7 @@ struct RWResource
     ComPtr<ID3D11UnorderedAccessView> pUAV;
     uint32_t initialCount;
     bool enableCounter;
+    bool firstInit;     // 防止重复清零
 };
 
 // 采样器状态
@@ -354,19 +355,26 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
         }
     }
 
+    struct PropertyFunctor
+    {
+        PropertyFunctor(ConstantBufferVariable& _cbv) : cbv(_cbv) {}
+        void operator()(int val) { cbv.SetSInt(val); }
+        void operator()(uint32_t val) { cbv.SetUInt(val); }
+        void operator()(float val) { cbv.SetFloat(val); }
+        void operator()(const DirectX::XMFLOAT2& val) { cbv.SetFloatVector(2, reinterpret_cast<const float*>(&val)); }
+        void operator()(const DirectX::XMFLOAT3& val) { cbv.SetFloatVector(3, reinterpret_cast<const float*>(&val)); }
+        void operator()(const DirectX::XMFLOAT4& val) { cbv.SetFloatVector(4, reinterpret_cast<const float*>(&val)); }
+        void operator()(const DirectX::XMFLOAT4X4& val) { cbv.SetFloatMatrix(4, 4, reinterpret_cast<const float*>(&val)); }
+        void operator()(const std::vector<float>& val) { cbv.SetRaw(val.data()); }
+        void operator()(const std::vector<DirectX::XMFLOAT4>& val) { cbv.SetRaw(val.data()); }
+        void operator()(const std::vector<DirectX::XMFLOAT4X4>& val) { cbv.SetRaw(val.data()); }
+        void operator()(const std::string& val) {}
+        ConstantBufferVariable& cbv;
+    };
+
     void Set(const Property& prop) override
     {
-        switch (prop.index())
-        {
-        case 0: SetSInt(std::get<0>(prop)); break;
-        case 1: SetUInt(std::get<1>(prop)); break;
-        case 2: SetFloat(std::get<2>(prop)); break;
-        case 3: SetFloatVector(4, (float*)&std::get<3>(prop)); break;
-        case 4: SetFloatMatrix(4, 4, (float*)&std::get<4>(prop)); break;
-        case 5: SetRaw(std::get<5>(prop).data()); break;
-        case 6: SetRaw(std::get<6>(prop).data()); break;
-        case 7: SetRaw(std::get<7>(prop).data()); break;
-        }
+        std::visit(PropertyFunctor(*this), prop);
     }
 
     HRESULT GetRaw(void* pOutput, uint32_t byteOffset = 0, uint32_t byteCount = 0xFFFFFFFF) override
@@ -760,7 +768,8 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
             if (it == m_RWResources.end())
             {
                 m_RWResources.emplace(std::make_pair(sibDesc.BindPoint,
-                    RWResource{ sibDesc.Name, static_cast<D3D11_UAV_DIMENSION>(sibDesc.Dimension), nullptr, 0, false }));
+                    RWResource{ sibDesc.Name, static_cast<D3D11_UAV_DIMENSION>(sibDesc.Dimension), nullptr, 0, 
+                    sibDesc.Type == D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER, false }));
             }
 
             // 标记该着色器使用了当前可读写资源
@@ -862,8 +871,6 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
 HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wstring_view filename,
     ID3D11Device* device, LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines, ID3DBlob** ppShaderByteCode)
 {
-    
-
     // 编译好的DXBC文件头
     static char dxbc_header[] = { 'D', 'X', 'B', 'C' };
     ID3DBlob* pBlobIn = nullptr;
@@ -1068,6 +1075,7 @@ void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11Unorder
     {
         it->second.pUAV = uav;
         it->second.initialCount = initialCount;
+        it->second.firstInit = true;
     }
 }
 
@@ -1266,35 +1274,35 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
         EFFECTPASS_SET_PARAM(PS);
         EFFECTPASS_SET_SAMPLER(PS);
         EFFECTPASS_SET_SHADERRESOURCE(PS);
-        uint32_t slot = 0, mask = pPSInfo->rwUseMask;
-        while (mask) {
-            if ((mask & 1) == 0) {
-                ++slot, mask >>= 1;
-                continue;
-            }
-            uint32_t zero_bit = ((mask + 1) | mask) ^ mask;
-            uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));
-            if (count == 1) {
-                auto& res = rwResources.at(slot);
-                deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
-                    nullptr, nullptr, slot, 1, res.pUAV.GetAddressOf(),
-                    (res.enableCounter ? &res.initialCount : nullptr));
-                ++slot, mask >>= 1;\
-            }
-            else {
-                std::vector<ID3D11UnorderedAccessView*> uavs(count);
-                std::vector<uint32_t> initCounts(count);
-                for (uint32_t i = 0; i < count; ++i)
+        if (pPSInfo->rwUseMask)
+        {
+            std::vector<ID3D11UnorderedAccessView*> pUAVs((size_t)(log2f((float)pPSInfo->rwUseMask)) + 1);
+            std::vector<uint32_t> initCounts((size_t)(log2f((float)pPSInfo->rwUseMask)) + 1);
+            bool needInit = false;
+            uint32_t firstSlot = 0;
+            for (uint32_t slot = 0, mask = pPSInfo->rwUseMask; mask; ++slot, mask >>= 1)
+            {
+                if (mask & 1)
                 {
-                    auto& res = rwResources.at(slot + i);
-                    uavs[i] = res.pUAV.Get();
-                    initCounts[i] = (res.enableCounter ? res.initialCount : 0);
+                    if (firstSlot == 0)
+                        firstSlot = slot;
+                    auto& res = rwResources.at(slot);
+                    if (res.firstInit)
+                    {
+                        needInit = true;
+                        initCounts[slot] = res.initialCount;
+                    }
+
+                    res.firstInit = false;
+                    pUAVs[slot] = res.pUAV.Get();
                 }
-                deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
-                    nullptr, nullptr, slot, count, uavs.data(), initCounts.data());
-                slot += count + 1, mask >>= (count + 1);
             }
+            // 必须一次性设置好
+            deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
+                nullptr, nullptr, firstSlot, (uint32_t)pUAVs.size() - firstSlot, &pUAVs[firstSlot],
+                (needInit ? initCounts.data() : nullptr));
         }
+        
     }
     else
     {
@@ -1314,36 +1322,8 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
             {
                 auto& res = rwResources.at(slot);
                 deviceContext->CSSetUnorderedAccessViews(slot, 1, res.pUAV.GetAddressOf(),
-                    (res.enableCounter ? &res.initialCount : nullptr));
-            }
-        }
-
-        uint32_t slot = 0, mask = pCSInfo->rwUseMask;
-        while (mask) {
-            if ((mask & 1) == 0) {
-                ++slot, mask >>= 1;
-                continue;
-            }
-            uint32_t zero_bit = ((mask + 1) | mask) ^ mask;
-            uint32_t count = (zero_bit == 0 ? 32 : (uint32_t)log2((double)zero_bit));
-            if (count == 1) {
-                auto& res = rwResources.at(slot);
-                deviceContext->CSSetUnorderedAccessViews(slot, 1, res.pUAV.GetAddressOf(),
-                    (res.enableCounter ? &res.initialCount : nullptr));
-                ++slot, mask >>= 1;
-            }
-            else {
-                std::vector<ID3D11UnorderedAccessView*> uavs(count);
-                std::vector<uint32_t> initCounts(count);
-                for (uint32_t i = 0; i < count; ++i)
-                {
-                    auto& res = rwResources.at(slot + i);
-                    uavs[i] = res.pUAV.Get();
-                    initCounts[i] = (res.enableCounter ? res.initialCount : 0);
-                }
-                
-                deviceContext->CSSetUnorderedAccessViews(slot, count, uavs.data(), initCounts.data());
-                slot += count + 1, mask >>= (count + 1);
+                    (res.enableCounter && res.firstInit ? &res.initialCount : nullptr));
+                res.firstInit = false;
             }
         }
     }

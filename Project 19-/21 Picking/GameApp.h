@@ -48,7 +48,7 @@ private:
     GameObject m_Triangle;									    // 三角形
     DirectX::BoundingSphere m_BoundingSphere;				    // 球的包围盒
 
-    Geometry::MeshData m_TriangleMesh;						    // 三角形网格模型
+    GeometryData m_TriangleMesh;						        // 三角形网格模型
 
     
 

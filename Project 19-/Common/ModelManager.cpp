@@ -10,45 +10,15 @@
 
 using namespace DirectX;
 
-namespace
+void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename)
 {
-    // ModelManager单例
-    ModelManager* s_pInstance = nullptr;
-}
-
-
-ModelManager::ModelManager()
-{
-    if (s_pInstance)
-        throw std::exception("ModelManager is a singleton!");
-    s_pInstance = this;
-}
-
-ModelManager::~ModelManager()
-{
-}
-
-ModelManager& ModelManager::Get()
-{
-    if (!s_pInstance)
-        throw std::exception("ModelManager needs an instance!");
-    return *s_pInstance;
-}
-
-void ModelManager::Init(ID3D11Device* device)
-{
-    m_pDevice = device;
-    m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
-}
-
-Model* ModelManager::CreateFromFile(std::string_view filename)
-{
-    XID modelID = StringToID(filename);
-    if (m_Models.count(modelID))
-        return &m_Models[modelID];
-
     using namespace Assimp;
     namespace fs = std::filesystem;
+    
+    model.materials.clear();
+    model.meshdatas.clear();
+    model.boundingbox = BoundingBox();
+
     Importer importer;
 
     auto pAssimpScene = importer.ReadFile(filename.data(), aiProcess_ConvertToLeftHanded |
@@ -56,8 +26,6 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
 
     if (pAssimpScene && !(pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && pAssimpScene->HasMeshes())
     {
-        auto& model = m_Models[modelID];
-
         model.meshdatas.resize(pAssimpScene->mNumMeshes);
         model.materials.resize(pAssimpScene->mNumMaterials);
         for (uint32_t i = 0; i < pAssimpScene->mNumMeshes; ++i)
@@ -74,7 +42,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
             {
                 initData.pSysMem = pAiMesh->mVertices;
                 bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT3);
-                m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pVertices.GetAddressOf());
+                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pVertices.GetAddressOf());
 
                 BoundingBox::CreateFromPoints(mesh.m_BoundingBox, numVertices,
                     (const XMFLOAT3*)pAiMesh->mVertices, sizeof(XMFLOAT3));
@@ -89,7 +57,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
             {
                 initData.pSysMem = pAiMesh->mNormals;
                 bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT3);
-                m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pNormals.GetAddressOf());
+                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pNormals.GetAddressOf());
             }
 
             // 切线和副切线
@@ -104,14 +72,14 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
 
                 initData.pSysMem = tangents.data();
                 bufferDesc.ByteWidth = pAiMesh->mNumVertices * sizeof(XMFLOAT4);
-                m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pTangents.GetAddressOf());
+                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pTangents.GetAddressOf());
 
                 for (uint32_t i = 0; i < pAiMesh->mNumVertices; ++i)
                 {
                     memcpy_s(&tangents[i], sizeof(XMFLOAT3),
                         pAiMesh->mBitangents + i, sizeof(XMFLOAT3));
                 }
-                m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pBiTangents.GetAddressOf());
+                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBiTangents.GetAddressOf());
             }
 
             // 纹理坐标
@@ -132,7 +100,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                     }
                     initData.pSysMem = uvs.data();
                     bufferDesc.ByteWidth = numVertices * sizeof(XMFLOAT2);
-                    m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pTexcoordArrays[i].GetAddressOf());
+                    device->CreateBuffer(&bufferDesc, &initData, mesh.m_pTexcoordArrays[i].GetAddressOf());
                 }
             }
 
@@ -153,7 +121,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                     }
                     bufferDesc = CD3D11_BUFFER_DESC(numIndices * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
                     initData.pSysMem = indices.data();
-                    m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
+                    device->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
                 }
                 else
                 {
@@ -165,7 +133,7 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                     }
                     bufferDesc = CD3D11_BUFFER_DESC(numIndices * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
                     initData.pSysMem = indices.data();
-                    m_pDevice->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
+                    device->CreateBuffer(&bufferDesc, &initData, mesh.m_pIndices.GetAddressOf());
                 }
             }
 
@@ -219,18 +187,11 @@ Model* ModelManager::CreateFromFile(std::string_view filename)
                 material.Set("$Normal", tex_filename.string());
             }
         }
-
-        return &model;
     }
-
-    return nullptr;
 }
 
-Model* ModelManager::CreateFromGeometry(std::string_view name, const Geometry::MeshData& data)
+void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic)
 {
-    XID modelID = StringToID(name);
-    auto& model = m_Models[modelID];
-
     // 默认材质
     model.materials = { Material{} };
     model.materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -241,52 +202,109 @@ Model* ModelManager::CreateFromGeometry(std::string_view name, const Geometry::M
 
     model.meshdatas = { MeshData{} };
     model.meshdatas[0].m_pTexcoordArrays.resize(1);
+    model.meshdatas[0].m_VertexCount = (uint32_t)data.vertices.size();
     model.meshdatas[0].m_IndexCount = (uint32_t)(!data.indices16.empty() ? data.indices16.size() : data.indices32.size());
     model.meshdatas[0].m_MaterialIndex = 0;
-    CD3D11_BUFFER_DESC bufferDesc(0, D3D11_BIND_VERTEX_BUFFER);
+
+    CD3D11_BUFFER_DESC bufferDesc(0,
+        D3D11_BIND_VERTEX_BUFFER,
+        isDynamic ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
+        isDynamic ? D3D11_CPU_ACCESS_WRITE : 0);
     D3D11_SUBRESOURCE_DATA initData{ nullptr, 0, 0 };
 
     initData.pSysMem = data.vertices.data();
     bufferDesc.ByteWidth = (uint32_t)data.vertices.size() * sizeof(XMFLOAT3);
-    m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pVertices.GetAddressOf());
-    
+    device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pVertices.GetAddressOf());
+
     if (!data.normals.empty())
     {
         initData.pSysMem = data.normals.data();
         bufferDesc.ByteWidth = (uint32_t)data.normals.size() * sizeof(XMFLOAT3);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pNormals.GetAddressOf());
+        device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pNormals.GetAddressOf());
     }
-    
+
     if (!data.texcoords.empty())
     {
         initData.pSysMem = data.texcoords.data();
         bufferDesc.ByteWidth = (uint32_t)data.texcoords.size() * sizeof(XMFLOAT2);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTexcoordArrays[0].GetAddressOf());
+        device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTexcoordArrays[0].GetAddressOf());
     }
 
     if (!data.tangents.empty())
     {
         initData.pSysMem = data.tangents.data();
         bufferDesc.ByteWidth = (uint32_t)data.tangents.size() * sizeof(XMFLOAT4);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTangents.GetAddressOf());
+        device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pTangents.GetAddressOf());
     }
 
+    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    bufferDesc.CPUAccessFlags = 0;
     if (!data.indices16.empty())
     {
         initData.pSysMem = data.indices16.data();
         bufferDesc = CD3D11_BUFFER_DESC((uint16_t)data.indices16.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
+        device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
     else
     {
         initData.pSysMem = data.indices32.data();
         bufferDesc = CD3D11_BUFFER_DESC((uint32_t)data.indices32.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
-        m_pDevice->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
+        device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
+}
 
+namespace
+{
+    // ModelManager单例
+    ModelManager* s_pInstance = nullptr;
+}
+
+
+ModelManager::ModelManager()
+{
+    if (s_pInstance)
+        throw std::exception("ModelManager is a singleton!");
+    s_pInstance = this;
+}
+
+ModelManager::~ModelManager()
+{
+}
+
+ModelManager& ModelManager::Get()
+{
+    if (!s_pInstance)
+        throw std::exception("ModelManager needs an instance!");
+    return *s_pInstance;
+}
+
+void ModelManager::Init(ID3D11Device* device)
+{
+    m_pDevice = device;
+    m_pDevice->GetImmediateContext(m_pDeviceContext.ReleaseAndGetAddressOf());
+}
+
+Model* ModelManager::CreateFromFile(std::string_view filename)
+{
+    return CreateFromFile(filename, filename);
+}
+
+Model* ModelManager::CreateFromFile(std::string_view name, std::string_view filename)
+{
+    XID modelID = StringToID(name);
+    auto& model = m_Models[modelID];
+    Model::CreateFromFile(model, m_pDevice.Get(), filename);
     return &model;
 }
 
+Model* ModelManager::CreateFromGeometry(std::string_view name, const GeometryData& data, bool isDynamic)
+{
+    XID modelID = StringToID(name);
+    auto& model = m_Models[modelID];
+    Model::CreateFromGeometry(model, m_pDevice.Get(), data, isDynamic);
+
+    return &model;
+}
 
 const Model* ModelManager::GetModel(std::string_view name) const
 {

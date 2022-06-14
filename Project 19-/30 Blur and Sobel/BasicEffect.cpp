@@ -107,15 +107,15 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
     pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc);
-    
+
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "OITStorePS";
     pImpl->m_pEffectHelper->AddEffectPass("OITStore", device, &passDesc);
-    
+
     passDesc.nameVS = "OITRenderVS";
     passDesc.namePS = "OITRenderPS";
     pImpl->m_pEffectHelper->AddEffectPass("OITRender", device, &passDesc);
-    
+
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamLinearWrap", RenderStates::SSLinearWrap.Get());
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamPointClamp", RenderStates::SSPointClamp.Get());
 
@@ -260,7 +260,7 @@ void BasicEffect::SetRenderTransparent(ID3D11DeviceContext* deviceContext)
 }
 
 void BasicEffect::SetRenderOITStorage(
-    ID3D11DeviceContext* deviceContext, 
+    ID3D11DeviceContext* deviceContext,
     ID3D11UnorderedAccessView* flBuffer,
     ID3D11UnorderedAccessView* startOffsetBuffer,
     uint32_t renderTargetWidth)
@@ -281,29 +281,30 @@ void BasicEffect::SetRenderOITStorage(
     pImpl->m_pCurrEffectPass->SetRasterizerState(RenderStates::RSNoCull.Get());
     pImpl->m_pCurrEffectPass->SetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
     pImpl->m_pCurrEffectPass->SetDepthStencilState(RenderStates::DSSNoDepthWrite.Get(), 0);
+
     uint32_t initCount[1] = { 0 };
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_FLBufferRW", flBuffer, initCount);
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_StartOffsetBufferRW", startOffsetBuffer, initCount);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_FrameWidth")->SetUInt(renderTargetWidth);
-    
+
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void BasicEffect::RenderOIT(
-    ID3D11DeviceContext* deviceContext, 
+    ID3D11DeviceContext* deviceContext,
     ID3D11ShaderResourceView* FLBuffer,
     ID3D11ShaderResourceView* startOffsetBuffer,
-    ID3D11ShaderResourceView* input, 
-    ID3D11RenderTargetView* output, 
+    ID3D11ShaderResourceView* input,
+    ID3D11RenderTargetView* output,
     const D3D11_VIEWPORT& vp)
 {
     // 清空UAV绑定，绑定RTV
     ID3D11UnorderedAccessView* nullUAVs[]{ nullptr };
-    deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL, nullptr, nullptr,
+    deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(0, nullptr, nullptr,
         pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_FLBufferRW"), 1, nullUAVs, nullptr);
     deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(1, &output, nullptr,
         pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_StartOffsetBufferRW"), 1, nullUAVs, nullptr);
-    
+
     deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_BackGround", input);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_FLBuffer", FLBuffer);
@@ -312,12 +313,14 @@ void BasicEffect::RenderOIT(
     pImpl->m_pCurrEffectPass->Apply(deviceContext);
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     deviceContext->RSSetViewports(1, &vp);
-    
+
     deviceContext->Draw(3, 0);
-    
+
     // 清空
     ID3D11ShaderResourceView* nullSRVs[]{ nullptr };
     deviceContext->PSSetShaderResources(pImpl->m_pEffectHelper->MapShaderResourceSlot("g_BackGround"), 1, nullSRVs);
+    deviceContext->PSSetShaderResources(pImpl->m_pEffectHelper->MapShaderResourceSlot("g_FLBuffer"), 1, nullSRVs);
+    deviceContext->PSSetShaderResources(pImpl->m_pEffectHelper->MapShaderResourceSlot("g_StartOffsetBuffer"), 1, nullSRVs);
     deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
 }
 

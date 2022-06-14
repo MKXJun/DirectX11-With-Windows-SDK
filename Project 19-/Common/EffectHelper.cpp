@@ -1054,18 +1054,22 @@ int EffectHelper::MapShaderResourceSlot(std::string_view name)
     return -1;
 }
 
-void EffectHelper::SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t initialCount)
+void EffectHelper::SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t* pInitialCount)
 {
     auto it = pImpl->m_RWResources.find(slot);
     if (it != pImpl->m_RWResources.end())
     {
         it->second.pUAV = uav;
-        it->second.initialCount = initialCount;
+        if (pInitialCount)
+        {
+            it->second.initialCount = *pInitialCount;
+            it->second.firstInit = true;
+        }
     }
         
 }
 
-void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t initialCount)
+void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t* pInitialCount)
 {
     auto it = std::find_if(pImpl->m_RWResources.begin(), pImpl->m_RWResources.end(),
         [name](const std::pair<uint32_t, RWResource>& p) {
@@ -1074,8 +1078,11 @@ void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11Unorder
     if (it != pImpl->m_RWResources.end())
     {
         it->second.pUAV = uav;
-        it->second.initialCount = initialCount;
-        it->second.firstInit = true;
+        if (pInitialCount)
+        {
+            it->second.initialCount = *pInitialCount;
+            it->second.firstInit = true;
+        }
     }
 }
 
@@ -1297,7 +1304,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
                     pUAVs[slot] = res.pUAV.Get();
                 }
             }
-            // 必须一次性设置好
+            // 必须一次性设置好，只要有一个需要初始化counter就都会被初始化
             deviceContext->OMSetRenderTargetsAndUnorderedAccessViews(D3D11_KEEP_RENDER_TARGETS_AND_DEPTH_STENCIL,
                 nullptr, nullptr, firstSlot, (uint32_t)pUAVs.size() - firstSlot, &pUAVs[firstSlot],
                 (needInit ? initCounts.data() : nullptr));

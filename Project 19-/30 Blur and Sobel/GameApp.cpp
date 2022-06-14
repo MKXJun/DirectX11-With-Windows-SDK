@@ -4,8 +4,7 @@
 using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-    : D3DApp(hInstance, windowName, initWidth, initHeight),
-    m_EnabledFog(true), m_EnabledOIT(true)
+    : D3DApp(hInstance, windowName, initWidth, initHeight)
 {
 }
 
@@ -27,6 +26,9 @@ bool GameApp::Init()
     if (!m_BasicEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
+    if (!m_PostProcessEffect.InitAll(m_pd3dDevice.Get()))
+        return false;
+
     if (!InitResource())
         return false;
 
@@ -40,7 +42,10 @@ void GameApp::OnResize()
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     m_pFLStaticNodeBuffer = std::make_unique<StructuredBuffer<FLStaticNode>>(m_pd3dDevice.Get(), m_ClientWidth * m_ClientHeight * 4);
     m_pStartOffsetBuffer = std::make_unique<ByteAddressBuffer>(m_pd3dDevice.Get(), m_ClientWidth * m_ClientHeight);
-    m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+    m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, 
+        DXGI_FORMAT_R8G8B8A8_UNORM, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS);
+    m_pTempTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, 
+        DXGI_FORMAT_R8G8B8A8_UNORM, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS);
 
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -53,15 +58,12 @@ void GameApp::OnResize()
 
 void GameApp::UpdateScene(float dt)
 {
-    // 获取子类
     auto cam3rd = std::dynamic_pointer_cast<ThirdPersonCamera>(m_pCamera);
+    ImGuiIO& io = ImGui::GetIO();
 
     // ******************
     // 第三人称摄像机的操作
     //
-
-    ImGuiIO& io = ImGui::GetIO();
-    // 绕物体旋转
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right))
     {
         cam3rd->RotateX(io.MouseDelta.y * 0.01f);
@@ -72,14 +74,35 @@ void GameApp::UpdateScene(float dt)
     m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
     m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
 
-    if (ImGui::Begin("OIT"))
+    if (ImGui::Begin("Blur and Sobel"))
     {
+        ImGui::Checkbox("Enable OIT", &m_EnabledOIT);
         if (ImGui::Checkbox("Enable Fog", &m_EnabledFog))
         {
             m_BasicEffect.SetFogState(m_EnabledFog);
         }
-        ImGui::Checkbox("Enable OIT", &m_EnabledOIT);
+        static int mode = m_BlurMode;
+        static const char* modeStrs[] = {
+            "Sobel Mode",
+            "Blur Mode"
+        };
+        if (ImGui::Combo("Mode", &mode, modeStrs, ARRAYSIZE(modeStrs)))
+            m_BlurMode = mode;
+
+        if (m_BlurMode)
+        {
+            if (ImGui::SliderInt("Blur Radius", &m_BlurRadius, 1, 7))
+            {
+                m_PostProcessEffect.SetBlurKernelSize(m_BlurRadius * 2 + 1);
+            }
+            if (ImGui::SliderFloat("Blur Sigma", &m_BlurSigma, 1.0f, 20.0f))
+            {
+                m_PostProcessEffect.SetBlurSigma(m_BlurSigma);
+            }
+            ImGui::SliderInt("Blur Times", &m_BlurTimes, 0, 5);
+        }
     }
+
     ImGui::End();
     ImGui::Render();
 
@@ -110,13 +133,13 @@ void GameApp::DrawScene()
     }
 
     float gray[4] = { 0.75f, 0.75f, 0.75f, 1.0f };
-    ID3D11RenderTargetView* pRTVs[1] = { m_EnabledOIT ? m_pLitTexture->GetRenderTarget() : GetBackBufferRTV() };
+    ID3D11RenderTargetView* pRTVs[1] = { m_EnabledOIT ? m_pTempTexture->GetRenderTarget() : m_pLitTexture->GetRenderTarget() };
     m_pd3dImmediateContext->ClearRenderTargetView(*pRTVs, gray);
     m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthTexture->GetDepthStencil());
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
- 
+
     // ******************
     // 1. 绘制不透明对象
     //
@@ -129,8 +152,8 @@ void GameApp::DrawScene()
     if (m_EnabledOIT)
     {
         m_BasicEffect.SetRenderOITStorage(
-            m_pd3dImmediateContext.Get(), 
-            m_pFLStaticNodeBuffer->GetUnorderedAccess(), 
+            m_pd3dImmediateContext.Get(),
+            m_pFLStaticNodeBuffer->GetUnorderedAccess(),
             m_pStartOffsetBuffer->GetUnorderedAccess(),
             m_ClientWidth);
     }
@@ -142,6 +165,9 @@ void GameApp::DrawScene()
     m_YellowBox.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     m_GpuWaves.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
+    // 清空
+    m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+
     // ******************
     // 3. 进行透明混合
     //
@@ -151,12 +177,52 @@ void GameApp::DrawScene()
             m_pd3dImmediateContext.Get(),
             m_pFLStaticNodeBuffer->GetShaderResource(),
             m_pStartOffsetBuffer->GetShaderResource(),
-            m_pLitTexture->GetShaderResource(),
-            GetBackBufferRTV(),
+            m_pTempTexture->GetShaderResource(),
+            m_pLitTexture->GetRenderTarget(),
             m_pCamera->GetViewPort()
         );
     }
     
+    // ******************
+    // 4. 滤波
+    //
+
+    // 高斯滤波
+    if (m_BlurMode == 1)
+    {
+        for (int i = 0; i < m_BlurTimes; ++i)
+        {
+            m_PostProcessEffect.ComputeGaussianBlurX(m_pd3dImmediateContext.Get(), 
+                m_pLitTexture->GetShaderResource(), 
+                m_pTempTexture->GetUnorderedAccess(), 
+                m_ClientWidth, m_ClientHeight);
+            m_PostProcessEffect.ComputeGaussianBlurY(m_pd3dImmediateContext.Get(),
+                m_pTempTexture->GetShaderResource(),
+                m_pLitTexture->GetUnorderedAccess(),
+                m_ClientWidth, m_ClientHeight);
+        }
+
+        // 直通(RGB->sRGB)
+        m_PostProcessEffect.RenderComposite(m_pd3dImmediateContext.Get(),
+            m_pLitTexture->GetShaderResource(),
+            nullptr,
+            GetBackBufferRTV(),
+            m_pCamera->GetViewPort());
+    }
+    // Sobel滤波
+    else
+    {
+        m_PostProcessEffect.ComputeSobel(m_pd3dImmediateContext.Get(),
+            m_pLitTexture->GetShaderResource(),
+            m_pTempTexture->GetUnorderedAccess(),
+            m_ClientWidth, m_ClientHeight);
+        m_PostProcessEffect.RenderComposite(m_pd3dImmediateContext.Get(),
+            m_pLitTexture->GetShaderResource(),
+            m_pTempTexture->GetShaderResource(),
+            GetBackBufferRTV(),
+            m_pCamera->GetViewPort());
+    }
+
     pRTVs[0] = GetBackBufferRTV();
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -275,6 +341,9 @@ bool GameApp::InitResource()
     m_BasicEffect.SetFogColor(XMFLOAT4(0.75f, 0.75f, 0.75f, 1.0f));
     m_BasicEffect.SetFogStart(15.0f);
     m_BasicEffect.SetFogRange(135.0f);
+
+    m_PostProcessEffect.SetBlurKernelSize(m_BlurRadius * 2 + 1);
+    m_PostProcessEffect.SetBlurSigma(m_BlurSigma);
 
     return true;
 }

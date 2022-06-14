@@ -189,9 +189,9 @@ public:
     int MapShaderResourceSlot(std::string_view name);
 
     // 按槽设置可读写资源
-    void SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t initialCount);
+    void SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccessView* uav, uint32_t* pInitialCount = nullptr);
     // 按名设置可读写资源(若存在同槽多名称则只能使用按槽设置)
-    void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t initialCount);
+    void SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t* pInitialCount = nullptr);
     // 按名映射可读写资源槽(找不到返回-1)
     int MapUnorderedAccessSlot(std::string_view name);
 

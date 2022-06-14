@@ -118,7 +118,6 @@ void RenderStates::InitAll(ID3D11Device* device)
 	HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap16x.GetAddressOf()));
 
 	// 采样器状态：深度比较与Border模式
-	// 注意：反向Z
 	sampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;

@@ -75,16 +75,34 @@ const Model* GameObject::GetModel() const
     return m_pModel;
 }
 
-BoundingBox GameObject::GetBoundingBox() const
+BoundingBox GameObject::GetLocalBoundingBox() const
 {
     return m_pModel ? m_pModel->boundingbox : DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
+}
+
+BoundingBox GameObject::GetLocalBoundingBox(size_t idx) const
+{
+    if (!m_pModel || m_pModel->meshdatas.size() >= idx)
+        return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
+    return m_pModel->meshdatas[idx].m_BoundingBox;
+}
+
+BoundingBox GameObject::GetBoundingBox() const
+{
+    if (!m_pModel)
+        return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
+    BoundingBox box = m_pModel->boundingbox;
+    box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+    return box;
 }
 
 BoundingBox GameObject::GetBoundingBox(size_t idx) const
 {
     if (!m_pModel || m_pModel->meshdatas.size() >= idx)
         return DirectX::BoundingBox(DirectX::XMFLOAT3(), DirectX::XMFLOAT3());
-    return m_pModel->meshdatas[idx].m_BoundingBox;
+    BoundingBox box = m_pModel->meshdatas[idx].m_BoundingBox;
+    box.Transform(box, m_Transform.GetLocalToWorldMatrixXM());
+    return box;
 }
 
 BoundingOrientedBox GameObject::GetBoundingOrientedBox() const

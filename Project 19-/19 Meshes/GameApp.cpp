@@ -157,10 +157,6 @@ bool GameApp::InitResource()
 
     // 环境光
     DirectionalLight dirLight{};
-    m_BasicEffect.SetDirLight(1, dirLight);
-    m_BasicEffect.SetDirLight(2, dirLight);
-    m_BasicEffect.SetDirLight(3, dirLight);
-    m_BasicEffect.SetDirLight(4, dirLight);
     dirLight.ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     dirLight.diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     dirLight.specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -168,10 +164,6 @@ bool GameApp::InitResource()
     m_BasicEffect.SetDirLight(0, dirLight);
     // 灯光
     PointLight pointLight{};
-    m_BasicEffect.SetPointLight(1, pointLight);
-    m_BasicEffect.SetPointLight(2, pointLight);
-    m_BasicEffect.SetPointLight(3, pointLight);
-    m_BasicEffect.SetPointLight(4, pointLight);
     pointLight.position = XMFLOAT3(0.0f, 20.0f, 0.0f);
     pointLight.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
     pointLight.diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
@@ -179,12 +171,10 @@ bool GameApp::InitResource()
     pointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
     pointLight.range = 30.0f;	
     m_BasicEffect.SetPointLight(0, pointLight);
-    SpotLight spotLight{};
-    m_BasicEffect.SetSpotLight(0, spotLight);
-    m_BasicEffect.SetSpotLight(1, spotLight);
-    m_BasicEffect.SetSpotLight(2, spotLight);
-    m_BasicEffect.SetSpotLight(3, spotLight);
-    m_BasicEffect.SetSpotLight(4, spotLight);
+
+
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
+
     return true;
 }
 

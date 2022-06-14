@@ -865,7 +865,7 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
         return hr;
 
     // 建立着色器反射
-    return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
+return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
 }
 
 HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wstring_view filename,
@@ -917,6 +917,64 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wst
         *ppShaderByteCode = pBlobOut;
     else
         pBlobOut->Release();
+
+    return hr;
+}
+
+HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wstring_view binaryFilename, std::wstring_view sourceFilename,
+    ID3D11Device* device, LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines, ID3DBlob** ppShaderByteCode)
+{
+    HRESULT hr = E_FAIL;
+    if (!binaryFilename.empty())
+    {
+        ID3DBlob* pBlob = nullptr;
+        hr = D3DReadFileToBlob(binaryFilename.data(), &pBlob);
+        if (SUCCEEDED(hr))
+        {
+            hr = AddShader(shaderName, device, pBlob);
+            if (ppShaderByteCode)
+                *ppShaderByteCode = pBlob;
+            else
+                pBlob->Release();
+            return hr;
+        }
+    }
+    if (!sourceFilename.empty())
+    {
+        ID3DBlob* pBlob = nullptr, * pErrorBlob = nullptr;
+        uint32_t dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+        // 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
+        // 但仍然允许着色器进行优化操作
+        dwShaderFlags |= D3DCOMPILE_DEBUG;
+
+        // 在Debug环境下禁用优化以避免出现一些不合理的情况
+        dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+        hr = D3DCompileFromFile(sourceFilename.data(), pDefines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+            entryPoint, shaderModel, dwShaderFlags, 0, &pBlob, &pErrorBlob);
+        if (FAILED(hr))
+        {
+            if (pErrorBlob != nullptr)
+            {
+                OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
+                pErrorBlob->Release();
+            }
+            return hr;
+        }
+
+        hr = AddShader(shaderName, device, pBlob);
+        if (FAILED(hr))
+            return hr;
+
+        if (!binaryFilename.empty())
+            hr = D3DWriteBlobToFile(pBlob, binaryFilename.data(), FALSE);
+
+        if (ppShaderByteCode)
+            *ppShaderByteCode = pBlob;
+        else
+            pBlob->Release();
+    }
 
     return hr;
 }

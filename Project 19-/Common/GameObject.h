@@ -54,9 +54,10 @@ public:
     void SetModel(const Model* pModel);
     const Model* GetModel() const;
 
+    DirectX::BoundingBox GetLocalBoundingBox() const;
+    DirectX::BoundingBox GetLocalBoundingBox(size_t idx) const;
     DirectX::BoundingBox GetBoundingBox() const;
     DirectX::BoundingBox GetBoundingBox(size_t idx) const;
-
     DirectX::BoundingOrientedBox GetBoundingOrientedBox() const;
     DirectX::BoundingOrientedBox GetBoundingOrientedBox(size_t idx) const;
     //

@@ -39,6 +39,7 @@ private:
     bool m_EnableNormalMap = true;								// 开启法线贴图
     bool m_EnableDebug = true;									// 开启调试模式
     int m_SlopeIndex = 0;			  							// 斜率索引
+    uint32_t m_MsaaLevels = 4;                                  // MSAA级别
 
     GameObject m_Ground;										// 地面
     GameObject m_Cylinders[10];								    // 圆柱体

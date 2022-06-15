@@ -43,9 +43,9 @@ void GameApp::OnResize()
 {
     D3DApp::OnResize();
 
-    m_pDepthTexture = std::make_unique<Depth2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_SAMPLE_DESC{ 4, 0 });
+    m_pDepthTexture = std::make_unique<Depth2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_SAMPLE_DESC{ m_MsaaLevels, 0 });
     m_pLitTexture = std::make_unique<Texture2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight,
-        DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SAMPLE_DESC{ 4, 0 });
+        DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SAMPLE_DESC{ m_MsaaLevels, 0 });
 
     m_pDepthTexture->SetDebugObjectName("DepthTexture");
     m_pLitTexture->SetDebugObjectName("LitTexture");
@@ -76,6 +76,18 @@ void GameApp::UpdateScene(float dt)
     {
         ImGui::Checkbox("Animate Light", &m_UpdateLight);
         ImGui::Checkbox("Enable Normal map", &m_EnableNormalMap);
+        static int msaaLevels = (int)log2f((float)m_MsaaLevels);
+        ImGui::Text("MSAA Samples: %d", (int)(1 << msaaLevels));
+        if (ImGui::SliderInt("##1", &msaaLevels, 0, 3, ""))
+        {
+            m_MsaaLevels = (1 << msaaLevels);
+            m_pDepthTexture = std::make_unique<Depth2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_SAMPLE_DESC{ m_MsaaLevels, 0 });
+            m_pLitTexture = std::make_unique<Texture2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight,
+                DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SAMPLE_DESC{ m_MsaaLevels, 0 });
+
+            m_pDepthTexture->SetDebugObjectName("DepthTexture");
+            m_pLitTexture->SetDebugObjectName("LitTexture");
+        }
         if (ImGui::SliderInt("Light Slope Level", &m_SlopeIndex, 0, 4))
         {
             m_OriginalLightDirs[0] = lightDirs[m_SlopeIndex];
@@ -158,7 +170,7 @@ void GameApp::DrawScene()
     // 绘制天空盒
     ID3D11RenderTargetView* pRTVs[] = { GetBackBufferRTV() };
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
-    m_SkyboxEffect.SetMsaaSamples(4);
+    m_SkyboxEffect.SetMsaaSamples(m_MsaaLevels);
     m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
     m_SkyboxEffect.SetDepthTexture(m_pDepthTexture->GetShaderResource());
     m_SkyboxEffect.SetLitTexture(m_pLitTexture->GetShaderResource());
@@ -194,7 +206,7 @@ void GameApp::DrawScene()
 
 
 
-    HR(m_pSwapChain->Present(0, 0));
+    HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
 }
 
 void GameApp::DrawScene(

@@ -39,6 +39,7 @@ void GameApp::OnResize()
     D3DApp::OnResize();
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
     
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -118,10 +119,15 @@ bool GameApp::InitResource()
     //
 
     // 初始化地板
-    m_Ground.SetModel(m_ModelManager.CreateFromFile("..\\Model\\ground_19.obj"));
+    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\ground_19.obj");
+    m_Ground.SetModel(pModel);
+    pModel->SetDebugObjectName("ground_19");
+    
 
     // 初始化房屋模型
-    m_House.SetModel(m_ModelManager.CreateFromFile("..\\Model\\house.obj"));
+    pModel = m_ModelManager.CreateFromFile("..\\Model\\house.obj");
+    m_House.SetModel(pModel);
+    pModel->SetDebugObjectName("house");
     
     // 获取房屋包围盒
     XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
@@ -171,9 +177,6 @@ bool GameApp::InitResource()
     pointLight.att = XMFLOAT3(0.0f, 0.1f, 0.0f);
     pointLight.range = 30.0f;	
     m_BasicEffect.SetPointLight(0, pointLight);
-
-
-    m_pDepthTexture->SetDebugObjectName("DepthTexture");
 
     return true;
 }

@@ -27,7 +27,7 @@ struct MeshData
     ComPtr<ID3D11Buffer> m_pNormals;
     std::vector<ComPtr<ID3D11Buffer>> m_pTexcoordArrays;
     ComPtr<ID3D11Buffer> m_pTangents;
-    ComPtr<ID3D11Buffer> m_pBiTangents;
+    ComPtr<ID3D11Buffer> m_pBitangents;
     ComPtr<ID3D11Buffer> m_pColors;
 
     ComPtr<ID3D11Buffer> m_pIndices;

@@ -42,6 +42,9 @@ void GameApp::OnResize()
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
+    m_pLitTexture->SetDebugObjectName("LitTexture");
+
     // 摄像机变更显示
     if (m_pCamera != nullptr)
     {
@@ -187,6 +190,8 @@ bool GameApp::InitResource()
     //
     m_pMinimapTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), 400, 400, DXGI_FORMAT_R8G8B8A8_UNORM);
     std::unique_ptr<Depth2D> pMinimapDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), 400, 400);
+    m_pMinimapTexture->SetDebugObjectName("MinimapTexture");
+    pMinimapDepthTexture->SetDebugObjectName("MinimapDepthTexture");
     CD3D11_VIEWPORT minimapViewport(0.0f, 0.0f, 400.0f, 400.0f);
 
     // ******************
@@ -197,8 +202,10 @@ bool GameApp::InitResource()
     CreateRandomTrees();
 
     // 初始化地面
-    m_Ground.SetModel(m_ModelManager.CreateFromFile("..\\Model\\ground_24.obj"));
-
+    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\ground_24.obj");
+    pModel->SetDebugObjectName("Ground");
+    m_Ground.SetModel(pModel);
+    
 
     // ******************
     // 初始化摄像机
@@ -286,7 +293,9 @@ void GameApp::DrawScene(ID3D11RenderTargetView* pRTV, ID3D11DepthStencilView* pD
 void GameApp::CreateRandomTrees()
 {
     // 初始化树
-    m_Trees.SetModel(m_ModelManager.CreateFromFile("..\\Model\\tree.obj"));
+    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\tree.obj");
+    pModel->SetDebugObjectName("Trees");
+    m_Trees.SetModel(pModel);
     XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
 
     BoundingBox treeBox = m_Trees.GetModel()->boundingbox;
@@ -299,6 +308,8 @@ void GameApp::CreateRandomTrees()
     m_pInstancedBuffer = std::make_unique<Buffer>(m_pd3dDevice.Get(),
         CD3D11_BUFFER_DESC(sizeof(BasicEffect::InstancedData) * 144, D3D11_BIND_VERTEX_BUFFER,
             D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE));
+    m_pInstancedBuffer->SetDebugObjectName("InstancedBuffer");
+
     std::mt19937 rng((uint32_t)time(nullptr));
     std::uniform_real<float> radiusNormDist(0.0f, 30.0f);
     std::uniform_real<float> normDist;

@@ -40,7 +40,7 @@ void GameApp::OnResize()
     D3DApp::OnResize();
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
-
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
 
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -234,12 +234,15 @@ bool GameApp::InitResource()
     m_pInstancedBuffer = std::make_unique<Buffer>(m_pd3dDevice.Get(),
         CD3D11_BUFFER_DESC(sizeof(BasicEffect::InstancedData) * 2048, D3D11_BIND_VERTEX_BUFFER,
             D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE));
+    
     CreateRandomTrees();
     CreateRandomCubes();
 
     // 初始化地面
     
-    m_Ground.SetModel(m_ModelManager.CreateFromFile("ground20", "..\\Model\\ground_20.obj"));
+    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\ground_20.obj");
+    m_Ground.SetModel(pModel);
+    pModel->SetDebugObjectName("Ground");
 
     // ******************
     // 初始化摄像机
@@ -271,13 +274,17 @@ bool GameApp::InitResource()
     for (int i = 0; i < 4; ++i)
         m_BasicEffect.SetDirLight(i, dirLight[i]);
 
+    m_pInstancedBuffer->SetDebugObjectName("InstancedBuffer");
+    
     return true;
 }
 
 void GameApp::CreateRandomTrees()
 {
     // 初始化树
-    m_Trees.SetModel(m_ModelManager.CreateFromFile("..\\Model\\tree.obj"));
+    Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\tree.obj");
+    m_Trees.SetModel(pModel);
+    pModel->SetDebugObjectName("Trees");
     XMMATRIX S = XMMatrixScaling(0.015f, 0.015f, 0.015f);
     
     BoundingBox treeBox = m_Trees.GetModel()->boundingbox;
@@ -326,7 +333,9 @@ void GameApp::CreateRandomTrees()
 void GameApp::CreateRandomCubes()
 {
     // 初始化立方体
-    m_Cubes.SetModel(m_ModelManager.CreateFromGeometry("Cube", Geometry::CreateBox()));
+    Model* pModel = m_ModelManager.CreateFromGeometry("Cubes", Geometry::CreateBox());
+    m_Cubes.SetModel(pModel);
+    pModel->SetDebugObjectName("Cubes");
 
     // 随机生成2048个立方体
     m_CubeInstancedData.resize(2048);

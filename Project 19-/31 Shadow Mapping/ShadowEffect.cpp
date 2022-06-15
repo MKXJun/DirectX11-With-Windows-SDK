@@ -30,7 +30,6 @@ public:
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
 
-    ComPtr<ID3D11InputLayout> m_pInstancePosNormalTexLayout;
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
     XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};

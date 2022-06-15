@@ -78,7 +78,7 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
             
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
             std::string fname = std::filesystem::path(filename).filename().string();
-            tex->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)fname.length(), fname.c_str());
+            res->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)fname.length(), fname.c_str());
 #endif
         }
         stbi_image_free(img_data);

@@ -38,7 +38,9 @@ void GameApp::OnResize()
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
-    
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
+    m_pLitTexture->SetDebugObjectName("LitTexture");
+
     // 摄像机变更显示
     if (m_pCamera != nullptr)
     {
@@ -173,6 +175,7 @@ bool GameApp::InitResource()
             [](float x, float z) { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); },	// 高度函数
             [](float x, float z) { return XMFLOAT3{ -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z), 1.0f,
             -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z) }; }));
+        pModel->SetDebugObjectName("Ground");
         m_TextureManager.CreateTexture("..\\Texture\\grass.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\grass.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -185,6 +188,7 @@ bool GameApp::InitResource()
     // 篱笆盒
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("WireFence", Geometry::CreateBox(8.0f, 8.0f, 8.0f));
+        pModel->SetDebugObjectName("WireFence");
         m_TextureManager.CreateTexture("..\\Texture\\WireFence.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\WireFence.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));

@@ -32,6 +32,8 @@ struct Model
     DirectX::BoundingBox boundingbox;
     static void CreateFromFile(Model& model, ID3D11Device* device, std::string_view filename);
     static void CreateFromGeometry(Model& model, ID3D11Device* device, const GeometryData& data, bool isDynamic = false);
+    
+    void SetDebugObjectName(std::string_view name);
 };
 
 

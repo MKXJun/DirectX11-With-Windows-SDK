@@ -79,7 +79,7 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                     memcpy_s(&tangents[i], sizeof(XMFLOAT3),
                         pAiMesh->mBitangents + i, sizeof(XMFLOAT3));
                 }
-                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBiTangents.GetAddressOf());
+                device->CreateBuffer(&bufferDesc, &initData, mesh.m_pBitangents.GetAddressOf());
             }
 
             // 纹理坐标
@@ -251,6 +251,62 @@ void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const Geometr
         bufferDesc = CD3D11_BUFFER_DESC((uint32_t)data.indices32.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
         device->CreateBuffer(&bufferDesc, &initData, model.meshdatas[0].m_pIndices.GetAddressOf());
     }
+}
+
+void Model::SetDebugObjectName(std::string_view name)
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+    std::string baseStr = name.data();
+    size_t sz = meshdatas.size();
+    std::string str;
+    str.reserve(100);
+    for (size_t i = 0; i < sz; ++i)
+    {
+        baseStr = name.data();
+        baseStr += "[" + std::to_string(i) + "].";
+        if (meshdatas[i].m_pVertices)
+        {
+            str = baseStr + "vertices";
+            meshdatas[i].m_pVertices->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+        if (meshdatas[i].m_pNormals)
+        {
+            str = baseStr + "normals";
+            meshdatas[i].m_pNormals->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+        if (meshdatas[i].m_pTangents)
+        {
+            str = baseStr + "tangents";
+            meshdatas[i].m_pTangents->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+        if (meshdatas[i].m_pBitangents)
+        {
+            str = baseStr + "bitangents";
+            meshdatas[i].m_pBitangents->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+        if (meshdatas[i].m_pColors)
+        {
+            str = baseStr + "colors";
+            meshdatas[i].m_pColors->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+        if (!meshdatas[i].m_pTexcoordArrays.empty())
+        {
+            size_t texSz = meshdatas[i].m_pTexcoordArrays.size();
+            for (size_t j = 0; j < texSz; ++j)
+            {
+                str = baseStr + "uv" + std::to_string(j);
+                meshdatas[i].m_pTexcoordArrays[j]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+            }
+        }
+        if (meshdatas[i].m_pIndices)
+        {
+            str = baseStr + "indices";
+            meshdatas[i].m_pIndices->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
+        }
+    }
+#else
+    UNREFERENCED_PARAMETER(name);
+#endif
 }
 
 namespace

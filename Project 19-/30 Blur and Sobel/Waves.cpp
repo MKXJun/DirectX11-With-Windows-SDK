@@ -62,6 +62,7 @@ void CpuWaves::InitResource(ID3D11Device* device,
 {
     Waves::InitResource(device, rows, cols, texU, texV, timeStep, 
         spatialStep, waveSpeed, damping, flowSpeedX, flowSpeedY, true);
+    m_Model.SetDebugObjectName("CpuWaves");
 
     // 取出顶点数据
     m_CurrSolution.swap(m_MeshData.vertices);
@@ -193,7 +194,7 @@ void GpuWaves::InitResource(ID3D11Device* device,
 
     Waves::InitResource(device, rows, cols, texU, texV, timeStep, 
         spatialStep, waveSpeed, damping, flowSpeedX, flowSpeedY, false);
-
+    m_Model.SetDebugObjectName("GpuWaves");
 
     m_pPrevSolutionTexture = std::make_unique<Texture2D>(device, cols, rows, DXGI_FORMAT_R32_FLOAT, 1,
         D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS);

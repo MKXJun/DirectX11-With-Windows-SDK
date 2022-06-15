@@ -46,6 +46,10 @@ void GameApp::OnResize()
     m_pDepthTexture = std::make_unique<Depth2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_SAMPLE_DESC{ 4, 0 });
     m_pLitTexture = std::make_unique<Texture2DMS>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight,
         DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SAMPLE_DESC{ 4, 0 });
+
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
+    m_pLitTexture->SetDebugObjectName("LitTexture");
+
     // 摄像机变更显示
     if (m_pCamera != nullptr)
     {
@@ -207,34 +211,34 @@ void GameApp::DrawScene(
     m_pd3dImmediateContext->OMSetRenderTargets(1, &pRTV, pDSV);
     m_pd3dImmediateContext->RSSetViewports(1, &vp);
 
-    m_BasicEffect.SetTextureShadowMap(pShadow);
+    effect.SetTextureShadowMap(pShadow);
 
     // 地面和石柱
     if (enableNormalMap)
     {
-        m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
+        effect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
         m_Ground.Draw(m_pd3dImmediateContext.Get(), effect);
         for (auto& cylinder : m_Cylinders)
             cylinder.Draw(m_pd3dImmediateContext.Get(), effect);
     }
     else
     {
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        effect.SetRenderDefault(m_pd3dImmediateContext.Get());
         m_Ground.Draw(m_pd3dImmediateContext.Get(), effect);
         for (auto& cylinder : m_Cylinders)
             cylinder.Draw(m_pd3dImmediateContext.Get(), effect);
     }
 
     // 石球
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    effect.SetRenderDefault(m_pd3dImmediateContext.Get());
     for (auto& sphere : m_Spheres)
         sphere.Draw(m_pd3dImmediateContext.Get(), effect);
 
     // 房屋
     m_House.Draw(m_pd3dImmediateContext.Get(), effect);
 
-    m_BasicEffect.SetTextureShadowMap(nullptr);
-    m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
+    effect.SetTextureShadowMap(nullptr);
+    effect.Apply(m_pd3dImmediateContext.Get());
 }
 
 void GameApp::DrawScene(ID3D11DepthStencilView* pDSV, ShadowEffect& effect, const D3D11_VIEWPORT& vp)
@@ -252,7 +256,6 @@ void GameApp::DrawScene(ID3D11DepthStencilView* pDSV, ShadowEffect& effect, cons
         cylinder.Draw(m_pd3dImmediateContext.Get(), effect);
 
     // 石球
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
     for (auto& sphere : m_Spheres)
         sphere.Draw(m_pd3dImmediateContext.Get(), effect);
 
@@ -279,6 +282,10 @@ bool GameApp::InitResource()
     m_pShadowMapTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), 2048, 2048);
     m_pDebugShadowTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), 2048, 2048, DXGI_FORMAT_R8G8B8A8_UNORM);
 
+    m_pShadowMapTexture->SetDebugObjectName("ShadowMapTexture");
+    m_pDebugShadowTexture->SetDebugObjectName("DebugShadowTexture");
+
+
     // 开启阴影
     m_BasicEffect.SetShadowEnabled(true);
     m_BasicEffect.SetDepthBias(0.005f);
@@ -297,6 +304,7 @@ bool GameApp::InitResource()
     // 地面
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Ground", Geometry::CreatePlane(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
+        pModel->SetDebugObjectName("Ground");
         m_TextureManager.CreateTexture("..\\Texture\\floor.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\floor.dds");
         m_TextureManager.CreateTexture("..\\Texture\\floor_nmap.dds");
@@ -312,6 +320,7 @@ bool GameApp::InitResource()
     // 圆柱
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Cylinder", Geometry::CreateCylinder(0.5f, 3.0f));
+        pModel->SetDebugObjectName("Cylinder");
         m_TextureManager.CreateTexture("..\\Texture\\bricks.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\bricks.dds");
         m_TextureManager.CreateTexture("..\\Texture\\bricks_nmap.dds");
@@ -331,6 +340,7 @@ bool GameApp::InitResource()
     // 石球
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Sphere", Geometry::CreateSphere(0.5f));
+        pModel->SetDebugObjectName("Sphere");
         m_TextureManager.CreateTexture("..\\Texture\\stone.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\stone.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
@@ -347,7 +357,9 @@ bool GameApp::InitResource()
 
     // 房屋
     {
-        m_House.SetModel(m_ModelManager.CreateFromFile("..\\Model\\house.obj"));
+        Model* pModel = m_ModelManager.CreateFromFile("..\\Model\\house.obj");
+        pModel->SetDebugObjectName("House");
+        m_House.SetModel(pModel);
 
         XMMATRIX S = XMMatrixScaling(0.01f, 0.01f, 0.01f);
         BoundingBox houseBox = m_House.GetBoundingBox();
@@ -359,10 +371,13 @@ bool GameApp::InitResource()
     }
     
     // 天空盒
-    Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
-    m_Skybox.SetModel(pModel);
-    m_TextureManager.CreateTexture("..\\Texture\\desertcube1024.dds", false, true);
-    pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\desertcube1024.dds");
+    {
+        Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
+        pModel->SetDebugObjectName("Skybox");
+        m_Skybox.SetModel(pModel);
+        m_TextureManager.CreateTexture("..\\Texture\\desertcube1024.dds", false, true);
+        pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\desertcube1024.dds");
+    }
 
     // ******************
     // 初始化光照

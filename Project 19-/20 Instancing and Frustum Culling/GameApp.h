@@ -2,6 +2,7 @@
 #define GAMEAPP_H
 
 #include <random>
+#include <ctime>
 #include <WinMin.h>
 #include "d3dApp.h"
 #include "Effects.h"

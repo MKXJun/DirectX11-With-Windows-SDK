@@ -40,6 +40,7 @@ void GameApp::OnResize()
     D3DApp::OnResize();
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
 
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -276,6 +277,7 @@ bool GameApp::InitResource()
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
         pTex->GetDesc(&texDesc);
         pTexCube = std::make_unique<TextureCube>(m_pd3dDevice.Get(), texDesc.Width, texDesc.Height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+        pTexCube->SetDebugObjectName("Daylight");
         for (uint32_t i = 0; i < 6; ++i)
         {
             pCubeTextures[i]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -296,6 +298,7 @@ bool GameApp::InitResource()
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
         pTex->GetDesc(&texDesc);
         pTexCube = std::make_unique<TextureCube>(m_pd3dDevice.Get(), texDesc.Width, texDesc.Height, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+        pTexCube->SetDebugObjectName("Sunset");
         for (uint32_t i = 0; i < 6; ++i)
         {
             pCubeTextures[i]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -313,6 +316,10 @@ bool GameApp::InitResource()
     m_pDebugDynamicCubeTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), 256, 256, DXGI_FORMAT_R8G8B8A8_UNORM);
     m_TextureManager.AddTexture("DynamicCube", m_pDynamicTextureCube->GetShaderResource());
 
+    m_pDynamicTextureCube->SetDebugObjectName("DynamicTextureCube");
+    m_pDynamicCubeDepthTexture->SetDebugObjectName("DynamicCubeDepthTexture");
+    m_pDebugDynamicCubeTexture->SetDebugObjectName("DebugDynamicCube");
+
     // ******************
     // 初始化游戏对象
     //
@@ -320,6 +327,7 @@ bool GameApp::InitResource()
     // 球体
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Sphere", Geometry::CreateSphere());
+        pModel->SetDebugObjectName("Sphere");
         m_TextureManager.CreateTexture("..\\Texture\\stone.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\stone.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -346,6 +354,7 @@ bool GameApp::InitResource()
     // 地面
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Ground", Geometry::CreatePlane(XMFLOAT2(10.0f, 10.0f), XMFLOAT2(5.0f, 5.0f)));
+        pModel->SetDebugObjectName("Ground");
         m_TextureManager.CreateTexture("..\\Texture\\floor.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\floor.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -359,6 +368,7 @@ bool GameApp::InitResource()
     // 柱体
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Cylinder", Geometry::CreateCylinder(0.5f, 2.0f));
+        pModel->SetDebugObjectName("Cylinder");
         m_TextureManager.CreateTexture("..\\Texture\\bricks.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\bricks.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -386,11 +396,13 @@ bool GameApp::InitResource()
     }
     // 天空盒立方体
     Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
+    pModel->SetDebugObjectName("Skybox");
     pModel->materials[0].Set<std::string>("$Skybox", "Daylight");
     m_Skybox.SetModel(pModel);
 
     // 调试用立方体
     pModel = m_ModelManager.CreateFromGeometry("DebugSkybox", Geometry::CreateBox());
+    pModel->SetDebugObjectName("DebugSkybox");
     pModel->materials[0].Set<std::string>("$Skybox", "DynamicCube");
     m_DebugSkybox.SetModel(pModel);
 

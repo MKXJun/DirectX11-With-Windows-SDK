@@ -42,6 +42,11 @@ void GameApp::OnResize()
     m_pStartOffsetBuffer = std::make_unique<ByteAddressBuffer>(m_pd3dDevice.Get(), m_ClientWidth * m_ClientHeight);
     m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 
+    m_pDepthTexture->SetDebugObjectName("DepthTexture");
+    m_pFLStaticNodeBuffer->SetDebugObjectName("FLStaticNodeBuffer");
+    m_pStartOffsetBuffer->SetDebugObjectName("StartOffsetBuffer");
+    m_pLitTexture->SetDebugObjectName("LitTexture");
+
     // 摄像机变更显示
     if (m_pCamera != nullptr)
     {
@@ -179,6 +184,7 @@ bool GameApp::InitResource()
             [](float x, float z) { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); },	// 高度函数
             [](float x, float z) { return XMFLOAT3{ -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z), 1.0f,
             -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z) }; }));
+        pModel->SetDebugObjectName("Ground");
         m_TextureManager.CreateTexture("..\\Texture\\grass.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\grass.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
@@ -191,6 +197,7 @@ bool GameApp::InitResource()
     // 红色盒子
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("RedBox", Geometry::CreateBox(8.0f, 8.0f, 8.0f));
+        pModel->SetDebugObjectName("RedBox");
         m_TextureManager.CreateTexture("..\\Texture\\Red.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\Red.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));
@@ -204,6 +211,7 @@ bool GameApp::InitResource()
     // 黄色盒子
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("YellowBox", Geometry::CreateBox(8.0f, 8.0f, 8.0f));
+        pModel->SetDebugObjectName("YellowBox");
         m_TextureManager.CreateTexture("..\\Texture\\Yellow.dds");
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\Yellow.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));

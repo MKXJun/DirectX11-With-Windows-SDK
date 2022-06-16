@@ -1,8 +1,9 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-#include "d3dApp.h"
-#include "EffectHelper.h"
+#include <WinMin.h>
+#include <d3dApp.h>
+#include <EffectHelper.h>
 #include <sstream>
 
 class GameApp : public D3DApp
@@ -11,7 +12,7 @@ public:
     enum class TessellationMode { Triangle, Quad, BezierCurve, BezierSurface };
     enum class PartitionMode { Integer, Odd, Even };
 public:
-    GameApp(HINSTANCE hInstance);
+    GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);
     ~GameApp();
 
     bool Init();
@@ -33,10 +34,6 @@ private:
     bool InitResource();
 
 private:
-    
-    ComPtr<ID2D1SolidColorBrush> m_pColorBrush;							// 单色笔刷
-    ComPtr<IDWriteFont> m_pFont;										// 字体
-    ComPtr<IDWriteTextFormat> m_pTextFormat;							// 文本格式
     
     TessellationMode m_TessellationMode = TessellationMode::Triangle;	// 镶嵌模式
     PartitionMode m_PartitionMode = PartitionMode::Integer;				// 细分模式

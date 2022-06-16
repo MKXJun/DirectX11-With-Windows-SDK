@@ -140,32 +140,34 @@ public:
     EffectHelper(EffectHelper&&) = default;
     EffectHelper& operator=(EffectHelper&&) = default;
 
-    // 添加着色器并为其设置标识名
-    // 注意：
-    // 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
-    // 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
-    // 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
-    HRESULT AddShader(std::string_view name, ID3D11Device* device, ID3DBlob* blob);
+    // 设置编译好的着色器文件缓存路径并创建
+    // 若设置为""，则关闭缓存
+    // 若forceWrite为true，每次运行程序都会强制覆盖保存
+    // 默认情况下不会缓存编译好的着色器
+    // 在shader没完成修改的时候应开启forceWrite
+    void SetBinaryCacheDirectory(std::wstring_view cacheDir, bool forceWrite = false);
 
-    // 编译着色器 或 读取着色器字节码，添加到内部并为其设置标识名
+    // 编译着色器 或 读取着色器字节码，按下述顺序：
+    // 1. 如果开启着色器字节码文件缓存路径 且 关闭强制覆盖，则优先尝试读取${cacheDir}/${shaderName}.cso并添加
+    // 2. 否则读取filename。若为着色器字节码，直接添加
+    // 3. 若filename为hlsl源码，则进行编译和添加。开启着色器字节码文件缓存会保存着色器字节码到${cacheDir}/${shaderName}.cso
     // 注意：
     // 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
     // 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
     // 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
-    // 如果传入着色器字节码，则不需要填entryPoint之后的信息
     HRESULT CreateShaderFromFile(std::string_view shaderName, std::wstring_view filename, ID3D11Device* device,
         LPCSTR entryPoint = nullptr, LPCSTR shaderModel = nullptr, const D3D_SHADER_MACRO* pDefines = nullptr, ID3DBlob** ppShaderByteCode = nullptr);
 
-    // 编译着色器 或 读取着色器字节码，添加到内部并为其设置标识名
+    // 添加编译好的着色器二进制信息并为其设置标识名
+    // 该函数不会保存着色器二进制编码到文件
     // 注意：
-    // 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
+    // 1. 不同着色器代码，若常量缓冲区使用同一个register，对应的定义应保持完全一致
     // 2. 不同着色器代码，若存在全局变量，定义应保持完全一致
-    // 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致，否则只能使用按槽设置
-    // 如果传入着色器字节码，则不需要填entryPoint之后的信息
-    HRESULT CreateShaderFromFile(std::string_view shaderName, std::wstring_view binaryFilename, std::wstring_view sourceFilename, ID3D11Device* device,
-        LPCSTR entryPoint = nullptr, LPCSTR shaderModel = nullptr, const D3D_SHADER_MACRO* pDefines = nullptr, ID3DBlob** ppShaderByteCode = nullptr);
+    // 3. 不同着色器代码，若采样器、着色器资源或可读写资源使用同一个槽，对应的定义应保持完全一致
+    HRESULT AddShader(std::string_view name, ID3D11Device* device, ID3DBlob* blob);
 
     // 添加带流输出的几何着色器并为其设置标识名
+    // 该函数不会保存着色器二进制编码到文件
     // 注意：
     // 1. 不同着色器代码，若常量缓冲区使用同一个槽，对应的定义应保持完全一致
     // 2. 不同着色器代码，若存在全局变量，定义应保持完全一致

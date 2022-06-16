@@ -13,13 +13,12 @@ file(COPY Shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 aux_source_directory(. DIR_SRCS)
 file(GLOB SHADER_FILES ${CMAKE_CURRENT_BINARY_DIR}/Shaders/*.hlsl ${CMAKE_CURRENT_BINARY_DIR}/Shaders/*.hlsli)
 file(GLOB HEADER_FILES ./*.h)
-file(GLOB COMMON_FILES ../../Common/*)
 
 foreach(SHADER_FILE ${SHADER_FILES})
 	set_source_files_properties(${SHADER_FILE} PROPERTIES HEADER_FILE_ONLY TRUE)
 endforeach()
 
-add_executable(31_Shadow_Mapping WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_FILES} ${COMMON_FILES})
+add_executable(31_Shadow_Mapping WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_FILES})
 
 target_link_libraries(31_Shadow_Mapping d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
 
@@ -34,7 +33,6 @@ file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 # Common
 target_link_libraries(31_Shadow_Mapping Common)
 
-source_group("Common" FILES ${COMMON_FILES})
 source_group("Shaders" FILES ${SHADER_FILES})
 set_target_properties(31_Shadow_Mapping PROPERTIES OUTPUT_NAME "31 Shadow Mapping")
 

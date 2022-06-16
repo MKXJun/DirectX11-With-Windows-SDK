@@ -13,6 +13,7 @@
 #include <Collision.h>
 #include <ModelManager.h>
 #include <TextureManager.h>
+#include "SSAOManager.h"
 
 class GameApp : public D3DApp
 {
@@ -25,9 +26,12 @@ public:
     void UpdateScene(float dt);
     void DrawScene();
 
+    void RenderSSAO();
     void RenderShadow();
     void RenderForward();
     void RenderSkybox();
+
+    void DrawScene(IEffect& effect);
 
 private:
     bool InitResource();
@@ -37,10 +41,10 @@ private:
     TextureManager m_TextureManager;
     ModelManager m_ModelManager;
 
+    bool m_EnableSSAO = true;									// 开启SSAO
     bool m_UpdateLight = true;                                  // 更新灯光
     bool m_EnableNormalMap = true;								// 开启法线贴图
     bool m_EnableDebug = true;									// 开启调试模式
-    int m_SlopeIndex = 0;			  							// 斜率索引
 
     GameObject m_Ground;										// 地面
     GameObject m_Cylinders[10];								    // 圆柱体
@@ -51,17 +55,22 @@ private:
     std::unique_ptr<Depth2D> m_pDepthTexture;                   // 深度纹理
     std::unique_ptr<Texture2D> m_pLitTexture;                   // 场景渲染缓冲区
     std::unique_ptr<Depth2D> m_pShadowMapTexture;               // 阴影贴图
-    std::unique_ptr<Texture2D> m_pDebugShadowTexture;           // 调试用阴影纹理
+    std::unique_ptr<Texture2D> m_pDebugAOTexture;               // 调试用环境光遮蔽纹理
+
+    SSAOManager m_SSAOManager;                                  // SSAO管理类
 
     DirectionalLight m_DirLights[3] = {};						// 方向光
     DirectX::XMFLOAT3 m_OriginalLightDirs[3] = {};				// 初始光方向
 
     BasicEffect m_BasicEffect;				                    // 基础特效
     ShadowEffect m_ShadowEffect;				                // 阴影特效
-    SkyboxEffect m_SkyboxEffect;					                // 天空盒特效
-    
+    SkyboxEffect m_SkyboxEffect;					            // 天空盒特效
+    SSAOEffect m_SSAOEffect;                                    // SSAO特效
+
     std::shared_ptr<FirstPersonCamera> m_pCamera;	            // 摄像机
     FirstPersonCameraController m_CameraController;             // 摄像机控制器
+
+
 };
 
 

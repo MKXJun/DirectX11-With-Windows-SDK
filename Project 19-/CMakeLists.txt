@@ -13,6 +13,7 @@ add_subdirectory("28 Waves")
 add_subdirectory("29 OIT")
 add_subdirectory("30 Blur and Sobel")
 add_subdirectory("31 Shadow Mapping")
+add_subdirectory("32 SSAO")
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Texture)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Texture DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

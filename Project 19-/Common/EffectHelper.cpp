@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <d3d11shader.h>
 #include <d3dcompiler.h>
+#include <filesystem>
 #include "XUtil.h"
 #include <d3d11_1.h>
 #include "EffectHelper.h"
@@ -584,8 +585,8 @@ public:
     std::unordered_map<size_t, std::shared_ptr<PixelShaderInfo>> m_PixelShaders;		// 像素着色器
     std::unordered_map<size_t, std::shared_ptr<ComputeShaderInfo>> m_ComputeShaders;	// 计算着色器
 
-
-                                                    
+    std::filesystem::path m_CacheDir;         // 缓存路径
+    bool m_ForceWrite = false;      // 强制编译后缓存
 };
 
 //
@@ -868,18 +869,49 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
 return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
 }
 
+void EffectHelper::SetBinaryCacheDirectory(std::wstring_view cacheDir, bool forceWrite)
+{
+    pImpl->m_CacheDir = cacheDir;
+    pImpl->m_ForceWrite = forceWrite;
+    if (!pImpl->m_CacheDir.empty())
+        CreateDirectoryW(cacheDir.data(), nullptr);
+}
+
 HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wstring_view filename,
     ID3D11Device* device, LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines, ID3DBlob** ppShaderByteCode)
 {
-    // 编译好的DXBC文件头
-    static char dxbc_header[] = { 'D', 'X', 'B', 'C' };
     ID3DBlob* pBlobIn = nullptr;
     ID3DBlob* pBlobOut = nullptr;
+    // 如果开启着色器字节码文件缓存路径 且 关闭强制覆盖，则优先尝试读取${cacheDir}/${shaderName}.cso并添加
+    if (!pImpl->m_CacheDir.empty() && !pImpl->m_ForceWrite)
+    {
+        std::filesystem::path cacheFilename = pImpl->m_CacheDir / (UTF8ToWString(shaderName) + L".cso");
+        std::wstring wstr = cacheFilename.generic_wstring();
+        HRESULT hr = D3DReadFileToBlob(wstr.c_str(), &pBlobOut);
+        if (SUCCEEDED(hr))
+        {
+            hr = AddShader(shaderName, device, pBlobOut);
+
+            if (ppShaderByteCode)
+                *ppShaderByteCode = pBlobOut;
+            else
+                pBlobOut->Release();
+
+            return hr;
+        }
+    }
+
+    // 如果没有开启或没有缓存，则读取filename。若为着色器字节码，直接添加
+    // 编译好的DXBC文件头
+    static char dxbc_header[] = { 'D', 'X', 'B', 'C' };
+
     HRESULT hr = D3DReadFileToBlob(filename.data(), &pBlobIn);
     if (FAILED(hr))
         return hr;
     if (memcmp(pBlobIn->GetBufferPointer(), dxbc_header, sizeof dxbc_header))
     {
+        // 若filename为hlsl源码，则进行编译和添加。开启着色器字节码文件缓存会保存着色器字节码到${cacheDir}/${shaderName}.cso
+
         uint32_t dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
         // 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
@@ -905,6 +937,13 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wst
             }
             return hr;
         }
+
+        if (!pImpl->m_CacheDir.empty())
+        {
+            std::filesystem::path cacheFilename = pImpl->m_CacheDir / (UTF8ToWString(shaderName) + L".cso");
+            std::wstring wstr = cacheFilename.generic_wstring();
+            D3DWriteBlobToFile(pBlobOut, wstr.c_str(), pImpl->m_ForceWrite);
+        }
     }
     else
     {
@@ -917,64 +956,6 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wst
         *ppShaderByteCode = pBlobOut;
     else
         pBlobOut->Release();
-
-    return hr;
-}
-
-HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wstring_view binaryFilename, std::wstring_view sourceFilename,
-    ID3D11Device* device, LPCSTR entryPoint, LPCSTR shaderModel, const D3D_SHADER_MACRO* pDefines, ID3DBlob** ppShaderByteCode)
-{
-    HRESULT hr = E_FAIL;
-    if (!binaryFilename.empty())
-    {
-        ID3DBlob* pBlob = nullptr;
-        hr = D3DReadFileToBlob(binaryFilename.data(), &pBlob);
-        if (SUCCEEDED(hr))
-        {
-            hr = AddShader(shaderName, device, pBlob);
-            if (ppShaderByteCode)
-                *ppShaderByteCode = pBlob;
-            else
-                pBlob->Release();
-            return hr;
-        }
-    }
-    if (!sourceFilename.empty())
-    {
-        ID3DBlob* pBlob = nullptr, * pErrorBlob = nullptr;
-        uint32_t dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
-#ifdef _DEBUG
-        // 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
-        // 但仍然允许着色器进行优化操作
-        dwShaderFlags |= D3DCOMPILE_DEBUG;
-
-        // 在Debug环境下禁用优化以避免出现一些不合理的情况
-        dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-        hr = D3DCompileFromFile(sourceFilename.data(), pDefines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-            entryPoint, shaderModel, dwShaderFlags, 0, &pBlob, &pErrorBlob);
-        if (FAILED(hr))
-        {
-            if (pErrorBlob != nullptr)
-            {
-                OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
-                pErrorBlob->Release();
-            }
-            return hr;
-        }
-
-        hr = AddShader(shaderName, device, pBlob);
-        if (FAILED(hr))
-            return hr;
-
-        if (!binaryFilename.empty())
-            hr = D3DWriteBlobToFile(pBlob, binaryFilename.data(), FALSE);
-
-        if (ppShaderByteCode)
-            *ppShaderByteCode = pBlob;
-        else
-            pBlob->Release();
-    }
 
     return hr;
 }

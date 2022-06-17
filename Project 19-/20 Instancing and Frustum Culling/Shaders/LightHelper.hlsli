@@ -1,179 +1,179 @@
 
-// ·½Ïò¹â
+// æ–¹å‘å…‰
 struct DirectionalLight
 {
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
-	float3 Direction;
-	float Pad;
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
+    float3 direction;
+    float pad;
 };
 
-// µã¹â
+// ç‚¹å…‰
 struct PointLight
 {
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
 
-	float3 Position;
-	float Range;
+    float3 position;
+    float range;
 
-	float3 Att;
-	float Pad;
+    float3 att;
+    float pad;
 };
 
-// ¾Û¹âµÆ
+// èšå…‰ç¯
 struct SpotLight
 {
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
+    float4 ambient;
+    float4 diffuse;
+    float4 specular;
 
-	float3 Position;
-	float Range;
+    float3 position;
+    float range;
 
-	float3 Direction;
-	float Spot;
+    float3 direction;
+    float Spot;
 
-	float3 Att;
-	float Pad;
+    float3 att;
+    float pad;
 };
 
-// ÎïÌå±íÃæ²ÄÖÊ
+// ç‰©ä½“è¡¨é¢æè´¨
 struct Material
 {
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular; // w = SpecPower
-	float4 Reflect;
+    float4 ambient;
+    float4 diffuse;
+    float4 specular; // w = SpecPower
+    float4 reflect;
 };
 
 
 
 void ComputeDirectionalLight(Material mat, DirectionalLight L,
-	float3 normal, float3 toEye,
-	out float4 ambient,
-	out float4 diffuse,
-	out float4 spec)
+    float3 normal, float3 toEye,
+    out float4 ambient,
+    out float4 diffuse,
+    out float4 spec)
 {
-	// ³õÊ¼»¯Êä³ö
-	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    // åˆå§‹åŒ–è¾“å‡º
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// ¹âÏòÁ¿ÓëÕÕÉä·½ÏòÏà·´
-	float3 lightVec = -L.Direction;
+    // å…‰å‘é‡ä¸ç…§å°„æ–¹å‘ç›¸å
+    float3 lightVec = -L.direction;
 
-	// Ìí¼Ó»·¾³¹â
-	ambient = mat.Ambient * L.Ambient;
+    // æ·»åŠ ç¯å¢ƒå…‰
+    ambient = mat.ambient * L.ambient;
 
-	// Ìí¼ÓÂş·´Éä¹âºÍ¾µÃæ¹â
-	float diffuseFactor = dot(lightVec, normal);
+    // æ·»åŠ æ¼«åå°„å…‰å’Œé•œé¢å…‰
+    float diffuseFactor = dot(lightVec, normal);
 
-	// Õ¹¿ª£¬±ÜÃâ¶¯Ì¬·ÖÖ§
-	[flatten]
-	if (diffuseFactor > 0.0f)
-	{
-		float3 v = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), mat.Specular.w);
+    // å±•å¼€ï¼Œé¿å…åŠ¨æ€åˆ†æ”¯
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 v = reflect(-lightVec, normal);
+        float specFactor = pow(max(dot(v, toEye), 0.0f), mat.specular.w);
 
-		diffuse = diffuseFactor * mat.Diffuse * L.Diffuse;
-		spec = specFactor * mat.Specular * L.Specular;
-	}
+        diffuse = diffuseFactor * mat.diffuse * L.diffuse;
+        spec = specFactor * mat.specular * L.specular;
+    }
 }
 
 
 void ComputePointLight(Material mat, PointLight L, float3 pos, float3 normal, float3 toEye,
-	out float4 ambient, out float4 diffuse, out float4 spec)
+    out float4 ambient, out float4 diffuse, out float4 spec)
 {
-	// ³õÊ¼»¯Êä³ö
-	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    // åˆå§‹åŒ–è¾“å‡º
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// ´Ó±íÃæµ½¹âÔ´µÄÏòÁ¿
-	float3 lightVec = L.Position - pos;
+    // ä»è¡¨é¢åˆ°å…‰æºçš„å‘é‡
+    float3 lightVec = L.position - pos;
 
-	// ±íÃæµ½¹âÏßµÄ¾àÀë
-	float d = length(lightVec);
+    // è¡¨é¢åˆ°å…‰çº¿çš„è·ç¦»
+    float d = length(lightVec);
 
-	// µÆ¹â·¶Î§²âÊÔ
-	if (d > L.Range)
-		return;
+    // ç¯å…‰èŒƒå›´æµ‹è¯•
+    if (d > L.range)
+        return;
 
-	// ±ê×¼»¯¹âÏòÁ¿
-	lightVec /= d;
+    // æ ‡å‡†åŒ–å…‰å‘é‡
+    lightVec /= d;
 
-	// »·¾³¹â¼ÆËã
-	ambient = mat.Ambient * L.Ambient;
+    // ç¯å¢ƒå…‰è®¡ç®—
+    ambient = mat.ambient * L.ambient;
 
-	// Âş·´ÉäºÍ¾µÃæ¼ÆËã
-	float diffuseFactor = dot(lightVec, normal);
+    // æ¼«åå°„å’Œé•œé¢è®¡ç®—
+    float diffuseFactor = dot(lightVec, normal);
 
-	// Õ¹¿ªÒÔ±ÜÃâ¶¯Ì¬·ÖÖ§
-	[flatten]
-	if (diffuseFactor > 0.0f)
-	{
-		float3 v = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), mat.Specular.w);
+    // å±•å¼€ä»¥é¿å…åŠ¨æ€åˆ†æ”¯
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 v = reflect(-lightVec, normal);
+        float specFactor = pow(max(dot(v, toEye), 0.0f), mat.specular.w);
 
-		diffuse = diffuseFactor * mat.Diffuse * L.Diffuse;
-		spec = specFactor * mat.Specular * L.Specular;
-	}
+        diffuse = diffuseFactor * mat.diffuse * L.diffuse;
+        spec = specFactor * mat.specular * L.specular;
+    }
 
-	// ¹âµÄË¥Èõ
-	float att = 1.0f / dot(L.Att, float3(1.0f, d, d * d));
+    // å…‰çš„è¡°å¼±
+    float att = 1.0f / dot(L.att, float3(1.0f, d, d * d));
 
-	diffuse *= att;
-	spec *= att;
+    diffuse *= att;
+    spec *= att;
 }
 
 
 void ComputeSpotLight(Material mat, SpotLight L, float3 pos, float3 normal, float3 toEye,
-	out float4 ambient, out float4 diffuse, out float4 spec)
+    out float4 ambient, out float4 diffuse, out float4 spec)
 {
-	// ³õÊ¼»¯Êä³ö
-	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    // åˆå§‹åŒ–è¾“å‡º
+    ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// // ´Ó±íÃæµ½¹âÔ´µÄÏòÁ¿
-	float3 lightVec = L.Position - pos;
+    // // ä»è¡¨é¢åˆ°å…‰æºçš„å‘é‡
+    float3 lightVec = L.position - pos;
 
-	// ±íÃæµ½¹âÔ´µÄ¾àÀë
-	float d = length(lightVec);
+    // è¡¨é¢åˆ°å…‰æºçš„è·ç¦»
+    float d = length(lightVec);
 
-	// ·¶Î§²âÊÔ
-	if (d > L.Range)
-		return;
+    // èŒƒå›´æµ‹è¯•
+    if (d > L.range)
+        return;
 
-	// ±ê×¼»¯¹âÏòÁ¿
-	lightVec /= d;
+    // æ ‡å‡†åŒ–å…‰å‘é‡
+    lightVec /= d;
 
-	// ¼ÆËã»·¾³¹â²¿·Ö
-	ambient = mat.Ambient * L.Ambient;
+    // è®¡ç®—ç¯å¢ƒå…‰éƒ¨åˆ†
+    ambient = mat.ambient * L.ambient;
 
 
-	// ¼ÆËãÂş·´Éä¹âºÍ¾µÃæ·´Éä¹â²¿·Ö
-	float diffuseFactor = dot(lightVec, normal);
+    // è®¡ç®—æ¼«åå°„å…‰å’Œé•œé¢åå°„å…‰éƒ¨åˆ†
+    float diffuseFactor = dot(lightVec, normal);
 
-	// Õ¹¿ªÒÔ±ÜÃâ¶¯Ì¬·ÖÖ§
-	[flatten]
-	if (diffuseFactor > 0.0f)
-	{
-		float3 v = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), mat.Specular.w);
+    // å±•å¼€ä»¥é¿å…åŠ¨æ€åˆ†æ”¯
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 v = reflect(-lightVec, normal);
+        float specFactor = pow(max(dot(v, toEye), 0.0f), mat.specular.w);
 
-		diffuse = diffuseFactor * mat.Diffuse * L.Diffuse;
-		spec = specFactor * mat.Specular * L.Specular;
-	}
+        diffuse = diffuseFactor * mat.diffuse * L.diffuse;
+        spec = specFactor * mat.specular * L.specular;
+    }
 
-	// ¼ÆËã»ã¾ÛÒò×ÓºÍË¥ÈõÏµÊı
-	float spot = pow(max(dot(-lightVec, L.Direction), 0.0f), L.Spot);
-	float att = spot / dot(L.Att, float3(1.0f, d, d * d));
+    // è®¡ç®—æ±‡èšå› å­å’Œè¡°å¼±ç³»æ•°
+    float spot = pow(max(dot(-lightVec, L.direction), 0.0f), L.Spot);
+    float att = spot / dot(L.att, float3(1.0f, d, d * d));
 
-	ambient *= spot;
-	diffuse *= att;
-	spec *= att;
+    ambient *= spot;
+    diffuse *= att;
+    spec *= att;
 }

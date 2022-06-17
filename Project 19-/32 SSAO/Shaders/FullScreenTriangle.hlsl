@@ -1,8 +1,7 @@
-
 #ifndef FULL_SCREEN_TRIANGLE_HLSL
 #define FULL_SCREEN_TRIANGLE_HLSL
 
-// 使用一个三角形覆盖NDC空间 
+// 浣跨敤涓�涓笁瑙掑舰瑕嗙洊NDC绌洪棿 
 // (-1, 1)________ (3, 1)
 //        |   |  /
 // (-1,-1)|___|/ (1, -1)   

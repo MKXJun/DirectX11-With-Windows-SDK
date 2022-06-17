@@ -4,7 +4,7 @@ SamplerState g_Sam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
 {
-    float g_FadeAmount;      // 颜色程度控制(0.0f-1.0f)
+    float g_FadeAmount;      // 棰滆壊绋嬪害鎺у埗(0.0f-1.0f)
     float3 g_Pad;
 }
 
@@ -15,12 +15,12 @@ cbuffer CBChangesRarely : register(b1)
 
 struct VertexPosTex
 {
-    float3 PosL : POSITION;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosHTex
 {
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float2 tex : TEXCOORD;
 };

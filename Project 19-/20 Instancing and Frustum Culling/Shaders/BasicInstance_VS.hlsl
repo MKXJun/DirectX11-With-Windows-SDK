@@ -5,12 +5,12 @@ VertexPosHWNormalColorTex VS(InstancePosNormalTex vIn)
 {
     VertexPosHWNormalColorTex vOut;
     
-    vector posW = mul(float4(vIn.PosL, 1.0f), vIn.World);
+    vector posW = mul(float4(vIn.posL, 1.0f), vIn.world);
 
-    vOut.PosW = posW.xyz;
-    vOut.PosH = mul(posW, g_ViewProj);
-    vOut.NormalW = mul(vIn.NormalL, (float3x3) vIn.WorldInvTranspose);
-    vOut.Color = vIn.Color;
-    vOut.Tex = vIn.Tex;
+    vOut.posW = posW.xyz;
+    vOut.posH = mul(posW, g_ViewProj);
+    vOut.normalW = mul(vIn.normalL, (float3x3) vIn.worldInvTranspose);
+    vOut.color = vIn.color;
+    vOut.tex = vIn.tex;
     return vOut;
 }

@@ -25,29 +25,29 @@ cbuffer CBChangesRarely : register(b2)
 
 struct VertexPosColor
 {
-    float3 PosL : POSITION;
-    float4 Color : COLOR;
+    float3 posL : POSITION;
+    float4 color : COLOR;
 };
 
 struct VertexPosHColor
 {
-    float4 PosH : SV_POSITION;
-    float4 Color : COLOR;
+    float4 posH : SV_POSITION;
+    float4 color : COLOR;
 };
 
 
 struct VertexPosNormalColor
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float4 Color : COLOR;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float4 color : COLOR;
 };
 
 struct VertexPosHWNormalColor
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION;
-    float3 NormalW : NORMAL;
-    float4 Color : COLOR;
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION;
+    float3 normalW : NORMAL;
+    float4 color : COLOR;
 };
 

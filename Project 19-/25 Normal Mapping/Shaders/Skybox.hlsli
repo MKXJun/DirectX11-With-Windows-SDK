@@ -9,13 +9,13 @@ cbuffer CBChangesEveryFrame : register(b0)
 
 struct VertexPos
 {
-    float3 PosL : POSITION;
+    float3 posL : POSITION;
 };
 
 struct VertexPosHL
 {
-    float4 PosH : SV_POSITION;
-    float3 PosL : POSITION;
+    float4 posH : SV_POSITION;
+    float3 posL : POSITION;
 };
 
 

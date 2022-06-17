@@ -8,5 +8,5 @@
 [maxtessfactor(64.0f)]
 float3 HS(InputPatch<VertexOut, 4> patch, uint i : SV_OutputControlPointID, uint patchId : SV_PrimitiveID) : POSITION
 {
-    return patch[i].PosL;
+    return patch[i].posL;
 }

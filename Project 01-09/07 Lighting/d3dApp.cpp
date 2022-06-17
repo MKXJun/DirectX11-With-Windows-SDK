@@ -13,9 +13,7 @@ extern "C"
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x00000001;
 }
 
-#if USE_IMGUI
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
 
 namespace
 {
@@ -34,10 +32,10 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-	: m_hAppInst(hInstance),
-	m_MainWndCaption(windowName),
-	m_ClientWidth(initWidth),
-	m_ClientHeight(initHeight),
+    : m_hAppInst(hInstance),
+    m_MainWndCaption(windowName),
+    m_ClientWidth(initWidth),
+    m_ClientHeight(initHeight),
     m_hMainWnd(nullptr),
     m_AppPaused(false),
     m_Minimized(false),
@@ -65,11 +63,9 @@ D3DApp::~D3DApp()
     // 恢复所有默认设定
     if (m_pd3dImmediateContext)
         m_pd3dImmediateContext->ClearState();
-#ifdef USE_IMGUI
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
-#endif
 }
 
 HINSTANCE D3DApp::AppInst()const
@@ -107,11 +103,9 @@ int D3DApp::Run()
             if (!m_AppPaused)
             {
                 CalculateFrameStats();
-#ifdef USE_IMGUI
                 ImGui_ImplDX11_NewFrame();
                 ImGui_ImplWin32_NewFrame();
                 ImGui::NewFrame();
-#endif
                 UpdateScene(m_Timer.DeltaTime());
                 DrawScene();
             }
@@ -133,14 +127,8 @@ bool D3DApp::Init()
     if (!InitDirect3D())
         return false;
 
-#ifdef USE_IMGUI
     if (!InitImGui())
         return false;
-#else
-
-    m_pMouse = std::make_unique<DirectX::Mouse>();
-    m_pKeyboard = std::make_unique<DirectX::Keyboard>();
-#endif
 
     return true;
 }
@@ -228,10 +216,9 @@ void D3DApp::OnResize()
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-#ifdef USE_IMGUI
     if (ImGui_ImplWin32_WndProcHandler(m_hMainWnd, msg, wParam, lParam))
         return true;
-#endif
+
     switch (msg)
     {
         // WM_ACTIVATE is sent when the window is activated or deactivated.  
@@ -340,38 +327,6 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
         return 0;
 
-#ifndef USE_IMGUI
-        // 监测这些键盘/鼠标事件
-    case WM_INPUT:
-
-    case WM_LBUTTONDOWN:
-    case WM_MBUTTONDOWN:
-    case WM_RBUTTONDOWN:
-    case WM_XBUTTONDOWN:
-
-    case WM_LBUTTONUP:
-    case WM_MBUTTONUP:
-    case WM_RBUTTONUP:
-    case WM_XBUTTONUP:
-
-    case WM_MOUSEWHEEL:
-    case WM_MOUSEHOVER:
-    case WM_MOUSEMOVE:
-        m_pMouse->ProcessMessage(msg, wParam, lParam);
-        return 0;
-
-    case WM_KEYDOWN:
-    case WM_SYSKEYDOWN:
-    case WM_KEYUP:
-    case WM_SYSKEYUP:
-        m_pKeyboard->ProcessMessage(msg, wParam, lParam);
-        return 0;
-
-    case WM_ACTIVATEAPP:
-        m_pMouse->ProcessMessage(msg, wParam, lParam);
-        m_pKeyboard->ProcessMessage(msg, wParam, lParam);
-        return 0;
-#endif
     }
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -580,7 +535,6 @@ bool D3DApp::InitDirect3D()
     return true;
 }
 
-#ifdef USE_IMGUI
 bool D3DApp::InitImGui()
 {
     IMGUI_CHECKVERSION();
@@ -599,7 +553,6 @@ bool D3DApp::InitImGui()
     return true;
 
 }
-#endif
 
 void D3DApp::CalculateFrameStats()
 {

@@ -7,7 +7,7 @@
 //        |  /
 // (-1,-3)|/      
 void VS(uint vertexID : SV_VertexID,
-        out float4 posH : SV_Position,
+        out float4 posH : SV_position,
         out float2 texcoord : TEXCOORD)
 {
     float2 grid = float2((vertexID << 1) & 2, vertexID & 2);

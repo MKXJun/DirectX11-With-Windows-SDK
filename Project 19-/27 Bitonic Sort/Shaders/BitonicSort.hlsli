@@ -3,8 +3,8 @@ RWBuffer<uint> g_Data : register(u0);
 
 cbuffer CB : register(b0)
 {
-    uint g_Level;        // 2^ĞèÒªÅÅĞòÌËÊı
-    uint g_DescendMask;  // ÏÂ½µĞòÁĞÑÚÂë
-    uint g_MatrixWidth;  // ¾ØÕó¿í¶È(ÒªÇó¿í¶È>=¸ß¶ÈÇÒ¶¼Îª2µÄ±¶Êı)
-    uint g_MatrixHeight; // ¾ØÕó¸ß¶È
+    uint g_Level;        // 2^éœ€è¦æ’åºè¶Ÿæ•°
+    uint g_DescendMask;  // ä¸‹é™åºåˆ—æ©ç 
+    uint g_MatrixWidth;  // çŸ©é˜µå®½åº¦(è¦æ±‚å®½åº¦>=é«˜åº¦ä¸”éƒ½ä¸º2çš„å€æ•°)
+    uint g_MatrixHeight; // çŸ©é˜µé«˜åº¦
 }

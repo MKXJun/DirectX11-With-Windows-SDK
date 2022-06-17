@@ -1,6 +1,6 @@
 #include "PostProcess.hlsli"
 
-float4 PS(float4 posH : SV_Position, float2 texcoord : TEXCOORD) : SV_Target
+float4 PS(float4 posH : SV_position, float2 texcoord : TEXCOORD) : SV_Target
 {
     float4 c = g_Input.SampleLevel(g_SamPointClamp, texcoord, 0.0f);
     uint texWidth, texHeight;

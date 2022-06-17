@@ -25,14 +25,14 @@ cbuffer CBPatchTess : register(b2)
 
 struct VertexOut
 {
-    float3 PosL : POSITION;
+    float3 posL : POSITION;
 };
 
 typedef VertexOut HullOut;
 
 struct GeometryOut
 {
-    float4 PosH : SV_Position;
+    float4 posH : SV_position;
 };
 
 struct IsolinePatchTess
@@ -135,25 +135,25 @@ float3 CubicBezierSum(const OutputPatch<HullOut, 16> bezPatch,
     float4 basisU, float4 basisV)
 {
     float3 sum = float3(0.0f, 0.0f, 0.0f);
-    sum = basisV.x * (basisU.x * bezPatch[0].PosL +
-        basisU.y * bezPatch[1].PosL +
-        basisU.z * bezPatch[2].PosL +
-        basisU.w * bezPatch[3].PosL);
+    sum = basisV.x * (basisU.x * bezPatch[0].posL +
+        basisU.y * bezPatch[1].posL +
+        basisU.z * bezPatch[2].posL +
+        basisU.w * bezPatch[3].posL);
     
-    sum += basisV.y * (basisU.x * bezPatch[4].PosL +
-        basisU.y * bezPatch[5].PosL +
-        basisU.z * bezPatch[6].PosL +
-        basisU.w * bezPatch[7].PosL);
+    sum += basisV.y * (basisU.x * bezPatch[4].posL +
+        basisU.y * bezPatch[5].posL +
+        basisU.z * bezPatch[6].posL +
+        basisU.w * bezPatch[7].posL);
     
-    sum += basisV.z * (basisU.x * bezPatch[8].PosL +
-        basisU.y * bezPatch[9].PosL +
-        basisU.z * bezPatch[10].PosL +
-        basisU.w * bezPatch[11].PosL);
+    sum += basisV.z * (basisU.x * bezPatch[8].posL +
+        basisU.y * bezPatch[9].posL +
+        basisU.z * bezPatch[10].posL +
+        basisU.w * bezPatch[11].posL);
     
-    sum += basisV.w * (basisU.x * bezPatch[12].PosL +
-        basisU.y * bezPatch[13].PosL +
-        basisU.z * bezPatch[14].PosL +
-        basisU.w * bezPatch[15].PosL);
+    sum += basisV.w * (basisU.x * bezPatch[12].posL +
+        basisU.y * bezPatch[13].posL +
+        basisU.z * bezPatch[14].posL +
+        basisU.w * bezPatch[15].posL);
     
     return sum;
 }

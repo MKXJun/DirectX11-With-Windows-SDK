@@ -4,7 +4,7 @@
 VertexPosHTex VS(VertexPosTex vIn)
 {
     VertexPosHTex vOut;
-    vOut.PosH = float4(vIn.PosL, 1.0f);
-    vOut.Tex = vIn.Tex;
+    vOut.posH = float4(vIn.posL, 1.0f);
+    vOut.tex = vIn.tex;
     return vOut;
 }

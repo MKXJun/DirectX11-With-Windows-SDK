@@ -44,31 +44,31 @@ cbuffer CBChangesRarely : register(b4)
 
 struct VertexPosNormalTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosHWNormalTex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // ÔÚÊÀ½çÖÐµÄÎ»ÖÃ
-    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖÐµÄ·½Ïò
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Î»ï¿½ï¿½
+    float3 normalW : NORMAL; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ·ï¿½ï¿½ï¿½
+    float2 tex : TEXCOORD;
 };
 
 struct PointSprite
 {
-    float3 PosW : POSITION;
+    float3 posW : POSITION;
     float2 SizeW : SIZE;
 };
 
 struct BillboardVertex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION;
-    float3 NormalW : NORMAL;
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION;
+    float3 normalW : NORMAL;
+    float2 tex : TEXCOORD;
     uint PrimID : SV_PrimitiveID;
 };
 

@@ -4,14 +4,14 @@ SamplerState g_Sam : register(s0);
 
 cbuffer CB : register(b0)
 {
-    float g_VisibleRange;        // 3DÊÀ½ç¿ÉÊÓ·¶Î§
-    float3 g_EyePosW;            // ÉãÏñ»úÎ»ÖÃ 
-    float4 g_RectW;              // Ğ¡µØÍ¼xOzÆ½Ãæ¶ÔÓ¦3DÊÀ½ç¾ØĞÎÇøÓò(Left, Front, Right, Back)
+    float g_VisibleRange;        // 3Dä¸–ç•Œå¯è§†èŒƒå›´
+    float3 g_EyePosW;            // æ‘„åƒæœºä½ç½®
+    float4 g_RectW;              // å°åœ°å›¾xOzå¹³é¢å¯¹åº”3Dä¸–ç•ŒçŸ©å½¢åŒºåŸŸ(Left, Front, Right, Back)
 }
 
 struct VertexPosHTex
 {
-    float4 PosH : SV_POSITION;
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float2 tex : TEXCOORD;
 };
 

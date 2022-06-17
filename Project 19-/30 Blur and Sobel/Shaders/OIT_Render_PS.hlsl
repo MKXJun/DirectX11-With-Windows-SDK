@@ -12,7 +12,7 @@ void SortPixelInPlace(int numPixels)
     {
         for (int j = i - 1; j >= 0; --j)
         {
-            if (g_SortedPixels[j].Depth < g_SortedPixels[j + 1].Depth)
+            if (g_SortedPixels[j].depth < g_SortedPixels[j + 1].depth)
             {
                 temp = g_SortedPixels[j];
                 g_SortedPixels[j] = g_SortedPixels[j + 1];
@@ -26,7 +26,7 @@ void SortPixelInPlace(int numPixels)
     }
 }
 
-float4 PS(float4 posH : SV_Position) : SV_Target
+float4 PS(float4 posH : SV_position) : SV_Target
 {
     // 取出当前像素位置对应的背景色
     float4 currColor = g_BackGround.Load(int3(posH.xy, 0));
@@ -45,10 +45,10 @@ float4 PS(float4 posH : SV_Position) : SV_Target
         // 按当前索引取出像素
         element = g_FLBuffer[offset];
         // 将像素拷贝到临时数组
-        g_SortedPixels[numPixels++] = element.Data;
+        g_SortedPixels[numPixels++] = element.data;
         // 取出下一个节点的索引，但最多只取出前MAX_SORTED_PIXELS个
         offset = (numPixels >= MAX_SORTED_PIXELS) ?
-            0xFFFFFFFF : element.Next;
+            0xFFFFFFFF : element.next;
     }
     
     // 对所有取出的像素片元按深度值从大到小排序
@@ -58,7 +58,7 @@ float4 PS(float4 posH : SV_Position) : SV_Target
     for (int i = 0; i < numPixels; ++i)
     {
         // 将打包的颜色解包出来
-        float4 pixelColor = UnpackColorFromUInt(g_SortedPixels[i].Color);
+        float4 pixelColor = UnpackColorFromUInt(g_SortedPixels[i].color);
         // 进行混合
         currColor.xyz = lerp(currColor.xyz, pixelColor.xyz, pixelColor.w);
     }

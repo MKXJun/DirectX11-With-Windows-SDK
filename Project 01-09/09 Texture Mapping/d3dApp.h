@@ -4,13 +4,13 @@
 #include <wrl/client.h>
 #include <string>
 #include "WinMin.h"
-#include <d2d1.h>
-#include <dwrite.h>
 #include <d3d11_1.h>
 #include <DirectXMath.h>
-#include "Mouse.h"
-#include "Keyboard.h"
 #include "CpuTimer.h"
+
+#include <imgui.h>
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
 
 class D3DApp
 {
@@ -33,9 +33,8 @@ public:
     // 窗口的消息回调函数
 protected:
     bool InitMainWindow();      // 窗口初始化
-    bool InitDirect2D();		// Direct2D初始化
     bool InitDirect3D();        // Direct3D初始化
-    
+    bool InitImGui();           // ImGui初始化
 
     void CalculateFrameStats(); // 计算每秒帧数并在窗口显示
 
@@ -56,10 +55,6 @@ protected:
     // 使用模板别名(C++11)简化类型名
     template <class T>
     using ComPtr = Microsoft::WRL::ComPtr<T>;
-    // Direct2D
-    ComPtr<ID2D1Factory> m_pd2dFactory;							// D2D工厂
-    ComPtr<ID2D1RenderTarget> m_pd2dRenderTarget;				// D2D渲染目标
-    ComPtr<IDWriteFactory> m_pdwriteFactory;					// DWrite工厂
     // Direct3D 11
     ComPtr<ID3D11Device> m_pd3dDevice;							// D3D11设备
     ComPtr<ID3D11DeviceContext> m_pd3dImmediateContext;			// D3D11设备上下文
@@ -73,11 +68,6 @@ protected:
     ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;			// 渲染目标视图
     ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;			// 深度模板视图
     D3D11_VIEWPORT m_ScreenViewport;                            // 视口
-    // 键鼠输入
-    std::unique_ptr<DirectX::Mouse> m_pMouse;					// 鼠标
-    DirectX::Mouse::ButtonStateTracker m_MouseTracker;			// 鼠标状态追踪器
-    std::unique_ptr<DirectX::Keyboard> m_pKeyboard;				// 键盘
-    DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;	// 键盘状态追踪器
     // 派生类应该在构造函数设置好这些自定义的初始参数
     std::wstring m_MainWndCaption;                               // 主窗口标题
     int m_ClientWidth;                                           // 视口宽度

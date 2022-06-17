@@ -1,5 +1,5 @@
 
-float3 VS(float3 PosL : POSITION) : POSITION
+float3 VS(float3 posL : POSITION) : POSITION
 {
-    return PosL;
+    return posL;
 }

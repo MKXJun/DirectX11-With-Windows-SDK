@@ -50,11 +50,6 @@ private:
 
 
 private:
-    
-    ComPtr<ID2D1SolidColorBrush> m_pColorBrush;				    // 单色笔刷
-    ComPtr<IDWriteFont> m_pFont;								// 字体
-    ComPtr<IDWriteTextFormat> m_pTextFormat;					// 文本格式
-
     ComPtr<ID3D11InputLayout> m_pVertexLayout2D;				// 用于2D的顶点输入布局
     ComPtr<ID3D11InputLayout> m_pVertexLayout3D;				// 用于3D的顶点输入布局
     ComPtr<ID3D11Buffer> m_pVertexBuffer;						// 顶点缓冲区

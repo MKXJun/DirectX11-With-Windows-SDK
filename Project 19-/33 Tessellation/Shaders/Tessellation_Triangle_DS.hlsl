@@ -6,9 +6,9 @@ float4 DS(TriPatchTess patchTess,
     const OutputPatch<HullOut, 3> tri) : SV_POSITION
 {
     // 重心坐标系插值
-    float3 pos = tri[0].PosL * weights[0] +
-        tri[1].PosL * weights[1] +
-        tri[2].PosL * weights[2];
+    float3 pos = tri[0].posL * weights[0] +
+        tri[1].posL * weights[1] +
+        tri[2].posL * weights[2];
     
     return float4(pos, 1.0f);
 }

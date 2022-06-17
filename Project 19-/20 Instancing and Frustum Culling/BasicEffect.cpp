@@ -173,8 +173,13 @@ void BasicEffect::SetMaterial(const Material& material)
     phongMat.specular.w = material.Has<float>("$SpecularFactor") ? material.Get<float>("$SpecularFactor") : 1.0f;
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
-    const auto& str = material.Get<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(str));
+    if (material.Has<std::string>("$Diffuse"))
+    {
+        const auto& str = material.Get<std::string>("$Diffuse");
+        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(str));
+    }
+    else
+        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", nullptr);
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)

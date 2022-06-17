@@ -6,8 +6,8 @@ VertexPosHWNormalTex VS(VertexPosNormalTex vIn)
     VertexPosHWNormalTex vOut;
     
     matrix viewProj = mul(g_View, g_Proj);
-    float4 posW = mul(float4(vIn.PosL, 1.0f), g_World);
-    float3 normalW = mul(vIn.NormalL, (float3x3) g_WorldInvTranspose);
+    float4 posW = mul(float4(vIn.posL, 1.0f), g_World);
+    float3 normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
     // 若当前在绘制反射物体，先进行反射操作
     [flatten]
     if (g_IsReflection)
@@ -22,9 +22,9 @@ VertexPosHWNormalTex VS(VertexPosNormalTex vIn)
         posW = (g_IsReflection ? mul(posW, g_RefShadow) : mul(posW, g_Shadow));
     }
 
-    vOut.PosH = mul(posW, viewProj);
-    vOut.PosW = posW.xyz;
-    vOut.NormalW = normalW;
-    vOut.Tex = vIn.Tex;
+    vOut.posH = mul(posW, viewProj);
+    vOut.posW = posW.xyz;
+    vOut.normalW = normalW;
+    vOut.tex = vIn.tex;
     return vOut;
 }

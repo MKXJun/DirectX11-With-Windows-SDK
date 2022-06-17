@@ -1,9 +1,9 @@
 #include "LightHelper.hlsli"
 
-Texture2D g_DiffuseMap : register(t0);          // ÎïÌåÎÆÀí
-Texture2D g_DisplacementMap : register(t1);     // Î»ÒÆÌùÍ¼
-SamplerState g_SamLinearWrap : register(s0);    // ÏßĞÔ¹ıÂË+Wrap²ÉÑùÆ÷
-SamplerState g_SamPointClamp : register(s1);    // µã¹ıÂË+Clamp²ÉÑùÆ÷
+Texture2D g_DiffuseMap : register(t0);          // ç‰©ä½“çº¹ç†
+Texture2D g_DisplacementMap : register(t1);     // ä½ç§»è´´å›¾
+SamplerState g_SamLinearWrap : register(s0);    // çº¿æ€§è¿‡æ»¤+Wrapé‡‡æ ·å™¨
+SamplerState g_SamPointClamp : register(s1);    // ç‚¹è¿‡æ»¤+Clampé‡‡æ ·å™¨
 
 cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {
@@ -31,9 +31,9 @@ cbuffer CBDrawingStates : register(b3)
     int g_FogEnabled;
     float g_FogStart;
     float g_FogRange;
-    int g_WavesEnabled;                     // ¿ªÆô²¨ÀË»æÖÆ
+    int g_WavesEnabled;                     // å¼€å¯æ³¢æµªç»˜åˆ¶
     
-    float g_GridSpatialStep;                // Õ¤¸ñ¿Õ¼ä²½³¤
+    float g_GridSpatialStep;                // æ …æ ¼ç©ºé—´æ­¥é•¿
     float3 g_Pad2;
 }
 
@@ -46,17 +46,17 @@ cbuffer CBChangesRarely : register(b4)
 
 struct VertexPosNormalTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosHWNormalTex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // ÔÚÊÀ½çÖĞµÄÎ»ÖÃ
-    float3 NormalW : NORMAL; // ·¨ÏòÁ¿ÔÚÊÀ½çÖĞµÄ·½Ïò
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION; // åœ¨ä¸–ç•Œä¸­çš„ä½ç½®
+    float3 normalW : NORMAL; // æ³•å‘é‡åœ¨ä¸–ç•Œä¸­çš„æ–¹å‘
+    float2 tex : TEXCOORD;
 };
 
 

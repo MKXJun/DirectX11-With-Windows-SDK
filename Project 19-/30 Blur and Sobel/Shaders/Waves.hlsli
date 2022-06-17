@@ -1,12 +1,12 @@
-// 用于更新模拟
-cbuffer cbUpdateSettings : register(b0)
+// 鐢ㄤ簬鏇存柊妯℃嫙
+cbuffer CBUpdateSettings : register(b0)
 {
     float g_WaveConstant0;
     float g_WaveConstant1;
     float g_WaveConstant2;
     float g_DisturbMagnitude;
     
-    int2 g_DisturbIndex;
+    uint2 g_DisturbIndex;
     float2 g_Pad;
 }
 

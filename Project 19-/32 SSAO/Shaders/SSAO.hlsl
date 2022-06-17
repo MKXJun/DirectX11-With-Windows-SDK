@@ -61,17 +61,17 @@ cbuffer CBChangesRarely : register(b3)
 //
 struct VertexPosNormalTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosHVNormalVTex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosV : POSITION;
+    float4 posH : SV_POSITION;
+    float3 posV : POSITION;
     float3 NormalV : NORMAL;
-    float2 Tex : TEXCOORD0;
+    float2 tex : TEXCOORD0;
 };
 
 //
@@ -79,16 +79,16 @@ struct VertexPosHVNormalVTex
 //
 struct VertexIn
 {
-    float3 PosL : POSITION;
+    float3 posL : POSITION;
     float3 ToFarPlaneIndex : NORMAL; // 仅使用x分量来进行对视锥体远平面顶点的索引
-    float2 Tex : TEXCOORD;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexOut
 {
-    float4 PosH : SV_POSITION;
+    float4 posH : SV_POSITION;
     float3 ToFarPlane : TEXCOORD0; // 远平面顶点坐标
-    float2 Tex : TEXCOORD1;
+    float2 tex : TEXCOORD1;
 };
 
 //
@@ -101,13 +101,13 @@ VertexPosHVNormalVTex GeometryVS(VertexPosNormalTex vIn)
     VertexPosHVNormalVTex vOut;
     
     // 变换到观察空间
-    vOut.PosV = mul(float4(vIn.PosL, 1.0f), g_WorldView).xyz;
-    vOut.NormalV = mul(vIn.NormalL, (float3x3) g_WorldInvTransposeView);
+    vOut.posV = mul(float4(vIn.posL, 1.0f), g_WorldView).xyz;
+    vOut.NormalV = mul(vIn.normalL, (float3x3) g_WorldInvTransposeView);
     
     // 变换到裁剪空间
-    vOut.PosH = mul(float4(vIn.PosL, 1.0f), g_WorldViewProj);
+    vOut.posH = mul(float4(vIn.posL, 1.0f), g_WorldViewProj);
     
-    vOut.Tex = vIn.Tex;
+    vOut.tex = vIn.tex;
     
     return vOut;
 }
@@ -120,13 +120,13 @@ float4 GeometryPS(VertexPosHVNormalVTex pIn, uniform bool alphaClip) : SV_TARGET
     
     if (alphaClip)
     {
-        float4 g_TexColor = g_DiffuseMap.Sample(g_SamLinearWrap, pIn.Tex);
+        float4 g_TexColor = g_DiffuseMap.Sample(g_SamLinearWrap, pIn.tex);
         
         clip(g_TexColor.a - 0.1f);
     }
     
     // 返回观察空间的法向量和深度值
-    return float4(pIn.NormalV, pIn.PosV.z);
+    return float4(pIn.NormalV, pIn.posV.z);
 }
 
 //
@@ -169,7 +169,7 @@ float OcclusionFunction(float distZ)
 //        |  /
 // (-1,-3)|/    
 void SSAO_VS(uint vertexID : SV_VertexID,
-             out float4 posH : SV_Position,
+             out float4 posH : SV_position,
              out float3 farPlanePoint : POSITION,
              out float2 texcoord : TEXCOORD)
 {
@@ -182,7 +182,7 @@ void SSAO_VS(uint vertexID : SV_VertexID,
 }
 
 // 绘制SSAO图的顶点着色器
-float4 SSAO_PS(float4 posH : SV_Position,
+float4 SSAO_PS(float4 posH : SV_position,
                float3 farPlanePoint : POSITION,
                float2 texcoord : TEXCOORD,
                uniform int sampleCount) : SV_TARGET
@@ -269,7 +269,7 @@ float4 SSAO_PS(float4 posH : SV_Position,
 
 // 双边滤波
 
-float4 BilateralPS(float4 posH : SV_Position,
+float4 BilateralPS(float4 posH : SV_position,
                    float2 texcoord : TEXCOORD) : SV_Target
 {
     // 总是把中心值加进去计算
@@ -324,7 +324,7 @@ float4 BilateralPS(float4 posH : SV_Position,
 }
 
 
-float4 DebugAO_PS(float4 posH : SV_Position,
+float4 DebugAO_PS(float4 posH : SV_position,
                   float2 texCoord : TEXCOORD) : SV_Target
 {
     float depth = g_DiffuseMap.Sample(g_SamLinearWrap, texCoord).r;

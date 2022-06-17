@@ -2,5 +2,5 @@
 
 float4 PS(VertexPosHWNormalColor pIn) : SV_TARGET
 {
-    return pIn.Color;
+    return pIn.color;
 }

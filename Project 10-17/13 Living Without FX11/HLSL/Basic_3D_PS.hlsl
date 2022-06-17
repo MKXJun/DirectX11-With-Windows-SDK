@@ -4,14 +4,14 @@
 float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 {
     // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
-    float4 texColor = g_Tex.Sample(g_Sam, pIn.Tex);
+    float4 texColor = g_Tex.Sample(g_Sam, pIn.tex);
     clip(texColor.a - 0.1f);
 
     // 标准化法向量
-    pIn.NormalW = normalize(pIn.NormalW);
+    pIn.normalW = normalize(pIn.normalW);
 
     // 顶点指向眼睛的向量
-    float3 toEyeW = normalize(g_EyePosW - pIn.PosW);
+    float3 toEyeW = normalize(g_EyePosW - pIn.posW);
 
     // 初始化为0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -30,9 +30,9 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
         [flatten]
         if (g_IsReflection)
         {
-            dirLight.Direction = mul(dirLight.Direction, (float3x3) (g_Reflection));
+            dirLight.direction = mul(dirLight.direction, (float3x3) (g_Reflection));
         }
-        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.NormalW, toEyeW, A, D, S);
+        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -50,9 +50,9 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
         [flatten]
         if (g_IsReflection)
         {
-            pointLight.Position = (float3) mul(float4(pointLight.Position, 1.0f), g_Reflection);
+            pointLight.position = (float3) mul(float4(pointLight.position, 1.0f), g_Reflection);
         }
-        ComputePointLight(g_Material, pointLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputePointLight(g_Material, pointLight, pIn.posW, pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -69,10 +69,10 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
         [flatten]
         if (g_IsReflection)
         {
-            spotLight.Position = (float3) mul(float4(spotLight.Position, 1.0f), g_Reflection);
-            spotLight.Direction = mul(spotLight.Direction, (float3x3) g_Reflection);
+            spotLight.position = (float3) mul(float4(spotLight.position, 1.0f), g_Reflection);
+            spotLight.direction = mul(spotLight.direction, (float3x3) g_Reflection);
         }
-        ComputeSpotLight(g_Material, spotLight, pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputeSpotLight(g_Material, spotLight, pIn.posW, pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -82,6 +82,6 @@ float4 PS(VertexPosHWNormalTex pIn) : SV_Target
 
     
     float4 litColor = texColor * (ambient + diffuse) + spec;
-    litColor.a = texColor.a * g_Material.Diffuse.a;
+    litColor.a = texColor.a * g_Material.diffuse.a;
     return litColor;
 }

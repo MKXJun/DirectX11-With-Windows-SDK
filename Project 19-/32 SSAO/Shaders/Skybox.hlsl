@@ -1,4 +1,3 @@
-
 #ifndef SKYBOX_HLSL
 #define SKYBOX_HLSL
 
@@ -12,12 +11,12 @@ struct VertexPosNormalTex
 };
 
 //--------------------------------------------------------------------------------------
-// ºó´¦Àí, Ìì¿ÕºĞµÈ
-// Ê¹ÓÃÌì¿ÕºĞ¼¸ºÎÌåäÖÈ¾
+// åå¤„ç†, å¤©ç©ºç›’ç­‰
+// ä½¿ç”¨å¤©ç©ºç›’å‡ ä½•ä½“æ¸²æŸ“
 //--------------------------------------------------------------------------------------
 TextureCube<float4> g_SkyboxTexture : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
-// ³£¹æ¶àÖØ²ÉÑùµÄ³¡¾°äÖÈ¾µÄÎÆÀí
+// å¸¸è§„å¤šé‡é‡‡æ ·çš„åœºæ™¯æ¸²æŸ“çš„çº¹ç†
 Texture2D<float4> g_LitTexture : register(t7);
 
 struct SkyboxVSOut
@@ -30,7 +29,7 @@ SkyboxVSOut SkyboxVS(VertexPosNormalTex input)
 {
     SkyboxVSOut output;
     
-    // ×¢Òâ£º²»ÒªÒÆ¶¯Ìì¿ÕºĞ²¢È·±£Éî¶ÈÖµÎª1(±ÜÃâ²Ã¼ô)
+    // æ³¨æ„ï¼šä¸è¦ç§»åŠ¨å¤©ç©ºç›’å¹¶ç¡®ä¿æ·±åº¦å€¼ä¸º1(é¿å…è£å‰ª)
     output.posViewport = mul(float4(input.posL, 0.0f), g_ViewProj).xyww;
     output.skyboxCoord = input.posL;
     

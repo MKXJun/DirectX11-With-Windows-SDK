@@ -22,9 +22,9 @@ void GS(triangle VertexPosNormalColor input[3], inout TriangleStream<VertexPosNo
     for (int i = 0; i < 3; ++i)
     {
         vertexes[i] = input[i];
-        vertexes[i + 3].Color = lerp(input[i].Color, input[(i + 1) % 3].Color, 0.5f);
-        vertexes[i + 3].NormalL = normalize(input[i].NormalL + input[(i + 1) % 3].NormalL);
-        vertexes[i + 3].PosL = g_SphereCenter + g_SphereRadius * vertexes[i + 3].NormalL;
+        vertexes[i + 3].color = lerp(input[i].color, input[(i + 1) % 3].color, 0.5f);
+        vertexes[i + 3].normalL = normalize(input[i].normalL + input[(i + 1) % 3].normalL);
+        vertexes[i + 3].posL = g_SphereCenter + g_SphereRadius * vertexes[i + 3].normalL;
     }
         
     output.Append(vertexes[0]);

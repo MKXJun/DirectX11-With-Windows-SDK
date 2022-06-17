@@ -1,10 +1,5 @@
-
 #ifndef SKYBOX_HLSL
 #define SKYBOX_HLSL
-
-#ifndef MSAA_SAMPLES
-#define MSAA_SAMPLES 1
-#endif
 
 uniform matrix g_ViewProj;
 
@@ -16,14 +11,13 @@ struct VertexPosNormalTex
 };
 
 //--------------------------------------------------------------------------------------
-// ºó´¦Àí, Ìì¿ÕºĞµÈ
-// Ê¹ÓÃÌì¿ÕºĞ¼¸ºÎÌåäÖÈ¾
+// åå¤„ç†, å¤©ç©ºç›’ç­‰
+// ä½¿ç”¨å¤©ç©ºç›’å‡ ä½•ä½“æ¸²æŸ“
 //--------------------------------------------------------------------------------------
 TextureCube<float4> g_SkyboxTexture : register(t5);
-Texture2DMS<float, MSAA_SAMPLES> g_DepthTexture : register(t6);
-
-// ³£¹æ¶àÖØ²ÉÑùµÄ³¡¾°äÖÈ¾µÄÎÆÀí
-Texture2DMS<float4, MSAA_SAMPLES> g_LitTexture : register(t7);
+Texture2D<float> g_DepthTexture : register(t6);
+// å¸¸è§„å¤šé‡é‡‡æ ·çš„åœºæ™¯æ¸²æŸ“çš„çº¹ç†
+Texture2D<float4> g_LitTexture : register(t7);
 
 struct SkyboxVSOut
 {
@@ -35,7 +29,7 @@ SkyboxVSOut SkyboxVS(VertexPosNormalTex input)
 {
     SkyboxVSOut output;
     
-    // ×¢Òâ£º²»ÒªÒÆ¶¯Ìì¿ÕºĞ²¢È·±£Éî¶ÈÖµÎª1(±ÜÃâ²Ã¼ô)
+    // æ³¨æ„ï¼šä¸è¦ç§»åŠ¨å¤©ç©ºç›’å¹¶ç¡®ä¿æ·±åº¦å€¼ä¸º1(é¿å…è£å‰ª)
     output.posViewport = mul(float4(input.posL, 0.0f), g_ViewProj).xyww;
     output.skyboxCoord = input.posL;
     
@@ -49,34 +43,17 @@ float4 SkyboxPS(SkyboxVSOut input) : SV_Target
     uint2 coords = input.posViewport.xy;
 
     float3 lit = float3(0.0f, 0.0f, 0.0f);
-    float skyboxSamples = 0.0f;
-#if MSAA_SAMPLES <= 1
-    [unroll]
-#endif
-    for (unsigned int sampleIndex = 0; sampleIndex < MSAA_SAMPLES; ++sampleIndex)
+    float depth = g_DepthTexture[coords];
+    if (depth >= 1.0f)
     {
-        float depth = g_DepthTexture.Load(coords, sampleIndex);
-
-        if (depth >= 1.0f)
-        {
-            ++skyboxSamples;
-        }
-        else
-        {
-            lit += g_LitTexture.Load(coords, sampleIndex).xyz;
-        }
+        lit += g_SkyboxTexture.Sample(g_SamplerDiffuse, input.skyboxCoord).rgb;
     }
-
-    // Èç¹ûÕâÀïÃ»ÓĞ³¡¾°äÖÈ¾£¬ÔòäÖÈ¾Ìì¿ÕºĞ
-    [branch]
-    if (skyboxSamples > 0)
+    else
     {
-        float3 skybox = g_SkyboxTexture.Sample(g_SamplerDiffuse, input.skyboxCoord).xyz;
-        lit += skyboxSamples * skybox;
+        lit += g_LitTexture[coords].rgb;
     }
     
-    // Resolve ¶àÖØ²ÉÑù(¼òµ¥ºĞĞÍÂË²¨)
-    return float4(lit * rcp((float) MSAA_SAMPLES), 1.0f);
+    return float4(lit, 1.0f);
 }
 
 

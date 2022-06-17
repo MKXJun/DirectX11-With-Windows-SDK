@@ -10,11 +10,10 @@
 #include "Keyboard.h"
 #include "CpuTimer.h"
 
-#ifdef USE_IMGUI
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
-#endif
+
 
 class D3DApp
 {
@@ -38,9 +37,8 @@ public:
 protected:
     bool InitMainWindow();       // 窗口初始化
     bool InitDirect3D();         // Direct3D初始化
-#ifdef USE_IMGUI
     bool InitImGui();            // ImGui初始化
-#endif
+
     void CalculateFrameStats();  // 计算每秒帧数并在窗口显示
 
 protected:
@@ -49,7 +47,7 @@ protected:
     HWND      m_hMainWnd;        // 主窗口句柄
     bool      m_AppPaused;       // 应用是否暂停
     bool      m_Minimized;       // 应用是否最小化
-    bool      m_Maximized;       // 应用是否最大化
+    bool      m_Maximized;       // 应用是否最大化InitImGui
     bool      m_Resizing;        // 窗口大小是否变化
     bool	  m_Enable4xMsaa;	 // 是否开启4倍多重采样
     UINT      m_4xMsaaQuality;   // MSAA支持的质量等级
@@ -73,11 +71,6 @@ protected:
     ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;				// 渲染目标视图
     ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;				// 深度模板视图
     D3D11_VIEWPORT m_ScreenViewport;								// 视口
-    // 键鼠输入
-    std::unique_ptr<DirectX::Mouse> m_pMouse;						// 鼠标
-    DirectX::Mouse::ButtonStateTracker m_MouseTracker;			    // 鼠标状态追踪器
-    std::unique_ptr<DirectX::Keyboard> m_pKeyboard;				    // 键盘
-    DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;	    // 键盘状态追踪器
     // 派生类应该在构造函数设置好这些自定义的初始参数
     std::wstring m_MainWndCaption;									// 主窗口标题
     int m_ClientWidth;												// 视口宽度

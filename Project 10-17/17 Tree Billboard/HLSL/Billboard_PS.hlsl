@@ -3,16 +3,16 @@
 float4 PS(BillboardVertex pIn) : SV_Target
 {
     // 每4棵树一个循环，尽量保证出现不同的树
-    float4 texColor = g_TexArray.Sample(g_Sam, float3(pIn.Tex, pIn.PrimID % 4));
+    float4 texColor = g_TexArray.Sample(g_Sam, float3(pIn.tex, pIn.PrimID % 4));
     // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
     clip(texColor.a - 0.05f);
 
     // 标准化法向量
-    pIn.NormalW = normalize(pIn.NormalW);
+    pIn.normalW = normalize(pIn.normalW);
 
     // 求出顶点指向眼睛的向量，以及顶点与眼睛的距离
-    float3 toEyeW = normalize(g_EyePosW - pIn.PosW);
-    float distToEye = distance(g_EyePosW, pIn.PosW);
+    float3 toEyeW = normalize(g_EyePosW - pIn.posW);
+    float distToEye = distance(g_EyePosW, pIn.posW);
 
     // 初始化为0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -25,7 +25,7 @@ float4 PS(BillboardVertex pIn) : SV_Target
     [unroll]
     for (int i = 0; i < 4; ++i)
     {
-        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.NormalW, toEyeW, A, D, S);
+        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -43,6 +43,6 @@ float4 PS(BillboardVertex pIn) : SV_Target
         litColor = lerp(litColor, g_FogColor, fogLerp);
     }
 
-    litColor.a = texColor.a * g_Material.Diffuse.a;
+    litColor.a = texColor.a * g_Material.diffuse.a;
     return litColor;
 }

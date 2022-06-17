@@ -42,23 +42,23 @@ cbuffer CBChangesRarely : register(b4)
 
 struct VertexInput
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
 #if defined USE_NORMAL_MAP
-    float4 TangentL : TANGENT;
+    float4 tangentL : TANGENT;
 #endif
-    float2 Tex : TEXCOORD;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexOutput
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // 在世界中的位置
-    float3 NormalW : NORMAL; // 法向量在世界中的方向
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION; // 在世界中的位置
+    float3 normalW : NORMAL; // 法向量在世界中的方向
 #if defined USE_NORMAL_MAP
     float4 TangentW : TANGENT; // 切线在世界中的方向
 #endif 
-    float2 Tex : TEXCOORD0;
+    float2 tex : TEXCOORD0;
     float4 ShadowPosH : TEXCOORD1;
 };
 
@@ -67,15 +67,15 @@ VertexOutput BasicVS(VertexInput vIn)
 {
     VertexOutput vOut;
     
-    vector posW = mul(float4(vIn.PosL, 1.0f), g_World);
+    vector posW = mul(float4(vIn.posL, 1.0f), g_World);
     
-    vOut.PosW = posW.xyz;
-    vOut.PosH = mul(posW, g_ViewProj);
-    vOut.NormalW = mul(vIn.NormalL, (float3x3) g_WorldInvTranspose);
+    vOut.posW = posW.xyz;
+    vOut.posH = mul(posW, g_ViewProj);
+    vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
 #if defined USE_NORMAL_MAP
-    vOut.TangentW = float4(mul(vIn.TangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.TangentL.w);
+    vOut.TangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
 #endif 
-    vOut.Tex = vIn.Tex;
+    vOut.tex = vIn.tex;
     vOut.ShadowPosH = mul(posW, g_ShadowTransform);
     return vOut;
 }
@@ -89,21 +89,21 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     if (texWidth > 0 && texHeight > 0)
     {
         // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
-        texColor = g_DiffuseMap.Sample(g_Sam, pIn.Tex);
+        texColor = g_DiffuseMap.Sample(g_Sam, pIn.tex);
         clip(texColor.a - 0.1f);
     }
     
     // 标准化法向量
-    pIn.NormalW = normalize(pIn.NormalW);
+    pIn.normalW = normalize(pIn.normalW);
 
     // 求出顶点指向眼睛的向量，以及顶点与眼睛的距离
-    float3 toEyeW = normalize(g_EyePosW - pIn.PosW);
-    float distToEye = distance(g_EyePosW, pIn.PosW);
+    float3 toEyeW = normalize(g_EyePosW - pIn.posW);
+    float distToEye = distance(g_EyePosW, pIn.posW);
 
 #if defined USE_NORMAL_MAP
     // 采样法线贴图
-    float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.Tex).rgb;
-    pIn.NormalW = NormalSampleToWorldSpace(normalMapSample, pIn.NormalW, pIn.TangentW);
+    float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.tex).rgb;
+    pIn.normalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.TangentW);
 #endif
     
     // 初始化为0 
@@ -122,7 +122,7 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
-        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.NormalW, toEyeW, A, D, S);
+        ComputeDirectionalLight(g_Material, g_DirLight[i], pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += shadow[i] * D;
         spec += shadow[i] * S;
@@ -131,7 +131,7 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
-        ComputePointLight(g_Material, g_PointLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputePointLight(g_Material, g_PointLight[i], pIn.posW, pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
@@ -140,14 +140,14 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     [unroll]
     for (i = 0; i < 5; ++i)
     {
-        ComputeSpotLight(g_Material, g_SpotLight[i], pIn.PosW, pIn.NormalW, toEyeW, A, D, S);
+        ComputeSpotLight(g_Material, g_SpotLight[i], pIn.posW, pIn.normalW, toEyeW, A, D, S);
         ambient += A;
         diffuse += D;
         spec += S;
     }
   
     float4 litColor = texColor * (ambient + diffuse) + spec;
-    litColor.a = texColor.a * g_Material.Diffuse.a;
+    litColor.a = texColor.a * g_Material.diffuse.a;
     return litColor;
 }
 

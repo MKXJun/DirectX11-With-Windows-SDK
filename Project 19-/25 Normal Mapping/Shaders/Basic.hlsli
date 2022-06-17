@@ -41,52 +41,52 @@ cbuffer CBChangesRarely : register(b4)
 
 struct VertexPosNormalTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosNormalTangentTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float4 TangentL : TANGENT;
-    float2 Tex : TEXCOORD;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float4 tangentL : TANGENT;
+    float2 tex : TEXCOORD;
 };
 
 struct InstancePosNormalTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float2 Tex : TEXCOORD;
-    matrix World : World;
-    matrix WorldInvTranspose : WorldInvTranspose;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float2 tex : TEXCOORD;
+    matrix world : World;
+    matrix worldInvTranspose : WorldInvTranspose;
 };
 
 struct InstancePosNormalTangentTex
 {
-    float3 PosL : POSITION;
-    float3 NormalL : NORMAL;
-    float4 TangentL : TANGENT;
-    float2 Tex : TEXCOORD;
-    matrix World : World;
-    matrix WorldInvTranspose : WorldInvTranspose;
+    float3 posL : POSITION;
+    float3 normalL : NORMAL;
+    float4 tangentL : TANGENT;
+    float2 tex : TEXCOORD;
+    matrix world : World;
+    matrix worldInvTranspose : WorldInvTranspose;
 };
 
 struct VertexPosHWNormalTex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // 在世界中的位置
-    float3 NormalW : NORMAL; // 法向量在世界中的方向
-    float2 Tex : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION; // 在世界中的位置
+    float3 normalW : NORMAL; // 法向量在世界中的方向
+    float2 tex : TEXCOORD;
 };
 
 struct VertexPosHWNormalTangentTex
 {
-    float4 PosH : SV_POSITION;
-    float3 PosW : POSITION; // 在世界中的位置
-    float3 NormalW : NORMAL; // 法向量在世界中的方向
+    float4 posH : SV_POSITION;
+    float3 posW : POSITION; // 在世界中的位置
+    float3 normalW : NORMAL; // 法向量在世界中的方向
     float4 TangentW : TANGENT; // 切线在世界中的方向
-    float2 Tex : TEXCOORD;
+    float2 tex : TEXCOORD;
 };
 

@@ -13,6 +13,8 @@ extern "C"
     __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 0x00000001;
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace
 {
     // This is just used to forward Windows messages from a global window
@@ -30,10 +32,10 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-	: m_hAppInst(hInstance),
-	m_MainWndCaption(windowName),
-	m_ClientWidth(initWidth),
-	m_ClientHeight(initHeight),
+    : m_hAppInst(hInstance),
+    m_MainWndCaption(windowName),
+    m_ClientWidth(initWidth),
+    m_ClientHeight(initHeight),
     m_hMainWnd(nullptr),
     m_AppPaused(false),
     m_Minimized(false),
@@ -61,6 +63,9 @@ D3DApp::~D3DApp()
     // 恢复所有默认设定
     if (m_pd3dImmediateContext)
         m_pd3dImmediateContext->ClearState();
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
 }
 
 HINSTANCE D3DApp::AppInst()const
@@ -98,6 +103,9 @@ int D3DApp::Run()
             if (!m_AppPaused)
             {
                 CalculateFrameStats();
+                ImGui_ImplDX11_NewFrame();
+                ImGui_ImplWin32_NewFrame();
+                ImGui::NewFrame();
                 UpdateScene(m_Timer.DeltaTime());
                 DrawScene();
             }
@@ -113,16 +121,13 @@ int D3DApp::Run()
 
 bool D3DApp::Init()
 {
-    m_pMouse = std::make_unique<DirectX::Mouse>();
-    m_pKeyboard = std::make_unique<DirectX::Keyboard>();
-
     if (!InitMainWindow())
         return false;
 
-    if (!InitDirect2D())
+    if (!InitDirect3D())
         return false;
 
-    if (!InitDirect3D())
+    if (!InitImGui())
         return false;
 
     return true;
@@ -211,6 +216,9 @@ void D3DApp::OnResize()
 
 LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(m_hMainWnd, msg, wParam, lParam))
+        return true;
+
     switch (msg)
     {
         // WM_ACTIVATE is sent when the window is activated or deactivated.  
@@ -318,37 +326,6 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         ((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
         ((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
         return 0;
-    
-        // 监测这些键盘/鼠标事件
-    case WM_INPUT:
-
-    case WM_LBUTTONDOWN:
-    case WM_MBUTTONDOWN:
-    case WM_RBUTTONDOWN:
-    case WM_XBUTTONDOWN:
-
-    case WM_LBUTTONUP:
-    case WM_MBUTTONUP:
-    case WM_RBUTTONUP:
-    case WM_XBUTTONUP:
-
-    case WM_MOUSEWHEEL:
-    case WM_MOUSEHOVER:
-    case WM_MOUSEMOVE:
-        m_pMouse->ProcessMessage(msg, wParam, lParam);
-        return 0;
-
-    case WM_KEYDOWN:
-    case WM_SYSKEYDOWN:
-    case WM_KEYUP:
-    case WM_SYSKEYUP:
-        m_pKeyboard->ProcessMessage(msg, wParam, lParam);
-        return 0;
-
-    case WM_ACTIVATEAPP:
-        m_pMouse->ProcessMessage(msg, wParam, lParam);
-        m_pKeyboard->ProcessMessage(msg, wParam, lParam);
-        return 0;
     }
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -392,15 +369,6 @@ bool D3DApp::InitMainWindow()
     ShowWindow(m_hMainWnd, SW_SHOW);
     UpdateWindow(m_hMainWnd);
     
-    return true;
-}
-
-bool D3DApp::InitDirect2D()
-{
-    HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, m_pd2dFactory.GetAddressOf()));
-    HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
-        reinterpret_cast<IUnknown**>(m_pdwriteFactory.GetAddressOf())));
-
     return true;
 }
 
@@ -568,8 +536,24 @@ bool D3DApp::InitDirect3D()
     return true;
 }
 
+bool D3DApp::InitImGui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // 允许键盘控制
+    io.ConfigWindowsMoveFromTitleBarOnly = true;              // 仅允许标题拖动
 
+    // 设置Dear ImGui风格
+    ImGui::StyleColorsDark();
 
+    // 设置平台/渲染器后端
+    ImGui_ImplWin32_Init(m_hMainWnd);
+    ImGui_ImplDX11_Init(m_pd3dDevice.Get(), m_pd3dImmediateContext.Get());
+
+    return true;
+
+}
 
 void D3DApp::CalculateFrameStats()
 {

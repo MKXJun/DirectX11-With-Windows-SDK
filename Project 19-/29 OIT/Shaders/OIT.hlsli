@@ -6,14 +6,14 @@ cbuffer CBFrame : register(b6)
 
 struct FragmentData
 {
-    uint Color;
-    float Depth;
+    uint color;
+    float depth;
 };
 
 struct FLStaticNode
 {
-    FragmentData Data;
-    uint Next;
+    FragmentData data;
+    uint next;
 };
 
 uint PackColorFromFloat4(float4 color)

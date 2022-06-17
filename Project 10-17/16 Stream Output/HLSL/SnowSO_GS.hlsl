@@ -11,23 +11,23 @@ void GS(line VertexPosColor input[2], inout LineStream<VertexPosColor> output)
     // i0         i1   i0  v0  v2  i1
     
     VertexPosColor v0, v1, v2;
-    v0.Color = lerp(input[0].Color, input[1].Color, 0.25f);
-    v1.Color = lerp(input[0].Color, input[1].Color, 0.5f);
-    v2.Color = lerp(input[0].Color, input[1].Color, 0.75f);
+    v0.color = lerp(input[0].color, input[1].color, 0.25f);
+    v1.color = lerp(input[0].color, input[1].color, 0.5f);
+    v2.color = lerp(input[0].color, input[1].color, 0.75f);
 
-    v0.PosL = lerp(input[0].PosL, input[1].PosL, 1.0f / 3.0f);
-    v2.PosL = lerp(input[0].PosL, input[1].PosL, 2.0f / 3.0f);
+    v0.posL = lerp(input[0].posL, input[1].posL, 1.0f / 3.0f);
+    v2.posL = lerp(input[0].posL, input[1].posL, 2.0f / 3.0f);
 
     // xy平面求出它的垂直单位向量
     //     
     //     |
     // ____|_____
-    float2 upDir = normalize(input[1].PosL - input[0].PosL).yx;
-    float len = length(input[1].PosL.xy - input[0].PosL.xy);
+    float2 upDir = normalize(input[1].posL - input[0].posL).yx;
+    float len = length(input[1].posL.xy - input[0].posL.xy);
     upDir.x = -upDir.x;
 
-    v1.PosL = lerp(input[0].PosL, input[1].PosL, 0.5f);
-    v1.PosL.xy += sqrt(3) / 6.0f * len * upDir;
+    v1.posL = lerp(input[0].posL, input[1].posL, 0.5f);
+    v1.posL.xy += sqrt(3) / 6.0f * len * upDir;
 
     output.Append(input[0]);
     output.Append(v0);

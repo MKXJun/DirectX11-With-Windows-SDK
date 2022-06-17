@@ -10,7 +10,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     // 被投影在了局部坐标系的xy平面，z=0
 
     float3 up = float3(0.0f, 1.0f, 0.0f);
-    float3 look = g_EyePosW - input[0].PosW;
+    float3 look = g_EyePosW - input[0].posW;
     look.y = 0.0f;  // look向量只取投影到xz平面的向量
     look = normalize(look);
     float3 right = cross(up, look);
@@ -25,7 +25,7 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     //      v0 /       v2
     //       look  
     float4 v[4];
-    float3 center = input[0].PosW;
+    float3 center = input[0].posW;
     float halfWidth = 0.5f * input[0].SizeW.x;
     float halfHeight = 0.5f * input[0].SizeW.y;
     v[0] = float4(center + halfWidth * right - halfHeight * up, 1.0f);
@@ -39,10 +39,10 @@ void GS(point PointSprite input[1], uint primID : SV_PrimitiveID,
     [unroll]
     for (int i = 0; i < 4; ++i)
     {
-        gOut.PosW = v[i].xyz;
-        gOut.PosH = mul(v[i], viewProj);
-        gOut.NormalW = look;
-        gOut.Tex = g_TexCoord[i];
+        gOut.posW = v[i].xyz;
+        gOut.posH = mul(v[i], viewProj);
+        gOut.normalW = look;
+        gOut.tex = g_TexCoord[i];
         gOut.PrimID = primID;
         output.Append(gOut);
     }

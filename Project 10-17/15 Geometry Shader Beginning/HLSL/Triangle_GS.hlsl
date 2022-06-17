@@ -21,8 +21,8 @@ void GS(triangle VertexPosHColor input[3], inout TriangleStream<VertexPosHColor>
     for (i = 0; i < 3; ++i)
     {
         vertexes[i] = input[i];
-        vertexes[i + 3].Color = (input[i].Color + input[(i + 1) % 3].Color) / 2.0f;
-        vertexes[i + 3].PosH = (input[i].PosH + input[(i + 1) % 3].PosH) / 2.0f;
+        vertexes[i + 3].color = (input[i].color + input[(i + 1) % 3].color) / 2.0f;
+        vertexes[i + 3].posH = (input[i].posH + input[(i + 1) % 3].posH) / 2.0f;
     }
 
     [unroll]

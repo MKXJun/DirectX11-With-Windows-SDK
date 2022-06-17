@@ -30,12 +30,6 @@ bool GameApp::Init()
     if (!InitResource())
         return false;
 
-#ifndef USE_IMGUI
-    // 初始化鼠标，键盘不需要
-    m_pMouse->SetWindow(m_hMainWnd);
-    m_pMouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-#endif
-
     return true;
 }
 
@@ -52,18 +46,16 @@ void GameApp::UpdateScene(float dt)
     m_VSConstantBuffer.world = XMMatrixTranspose(W);
     m_VSConstantBuffer.worldInvTranspose = XMMatrixTranspose(InverseTranspose(W));
 
-#ifdef USE_IMGUI
-        ImGuiIO& io = ImGui::GetIO();
     if (ImGui::Begin("Lighting"))
     {
         static int curr_mesh_item = 0;
-        const char* mesh_lists[] = {
+        const char* mesh_strs[] = {
             "Box",
             "Sphere",
             "Cylinder",
             "Cone"
         };
-        if (ImGui::Combo("Mesh", &curr_mesh_item, mesh_lists, ARRAYSIZE(mesh_lists)))
+        if (ImGui::Combo("Mesh", &curr_mesh_item, mesh_strs, ARRAYSIZE(mesh_strs)))
         {
             Geometry::MeshData<VertexPosNormalColor> meshData;
             switch (curr_mesh_item)
@@ -134,57 +126,6 @@ void GameApp::UpdateScene(float dt)
     ImGui::End();
     ImGui::Render();
 
-#else
-    // 键盘切换灯光类型
-    Keyboard::State state = m_pKeyboard->GetState();
-    m_KeyboardTracker.Update(state);	
-    if (m_KeyboardTracker.IsKeyPressed(Keyboard::D1))
-    {
-        m_PSConstantBuffer.dirLight = m_DirLight;
-        m_PSConstantBuffer.pointLight = PointLight();
-        m_PSConstantBuffer.spotLight = SpotLight();
-    }
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D2))
-    {
-        m_PSConstantBuffer.dirLight = DirectionalLight();
-        m_PSConstantBuffer.pointLight = m_PointLight;
-        m_PSConstantBuffer.spotLight = SpotLight();
-    }
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::D3))
-    {
-        m_PSConstantBuffer.dirLight = DirectionalLight();
-        m_PSConstantBuffer.pointLight = PointLight();
-        m_PSConstantBuffer.spotLight = m_SpotLight;
-    }
-
-    // 键盘切换模型类型
-    if (m_KeyboardTracker.IsKeyPressed(Keyboard::Q))
-    {
-        auto meshData = Geometry::CreateBox<VertexPosNormalColor>();
-        ResetMesh(meshData);
-    }
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::W))
-    {
-        auto meshData = Geometry::CreateSphere<VertexPosNormalColor>();
-        ResetMesh(meshData);
-    }
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::E))
-    {
-        auto meshData = Geometry::CreateCylinder<VertexPosNormalColor>();
-        ResetMesh(meshData);
-    }
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::R))
-    {
-        auto meshData = Geometry::CreateCone<VertexPosNormalColor>();
-        ResetMesh(meshData);
-    }
-    // 键盘切换光栅化状态
-    else if (m_KeyboardTracker.IsKeyPressed(Keyboard::S))
-    {
-        m_IsWireframeMode = !m_IsWireframeMode;
-        m_pd3dImmediateContext->RSSetState(m_IsWireframeMode ? m_pRSWireframe.Get() : nullptr);
-    }
-#endif
     // 更新常量缓冲区，让立方体转起来
     D3D11_MAPPED_SUBRESOURCE mappedData;
     HR(m_pd3dImmediateContext->Map(m_pConstantBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
@@ -207,9 +148,7 @@ void GameApp::DrawScene()
     // 绘制几何模型
     m_pd3dImmediateContext->DrawIndexed(m_IndexCount, 0, 0);
 
-#ifdef USE_IMGUI
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-#endif
 
     HR(m_pSwapChain->Present(0, 0));
 }

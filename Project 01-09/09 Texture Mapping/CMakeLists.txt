@@ -45,7 +45,11 @@ foreach(HLSL_FILE ${HLSL_FILES})
 endforeach()
 
 add_executable(09_Texture_Mapping WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
-target_link_libraries(09_Texture_Mapping d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+target_link_libraries(09_Texture_Mapping d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib winmm.lib)
+
+# ImGui
+target_link_libraries(09_Texture_Mapping ImGui)
+file(COPY imgui.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 source_group("HLSL Files" FILES ${HLSL_FILES})
 set_target_properties(09_Texture_Mapping PROPERTIES OUTPUT_NAME "09 Texture Mapping")

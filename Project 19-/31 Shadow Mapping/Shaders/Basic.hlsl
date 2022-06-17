@@ -1,7 +1,7 @@
 #ifndef BASIC_HLSL
 #define BASIC_HLSL
 
-#include "LightHelper.hlsli"
+#include "LightHelper.hlsl"
 
 Texture2D g_DiffuseMap : register(t0);
 Texture2D g_NormalMap : register(t1);
@@ -56,7 +56,7 @@ struct VertexOutput
     float3 posW : POSITION; // 在世界中的位置
     float3 normalW : NORMAL; // 法向量在世界中的方向
 #if defined USE_NORMAL_MAP
-    float4 TangentW : TANGENT; // 切线在世界中的方向
+    float4 tangentW : TANGENT; // 切线在世界中的方向
 #endif 
     float2 tex : TEXCOORD0;
     float4 ShadowPosH : TEXCOORD1;
@@ -73,7 +73,7 @@ VertexOutput BasicVS(VertexInput vIn)
     vOut.posH = mul(posW, g_ViewProj);
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
 #if defined USE_NORMAL_MAP
-    vOut.TangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
+    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
 #endif 
     vOut.tex = vIn.tex;
     vOut.ShadowPosH = mul(posW, g_ShadowTransform);
@@ -103,7 +103,7 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
 #if defined USE_NORMAL_MAP
     // 采样法线贴图
     float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.tex).rgb;
-    pIn.normalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.TangentW);
+    pIn.normalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.tangentW);
 #endif
     
     // 初始化为0 

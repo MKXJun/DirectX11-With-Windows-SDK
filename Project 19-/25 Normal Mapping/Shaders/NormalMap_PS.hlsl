@@ -22,7 +22,7 @@ float4 PS(VertexPosHWNormalTangentTex pIn) : SV_Target
 
     // 法线映射
     float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.tex).rgb;
-    float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.TangentW);
+    float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.tangentW);
 
     // 初始化为0 
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);

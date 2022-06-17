@@ -32,9 +32,11 @@ bool GameApp::Init()
     if (!m_ShadowEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
-    if (!InitResource())
+    if (!m_SSAOEffect.InitAll(m_pd3dDevice.Get()))
         return false;
 
+    if (!InitResource())
+        return false;
 
     return true;
 }
@@ -45,9 +47,12 @@ void GameApp::OnResize()
 
     m_pDepthTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
     m_pLitTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+    m_pDebugAOTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_ClientWidth / 2, m_ClientHeight / 2, DXGI_FORMAT_R8G8B8A8_UNORM);
+    m_SSAOManager.OnResize(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
 
     m_pDepthTexture->SetDebugObjectName("DepthTexture");
     m_pLitTexture->SetDebugObjectName("LitTexture");
+    m_pDebugAOTexture->SetDebugObjectName("DebugAOTexture");
 
     // 摄像机变更显示
     if (m_pCamera != nullptr)
@@ -55,43 +60,56 @@ void GameApp::OnResize()
         m_pCamera->SetFrustum(XM_PI / 3, AspectRatio(), 1.0f, 1000.0f);
         m_pCamera->SetViewPort(0.0f, 0.0f, (float)m_ClientWidth, (float)m_ClientHeight);
         m_BasicEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
+        m_SSAOEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
         m_SkyboxEffect.SetProjMatrix(m_pCamera->GetProjMatrixXM());
     }
 }
 
 void GameApp::UpdateScene(float dt)
 {
-    static const DirectX::XMFLOAT3 lightDirs[] = {
-        XMFLOAT3(1.0f / sqrtf(2.0f), -1.0f / sqrtf(2.0f), 0.0f),
-        XMFLOAT3(3.0f / sqrtf(13.0f), -2.0f / sqrtf(13.0f), 0.0f),
-        XMFLOAT3(2.0f / sqrtf(5.0f), -1.0f / sqrtf(5.0f), 0.0f),
-        XMFLOAT3(3.0f / sqrtf(10.0f), -1.0f / sqrtf(10.0f), 0.0f),
-        XMFLOAT3(4.0f / sqrtf(17.0f), -1.0f / sqrtf(17.0f), 0.0f)
-    };
-
     m_CameraController.Update(dt);
 
-    if (ImGui::Begin("Shadow Mapping"))
+    if (ImGui::Begin("Displacement Mapping"))
     {
         ImGui::Checkbox("Animate Light", &m_UpdateLight);
-        ImGui::Checkbox("Enable Normal map", &m_EnableNormalMap);
-        if (ImGui::SliderInt("Light Slope Level", &m_SlopeIndex, 0, 4))
+
+        static int curr_item = 2;
+        static const char* modes[] = {
+            "Basic",
+            "Normal Map",
+            "Displacement Map"
+        };
+        if (ImGui::Combo("Mode", &curr_item, modes, ARRAYSIZE(modes)))
+            m_RenderMode = static_cast<RenderMode>(curr_item);
+        if (m_RenderMode == RenderMode::DisplacementMap)
+            ImGui::SliderInt("Height Scale", &m_HeightScale, 0, 15);
+        static bool isWireframe = false;
+        if (ImGui::Checkbox("Wireframe Mode", &isWireframe))
+            m_RasterizerMode = static_cast<RasterizerMode>(isWireframe);
+        if (ImGui::Checkbox("Enable SSAO", &m_EnableSSAO))
         {
-            m_OriginalLightDirs[0] = lightDirs[m_SlopeIndex];
-        }
-        static float depthBias = 0.005f;
-        if (ImGui::SliderFloat("Depth Bias", &depthBias, 0.0f, 0.02f, "%.3f"))
-        {
-            m_BasicEffect.SetDepthBias(depthBias);
+            m_BasicEffect.SetSSAOEnabled(m_EnableSSAO);
+            if (m_EnableDebug && !m_EnableSSAO)
+                m_EnableDebug = false;
         }
 
-        ImGui::Checkbox("Enable Debug", &m_EnableDebug);
+        if (m_EnableSSAO)
+            ImGui::Checkbox("Debug SSAO", &m_EnableDebug);
     }
     ImGui::End();
 
-    m_SkyboxEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
+
+    m_BasicEffect.SetHeightScale(m_HeightScale / 100.0f);
+    m_ShadowEffect.SetHeightScale(m_HeightScale / 100.0f);
+    m_SSAOEffect.SetHeightScale(m_HeightScale / 100.0f);
+
     m_BasicEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
+    m_SSAOEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
+    m_SkyboxEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
+
     m_BasicEffect.SetEyePos(m_pCamera->GetPosition());
+    m_SSAOEffect.SetEyePos(m_pCamera->GetPosition());
+    m_ShadowEffect.SetEyePos(m_pCamera->GetPosition());
 
     // 更新光照
     static float theta = 0;
@@ -114,7 +132,7 @@ void GameApp::UpdateScene(float dt)
     XMVECTOR dirVec = XMLoadFloat3(&m_DirLights[0].direction);
     XMMATRIX LightView = XMMatrixLookAtLH(dirVec * 20.0f * (-2.0f), g_XMZero, g_XMIdentityR1);
     m_ShadowEffect.SetViewMatrix(LightView);
-    
+
     // 将NDC空间 [-1, +1]^2 变换到纹理坐标空间 [0, 1]^2
     static XMMATRIX T(
         0.5f, 0.0f, 0.0f, 0.0f,
@@ -123,6 +141,7 @@ void GameApp::UpdateScene(float dt)
         0.5f, 0.5f, 0.0f, 1.0f);
     // S = V * P * T
     m_BasicEffect.SetShadowTransformMatrix(LightView * XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 60.0f) * T);
+
 }
 
 void GameApp::DrawScene()
@@ -136,24 +155,28 @@ void GameApp::DrawScene()
         m_pd3dDevice->CreateRenderTargetView(pBackBuffer.Get(), &rtvDesc, m_pRenderTargetViews[m_FrameCount].ReleaseAndGetAddressOf());
     }
 
+    if (m_EnableSSAO)
+    {
+        RenderSSAO();
+    }
     RenderShadow();
     RenderForward();
     RenderSkybox();
 
     if (m_EnableDebug)
     {
-        if (ImGui::Begin("Depth Buffer", &m_EnableDebug))
+        if (ImGui::Begin("SSAO Buffer", &m_EnableDebug))
         {
-            CD3D11_VIEWPORT vp(0.0f, 0.0f, (float)m_pDebugShadowTexture->GetWidth(), (float)m_pDebugShadowTexture->GetHeight());
-            m_ShadowEffect.RenderDepthToTexture(
+            CD3D11_VIEWPORT vp(0.0f, 0.0f, (float)m_pDebugAOTexture->GetWidth(), (float)m_pDebugAOTexture->GetHeight());
+            m_SSAOEffect.RenderAmbientOcclusionToTexture(
                 m_pd3dImmediateContext.Get(),
-                m_pShadowMapTexture->GetShaderResource(),
-                m_pDebugShadowTexture->GetRenderTarget(),
+                m_SSAOManager.GetAmbientOcclusionTexture(),
+                m_pDebugAOTexture->GetRenderTarget(),
                 vp);
-            
+
             ImVec2 winSize = ImGui::GetWindowSize();
-            float smaller = (std::min)(winSize.x - 20, winSize.y - 36);
-            ImGui::Image(m_pDebugShadowTexture->GetShaderResource(), ImVec2(smaller, smaller));
+            float smaller = (std::min)((winSize.x - 20) / AspectRatio(), winSize.y - 36);
+            ImGui::Image(m_pDebugAOTexture->GetShaderResource(), ImVec2(smaller * AspectRatio(), smaller));
         }
         ImGui::End();
     }
@@ -163,9 +186,32 @@ void GameApp::DrawScene()
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-
-
     HR(m_pSwapChain->Present(0, m_IsDxgiFlipModel ? DXGI_PRESENT_ALLOW_TEARING : 0));
+}
+
+void GameApp::RenderSSAO()
+{
+    // Pass 1: 绘制场景
+    m_SSAOManager.Begin(m_pd3dImmediateContext.Get(), m_pDepthTexture->GetDepthStencil(), m_pCamera->GetViewPort());
+    {
+        if (m_RenderMode == RenderMode::DisplacementMap)
+            m_SSAOEffect.SetRenderNormalDepthMapWithDisplacement(m_pd3dImmediateContext.Get());
+        else
+            m_SSAOEffect.SetRenderNormalDepthMap(m_pd3dImmediateContext.Get());
+        m_SSAOEffect.SetRasterizerMode(m_RasterizerMode);
+        DrawScene<SSAOEffect>(m_SSAOEffect, [&](SSAOEffect& effect, ID3D11DeviceContext* deviceContext) {
+            effect.SetRenderNormalDepthMap(deviceContext);
+            effect.SetRasterizerMode(m_RasterizerMode);
+            });
+    }
+    m_SSAOManager.End(m_pd3dImmediateContext.Get());
+
+    // Pass 2: 生成AO
+    m_SSAOManager.RenderToSSAOTexture(m_pd3dImmediateContext.Get(), m_SSAOEffect, *m_pCamera);
+
+    // Pass 3: 混合
+    m_SSAOManager.BlurAmbientMap(m_pd3dImmediateContext.Get(), m_SSAOEffect);
+
 }
 
 void GameApp::RenderShadow()
@@ -175,35 +221,45 @@ void GameApp::RenderShadow()
     m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, m_pShadowMapTexture->GetDepthStencil());
     m_pd3dImmediateContext->RSSetViewports(1, &shadowViewport);
 
-
     m_ShadowEffect.SetRenderDepthOnly(m_pd3dImmediateContext.Get());
-    DrawScene<ShadowEffect>(m_ShadowEffect);
+    DrawScene(m_ShadowEffect);
 }
+
 void GameApp::RenderForward()
 {
     float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     ID3D11RenderTargetView* pRTVs[]{ m_pLitTexture->GetRenderTarget() };
     m_pd3dImmediateContext->ClearRenderTargetView(pRTVs[0], black);
-    m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    // 开启SSAO时不要清空深度缓冲区，因为要使用相等比较
+    if (!m_EnableSSAO)
+    {
+        m_pd3dImmediateContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    }
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, m_pDepthTexture->GetDepthStencil());
     D3D11_VIEWPORT vp = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &vp);
 
     m_BasicEffect.SetTextureShadowMap(m_pShadowMapTexture->GetShaderResource());
+    m_BasicEffect.SetTextureAmbientOcclusion(m_EnableSSAO ? m_SSAOManager.GetAmbientOcclusionTexture() : nullptr);
 
-    if (m_EnableNormalMap)
-        m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
-    else
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
-    
-    DrawScene<BasicEffect>(m_BasicEffect, [](BasicEffect& effect, ID3D11DeviceContext* deviceContext) {
+    switch (m_RenderMode)
+    {
+    case GameApp::RenderMode::Basic: m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get()); break;
+    case GameApp::RenderMode::NormalMap: m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get()); break;
+    case GameApp::RenderMode::DisplacementMap: m_BasicEffect.SetRenderWithDisplacementMap(m_pd3dImmediateContext.Get()); break;
+    default: break;
+    }
+    m_BasicEffect.SetRasterizerMode(m_RasterizerMode);
+    DrawScene<BasicEffect>(m_BasicEffect, [&](BasicEffect& effect, ID3D11DeviceContext* deviceContext) {
         effect.SetRenderDefault(deviceContext);
+        effect.SetRasterizerMode(m_RasterizerMode);
         });
 
-
     m_BasicEffect.SetTextureShadowMap(nullptr);
+    m_BasicEffect.SetTextureAmbientOcclusion(nullptr);
     m_BasicEffect.Apply(m_pd3dImmediateContext.Get());
 }
+
 void GameApp::RenderSkybox()
 {
     D3D11_VIEWPORT skyboxViewport = m_pCamera->GetViewPort();
@@ -214,7 +270,7 @@ void GameApp::RenderSkybox()
     m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
     m_SkyboxEffect.SetDepthTexture(m_pDepthTexture->GetShaderResource());
     m_SkyboxEffect.SetLitTexture(m_pLitTexture->GetShaderResource());
-    
+
     // 由于全屏绘制，不需要用到深度缓冲区，也就不需要清空后备缓冲区了
     ID3D11RenderTargetView* pRTVs[] = { GetBackBufferRTV() };
     m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
@@ -243,28 +299,46 @@ bool GameApp::InitResource()
 
     // ******************
     // 初始化阴影贴图和特效
+    //
     m_pShadowMapTexture = std::make_unique<Depth2D>(m_pd3dDevice.Get(), 2048, 2048);
-    m_pDebugShadowTexture = std::make_unique<Texture2D>(m_pd3dDevice.Get(), 2048, 2048, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     m_pShadowMapTexture->SetDebugObjectName("ShadowMapTexture");
-    m_pDebugShadowTexture->SetDebugObjectName("DebugShadowTexture");
 
+    // 开启纹理、阴影、SSAO
     m_BasicEffect.SetDepthBias(0.005f);
+    m_BasicEffect.SetSSAOEnabled(m_EnableSSAO);
     m_BasicEffect.SetViewMatrix(camera->GetViewMatrixXM());
     m_BasicEffect.SetProjMatrix(camera->GetProjMatrixXM());
+    m_BasicEffect.SetHeightScale(0.07f);
+    m_BasicEffect.SetTessInfo(1.0f, 25.0f, 1.0f, 5.0f);
 
     m_ShadowEffect.SetProjMatrix(XMMatrixOrthographicLH(40.0f, 40.0f, 20.0f, 60.0f));
+    m_ShadowEffect.SetHeightScale(0.07f);
+    m_ShadowEffect.SetTessInfo(1.0f, 25.0f, 1.0f, 5.0f);
+
+
+    m_SSAOEffect.SetViewMatrix(camera->GetViewMatrixXM());
+    m_SSAOEffect.SetProjMatrix(camera->GetProjMatrixXM());
+    m_SSAOEffect.SetHeightScale(0.07f);
+    m_SSAOEffect.SetTessInfo(1.0f, 25.0f, 1.0f, 5.0f);
 
     m_SkyboxEffect.SetViewMatrix(camera->GetViewMatrixXM());
     m_SkyboxEffect.SetProjMatrix(camera->GetProjMatrixXM());
 
     // ******************
+    // 初始化SSAO管理
+    //
+    m_SSAOManager.InitResource(m_pd3dDevice.Get(), m_ClientWidth, m_ClientHeight);
+
+    // ******************
     // 初始化对象
     //
-    
+
     // 地面
     {
-        Model* pModel = m_ModelManager.CreateFromGeometry("Ground", Geometry::CreatePlane(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
+        
+        Model* pModel = m_ModelManager.CreateFromGeometry("Ground", 
+            Geometry::CreateGrid(XMFLOAT2(20.0f, 30.0f), XMUINT2(40, 50), XMFLOAT2(6.0f, 9.0f)));
         pModel->SetDebugObjectName("Ground");
         m_TextureManager.CreateTexture("..\\Texture\\floor.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\floor.dds");
@@ -330,7 +404,7 @@ bool GameApp::InitResource()
         houseTransform.SetScale(0.01f, 0.01f, 0.01f);
         houseTransform.SetPosition(0.0f, -(houseBox.Center.y - houseBox.Extents.y + 3.0f), 0.0f);
     }
-    
+
     // 天空盒
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());

@@ -37,14 +37,14 @@ struct GeometryOut
 
 struct IsolinePatchTess
 {
-    float EdgeTess[2] : SV_TessFactor;
+    float edgeTess[2] : SV_TessFactor;
     
     // 可以在下面为每个面片附加所需的额外信息
 };
 
 struct TriPatchTess
 {
-    float EdgeTess[3] : SV_TessFactor;
+    float edgeTess[3] : SV_TessFactor;
     float InsideTess : SV_InsideTessFactor;
     
     // 可以在下面为每个面片附加所需的额外信息
@@ -52,7 +52,7 @@ struct TriPatchTess
 
 struct QuadPatchTess
 {
-    float EdgeTess[4] : SV_TessFactor;
+    float edgeTess[4] : SV_TessFactor;
     float InsideTess[2] : SV_InsideTessFactor;
     
     // 可以在下面为每个面片附加所需的额外信息
@@ -63,8 +63,8 @@ IsolinePatchTess IsolineConstantHS(InputPatch<VertexOut, 4> patch, uint patchID 
 {
     IsolinePatchTess pt;
     
-    pt.EdgeTess[0] = g_IsolineEdgeTess[0];  // 未知
-    pt.EdgeTess[1] = g_IsolineEdgeTess[1];  // 段数
+    pt.edgeTess[0] = g_IsolineEdgeTess[0];  // 未知
+    pt.edgeTess[1] = g_IsolineEdgeTess[1];  // 段数
     
     return pt;
 }
@@ -73,9 +73,9 @@ TriPatchTess TriConstantHS(InputPatch<VertexOut, 3> patch, uint patchID : SV_Pri
 {
     TriPatchTess pt;
     
-    pt.EdgeTess[0] = g_TriEdgeTess[0];
-    pt.EdgeTess[1] = g_TriEdgeTess[1];
-    pt.EdgeTess[2] = g_TriEdgeTess[2];
+    pt.edgeTess[0] = g_TriEdgeTess[0];
+    pt.edgeTess[1] = g_TriEdgeTess[1];
+    pt.edgeTess[2] = g_TriEdgeTess[2];
     pt.InsideTess = g_TriInsideTess;
     
     return pt;
@@ -85,10 +85,10 @@ QuadPatchTess QuadConstantHS(InputPatch<VertexOut, 4> patch, uint patchID : SV_P
 {
     QuadPatchTess pt;
     
-    pt.EdgeTess[0] = g_QuadEdgeTess[0];
-    pt.EdgeTess[1] = g_QuadEdgeTess[1];
-    pt.EdgeTess[2] = g_QuadEdgeTess[2];
-    pt.EdgeTess[3] = g_QuadEdgeTess[3];
+    pt.edgeTess[0] = g_QuadEdgeTess[0];
+    pt.edgeTess[1] = g_QuadEdgeTess[1];
+    pt.edgeTess[2] = g_QuadEdgeTess[2];
+    pt.edgeTess[3] = g_QuadEdgeTess[3];
     pt.InsideTess[0] = g_QuadInsideTess[0];
     pt.InsideTess[1] = g_QuadInsideTess[1];
     
@@ -99,10 +99,10 @@ QuadPatchTess QuadPatchConstantHS(InputPatch<VertexOut, 16> patch, uint patchID 
 {
     QuadPatchTess pt;
     
-    pt.EdgeTess[0] = g_QuadEdgeTess[0];
-    pt.EdgeTess[1] = g_QuadEdgeTess[1];
-    pt.EdgeTess[2] = g_QuadEdgeTess[2];
-    pt.EdgeTess[3] = g_QuadEdgeTess[3];
+    pt.edgeTess[0] = g_QuadEdgeTess[0];
+    pt.edgeTess[1] = g_QuadEdgeTess[1];
+    pt.edgeTess[2] = g_QuadEdgeTess[2];
+    pt.edgeTess[3] = g_QuadEdgeTess[3];
     pt.InsideTess[0] = g_QuadInsideTess[0];
     pt.InsideTess[1] = g_QuadInsideTess[1];
     

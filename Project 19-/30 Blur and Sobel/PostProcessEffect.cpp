@@ -206,6 +206,7 @@ void PostProcessEffect::ComputeGaussianBlurX(
     ID3D11UnorderedAccessView* output, 
     uint32_t width, uint32_t height)
 {
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     auto pPass = pImpl->m_pEffectHelper->GetEffectPass("BlurHorz");
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Weights")->SetRaw(pImpl->m_Weights);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_BlurRadius")->SetSInt(pImpl->m_BlurRadius);
@@ -228,6 +229,7 @@ void PostProcessEffect::ComputeGaussianBlurY(
     ID3D11UnorderedAccessView* output,
     uint32_t width, uint32_t height)
 {
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     auto pPass = pImpl->m_pEffectHelper->GetEffectPass("BlurVert");
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Weights")->SetRaw(pImpl->m_Weights);
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_BlurRadius")->SetSInt(pImpl->m_BlurRadius);

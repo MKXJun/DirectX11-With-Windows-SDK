@@ -10,7 +10,7 @@ VertexPosHWNormalTangentTex VS(VertexPosNormalTangentTex vIn)
     vOut.posW = posW.xyz;
     vOut.posH = mul(posW, g_ViewProj);
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
-    vOut.TangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
+    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
     vOut.tex = vIn.tex;
     return vOut;
 }

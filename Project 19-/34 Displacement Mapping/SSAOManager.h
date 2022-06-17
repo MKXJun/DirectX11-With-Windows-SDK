@@ -38,9 +38,7 @@ public:
 
 
 
-    // 开始绘制场景到法向量/深度图
-    // 缓存当前RTV、DSV和视口
-    // 当我们渲染到法向量/深度图时，需要传递程序使用的深度缓冲区
+    // 绑定深度缓冲区、法线/深度图到管线并初始化
     void Begin(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* dsv, const D3D11_VIEWPORT& vp);
     // 完成法向量/深度图绘制后清除绑定
     void End(ID3D11DeviceContext* deviceContext);

@@ -31,6 +31,7 @@ void SSAOManager::OnResize(ID3D11Device* device, int width, int height)
 
 void SSAOManager::Begin(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* dsv, const D3D11_VIEWPORT& vp)
 {
+
     // 将指定的DSV绑定到管线上
     ID3D11RenderTargetView* pRTVs[1] = { m_pNormalDepthTexture->GetRenderTarget() };
     deviceContext->OMSetRenderTargets(1, pRTVs, dsv);

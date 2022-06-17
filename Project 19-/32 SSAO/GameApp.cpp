@@ -185,9 +185,10 @@ void GameApp::DrawScene()
 void GameApp::RenderSSAO()
 {
     // Pass 1: 绘制场景
-    m_SSAOManager.Begin(m_pd3dImmediateContext.Get(), m_SSAOEffect, m_pDepthTexture->GetDepthStencil(), m_pCamera->GetViewPort());
+    m_SSAOManager.Begin(m_pd3dImmediateContext.Get(), m_pDepthTexture->GetDepthStencil(), m_pCamera->GetViewPort());
     {
-        DrawScene(m_SSAOEffect);
+        m_SSAOEffect.SetRenderNormalDepthMap(m_pd3dImmediateContext.Get());
+        DrawScene<SSAOEffect>(m_SSAOEffect);
     }
     m_SSAOManager.End(m_pd3dImmediateContext.Get());
 
@@ -207,7 +208,7 @@ void GameApp::RenderShadow()
     m_pd3dImmediateContext->RSSetViewports(1, &shadowViewport);
 
     m_ShadowEffect.SetRenderDepthOnly(m_pd3dImmediateContext.Get());
-    DrawScene(m_ShadowEffect);
+    DrawScene<ShadowEffect>(m_ShadowEffect);
 }
 
 void GameApp::RenderForward()
@@ -227,31 +228,13 @@ void GameApp::RenderForward()
     m_BasicEffect.SetTextureShadowMap(m_pShadowMapTexture->GetShaderResource());
     m_BasicEffect.SetTextureAmbientOcclusion(m_EnableSSAO ? m_SSAOManager.GetAmbientOcclusionTexture() : nullptr);
 
-    
     if (m_EnableNormalMap)
-    {
         m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
-        // 地面       
-        m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
-
-        // 石柱
-        for (auto& cylinder : m_Cylinders)
-            cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
-
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
-        // 石球
-        for (auto& sphere : m_Spheres)
-            sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
-
-        // 房屋
-        m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
-    }
     else
-    {
         m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
-        DrawScene(m_BasicEffect);
-    }
-    
+    DrawScene<BasicEffect>(m_BasicEffect, [](BasicEffect& effect, ID3D11DeviceContext* deviceContext) {
+        effect.SetRenderDefault(deviceContext);
+        });
 
     m_BasicEffect.SetTextureShadowMap(nullptr);
     m_BasicEffect.SetTextureAmbientOcclusion(nullptr);
@@ -279,23 +262,6 @@ void GameApp::RenderSkybox()
     m_SkyboxEffect.SetDepthTexture(nullptr);
     m_SkyboxEffect.SetLitTexture(nullptr);
     m_SkyboxEffect.Apply(m_pd3dImmediateContext.Get());
-}
-
-void GameApp::DrawScene(IEffect& effect)
-{
-    // 地面
-    m_Ground.Draw(m_pd3dImmediateContext.Get(), effect);
-
-    // 石柱
-    for (auto& cylinder : m_Cylinders)
-        cylinder.Draw(m_pd3dImmediateContext.Get(), effect);
-
-    // 石球
-    for (auto& sphere : m_Spheres)
-        sphere.Draw(m_pd3dImmediateContext.Get(), effect);
-
-    // 房屋
-    m_House.Draw(m_pd3dImmediateContext.Get(), effect);
 }
 
 bool GameApp::InitResource()

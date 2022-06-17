@@ -116,6 +116,7 @@ void PostProcessEffect::RenderScreenFade(
     const D3D11_VIEWPORT& vp, 
     float fadeAmount)
 {
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     deviceContext->RSSetViewports(1, &vp);
     deviceContext->OMSetRenderTargets(1, &output, nullptr);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Tex", input);
@@ -152,6 +153,7 @@ void PostProcessEffect::RenderMinimap(
     ID3D11RenderTargetView* output, 
     const D3D11_VIEWPORT& vp)
 {
+    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     deviceContext->RSSetViewports(1, &vp);
     deviceContext->OMSetRenderTargets(1, &output, nullptr);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Tex", input);

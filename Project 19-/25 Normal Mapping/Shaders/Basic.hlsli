@@ -86,7 +86,7 @@ struct VertexPosHWNormalTangentTex
     float4 posH : SV_POSITION;
     float3 posW : POSITION; // 在世界中的位置
     float3 normalW : NORMAL; // 法向量在世界中的方向
-    float4 TangentW : TANGENT; // 切线在世界中的方向
+    float4 tangentW : TANGENT; // 切线在世界中的方向
     float2 tex : TEXCOORD;
 };
 

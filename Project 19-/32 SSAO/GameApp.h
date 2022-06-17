@@ -31,7 +31,28 @@ public:
     void RenderForward();
     void RenderSkybox();
 
-    void DrawScene(IEffect& effect);
+    template<class Effect>
+    void DrawScene(Effect& effect, std::function<void(Effect&, ID3D11DeviceContext*)> func = [](Effect&, ID3D11DeviceContext*) {})
+    {
+        // 这些物体有法线贴图
+        {
+            // 地面       
+            m_Ground.Draw(m_pd3dImmediateContext.Get(), effect);
+
+            // 石柱
+            for (auto& cylinder : m_Cylinders)
+                cylinder.Draw(m_pd3dImmediateContext.Get(), effect);
+        }
+
+        // 没有法线贴图的物体调用普通绘制
+        func(effect, m_pd3dImmediateContext.Get());
+        // 石球
+        for (auto& sphere : m_Spheres)
+            sphere.Draw(m_pd3dImmediateContext.Get(), effect);
+
+        // 房屋
+        m_House.Draw(m_pd3dImmediateContext.Get(), effect);
+    }
 
 private:
     bool InitResource();

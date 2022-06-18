@@ -23,7 +23,7 @@ cbuffer CBFixed : register(b1)
     float3 g_AccelW;
 }
 
-// 用于贴图到粒子上的纹理数组
+// 用于贴图到粒子上的纹理
 Texture2D g_TextureInput : register(t0);
 
 // 用于在着色器中生成随机数的纹理

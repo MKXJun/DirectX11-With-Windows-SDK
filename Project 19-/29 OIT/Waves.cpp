@@ -268,8 +268,9 @@ void GpuWaves::Draw(ID3D11DeviceContext* deviceContext, BasicEffect& effect)
     GameObject::Draw(deviceContext, effect);
 
     // 立即撤下位移贴图的绑定跟关闭水波绘制状态
-    effect.SetTextureDisplacement(nullptr, deviceContext);
+    effect.SetTextureDisplacement(nullptr);
     effect.SetWavesStates(false);
+    effect.Apply(deviceContext);
 }
 
 

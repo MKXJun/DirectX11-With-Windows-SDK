@@ -56,9 +56,9 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
     // 带法线贴图的绘制
-    void SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext);
+    void SetRenderWithNormalMap();
 
     // 天空盒
     void SetTextureCube(ID3D11ShaderResourceView* textureCube);
@@ -128,9 +128,9 @@ public:
     //
 
     // 仅写入深度图
-    void SetRenderDepthOnly(ID3D11DeviceContext* deviceContext);
+    void SetRenderDepthOnly();
     // Alpha裁剪绘制(处理具有透明度的物体)
-    void SetRenderAlphaClip(ID3D11DeviceContext* deviceContext);
+    void SetRenderAlphaClip();
 
     // 绘制深度图到纹理
     void RenderDepthToTexture(ID3D11DeviceContext* deviceContext,
@@ -192,7 +192,7 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     // 设置深度图
     void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);

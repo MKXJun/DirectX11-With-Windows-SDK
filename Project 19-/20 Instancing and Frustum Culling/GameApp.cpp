@@ -175,7 +175,7 @@ void GameApp::DrawScene()
     else
     {
         // 遍历的形式逐个绘制
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderDefault();
         if (m_EnableFrustumCulling)
         {
             size_t sz = m_AcceptedIndices.size();
@@ -202,7 +202,7 @@ void GameApp::DrawScene()
     // 绘制地面
     if (m_SceneMode == 0)
     {
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderDefault();
         m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     }
 

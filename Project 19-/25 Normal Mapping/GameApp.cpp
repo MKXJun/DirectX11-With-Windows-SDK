@@ -208,7 +208,7 @@ void GameApp::DrawScene()
             ID3D11RenderTargetView* pRTVs[]{ m_pDebugDynamicCubeTexture->GetRenderTarget() };
             m_pd3dImmediateContext->RSSetViewports(1, &viewport);
             m_pd3dImmediateContext->OMSetRenderTargets(1, pRTVs, nullptr);
-            m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+            m_SkyboxEffect.SetRenderDefault();
             m_SkyboxEffect.SetViewMatrix(m_pDebugCamera->GetViewMatrixXM());
             m_SkyboxEffect.SetProjMatrix(m_pDebugCamera->GetProjMatrixXM());
             m_DebugSkybox.Draw(m_pd3dImmediateContext.Get(), m_SkyboxEffect);
@@ -423,7 +423,7 @@ void GameApp::DrawScene(bool drawCenterSphere, const Camera& camera, ID3D11Rende
     m_BasicEffect.SetViewMatrix(camera.GetViewMatrixXM());
     m_BasicEffect.SetProjMatrix(camera.GetProjMatrixXM());
     m_BasicEffect.SetEyePos(camera.GetPosition());
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
 
     // 只绘制球体的反射效果
     if (drawCenterSphere)
@@ -440,9 +440,9 @@ void GameApp::DrawScene(bool drawCenterSphere, const Camera& camera, ID3D11Rende
     m_BasicEffect.SetRefractionEnabled(false);
     
     if (m_EnableNormalMap)
-        m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderWithNormalMap();
     else
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderDefault();
 
     // 绘制地面
     m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
@@ -465,7 +465,7 @@ void GameApp::DrawScene(bool drawCenterSphere, const Camera& camera, ID3D11Rende
     // 绘制天空盒
     m_SkyboxEffect.SetViewMatrix(camera.GetViewMatrixXM());
     m_SkyboxEffect.SetProjMatrix(camera.GetProjMatrixXM());
-    m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_SkyboxEffect.SetRenderDefault();
     m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_SkyboxEffect);
     
 }

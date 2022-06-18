@@ -63,7 +63,7 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     // 各种类型灯光允许的最大数目
     static const int maxLights = 5;

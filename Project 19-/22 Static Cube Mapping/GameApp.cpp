@@ -116,7 +116,7 @@ void GameApp::DrawScene()
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
     // 绘制模型
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
     m_BasicEffect.SetReflectionEnabled(true);
     m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
@@ -126,7 +126,7 @@ void GameApp::DrawScene()
 
 
     // 绘制天空盒
-    m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_SkyboxEffect.SetRenderDefault();
     m_Skybox.Draw(m_pd3dImmediateContext.Get(), m_SkyboxEffect);
 
 

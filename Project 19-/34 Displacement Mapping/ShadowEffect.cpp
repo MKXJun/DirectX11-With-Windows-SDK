@@ -29,6 +29,8 @@ public:
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
@@ -160,24 +162,24 @@ bool ShadowEffect::InitAll(ID3D11Device* device)
     return true;
 }
 
-void ShadowEffect::SetRenderDepthOnly(ID3D11DeviceContext* deviceContext, bool enableAlphaClip)
+void ShadowEffect::SetRenderDepthOnly(bool enableAlphaClip)
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     if (enableAlphaClip)
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("DepthAlphaClip");
     else
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("DepthOnly");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
-void ShadowEffect::SetRenderDepthOnlyWithDisplacement(ID3D11DeviceContext* deviceContext, bool enableAlphaClip)
+void ShadowEffect::SetRenderDepthOnlyWithDisplacement(bool enableAlphaClip)
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     if (enableAlphaClip)
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("TessDepthAlphaClip");
     else
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("TessDepthOnly");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
 }
 
 void ShadowEffect::RenderDepthToTexture(
@@ -234,6 +236,8 @@ void ShadowEffect::SetMaterial(const Material& material)
 MeshDataInput ShadowEffect::GetInputData(const MeshData& meshData)
 {
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
     input.pVertexBuffers = {
         meshData.m_pVertices.Get(),
         meshData.m_pNormals.Get(),

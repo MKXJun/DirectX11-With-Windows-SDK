@@ -56,7 +56,7 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     void SetTextureCube(ID3D11ShaderResourceView* textureCube);
 
@@ -123,7 +123,7 @@ public:
     // SkyboxEffect
     //
 
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     // 应用常量缓冲区和纹理资源的变更
     void Apply(ID3D11DeviceContext* deviceContext) override;

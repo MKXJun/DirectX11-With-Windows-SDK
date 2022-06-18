@@ -31,6 +31,8 @@ public:
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
     ComPtr<ID3D11InputLayout> m_pInstancePosNormalTexLayout;
@@ -181,6 +183,8 @@ void BasicEffect::SetMaterial(const Material& material)
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
 {
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
     input.pVertexBuffers = {
         meshData.m_pVertices.Get(),
         meshData.m_pNormals.Get(),
@@ -237,18 +241,19 @@ void BasicEffect::SetFogRange(float fogRange)
 }
 
 
-void BasicEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
+void BasicEffect::SetRenderDefault()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("BasicObject");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
 void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& instancedBuffer, const GameObject& object, uint32_t numObjects)
 {
     deviceContext->IASetInputLayout(pImpl->m_pInstancePosNormalTexLayout.Get());
-    pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("BasicInstance");
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    auto pPass = pImpl->m_pEffectHelper->GetEffectPass("BasicInstance");
+
 
     XMMATRIX V = XMLoadFloat4x4(&pImpl->m_View);
     XMMATRIX P = XMLoadFloat4x4(&pImpl->m_Proj);
@@ -262,7 +267,7 @@ void BasicEffect::DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& inst
     for (size_t i = 0; i < sz; ++i)
     {
         SetMaterial(pModel->materials[pModel->meshdatas[i].m_MaterialIndex]);
-        pImpl->m_pCurrEffectPass->Apply(deviceContext);
+        pPass->Apply(deviceContext);
 
         MeshDataInput input = GetInputData(pModel->meshdatas[i]);
         input.pVertexBuffers.back() = instancedBuffer.GetBuffer();

@@ -244,14 +244,14 @@ void GameApp::RenderForward()
 
     switch (m_RenderMode)
     {
-    case GameApp::RenderMode::Basic: m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get()); break;
-    case GameApp::RenderMode::NormalMap: m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get()); break;
-    case GameApp::RenderMode::DisplacementMap: m_BasicEffect.SetRenderWithDisplacementMap(m_pd3dImmediateContext.Get()); break;
+    case GameApp::RenderMode::Basic: m_BasicEffect.SetRenderDefault(); break;
+    case GameApp::RenderMode::NormalMap: m_BasicEffect.SetRenderWithNormalMap(); break;
+    case GameApp::RenderMode::DisplacementMap: m_BasicEffect.SetRenderWithDisplacementMap(); break;
     default: break;
     }
     m_BasicEffect.SetRasterizerMode(m_RasterizerMode);
     DrawScene<BasicEffect>(m_BasicEffect, [&](BasicEffect& effect, ID3D11DeviceContext* deviceContext) {
-        effect.SetRenderDefault(deviceContext);
+        effect.SetRenderDefault();
         effect.SetRasterizerMode(m_RasterizerMode);
         });
 
@@ -267,7 +267,7 @@ void GameApp::RenderSkybox()
     skyboxViewport.MaxDepth = 1.0f;
     m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
 
-    m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_SkyboxEffect.SetRenderDefault();
     m_SkyboxEffect.SetDepthTexture(m_pDepthTexture->GetShaderResource());
     m_SkyboxEffect.SetLitTexture(m_pLitTexture->GetShaderResource());
 

@@ -30,6 +30,8 @@ public:
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTangentTexLayout;
@@ -229,8 +231,9 @@ void BasicEffect::SetMaterial(const Material& material)
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
 {
-
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
     if (pImpl->m_NormalMapEnabled)
     {
         input.pVertexBuffers = {
@@ -261,36 +264,36 @@ MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
 }
 
 
-void BasicEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
+void BasicEffect::SetRenderDefault()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     if (pImpl->m_AmbientOcclusionMapEnabled)
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("BasicSsao");
     else
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Basic");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     pImpl->m_NormalMapEnabled = false;
 }
 
-void BasicEffect::SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext)
+void BasicEffect::SetRenderWithNormalMap()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTangentTexLayout.Get());
     if (pImpl->m_AmbientOcclusionMapEnabled)
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("NormalMapSsao");
     else
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("NormalMap");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTangentTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     pImpl->m_NormalMapEnabled = true;
 }
 
-void BasicEffect::SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext)
+void BasicEffect::SetRenderWithDisplacementMap()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTangentTexLayout.Get());
     if (pImpl->m_AmbientOcclusionMapEnabled)
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("TessSsao");
     else
         pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Tess");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTangentTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
     pImpl->m_NormalMapEnabled = true;
 }
 

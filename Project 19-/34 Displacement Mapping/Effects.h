@@ -58,11 +58,11 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
     // 带法线贴图的绘制
-    void SetRenderWithNormalMap(ID3D11DeviceContext* deviceContext);
+    void SetRenderWithNormalMap();
     // 带法线/位移贴图的绘制
-    void SetRenderWithDisplacementMap(ID3D11DeviceContext* deviceContext);
+    void SetRenderWithDisplacementMap();
 
     // 给当前Pass设置光栅化模式
     void SetRasterizerMode(RasterizerMode mode);
@@ -147,9 +147,9 @@ public:
     //
 
     // 仅写入深度图
-    void SetRenderDepthOnly(ID3D11DeviceContext* deviceContext, bool enableAlphaClip = false);
+    void SetRenderDepthOnly(bool enableAlphaClip = false);
     // 顶点带位移，仅写入深度图
-    void SetRenderDepthOnlyWithDisplacement(ID3D11DeviceContext* deviceContext, bool enableAlphaClip = false);
+    void SetRenderDepthOnlyWithDisplacement(bool enableAlphaClip = false);
 
     // 曲面细分
 
@@ -220,7 +220,7 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     // 设置深度图
     void SetDepthTexture(ID3D11ShaderResourceView* depthTexture);
@@ -282,9 +282,9 @@ public:
 
     // Pass1: 绘制观察空间法向量和深度贴图
 
-    void SetRenderNormalDepthMap(ID3D11DeviceContext* deviceContext, bool enableAlphaClip = false);
+    void SetRenderNormalDepthMap(bool enableAlphaClip = false);
     // 使用位移贴图
-    void SetRenderNormalDepthMapWithDisplacement(ID3D11DeviceContext* deviceContext, bool enableAlphaClip = false);
+    void SetRenderNormalDepthMapWithDisplacement(bool enableAlphaClip = false);
 
     // 给当前Pass设置光栅化模式
     void SetRasterizerMode(RasterizerMode mode);

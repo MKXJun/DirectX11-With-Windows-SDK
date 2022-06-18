@@ -29,9 +29,11 @@ public:
 
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
-    std::shared_ptr<IEffectPass> m_pCurrEffectPass;
-
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
+
+    std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     XMFLOAT4X4 m_World{}, m_View{}, m_Proj{};
 };
@@ -151,6 +153,9 @@ void BasicEffect::SetMaterial(const Material& material)
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
 {
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
+
     input.pVertexBuffers = {
         meshData.m_pVertices.Get(),
         meshData.m_pNormals.Get(),
@@ -185,11 +190,11 @@ void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_EyePosW")->SetFloatVector(3, reinterpret_cast<const float*>(&eyePos));
 }
 
-void BasicEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
+void BasicEffect::SetRenderDefault()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Basic");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
 void BasicEffect::Apply(ID3D11DeviceContext* deviceContext)

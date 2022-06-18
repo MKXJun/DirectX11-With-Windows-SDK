@@ -101,7 +101,7 @@ void GameApp::DrawScene()
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
     m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     m_House.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     

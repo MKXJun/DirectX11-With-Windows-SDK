@@ -207,7 +207,7 @@ void GameApp::RenderShadow()
     m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, m_pShadowMapTexture->GetDepthStencil());
     m_pd3dImmediateContext->RSSetViewports(1, &shadowViewport);
 
-    m_ShadowEffect.SetRenderDepthOnly(m_pd3dImmediateContext.Get());
+    m_ShadowEffect.SetRenderDepthOnly();
     DrawScene<ShadowEffect>(m_ShadowEffect);
 }
 
@@ -229,11 +229,11 @@ void GameApp::RenderForward()
     m_BasicEffect.SetTextureAmbientOcclusion(m_EnableSSAO ? m_SSAOManager.GetAmbientOcclusionTexture() : nullptr);
 
     if (m_EnableNormalMap)
-        m_BasicEffect.SetRenderWithNormalMap(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderWithNormalMap();
     else
-        m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderDefault();
     DrawScene<BasicEffect>(m_BasicEffect, [](BasicEffect& effect, ID3D11DeviceContext* deviceContext) {
-        effect.SetRenderDefault(deviceContext);
+        effect.SetRenderDefault();
         });
 
     m_BasicEffect.SetTextureShadowMap(nullptr);
@@ -248,7 +248,7 @@ void GameApp::RenderSkybox()
     skyboxViewport.MaxDepth = 1.0f;
     m_pd3dImmediateContext->RSSetViewports(1, &skyboxViewport);
 
-    m_SkyboxEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_SkyboxEffect.SetRenderDefault();
     m_SkyboxEffect.SetDepthTexture(m_pDepthTexture->GetShaderResource());
     m_SkyboxEffect.SetLitTexture(m_pLitTexture->GetShaderResource());
 

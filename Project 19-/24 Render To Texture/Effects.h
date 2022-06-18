@@ -71,7 +71,7 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
 
     // 绘制实例
     void DrawInstanced(ID3D11DeviceContext* deviceContext, Buffer& instancedBuffer, const GameObject& object, uint32_t numObjects);

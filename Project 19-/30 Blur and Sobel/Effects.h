@@ -56,25 +56,36 @@ public:
     //
 
     // 默认状态来绘制
-    void SetRenderDefault(ID3D11DeviceContext* deviceContext);
+    void SetRenderDefault();
     // 透明混合绘制
-    void SetRenderTransparent(ID3D11DeviceContext* deviceContext);
+    void SetRenderTransparent();
+
+    // OIT Pass1
+
+    // 清空OIT缓冲区
+    void ClearOITBuffers(
+        ID3D11DeviceContext* deviceContext,
+        ID3D11UnorderedAccessView* flBuffer,
+        ID3D11UnorderedAccessView* startOffsetBuffer);
+
     // 顺序无关透明度存储
     void SetRenderOITStorage(
-        ID3D11DeviceContext* deviceContext,
         ID3D11UnorderedAccessView* flBuffer,
         ID3D11UnorderedAccessView* startOffsetBuffer,
         uint32_t renderTargetWidth);
 
+    // OIT Pass2
+
     // 完成OIT渲染
-    void RenderOIT(ID3D11DeviceContext* deviceContext,
-        ID3D11ShaderResourceView* FLBuffer,
+    void RenderOIT(
+        ID3D11DeviceContext* deviceContext,
+        ID3D11ShaderResourceView* flBuffer,
         ID3D11ShaderResourceView* startOffsetBuffer,
         ID3D11ShaderResourceView* input,
         ID3D11RenderTargetView* output,
         const D3D11_VIEWPORT& vp);
 
-    void SetTextureDisplacement(ID3D11ShaderResourceView* textureDisplacement, ID3D11DeviceContext* deviceContext = nullptr);
+    void SetTextureDisplacement(ID3D11ShaderResourceView* textureDisplacement);
 
     // 各种类型灯光允许的最大数目
     static const int maxLights = 5;
@@ -100,87 +111,6 @@ private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
 };
-
-//class BasicEffect : public IEffect
-//{
-//public:
-//
-//    enum RenderType { RenderObject, RenderInstance };
-//
-//    BasicEffect();
-//    virtual ~BasicEffect() override;
-//
-//    BasicEffect(BasicEffect&& moveFrom) noexcept;
-//    BasicEffect& operator=(BasicEffect&& moveFrom) noexcept;
-//
-//    // 获取单例
-//    static BasicEffect& Get();
-//
-//    
-//
-//    // 初始化所需资源
-//    bool InitAll(ID3D11Device * device);
-//
-//
-//    // 
-//    // 渲染模式的变更
-//    //
-//
-//    // 默认状态来绘制
-//    void SetRenderDefault(ID3D11DeviceContext * deviceContext, RenderType type);
-//    // 2D默认状态绘制
-//    void Set2DRenderDefault(ID3D11DeviceContext* deviceContext);
-//    // 纹理合成渲染
-//    void SetRenderComposite(ID3D11DeviceContext* deviceContext);
-//
-//    //
-//    // 矩阵设置
-//    //
-//
-//    void XM_CALLCONV SetWorldMatrix(DirectX::FXMMATRIX W);
-//    void XM_CALLCONV SetViewMatrix(DirectX::FXMMATRIX V);
-//    void XM_CALLCONV SetProjMatrix(DirectX::FXMMATRIX P);
-//    void XM_CALLCONV SetTexTransformMatrix(DirectX::FXMMATRIX T);
-//    
-//    //
-//    // 光照、材质和纹理相关设置
-//    //
-//
-//    // 各种类型灯光允许的最大数目
-//    static const int maxLights = 5;
-//
-//    void SetDirLight(size_t pos, const DirectionalLight& dirLight);
-//    void SetPointLight(size_t pos, const PointLight& pointLight);
-//    void SetSpotLight(size_t pos, const SpotLight& spotLight);
-//
-//    void SetMaterial(const Material& material);
-//
-//    void SetTextureDiffuse(ID3D11ShaderResourceView * textureDiffuse);
-//    void SetTextureDisplacement(ID3D11ShaderResourceView * textureDisplacement);
-//    void SetTextureComposite(ID3D11ShaderResourceView* textureComposite);
-//
-//    void SetWavesStates(bool enabled, float texelSizeU = 0.0f, float texelSizeV = 0.0f, float gridSpatialStep = 0.0f);
-//
-//
-//    void SetEyePos(const DirectX::XMFLOAT3& eyePos);
-//    
-//
-//    //
-//    // 状态设置
-//    //
-//
-//    void SetFogState(bool isOn);
-//    void SetFogStart(float fogStart);
-//    void SetFogColor(DirectX::XMVECTOR fogColor);
-//    void SetFogRange(float fogRange);
-//
-//    // 应用常量缓冲区和纹理资源的变更
-//    void Apply(ID3D11DeviceContext * deviceContext) override;
-//    
-//private:
-//    class Impl;
-//    std::unique_ptr<Impl> pImpl;
-//};
 
 class PostProcessEffect
 {

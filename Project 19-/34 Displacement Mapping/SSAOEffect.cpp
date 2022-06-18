@@ -32,6 +32,8 @@ public:
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
@@ -241,8 +243,9 @@ void SSAOEffect::SetMaterial(const Material& material)
 
 MeshDataInput SSAOEffect::GetInputData(const MeshData& meshData)
 {
-
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
     input.pVertexBuffers = {
             meshData.m_pVertices.Get(),
             meshData.m_pNormals.Get(),
@@ -256,19 +259,19 @@ MeshDataInput SSAOEffect::GetInputData(const MeshData& meshData)
     return input;
 }
 
-void SSAOEffect::SetRenderNormalDepthMap(ID3D11DeviceContext* deviceContext, bool enableAlphaClip)
+void SSAOEffect::SetRenderNormalDepthMap(bool enableAlphaClip)
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout.Get();
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("SSAO_Geometry");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     pImpl->m_pCurrEffectPass->PSGetParamByName("alphaClip")->SetUInt(enableAlphaClip);
 }
 
-void SSAOEffect::SetRenderNormalDepthMapWithDisplacement(ID3D11DeviceContext* deviceContext, bool enableAlphaClip)
+void SSAOEffect::SetRenderNormalDepthMapWithDisplacement(bool enableAlphaClip)
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout.Get();
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("SSAO_Tess");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
     pImpl->m_pCurrEffectPass->PSGetParamByName("alphaClip")->SetUInt(enableAlphaClip);
 }
 

@@ -31,7 +31,10 @@ public:
     using ComPtr = Microsoft::WRL::ComPtr<T>;
 
     std::unique_ptr<EffectHelper> m_pEffectHelper;
+
     std::shared_ptr<IEffectPass> m_pCurrEffectPass;
+    ComPtr<ID3D11InputLayout> m_pCurrInputLayout;
+    D3D11_PRIMITIVE_TOPOLOGY m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
     ComPtr<ID3D11InputLayout> m_pVertexPosNormalTexLayout;
 
@@ -130,11 +133,11 @@ bool SkyboxEffect::InitAll(ID3D11Device* device)
     return true;
 }
 
-void SkyboxEffect::SetRenderDefault(ID3D11DeviceContext* deviceContext)
+void SkyboxEffect::SetRenderDefault()
 {
-    deviceContext->IASetInputLayout(pImpl->m_pVertexPosNormalTexLayout.Get());
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("Skybox");
-    deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout;
+    pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
 void XM_CALLCONV SkyboxEffect::SetWorldMatrix(DirectX::FXMMATRIX W)

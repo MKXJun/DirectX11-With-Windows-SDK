@@ -151,7 +151,7 @@ void GameApp::DrawScene()
     D3D11_VIEWPORT viewport = m_pCamera->GetViewPort();
     m_pd3dImmediateContext->RSSetViewports(1, &viewport);
 
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
 
     // 绘制不需要纹理的模型
     m_Sphere.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
@@ -233,7 +233,7 @@ bool GameApp::InitResource()
     m_BasicEffect.SetDirLight(0, dirLight);
 
     // 默认只按对象绘制
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
 
     return true;
 }

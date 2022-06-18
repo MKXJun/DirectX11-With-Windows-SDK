@@ -149,7 +149,7 @@ void GameApp::DrawScene()
     // ******************
     // 1. 绘制不透明对象
     //
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
     m_Land.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
     // ******************
@@ -157,15 +157,19 @@ void GameApp::DrawScene()
     //
     if (m_EnabledOIT)
     {
-        m_BasicEffect.SetRenderOITStorage(
+        m_BasicEffect.ClearOITBuffers(
             m_pd3dImmediateContext.Get(),
+            m_pFLStaticNodeBuffer->GetUnorderedAccess(),
+            m_pStartOffsetBuffer->GetUnorderedAccess()
+        );
+        m_BasicEffect.SetRenderOITStorage(
             m_pFLStaticNodeBuffer->GetUnorderedAccess(),
             m_pStartOffsetBuffer->GetUnorderedAccess(),
             m_ClientWidth);
     }
     else
     {
-        m_BasicEffect.SetRenderTransparent(m_pd3dImmediateContext.Get());
+        m_BasicEffect.SetRenderTransparent();
     }
     m_RedBox.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     m_YellowBox.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);

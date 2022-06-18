@@ -282,7 +282,7 @@ void GameApp::DrawScene(ID3D11RenderTargetView* pRTV, ID3D11DepthStencilView* pD
 
     m_BasicEffect.DrawInstanced(m_pd3dImmediateContext.Get(), *m_pInstancedBuffer, m_Trees, 144);
     // 绘制地面
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
     m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
     // 清空

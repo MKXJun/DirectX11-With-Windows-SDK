@@ -142,12 +142,12 @@ void GameApp::DrawScene()
     // ******************
     // 1. 绘制不透明对象
     //
-    m_BasicEffect.SetRenderDefault(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderDefault();
     m_Land.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     // ******************
     // 2. 绘制半透明/透明对象
     //
-    m_BasicEffect.SetRenderTransparent(m_pd3dImmediateContext.Get());
+    m_BasicEffect.SetRenderTransparent();
     m_WireFence.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
 
     if (m_WavesMode)

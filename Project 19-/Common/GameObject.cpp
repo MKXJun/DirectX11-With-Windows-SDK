@@ -151,6 +151,8 @@ void GameObject::Draw(ID3D11DeviceContext * deviceContext, IEffect& effect)
 
         MeshDataInput input = pEffectMeshData->GetInputData(m_pModel->meshdatas[i]);
         {
+            deviceContext->IASetInputLayout(input.pInputLayout);
+            deviceContext->IASetPrimitiveTopology(input.topology);
             deviceContext->IASetVertexBuffers(0, (uint32_t)input.pVertexBuffers.size(), 
                 input.pVertexBuffers.data(), input.strides.data(), input.offsets.data());
             deviceContext->IASetIndexBuffer(input.pIndexBuffer, input.indexCount > 65535 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, 0);

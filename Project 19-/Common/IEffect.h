@@ -20,6 +20,8 @@ struct MeshData;
 
 struct MeshDataInput
 {
+    ID3D11InputLayout* pInputLayout = nullptr;
+    D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
     std::vector<ID3D11Buffer*> pVertexBuffers;
     ID3D11Buffer* pIndexBuffer = nullptr;
     std::vector<uint32_t> strides;

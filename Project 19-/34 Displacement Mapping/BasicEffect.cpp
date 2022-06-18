@@ -193,8 +193,8 @@ bool BasicEffect::InitAll(ID3D11Device* device)
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BasicEffect.VertexPosNormalTexLayout"));
-    pImpl->m_pVertexPosNormalTangentTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("BasicEffect.VertexPosNormalTangentTexLayout"));
+    SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "BasicEffect.VertexPosNormalTexLayout");
+    SetDebugObjectName(pImpl->m_pVertexPosNormalTangentTexLayout.Get(), "BasicEffect.VertexPosNormalTangentTexLayout");
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("BasicEffect");
 

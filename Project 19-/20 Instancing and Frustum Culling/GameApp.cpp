@@ -296,7 +296,8 @@ void GameApp::CreateRandomTrees()
     m_TreeInstancedData.resize(256);
     m_TreeTransforms.resize(256);
 
-    std::mt19937 rng((uint32_t)time(nullptr));
+    std::mt19937 rng;
+    rng.seed(std::random_device()());
     std::uniform_real<float> radiusNormDist(0.0f, 30.0f);
     std::uniform_real<float> normDist;
     float theta = 0.0f;
@@ -341,7 +342,8 @@ void GameApp::CreateRandomCubes()
     m_CubeInstancedData.resize(2048);
     m_CubeTransforms.resize(2048);
 
-    std::mt19937 rng((uint32_t)time(nullptr));
+    std::mt19937 rng;
+    rng.seed(std::random_device()());
     std::uniform_real<float> radiusNormDist(0.0f, 40.0f);
     std::uniform_real<float> scaleNormDist(0.25f, 3.0f);
     std::uniform_real<float> heightNormDist(-30.0f, 70.0f);

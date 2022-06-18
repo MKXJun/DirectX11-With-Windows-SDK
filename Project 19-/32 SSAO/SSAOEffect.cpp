@@ -181,10 +181,10 @@ bool SSAOEffect::InitAll(ID3D11Device* device)
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    pImpl->m_pVertexPosNormalTexLayout->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAOEffect.VertexPosNormalTexLayout"));
-    pImpl->m_pSamNormalDepth->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAOEffect.SSNormalDepth"));
-    pImpl->m_pSamRandomVec->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAOEffect.SSRandomVec"));
-    pImpl->m_pSamBlur->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SSAOEffect.SSBlur"));
+    SetDebugObjectName(pImpl->m_pVertexPosNormalTexLayout.Get(), "SSAOEffect.VertexPosNormalTexLayout");
+    SetDebugObjectName(pImpl->m_pSamNormalDepth.Get(), "SSAOEffect.SSNormalDepth");
+    SetDebugObjectName(pImpl->m_pSamRandomVec.Get(), "SSAOEffect.SSRandomVec");
+    SetDebugObjectName(pImpl->m_pSamBlur.Get(), "SSAOEffect.SSBlur");
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("SSAOEffect");
 

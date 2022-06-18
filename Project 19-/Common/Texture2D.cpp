@@ -28,10 +28,8 @@ Texture2DBase::Texture2DBase(ID3D11Device* device,
 void Texture2DBase::SetDebugObjectName(std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)name.length(), name.data());
-    std::string str = name.data();
-    str += ".SRV";
-    m_pTextureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    ::SetDebugObjectName(m_pTexture.Get(), name);
+    ::SetDebugObjectName(m_pTextureSRV.Get(), std::string(name) + ".SRV");
 #endif
 }
 
@@ -60,9 +58,7 @@ void Texture2D::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str = name.data();
-    str += ".RTV";
-    m_pTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    ::SetDebugObjectName(m_pTextureRTV.Get(), std::string(name) + ".RTV");
 #endif
 }
 
@@ -84,9 +80,7 @@ void Texture2DMS::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str = name.data();
-    str += ".RTV";
-    m_pTextureRTV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    ::SetDebugObjectName(m_pTextureRTV.Get(), std::string(name) + ".RTV");
 #endif
 }
 
@@ -155,25 +149,12 @@ void TextureCube::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str;
     for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".RTV[" + std::to_string(i) + "]";
-        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pRenderTargetElements[i].Get(), std::string(name) + ".RTV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResourceElements[i].Get(), std::string(name) + ".SRV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".UAV[" + std::to_string(i) + "]";
-        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pUnorderedAccessElements[i].Get(), std::string(name) + ".UAV[" + std::to_string(i) + "]");
 #else
     UNREFERENCED_PARAMETER(name);
 #endif
@@ -243,25 +224,12 @@ void Texture2DArray::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str;
     for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".RTV[" + std::to_string(i) + "]";
-        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pRenderTargetElements[i].Get(), std::string(name) + ".RTV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResourceElements[i].Get(), std::string(name) + ".SRV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pUnorderedAccessElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".UAV[" + std::to_string(i) + "]";
-        m_pUnorderedAccessElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pUnorderedAccessElements[i].Get(), std::string(name) + ".UAV[" + std::to_string(i) + "]");
 #else
     UNREFERENCED_PARAMETER(name);
 #endif
@@ -312,19 +280,10 @@ Texture2DMSArray::Texture2DMSArray(ID3D11Device* device, uint32_t width, uint32_
 void Texture2DMSArray::SetDebugObjectName(std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str;
     for (size_t i = 0; i < m_pRenderTargetElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".RTV[" + std::to_string(i) + "]";
-        m_pRenderTargetElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pRenderTargetElements[i].Get(), std::string(name) + ".RTV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResourceElements[i].Get(), std::string(name) + ".SRV[" + std::to_string(i) + "]");
 #else
     UNREFERENCED_PARAMETER(name);
 #endif
@@ -383,9 +342,7 @@ void Depth2D::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str = name.data();
-    str += ".DSV";
-    m_pTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    ::SetDebugObjectName(m_pTextureDSV.Get(), std::string(name) + ".DSV");
 #endif
 }
 
@@ -408,9 +365,7 @@ void Depth2DMS::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str = name.data();
-    str += ".DSV";
-    m_pTextureDSV->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
+    ::SetDebugObjectName(m_pTextureDSV.Get(), std::string(name) + ".DSV");
 #endif
 }
 
@@ -460,19 +415,10 @@ void Depth2DArray::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str;
     for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".DSV[" + std::to_string(i) + "]";
-        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pDepthStencilElements[i].Get(), std::string(name) + ".DSV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResourceElements[i].Get(), std::string(name) + ".SRV[" + std::to_string(i) + "]");
 #else
     UNREFERENCED_PARAMETER(name);
 #endif
@@ -525,19 +471,10 @@ void Depth2DMSArray::SetDebugObjectName(std::string_view name)
 {
     Texture2DBase::SetDebugObjectName(name);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    std::string str;
     for (size_t i = 0; i < m_pDepthStencilElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".DSV[" + std::to_string(i) + "]";
-        m_pDepthStencilElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pDepthStencilElements[i].Get(), std::string(name) + ".DSV[" + std::to_string(i) + "]");
     for (size_t i = 0; i < m_pShaderResourceElements.size(); ++i)
-    {
-        str = name.data();
-        str += ".SRV[" + std::to_string(i) + "]";
-        m_pShaderResourceElements[i]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.length(), str.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResourceElements[i].Get(), std::string(name) + ".SRV[" + std::to_string(i) + "]");
 #else
     UNREFERENCED_PARAMETER(name);
 #endif

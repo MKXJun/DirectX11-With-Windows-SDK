@@ -17,9 +17,6 @@
 
 class GameApp : public D3DApp
 {
-public:
-    // 摄像机模式
-    enum class CameraMode { FirstPerson, ThirdPerson, Free };
     
 public:
     GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight);

@@ -1,4 +1,5 @@
 #include "Buffer.h"
+#include "XUtil.h"
 
 Buffer::Buffer(ID3D11Device* d3dDevice, const CD3D11_BUFFER_DESC& bufferDesc)
     : m_ByteWidth(bufferDesc.ByteWidth)
@@ -47,17 +48,11 @@ void Buffer::SetDebugObjectName(std::string_view name)
 {
 #if (defined(DEBUG) || defined(_DEBUG))
 
-    m_pBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32_t>(name.length()), name.data());
+    ::SetDebugObjectName(m_pBuffer.Get(), name);
     if (m_pShaderResource)
-    {
-        std::string srvName = std::string(name) + ".SRV";
-        m_pShaderResource->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32_t>(srvName.length()), srvName.c_str());
-    }
+        ::SetDebugObjectName(m_pShaderResource.Get(), std::string(name) + ".SRV");
     if (m_pUnorderedAccess)
-    {
-        std::string uavName = std::string(name) + ".UAV";
-        m_pUnorderedAccess->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<uint32_t>(uavName.length()), uavName.c_str());
-    }
+        ::SetDebugObjectName(m_pUnorderedAccess.Get(), std::string(name) + ".UAV");
 
 #else
     UNREFERENCED_PARAMETER(name);

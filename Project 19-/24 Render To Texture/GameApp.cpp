@@ -310,7 +310,8 @@ void GameApp::CreateRandomTrees()
             D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE));
     m_pInstancedBuffer->SetDebugObjectName("InstancedBuffer");
 
-    std::mt19937 rng((uint32_t)time(nullptr));
+    std::mt19937 rng;
+    rng.seed(std::random_device()());
     std::uniform_real<float> radiusNormDist(0.0f, 30.0f);
     std::uniform_real<float> normDist;
     float theta = 0.0f;

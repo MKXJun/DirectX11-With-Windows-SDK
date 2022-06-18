@@ -452,8 +452,8 @@ bool D3DApp::InitDirect3D()
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    m_pd3dImmediateContext->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("ImmediateContext"));
-    m_pSwapChain->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SwapChain"));
+    SetDebugObjectName(m_pd3dImmediateContext.Get(), "ImmediateContext");
+    SetDebugObjectName(m_pSwapChain.Get(), "SwapChain");
 #endif
 
     // 每当窗口被重新调整大小的时候，都需要调用这个OnResize函数。现在调用

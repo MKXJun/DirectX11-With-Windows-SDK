@@ -960,6 +960,20 @@ HRESULT EffectHelper::CreateShaderFromFile(std::string_view shaderName, std::wst
     return hr;
 }
 
+HRESULT EffectHelper::CompileShaderFromFile(std::wstring_view filename, LPCSTR entryPoint, LPCSTR shaderModel, ID3DBlob** ppShaderByteCode, ID3DBlob** ppErrorBlob, const D3D_SHADER_MACRO* pDefines, ID3DInclude* pInclude)
+{
+    uint32_t dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#ifdef _DEBUG
+    // 设置 D3DCOMPILE_DEBUG 标志用于获取着色器调试信息。该标志可以提升调试体验，
+    // 但仍然允许着色器进行优化操作
+    dwShaderFlags |= D3DCOMPILE_DEBUG;
+
+    // 在Debug环境下禁用优化以避免出现一些不合理的情况
+    dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+    return D3DCompileFromFile(filename.data(), pDefines, pInclude, entryPoint, shaderModel, dwShaderFlags, 0, ppShaderByteCode, ppErrorBlob);
+}
+
 HRESULT EffectHelper::AddGeometryShaderWithStreamOutput(std::string_view name, ID3D11Device* device, ID3D11GeometryShader* gsWithSO, ID3DBlob* blob)
 {
     if (name.empty() || !gsWithSO)

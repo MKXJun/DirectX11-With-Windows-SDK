@@ -28,6 +28,16 @@
 #endif
 
 //
+// 设置调试对象名称
+//
+
+template<class IObject>
+inline void SetDebugObjectName(IObject* pObject, std::string_view name)
+{
+    pObject->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)name.size(), name.data());
+}
+
+//
 // 文本转换函数
 //
 

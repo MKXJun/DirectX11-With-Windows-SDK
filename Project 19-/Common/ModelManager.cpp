@@ -265,44 +265,23 @@ void Model::SetDebugObjectName(std::string_view name)
         baseStr = name.data();
         baseStr += "[" + std::to_string(i) + "].";
         if (meshdatas[i].m_pVertices)
-        {
-            str = baseStr + "vertices";
-            meshdatas[i].m_pVertices->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pVertices.Get(), baseStr + "vertices");
         if (meshdatas[i].m_pNormals)
-        {
-            str = baseStr + "normals";
-            meshdatas[i].m_pNormals->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pNormals.Get(), baseStr + "normals");
         if (meshdatas[i].m_pTangents)
-        {
-            str = baseStr + "tangents";
-            meshdatas[i].m_pTangents->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pTangents.Get(), baseStr + "tangents");
         if (meshdatas[i].m_pBitangents)
-        {
-            str = baseStr + "bitangents";
-            meshdatas[i].m_pBitangents->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pBitangents.Get(), baseStr + "bitangents");
         if (meshdatas[i].m_pColors)
-        {
-            str = baseStr + "colors";
-            meshdatas[i].m_pColors->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pColors.Get(), baseStr + "colors");
         if (!meshdatas[i].m_pTexcoordArrays.empty())
         {
             size_t texSz = meshdatas[i].m_pTexcoordArrays.size();
             for (size_t j = 0; j < texSz; ++j)
-            {
-                str = baseStr + "uv" + std::to_string(j);
-                meshdatas[i].m_pTexcoordArrays[j]->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-            }
+                ::SetDebugObjectName(meshdatas[i].m_pTexcoordArrays[j].Get(), baseStr + "uv" + std::to_string(j));
         }
         if (meshdatas[i].m_pIndices)
-        {
-            str = baseStr + "indices";
-            meshdatas[i].m_pIndices->SetPrivateData(WKPDID_D3DDebugObjectName, (uint32_t)str.size(), str.data());
-        }
+            ::SetDebugObjectName(meshdatas[i].m_pIndices.Get(), baseStr + "indices");
     }
 #else
     UNREFERENCED_PARAMETER(name);

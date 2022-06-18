@@ -117,7 +117,7 @@ bool SkyboxEffect::InitAll(ID3D11Device* device)
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
-    pImpl->m_pVertexPosLayout->SetPrivateData(WKPDID_D3DDebugObjectName, LEN_AND_STR("SkyboxEffect.VertexPosLayout"));
+    SetDebugObjectName(pImpl->m_pVertexPosLayout.Get(), "SkyboxEffect.VertexPosLayout");
 #endif
     pImpl->m_pEffectHelper->SetDebugObjectName("SkyboxEffect");
 

@@ -5,8 +5,7 @@
 using namespace DirectX;
 
 GameApp::GameApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-    : D3DApp(hInstance, windowName, initWidth, initHeight),
-    m_CameraMode(CameraMode::ThirdPerson)
+    : D3DApp(hInstance, windowName, initWidth, initHeight)
 {
 }
 

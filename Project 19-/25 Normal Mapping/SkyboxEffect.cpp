@@ -1,10 +1,10 @@
 #include "Effects.h"
-#include "XUtil.h"
-#include "RenderStates.h"
-#include "EffectHelper.h"
-#include "DXTrace.h"
-#include "Vertex.h"
-#include "TextureManager.h"
+#include <XUtil.h>
+#include <RenderStates.h>
+#include <EffectHelper.h>
+#include <DXTrace.h>
+#include <Vertex.h>
+#include <TextureManager.h>
 using namespace DirectX;
 
 //

@@ -75,12 +75,18 @@ ID3D11ShaderResourceView* TextureManager::CreateTexture(std::string_view filenam
             // 生成mipmap
             if (enableMips)
                 m_pDeviceContext->GenerateMips(res.Get());
-            
+            stbi_image_free(img_data);
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
             SetDebugObjectName(res.Get(), std::filesystem::path(filename).filename().string());
 #endif
         }
-        stbi_image_free(img_data);
+        else
+        {
+            std::string warning = "[Warning]: TextureManager::CreateTexture, couldn't find \"";
+            warning += filename;
+            warning += "\"\n";
+            OutputDebugStringA(warning.c_str());
+        }
     }
 
     return res.Get();

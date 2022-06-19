@@ -91,7 +91,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
 
     pImpl->m_pEffectHelper = std::make_unique<EffectHelper>();
 
-    pImpl->m_pEffectHelper->SetBinaryCacheDirectory(L"Shaders\\Cache", true);
+    pImpl->m_pEffectHelper->SetBinaryCacheDirectory(L"Shaders\\Cache");
 
     // 实例输入布局
     D3D11_INPUT_ELEMENT_DESC basicInstLayout[] = {

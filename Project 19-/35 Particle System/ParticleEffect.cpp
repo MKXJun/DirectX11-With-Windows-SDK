@@ -91,7 +91,7 @@ bool ParticleEffect::InitAll(ID3D11Device* device, std::wstring_view filename)
     };
 
     fs::path cacheDir = "Shaders\\Cache";
-    bool overWrite = true;
+    bool overWrite = false;
     pImpl->m_pEffectHelper->SetBinaryCacheDirectory(cacheDir.c_str(), overWrite);
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob;

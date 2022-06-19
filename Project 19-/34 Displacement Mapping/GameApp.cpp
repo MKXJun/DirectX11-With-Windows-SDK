@@ -221,7 +221,7 @@ void GameApp::RenderShadow()
     m_pd3dImmediateContext->OMSetRenderTargets(0, nullptr, m_pShadowMapTexture->GetDepthStencil());
     m_pd3dImmediateContext->RSSetViewports(1, &shadowViewport);
 
-    m_ShadowEffect.SetRenderDepthOnly(m_pd3dImmediateContext.Get());
+    m_ShadowEffect.SetRenderDepthOnly();
     DrawScene(m_ShadowEffect);
 }
 

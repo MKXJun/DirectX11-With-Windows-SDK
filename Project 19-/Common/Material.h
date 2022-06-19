@@ -60,7 +60,10 @@ public:
     const T* TryGet(std::string_view name) const
     {
         auto it = m_Properties.find(StringToID(name));
-        return &std::get<T&>(it->second);
+        if (it != m_Properties.end())
+            return &std::get<T>(it->second);
+        else
+            return nullptr;
     }
 
     template<class T>

@@ -383,9 +383,7 @@ Depth2DArray::Depth2DArray(ID3D11Device* device, uint32_t width, uint32_t height
             CD3D11_DEPTH_STENCIL_VIEW_DESC dsvElementDesc(
                 D3D11_DSV_DIMENSION_TEXTURE2DARRAY,
                 GetDepthDSVFormat(depthStencilBitsFlag),
-                0, 1,
-                i, 1   // Array
-            );
+                0, i, 1);   // Array
 
             ComPtr<ID3D11DepthStencilView> pDSV;
             device->CreateDepthStencilView(m_pTexture.Get(), &dsvElementDesc, pDSV.GetAddressOf());
@@ -400,9 +398,8 @@ Depth2DArray::Depth2DArray(ID3D11Device* device, uint32_t width, uint32_t height
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
                 D3D11_SRV_DIMENSION_TEXTURE2DARRAY,
                 GetDepthSRVFormat(depthStencilBitsFlag),
-                0, 1,
-                i, 1   // Array
-            );
+                0, 1, 
+                i, 1);   // Array
 
             ComPtr<ID3D11ShaderResourceView> pSRV;
             device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());
@@ -439,9 +436,7 @@ Depth2DMSArray::Depth2DMSArray(ID3D11Device* device, uint32_t width, uint32_t he
             CD3D11_DEPTH_STENCIL_VIEW_DESC dsvElementDesc(
                 D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY,
                 GetDepthDSVFormat(depthStencilBitsFlag),
-                0, 1,
-                i, 1   // Array
-            );
+                0, i, 1);   // Array
 
             ComPtr<ID3D11DepthStencilView> pDSV;
             device->CreateDepthStencilView(m_pTexture.Get(), &dsvElementDesc, pDSV.GetAddressOf());
@@ -457,8 +452,7 @@ Depth2DMSArray::Depth2DMSArray(ID3D11Device* device, uint32_t width, uint32_t he
                 D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY,
                 GetDepthSRVFormat(depthStencilBitsFlag),
                 0, 1,
-                i, 1   // Array
-            );
+                i, 1);   // Array
 
             ComPtr<ID3D11ShaderResourceView> pSRV;
             device->CreateShaderResourceView(m_pTexture.Get(), &srvElementDesc, pSRV.GetAddressOf());

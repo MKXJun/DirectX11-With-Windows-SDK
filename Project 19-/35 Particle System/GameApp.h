@@ -1,7 +1,6 @@
 #ifndef GAMEAPP_H
 #define GAMEAPP_H
 
-#include <ctime>
 #include <random>
 #include <WinMin.h>
 #include "d3dApp.h"

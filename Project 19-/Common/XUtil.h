@@ -23,6 +23,7 @@
 
 #define LEN_AND_STR(STR) ((UINT)(sizeof(STR) - 1)), (STR)
 
+// 是否开启图形调试对象名称
 #if (defined(DEBUG) || defined(_DEBUG)) && !defined(GRAPHICS_DEBUGGER_OBJECT_NAME)
 #define GRAPHICS_DEBUGGER_OBJECT_NAME 1
 #endif
@@ -69,7 +70,7 @@ inline std::string WStringToUTF8(std::wstring_view wstr)
 }
 
 //
-// 获取ID
+// 字符串转hash ID
 //
 
 using XID = size_t;

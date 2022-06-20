@@ -161,6 +161,8 @@ void GameApp::DrawScene()
     }
 
     m_GpuTimer_Instancing.Start();
+    uint32_t objectCount = (uint32_t)instancedData.size();
+    uint32_t drawCount = m_EnableFrustumCulling ? (uint32_t)m_AcceptedData.size() : (uint32_t)instancedData.size();
     // 是否开启硬件实例化
     if (m_EnableInstancing)
     {
@@ -208,6 +210,8 @@ void GameApp::DrawScene()
 
     if (ImGui::Begin("Instancing and Frustum Culling"))
     {
+        ImGui::Text("Objects: %u/%u", drawCount, objectCount);
+
         m_GpuTimer_Instancing.TryGetTime(nullptr);
         double avgTime = m_GpuTimer_Instancing.AverageTime();
         

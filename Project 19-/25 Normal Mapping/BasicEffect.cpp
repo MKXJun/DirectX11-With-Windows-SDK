@@ -109,10 +109,8 @@ bool BasicEffect::InitAll(ID3D11Device* device)
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTangentTexLayout.GetAddressOf()));
 
     // 创建像素着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device,
-        "PS", "ps_5_0");
-    pImpl->m_pEffectHelper->CreateShaderFromFile("NormalMapPS", L"Shaders/NormalMap_PS.cso", device,
-        "PS", "ps_5_0");
+    pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device);
+    pImpl->m_pEffectHelper->CreateShaderFromFile("NormalMapPS", L"Shaders/NormalMap_PS.cso", device);
 
 
     // 创建通道
@@ -166,15 +164,10 @@ void BasicEffect::SetMaterial(const Material& material)
     phongMat.reflect = material.Get<XMFLOAT4>("$ReflectColor");
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
-    if (material.Has<std::string>("$Diffuse"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(material.Get<std::string>("$Diffuse")));
-    }
-    
-    if (material.Has<std::string>("$Normal"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", tm.GetTexture(material.Get<std::string>("$Normal")));
-    }
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pStr = material.TryGet<std::string>("$Normal");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", pStr ? tm.GetTexture(*pStr) : nullptr);
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)

@@ -12,7 +12,6 @@ using namespace DirectX;
 
 # pragma warning(disable: 26812)
 
-
 //
 // BasicEffect::Impl 需要先于BasicEffect的定义
 //
@@ -100,8 +99,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
     // 创建像素着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device,
-        "PS", "ps_5_0");
+    HR(pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device));
 
 
     // 创建通道
@@ -109,7 +107,6 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
     pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc);
-
 
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 

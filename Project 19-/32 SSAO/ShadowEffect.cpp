@@ -189,11 +189,8 @@ void ShadowEffect::SetMaterial(const Material& material)
 {
     TextureManager& tm = TextureManager::Get();
 
-    if (material.Has<std::string>("$Diffuse"))
-    {
-        const std::string& str = material.Get<std::string>("$Diffuse");
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(str));
-    }
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
 }
 
 MeshDataInput ShadowEffect::GetInputData(const MeshData& meshData)

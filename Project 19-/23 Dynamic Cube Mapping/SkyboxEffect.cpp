@@ -99,8 +99,7 @@ bool SkyboxEffect::InitAll(ID3D11Device* device)
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosLayout.ReleaseAndGetAddressOf()));
 
     // 创建像素着色器
-    HR(pImpl->m_pEffectHelper->CreateShaderFromFile("SkyboxPS", L"Shaders\\Skybox_PS.cso",
-        device, "PS", "ps_5_0"));
+    HR(pImpl->m_pEffectHelper->CreateShaderFromFile("SkyboxPS", L"Shaders\\Skybox_PS.cso", device));
 
     // 创建通道
     EffectPassDesc passDesc;
@@ -113,7 +112,7 @@ bool SkyboxEffect::InitAll(ID3D11Device* device)
         pPass->SetDepthStencilState(RenderStates::DSSLessEqual.Get(), 0);
     }
 
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSAnistropicWrap16x.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)

@@ -136,7 +136,7 @@ bool SkyboxEffect::InitAll(ID3D11Device * device)
         msaaSamples <<= 1;
     }
     
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSLinearWrap.Get());
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)

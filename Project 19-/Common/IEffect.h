@@ -18,6 +18,9 @@
 class Material;
 struct MeshData;
 
+// 单个MeshData需要设置到输入装配阶段的内容
+// 输入布局、strides、offsets和图元由Effect Pass提供
+// 其余数据源自MeshData
 struct MeshDataInput
 {
     ID3D11InputLayout* pInputLayout = nullptr;

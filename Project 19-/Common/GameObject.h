@@ -64,7 +64,10 @@ public:
     // 绘制
     //
 
-    void SetVisible(bool visible) { m_InFrustum = visible; }
+    void SetVisible(bool visible) {
+        m_InFrustum = visible;
+        m_SubModelInFrustum.assign(m_SubModelInFrustum.size(), true);
+    }
 
     // 绘制对象
     void Draw(ID3D11DeviceContext* deviceContext, IEffect& effect);

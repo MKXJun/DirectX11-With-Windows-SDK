@@ -80,16 +80,12 @@ bool PostProcessEffect::InitAll(ID3D11Device* device)
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob;
     // 创建顶点着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("MinimapVS", L"Shaders/Minimap_VS.cso", device,
-        "VS", "vs_5_0");
-    pImpl->m_pEffectHelper->CreateShaderFromFile("ScreenFadeVS", L"Shaders/ScreenFade_VS.cso", device,
-        "VS", "vs_5_0");
+    pImpl->m_pEffectHelper->CreateShaderFromFile("MinimapVS", L"Shaders/Minimap_VS.cso", device);
+    pImpl->m_pEffectHelper->CreateShaderFromFile("ScreenFadeVS", L"Shaders/ScreenFade_VS.cso", device);
 
     // 创建像素着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("MinimapPS", L"Shaders/Minimap_PS.cso", device,
-        "PS", "ps_5_0");
-    pImpl->m_pEffectHelper->CreateShaderFromFile("ScreenFadePS", L"Shaders/ScreenFade_PS.cso", device,
-        "PS", "ps_5_0");
+    pImpl->m_pEffectHelper->CreateShaderFromFile("MinimapPS", L"Shaders/Minimap_PS.cso", device);
+    pImpl->m_pEffectHelper->CreateShaderFromFile("ScreenFadePS", L"Shaders/ScreenFade_PS.cso", device);
 
     // 创建通道
     EffectPassDesc passDesc;

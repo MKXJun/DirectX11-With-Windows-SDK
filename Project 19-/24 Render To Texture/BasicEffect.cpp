@@ -121,8 +121,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
 
     // 创建像素着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device,
-        "ForwardPS", "ps_5_0");
+    pImpl->m_pEffectHelper->CreateShaderFromFile("BasicPS", L"Shaders/Basic_PS.cso", device);
 
 
     // 创建通道
@@ -174,10 +173,8 @@ void BasicEffect::SetMaterial(const Material& material)
     phongMat.specular.w = material.Has<float>("$SpecularFactor") ? material.Get<float>("$SpecularFactor") : 1.0f;
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
-    if (material.Has<std::string>("$Diffuse"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(material.Get<std::string>("$Diffuse")));
-    }
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)

@@ -92,11 +92,13 @@ public:
 
     uint32_t GetMipLevels() const { return m_MipLevels; }
 
+    ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureArrayRTV.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx) { return m_pRenderTargetElements[arrayIdx].Get(); }
     
     // RWTexture2D
     ID3D11UnorderedAccessView* GetUnorderedAccess(size_t arrayIdx) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
     
+    // TextureCube
     using Texture2DBase::GetShaderResource;
     // Texture2D
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -106,6 +108,7 @@ public:
 
 private:
     uint32_t m_MipLevels = 1;
+    ComPtr<ID3D11RenderTargetView> m_pTextureArrayRTV;   // RTV指向纹理数组
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
     std::vector<ComPtr<ID3D11UnorderedAccessView>> m_pUnorderedAccessElements;
     std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
@@ -122,10 +125,13 @@ public:
     uint32_t GetMipLevels() const { return m_MipLevels; }
     uint32_t GetArraySize() const { return m_ArraySize; }
 
+    ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureArrayRTV.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx) { return m_pRenderTargetElements[arrayIdx].Get(); }
+    
     // RWTexture2D
     ID3D11UnorderedAccessView* GetUnorderedAccess(size_t arrayIdx) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
 
+    // Texture2DArray
     using Texture2DBase::GetShaderResource;
     // Texture2D
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -136,6 +142,7 @@ public:
 private:
     uint32_t m_MipLevels = 1;
     uint32_t m_ArraySize = 1;
+    ComPtr<ID3D11RenderTargetView> m_pTextureArrayRTV;   // RTV指向纹理数组
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
     std::vector<ComPtr<ID3D11UnorderedAccessView>> m_pUnorderedAccessElements;
     std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
@@ -152,8 +159,10 @@ public:
     uint32_t GetArraySize() const { return m_ArraySize; }
     uint32_t GetMsaaSamples() const { return m_MsaaSamples; }
 
+    ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureArrayRTV.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx) { return m_pRenderTargetElements[arrayIdx].Get(); }
 
+    // Texture2DMSArray
     using Texture2DBase::GetShaderResource;
     // Texture2DMS
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -164,6 +173,8 @@ public:
 private:
     uint32_t m_MsaaSamples = 1;
     uint32_t m_ArraySize = 1;
+
+    ComPtr<ID3D11RenderTargetView> m_pTextureArrayRTV;   // RTV指向纹理数组
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
     std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
 };
@@ -222,8 +233,10 @@ public:
         uint32_t bindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
     ~Depth2DArray() override = default;
 
+    ID3D11DepthStencilView* GetDepthStencil() { return m_pDepthArrayDSV.Get(); }
     ID3D11DepthStencilView* GetDepthStencil(size_t arrayIdx) { return m_pDepthStencilElements[arrayIdx].Get(); }
 
+    // TextureArray
     using Texture2DBase::GetShaderResource;
     // Texture2D
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -235,6 +248,7 @@ public:
 
 private:
     uint32_t m_ArraySize = 1;
+    ComPtr<ID3D11DepthStencilView> m_pDepthArrayDSV;
     std::vector<ComPtr<ID3D11DepthStencilView>> m_pDepthStencilElements;
     std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
 };
@@ -250,8 +264,11 @@ public:
 
     uint32_t GetArraySize() const { return m_ArraySize; }
     uint32_t GetMsaaSamples() const { return m_MsaaSamples; }
+
+    ID3D11DepthStencilView* GetDepthStencil() { return m_pDepthArrayDSV.Get(); }
     ID3D11DepthStencilView* GetDepthStencil(size_t arrayIdx) { return m_pDepthStencilElements[arrayIdx].Get(); }
 
+    // Texture2DMSArray
     using Texture2DBase::GetShaderResource;
     // Texture2DMS
     ID3D11ShaderResourceView* GetShaderResource(size_t arrayIdx) { return m_pShaderResourceElements[arrayIdx].Get(); }
@@ -262,6 +279,7 @@ public:
 private:
     uint32_t m_ArraySize = 1;
     uint32_t m_MsaaSamples = 1;
+    ComPtr<ID3D11DepthStencilView> m_pDepthArrayDSV;
     std::vector<ComPtr<ID3D11DepthStencilView>> m_pDepthStencilElements;
     std::vector<ComPtr<ID3D11ShaderResourceView>> m_pShaderResourceElements;
 };

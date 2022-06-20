@@ -218,15 +218,10 @@ void BasicEffect::SetMaterial(const Material& material)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
 
-    if (material.Has<std::string>("$Diffuse"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(material.Get<std::string>("$Diffuse")));
-    }
-
-    if (material.Has<std::string>("$Normal"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", tm.GetTexture(material.Get<std::string>("$Normal")));
-    }
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pStr = material.TryGet<std::string>("$Normal");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_NormalMap", pStr ? tm.GetTexture(*pStr) : nullptr);
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)

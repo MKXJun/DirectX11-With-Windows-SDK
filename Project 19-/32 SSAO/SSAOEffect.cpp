@@ -210,10 +210,8 @@ void SSAOEffect::SetMaterial(const Material& material)
 {
     TextureManager& tm = TextureManager::Get();
 
-    if (material.Has<std::string>("$Diffuse"))
-    {
-        pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(material.Get<std::string>("$Diffuse")));
-    }
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
 }
 
 MeshDataInput SSAOEffect::GetInputData(const MeshData& meshData)

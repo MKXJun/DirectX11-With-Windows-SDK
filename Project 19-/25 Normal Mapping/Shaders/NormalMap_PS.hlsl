@@ -13,9 +13,10 @@ float4 PS(VertexPosHWNormalTangentTex pIn) : SV_Target
         clip(texColor.a - 0.1f);
     }
     
-    // 标准化法向量
+    // 标准化法向量和切线
     pIn.normalW = normalize(pIn.normalW);
-
+    pIn.tangentW.xyz = normalize(pIn.tangentW.xyz);
+    
     // 求出顶点指向眼睛的向量，以及顶点与眼睛的距离
     float3 toEyeW = normalize(g_EyePosW - pIn.posW);
     float distToEye = distance(g_EyePosW, pIn.posW);

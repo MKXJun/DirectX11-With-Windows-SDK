@@ -16,7 +16,7 @@ struct VertexPosNormalTex
 //--------------------------------------------------------------------------------------
 TextureCube<float4> g_SkyboxTexture : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
-// 常规多重采样的场景渲染的纹理
+// 常规场景渲染的纹理
 Texture2D<float4> g_LitTexture : register(t7);
 
 struct SkyboxVSOut

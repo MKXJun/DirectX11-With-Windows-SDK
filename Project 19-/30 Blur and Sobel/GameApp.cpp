@@ -97,7 +97,7 @@ void GameApp::UpdateScene(float dt)
 
         if (m_BlurMode)
         {
-            if (ImGui::SliderInt("Blur Radius", &m_BlurRadius, 1, 7))
+            if (ImGui::SliderInt("Blur Radius", &m_BlurRadius, 1, 15))
             {
                 m_PostProcessEffect.SetBlurKernelSize(m_BlurRadius * 2 + 1);
             }

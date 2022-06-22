@@ -107,7 +107,7 @@ void CpuWaves::Update(float dt)
         // 我们需要将下一次模拟的结果与当前模拟的结果交换
         m_PrevSolution.swap(m_CurrSolution);
 
-        m_AccumulateTime = 0.0f;	// 重置时间
+        m_AccumulateTime = 0.0f;    // 重置时间
 
         // 使用有限差分法计算法向量
         for (size_t i = 1; i < m_NumRows - 1; ++i)
@@ -220,10 +220,9 @@ void GpuWaves::Update(ID3D11DeviceContext* deviceContext, float dt)
         m_pEffectHelper->SetUnorderedAccessByName("g_PrevSolInput", m_pPrevSolutionTexture->GetUnorderedAccess(), 0);
         m_pEffectHelper->SetUnorderedAccessByName("g_CurrSolInput", m_pCurrSolutionTexture->GetUnorderedAccess(), 0);
         m_pEffectHelper->SetUnorderedAccessByName("g_Output", m_pNextSolutionTexture->GetUnorderedAccess(), 0);
-        m_pEffectHelper->GetEffectPass("WavesUpdate")->Apply(deviceContext);
-
-        // 开始调度
-        deviceContext->Dispatch(m_NumCols / 16, m_NumRows / 16, 1);
+        auto pPass = m_pEffectHelper->GetEffectPass("WavesUpdate");
+        pPass->Apply(deviceContext);
+        pPass->Dispatch(deviceContext, m_NumCols, m_NumRows);
 
         // 清除绑定
         ID3D11UnorderedAccessView* nullUAVs[3]{};
@@ -238,7 +237,7 @@ void GpuWaves::Update(ID3D11DeviceContext* deviceContext, float dt)
         m_pCurrSolutionTexture.swap(m_pNextSolutionTexture);
         m_pPrevSolutionTexture.swap(m_pNextSolutionTexture);
 
-        m_AccumulateTime = 0.0f;		// 重置时间
+        m_AccumulateTime = 0.0f;        // 重置时间
     }
 }
 

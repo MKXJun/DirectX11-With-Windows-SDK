@@ -13,7 +13,7 @@ using namespace DirectX;
 # pragma warning(disable: 26812)
 
 
-static void GenerateGaussianWeights(float weights[16], int kernelSize, float sigma)
+static void GenerateGaussianWeights(float weights[], int kernelSize, float sigma)
 {
     float twoSigmaSq = 2.0f * sigma * sigma;
     int radius = kernelSize / 2;
@@ -51,7 +51,7 @@ public:
 
     std::unique_ptr<EffectHelper> m_pEffectHelper;
 
-    float m_Weights[16]{};
+    float m_Weights[32]{};
     int m_BlurRadius = 3;
     float m_BlurSigma = 1.0f;
     
@@ -121,15 +121,15 @@ bool PostProcessEffect::InitAll(ID3D11Device* device)
     // 创建通道
     EffectPassDesc passDesc;
     passDesc.nameCS = "BlurHorzCS";
-    pImpl->m_pEffectHelper->AddEffectPass("BlurHorz", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("BlurHorz", device, &passDesc));
     passDesc.nameCS = "BlurVertCS";
-    pImpl->m_pEffectHelper->AddEffectPass("BlurVert", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("BlurVert", device, &passDesc));
     passDesc.nameCS = "SobelCS";
-    pImpl->m_pEffectHelper->AddEffectPass("Sobel", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Sobel", device, &passDesc));
     passDesc.nameVS = "CompositeVS";
     passDesc.namePS = "CompositePS";
     passDesc.nameCS = "";
-    pImpl->m_pEffectHelper->AddEffectPass("Composite", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Composite", device, &passDesc));
 
 
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamLinearWrap", RenderStates::SSLinearWrap.Get());
@@ -172,8 +172,7 @@ void PostProcessEffect::ComputeSobel(ID3D11DeviceContext* deviceContext,
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Input", input);
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_Output", output);
     pPass->Apply(deviceContext);
-    
-    deviceContext->Dispatch((width + 15) / 16, (height + 15) / 16, 1);
+    pPass->Dispatch(deviceContext, width, height);
 
     // 清空
     input = nullptr;
@@ -184,7 +183,7 @@ void PostProcessEffect::ComputeSobel(ID3D11DeviceContext* deviceContext,
 
 void PostProcessEffect::SetBlurKernelSize(int size)
 {
-    if (size % 2 == 0 || size > 15)
+    if (size % 2 == 0 || size > ARRAYSIZE(pImpl->m_Weights))
         return;
 
     pImpl->m_BlurRadius = size / 2;
@@ -213,8 +212,7 @@ void PostProcessEffect::ComputeGaussianBlurX(
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Input", input);
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_Output", output);
     pPass->Apply(deviceContext);
-
-    deviceContext->Dispatch((width + 255) / 256, height, 1);
+    pPass->Dispatch(deviceContext, width, height);
 
     // 清空
     input = nullptr;
@@ -236,8 +234,7 @@ void PostProcessEffect::ComputeGaussianBlurY(
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Input", input);
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_Output", output);
     pPass->Apply(deviceContext);
-
-    deviceContext->Dispatch(width, (height + 255) / 256, 1);
+    pPass->Dispatch(deviceContext, width, height);
 
     // 清空
     input = nullptr;

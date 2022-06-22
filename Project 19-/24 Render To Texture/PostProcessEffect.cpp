@@ -91,11 +91,11 @@ bool PostProcessEffect::InitAll(ID3D11Device* device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "MinimapVS";
     passDesc.namePS = "MinimapPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Minimap", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Minimap", device, &passDesc));
 
     passDesc.nameVS = "ScreenFadeVS";
     passDesc.namePS = "ScreenFadePS";
-    pImpl->m_pEffectHelper->AddEffectPass("ScreenFade", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("ScreenFade", device, &passDesc));
 
 
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSLinearWrap.Get());

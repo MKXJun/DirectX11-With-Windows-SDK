@@ -387,11 +387,7 @@ void DeferredEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext
     std::string passName = "ComputeShaderTileDeferred_" + std::to_string(pImpl->m_MsaaSamples) + "xMSAA";
     auto pPass = pImpl->m_pEffectHelper->GetEffectPass(passName);
     pPass->Apply(deviceContext);
-
-    // 调度
-    UINT dispatchWidth = (texDesc.Width + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
-    UINT dispatchHeight = (texDesc.Height + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
-    deviceContext->Dispatch(dispatchWidth, dispatchHeight, 1);
+    pPass->Dispatch(deviceContext, texDesc.Width, texDesc.Height);
     
     // 清空
 

@@ -79,7 +79,7 @@ VertexOutput BasicVS(VertexInput vIn)
     vOut.posH = mul(float4(vIn.posL, 1.0f), g_WorldViewProj); // 保持和SSAO的计算一致
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
 #if defined USE_NORMAL_MAP
-    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
+    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_World), vIn.tangentL.w);
 #endif 
     vOut.tex = vIn.tex;
     vOut.ShadowPosH = mul(posW, g_ShadowTransform);
@@ -116,6 +116,8 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     float distToEye = distance(g_EyePosW, pIn.posW);
 
 #if defined USE_NORMAL_MAP
+    // 标准化切线
+    pIn.tangentW = normalize(pIn.tangentW);
     // 采样法线贴图
     float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.tex).rgb;
     pIn.normalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.tangentW);

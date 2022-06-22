@@ -97,7 +97,7 @@ PatchTess PatchHS(InputPatch<TessVertexOut, 3> patch,
                   uint patchID : SV_PrimitiveID)
 {
     PatchTess pt;
-	
+    
     // 对每条边的曲面细分因子求平均值，并选择其中一条边的作为其内部的
     // 曲面细分因子。基于边的属性来进行曲面细分因子的计算非常重要，这
     // 样那些与多个三角形共享的边将会拥有相同的曲面细分因子，否则会导
@@ -106,7 +106,7 @@ PatchTess PatchHS(InputPatch<TessVertexOut, 3> patch,
     pt.edgeTess[1] = 0.5f * (patch[2].tessFactor + patch[0].tessFactor);
     pt.edgeTess[2] = 0.5f * (patch[0].tessFactor + patch[1].tessFactor);
     pt.InsideTess = pt.edgeTess[0];
-	
+    
     return pt;
 }
 
@@ -115,24 +115,24 @@ PatchTess PatchHS(InputPatch<TessVertexOut, 3> patch,
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(3)]
 [patchconstantfunc("PatchHS")]
-HullOut ShadowHS(InputPatch<TessVertexOut, 3> p,
+HullOut ShadowTessHS(InputPatch<TessVertexOut, 3> p,
            uint i : SV_OutputControlPointID,
            uint patchId : SV_PrimitiveID)
 {
     HullOut hOut;
-	
-	// 直传
+    
+    // 直传
     hOut.posW = p[i].posW;
     hOut.normalW = p[i].normalW;
     hOut.tex = p[i].tex;
-	
+    
     return hOut;
 }
 
 
 
 [domain("tri")]
-VertexPosHTex ShadowDS(PatchTess patchTess,
+VertexPosHTex ShadowTessDS(PatchTess patchTess,
              float3 bary : SV_DomainLocation,
              const OutputPatch<HullOut, 3> tri)
 {

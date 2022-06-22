@@ -24,6 +24,12 @@
 
 ## CMake构建项目
 
+### 命令行构建
+
+在Win10系统下，若安装cmake的时候添加了环境变量，则可以直接运行`build_msvc.cmd`来生成项目并构建项目，完成后打开build文件夹可以找到解决方案
+
+### GUI构建
+
 使用`cmake-gui.exe`填写源码路径和构建路径，然后只需要关注下面一个变量：
 
 ![004](MarkdownFiles/004.png)
@@ -34,15 +40,14 @@
 
 ## 打开教程项目
 
-> 注意：默认提供的项目会在后续更新中考虑去除。
-
 打开CMake生成的项目，建议切换成**Release x64**。若要指定运行哪个项目，需要对项目右键-设为启动项。然后就可以生成并运行了
 
 ![](MarkdownFiles/001.png)
 
 > **注意：** 
 > 1. **目前教程仅支持VS2017(或平台工具集v141)及更高版本！**
-> 2. Win7打开需要安装Service Pack 1以及KB2670838补丁，但目前更推荐使用ImGui
+> 2. **由于Assimp不支持Win32(x86)，本项目仅支持64位系统**
+> 3. **Win7打开需要安装Service Pack 1以及KB2670838补丁**
 
 ## 项目概况
 
@@ -73,26 +78,27 @@
 
 ## 最近更新
 
-**2022/6/19 Ver2.37.0**
+**2022/6/23 Ver2.37.0**
 
 - 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃
 - 替换带后缀11的DDS/WICTextureLoader和ScreenGrab
 - 删除VS项目，现在用户需要使用cmake生成
 - 添加VS项目自动生成检查
 - HLSL代码统一使用UTF-8 NO BOM（带BOM会导致编译出错，尽管fxc要求ansi编码）
+- 添加命令行快速生成项目并编译
 
 **19章起的改动**
 
-- 代码重新分类为三个文件夹，且19章开始使用统一的Common代码来避免重复
+- 代码重新分类为三个文件夹，且19章开始使用统一的**Common**项目来避免重复
 - **统一使用Assimp加载模型**
-- 使用ModelManager和TextureManager管理资源，避免重复重建
+- 使用`ModelManager`和`TextureManager`管理资源，避免重复创建资源
 - **需要使用C++17**
 - **back buffer默认使用sRGB格式**，因此不能直接copy渲染结果到交换链，而是要以render的方式写入
 - **统一使用EffectHelper**，基于IEffect继承来管理特效资源，承接模型材质和几何数据
 - 使用Material存储材质信息、MeshData管理存储在GPU的模型信息
-- 修复EffectHelper中OM设置RTV和UAV的部分
-- 修改Texture2D、Buffer部分，便于和着色器对应
-- Geometry::MeshData更改为GeometryData，避免与MeshData同名
+- 修复EffectHelper中OM阶段设置RTV和UAV的部分
+- 添加`Texture2D`、`Depth2D`和`Buffer`等，便于和着色器对应
+- `Geometry::MeshData`更改为`GeometryData`，避免与`MeshData`同名
 - 具体特效会根据当前使用的Pass和输入的MeshData来获取管线需要在IA阶段绑定的信息
 - shader进行精简与部分重写
 - 修复切线变换错误的问题
@@ -100,5 +106,8 @@
 - 修正SSAO中shader变换投影纹理坐标错误
 - 31章起的项目会缓存编译好的着色器二进制信息，若要重新编译则删掉缓存或者设置`EffectHelper::SetBinaryCacheDirectory`
 - 后处理特效绝大部分统一使用全屏三角形渲染然后指定视口的方式
+- EffectHelper添加Dispatch方法，无需知道shader内CS线程组维度信息
+- Effect具体类的各种设置函数将不需要提供`ID3D11DeviceContext`
+- 在Win10下使用DXGI FLIP模型
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

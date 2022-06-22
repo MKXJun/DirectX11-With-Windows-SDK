@@ -1,9 +1,9 @@
 #include "PostProcess.hlsli"
 
-// 将RGB色转化为灰色
+// 将线性RGB色转化为亮度
 float3 RGB2Gray(float3 color)
 {
-    return (float3) dot(color, float3(0.299f, 0.587f, 0.114f));
+    return dot(color, float3(0.212671f, 0.715160f, 0.072169f));
 }
 
 [numthreads(16, 16, 1)]

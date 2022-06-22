@@ -60,9 +60,8 @@ void CpuWaves::InitResource(ID3D11Device* device,
     uint32_t rows, uint32_t cols, float texU, float texV, float timeStep, float spatialStep,
     float waveSpeed, float damping, float flowSpeedX, float flowSpeedY)
 {
-    Waves::InitResource(device, rows, cols, texU, texV, timeStep, 
+    Waves::InitResource(device, rows, cols, texU, texV, timeStep,
         spatialStep, waveSpeed, damping, flowSpeedX, flowSpeedY, true);
-    m_Model.SetDebugObjectName("CpuWaves");
 
     // 取出顶点数据
     m_CurrSolution.swap(m_MeshData.vertices);
@@ -76,7 +75,7 @@ void CpuWaves::InitResource(ID3D11Device* device,
 void CpuWaves::Update(float dt)
 {
     m_AccumulateTime += dt;
-    
+
     auto& texOffset = m_Model.materials[0].Get<XMFLOAT2>("$TexOffset");
     texOffset.x += m_FlowSpeedX * dt;
     texOffset.y += m_FlowSpeedY * dt;
@@ -108,7 +107,7 @@ void CpuWaves::Update(float dt)
         // 我们需要将下一次模拟的结果与当前模拟的结果交换
         m_PrevSolution.swap(m_CurrSolution);
 
-        m_AccumulateTime = 0.0f;	// 重置时间
+        m_AccumulateTime = 0.0f;    // 重置时间
 
         // 使用有限差分法计算法向量
         for (size_t i = 1; i < m_NumRows - 1; ++i)
@@ -171,7 +170,7 @@ void CpuWaves::Draw(ID3D11DeviceContext* deviceContext, IEffect& effect)
 std::unique_ptr<EffectHelper> GpuWaves::m_pEffectHelper = nullptr;
 
 void GpuWaves::InitResource(ID3D11Device* device,
-    uint32_t rows, uint32_t cols, float texU, float texV, 
+    uint32_t rows, uint32_t cols, float texU, float texV,
     float timeStep, float spatialStep, float waveSpeed, float damping, float flowSpeedX, float flowSpeedY)
 {
     // 初始化特效
@@ -192,9 +191,9 @@ void GpuWaves::InitResource(ID3D11Device* device,
         HR(m_pEffectHelper->AddEffectPass("WavesUpdate", device, &passDesc));
     }
 
-    Waves::InitResource(device, rows, cols, texU, texV, timeStep, 
+    Waves::InitResource(device, rows, cols, texU, texV, timeStep,
         spatialStep, waveSpeed, damping, flowSpeedX, flowSpeedY, false);
-    m_Model.SetDebugObjectName("GpuWaves");
+
 
     m_pPrevSolutionTexture = std::make_unique<Texture2D>(device, cols, rows, DXGI_FORMAT_R32_FLOAT, 1,
         D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS);
@@ -221,10 +220,9 @@ void GpuWaves::Update(ID3D11DeviceContext* deviceContext, float dt)
         m_pEffectHelper->SetUnorderedAccessByName("g_PrevSolInput", m_pPrevSolutionTexture->GetUnorderedAccess(), 0);
         m_pEffectHelper->SetUnorderedAccessByName("g_CurrSolInput", m_pCurrSolutionTexture->GetUnorderedAccess(), 0);
         m_pEffectHelper->SetUnorderedAccessByName("g_Output", m_pNextSolutionTexture->GetUnorderedAccess(), 0);
-        m_pEffectHelper->GetEffectPass("WavesUpdate")->Apply(deviceContext);
-
-        // 开始调度
-        deviceContext->Dispatch(m_NumCols / 16, m_NumRows / 16, 1);
+        auto pPass = m_pEffectHelper->GetEffectPass("WavesUpdate");
+        pPass->Apply(deviceContext);
+        pPass->Dispatch(deviceContext, m_NumCols, m_NumRows);
 
         // 清除绑定
         ID3D11UnorderedAccessView* nullUAVs[3]{};
@@ -239,7 +237,7 @@ void GpuWaves::Update(ID3D11DeviceContext* deviceContext, float dt)
         m_pCurrSolutionTexture.swap(m_pNextSolutionTexture);
         m_pPrevSolutionTexture.swap(m_pNextSolutionTexture);
 
-        m_AccumulateTime = 0.0f;		// 重置时间
+        m_AccumulateTime = 0.0f;        // 重置时间
     }
 }
 

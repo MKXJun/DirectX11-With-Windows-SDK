@@ -57,8 +57,9 @@ cbuffer CBChangesRarely : register(b3)
 };
 
 //
-// 用于SSAO_NormalDepth和SSAO_Blur
+// Pass1 几何Buffer生成
 //
+
 struct VertexPosNormalTex
 {
     float3 posL : POSITION;
@@ -73,27 +74,6 @@ struct VertexPosHVNormalVTex
     float3 NormalV : NORMAL;
     float2 tex : TEXCOORD0;
 };
-
-//
-// 用于SSAO
-//
-struct VertexIn
-{
-    float3 posL : POSITION;
-    float3 ToFarPlaneIndex : NORMAL; // 仅使用x分量来进行对视锥体远平面顶点的索引
-    float2 tex : TEXCOORD;
-};
-
-struct VertexOut
-{
-    float4 posH : SV_POSITION;
-    float3 ToFarPlane : TEXCOORD0; // 远平面顶点坐标
-    float2 tex : TEXCOORD1;
-};
-
-//
-// Pass1 几何Buffer生成
-//
 
 // 生成观察空间的法向量和深度值的RTT的顶点着色器
 VertexPosHVNormalVTex GeometryVS(VertexPosNormalTex vIn)
@@ -181,14 +161,14 @@ void SSAO_VS(uint vertexID : SV_VertexID,
     farPlanePoint = g_FarPlanePoints[vertexID].xyz;
 }
 
-// 绘制SSAO图的顶点着色器
+// 绘制SSAO图的像素着色器
 float4 SSAO_PS(float4 posH : SV_position,
                float3 farPlanePoint : POSITION,
                float2 texcoord : TEXCOORD,
                uniform int sampleCount) : SV_TARGET
 {
     // p -- 我们要计算的环境光遮蔽目标点
-    // n -- 顶点p的法向量
+    // n -- 点p的法向量
     // q -- 点p处所在半球内的随机一点
     // r -- 有可能遮挡点p的一点
     

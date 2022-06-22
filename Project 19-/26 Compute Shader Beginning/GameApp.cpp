@@ -57,14 +57,15 @@ bool GameApp::InitResource()
     CreateDDSTextureFromFile(m_pd3dDevice.Get(), L"..\\Texture\\flarealpha.dds",
         nullptr, m_pTextureInputB.GetAddressOf());
 
-    // 下述格式也支持传递给RWTexture2D<float4>，可以替换尝试
-    // DXGI_FORMAT_R8G8B8A8_UNORM
-    // DXGI_FORMAT_R8G8B8A8_SNORM
-    // DXGI_FORMAT_R16G16B16A16_UNORM
-    // DXGI_FORMAT_R16G16B16A16_SNORM
-    // DXGI_FORMAT_R16G16B16A16_FLOAT
-    // DXGI_FORMAT_R32G32B32A32_FLOAT
-    DXGI_FORMAT format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    // DXGI_FORMAT                     |  RWTexture2D<T>
+    // --------------------------------+------------------
+    // DXGI_FORMAT_R8G8B8A8_UNORM      |  unorm float4
+    // DXGI_FORMAT_R16G16B16A16_UNORM  |  unorm float4
+    // DXGI_FORMAT_R8G8B8A8_SNORM      |  snorm float4
+    // DXGI_FORMAT_R16G16B16A16_SNORM  |  snorm float4
+    // DXGI_FORMAT_R16G16B16A16_FLOAT  |  float4 或 half4?
+    // DXGI_FORMAT_R32G32B32A32_FLOAT  |  float4
+    DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
     CD3D11_TEXTURE2D_DESC texDesc(format, 512, 512, 1, 1,
         D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS);
     m_pd3dDevice->CreateTexture2D(&texDesc, nullptr, m_pTextureOutput.GetAddressOf());

@@ -455,6 +455,7 @@ void GameApp::DrawScene(bool drawCenterSphere, const Camera& camera, ID3D11Rende
         cylinder.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     }
 
+    m_BasicEffect.SetRenderDefault();
     // 绘制五个圆球
     for (auto& sphere : m_Spheres)
     {

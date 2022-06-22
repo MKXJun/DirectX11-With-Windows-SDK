@@ -122,7 +122,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "GeometryVS";
     passDesc.namePS = "ForwardPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Forward", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Forward", device, &passDesc));
     {
         auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Forward");
         // 注意：反向Z => GREATER_EQUAL测试
@@ -130,7 +130,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     }
     
     passDesc.namePS = "ForwardPlusPS";
-    pImpl->m_pEffectHelper->AddEffectPass("ForwardPlus", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("ForwardPlus", device, &passDesc));
     {
         auto pPass = pImpl->m_pEffectHelper->GetEffectPass("ForwardPlus");
         // 注意：反向Z => GREATER_EQUAL测试
@@ -138,7 +138,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     }
 
     passDesc.namePS = "";
-    pImpl->m_pEffectHelper->AddEffectPass("PreZ", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("PreZ", device, &passDesc));
     {
         auto pPass = pImpl->m_pEffectHelper->GetEffectPass("PreZ");
         // 注意：反向Z => GREATER_EQUAL测试
@@ -164,7 +164,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 
         passDesc.nameCS = shaderName.c_str();
         std::string passName = "ComputeShaderTileForward_" + std::to_string(msaaSamples) + "xMSAA";
-        pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
+        HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
 
         msaaSamples <<= 1;
     }
@@ -250,9 +250,7 @@ void ForwardEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
     pPass->Apply(deviceContext);
 
     // 调度
-    UINT dispatchWidth = (texDesc.Width + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
-    UINT dispatchHeight = (texDesc.Height + COMPUTE_SHADER_TILE_GROUP_DIM - 1) / COMPUTE_SHADER_TILE_GROUP_DIM;
-    deviceContext->Dispatch(dispatchWidth, dispatchHeight, 1);
+    pPass->Dispatch(deviceContext, texDesc.Width, texDesc.Height);
 
     // 清空
     int slot = pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_TilebufferRW");

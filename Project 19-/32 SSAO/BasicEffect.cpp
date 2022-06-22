@@ -145,16 +145,16 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc));
     passDesc.nameVS = "NormalMapVS";
     passDesc.namePS = "NormalMapPS";
-    pImpl->m_pEffectHelper->AddEffectPass("NormalMap", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("NormalMap", device, &passDesc));
     passDesc.nameVS = "BasicSsaoVS";
     passDesc.namePS = "BasicSsaoPS";
-    pImpl->m_pEffectHelper->AddEffectPass("BasicSsao", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("BasicSsao", device, &passDesc));
     passDesc.nameVS = "NormalMapSsaoVS";
     passDesc.namePS = "NormalMapSsaoPS";
-    pImpl->m_pEffectHelper->AddEffectPass("NormalMapSsao", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("NormalMapSsao", device, &passDesc));
 
     // 我们在绘制SSAO法向量/深度图的时候也已经写入了主要的深度/模板贴图，
     // 所以我们可以直接使用深度值相等的测试，这样可以避免在当前的一趟渲染中

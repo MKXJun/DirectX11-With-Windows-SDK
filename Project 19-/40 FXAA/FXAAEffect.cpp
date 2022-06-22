@@ -129,7 +129,7 @@ bool FXAAEffect::InitAll(ID3D11Device * device)
 
         // 创建通道
         passDesc.namePS = psName;
-        pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
+        HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
 
         psName[2] = passName[2] = '0';
         defines[1].Name = nullptr;
@@ -140,7 +140,7 @@ bool FXAAEffect::InitAll(ID3D11Device * device)
             "PS", "ps_5_0", defines);
         // 创建通道
         passDesc.namePS = psName;
-        pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
+        HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
     }
     
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerLinearClamp", RenderStates::SSLinearClamp.Get());

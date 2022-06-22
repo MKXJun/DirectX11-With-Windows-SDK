@@ -124,7 +124,7 @@ VertexOutput BasicVS(VertexInput vIn)
     vOut.posH = mul(float4(vIn.posL, 1.0f), g_WorldViewProj); // 保持和SSAO的计算一致
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
 #if defined USE_NORMAL_MAP
-    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_WorldInvTranspose), vIn.tangentL.w);
+    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_World), vIn.tangentL.w);
 #endif 
     vOut.tex = vIn.tex;
     vOut.ShadowPosH = mul(posW, g_ShadowTransform);
@@ -146,7 +146,7 @@ TessVertexOut TessVS(TessVertexInput vIn)
 
     vOut.posW = mul(float4(vIn.posL, 1.0f), g_World).xyz;
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
-    vOut.tangentW = mul(vIn.tangentL, g_World);
+    vOut.tangentW = float4(mul(vIn.tangentL.xyz, (float3x3) g_World), vIn.tangentL.w);
     vOut.tex = vIn.tex;
     
     float d = distance(vOut.posW, g_EyePosW);
@@ -204,7 +204,7 @@ HullOut TessHS(InputPatch<TessVertexOut, 3> patch,
 
 // 域着色器
 [domain("tri")]
-DomainOutput DS(PatchTess patchTess,
+DomainOutput TessDS(PatchTess patchTess,
              float3 bary : SV_DomainLocation,
              const OutputPatch<HullOut, 3> tri)
 {
@@ -216,7 +216,7 @@ DomainOutput DS(PatchTess patchTess,
     dOut.tangentW = bary.x * tri[0].tangentW + bary.y * tri[1].tangentW + bary.z * tri[2].tangentW;
     dOut.tex      = bary.x * tri[0].tex      + bary.y * tri[1].tex      + bary.z * tri[2].tex;
     
-    // 对插值后的法向量进行标准化
+    // 对插值后的法向量和切线进行标准化
     dOut.normalW = normalize(dOut.normalW);
     
     //
@@ -272,6 +272,8 @@ float4 BasicPS(VertexOutput pIn) : SV_Target
     float distToEye = distance(g_EyePosW, pIn.posW);
 
 #if defined USE_NORMAL_MAP
+    // 标准化切线
+    pIn.tangentW = normalize(pIn.tangentW);
     // 采样法线贴图
     float3 normalMapSample = g_NormalMap.Sample(g_Sam, pIn.tex).rgb;
     pIn.normalW = NormalSampleToWorldSpace(normalMapSample, pIn.normalW, pIn.tangentW);

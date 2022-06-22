@@ -123,6 +123,10 @@ struct IEffectPass
     // 应用着色器、常量缓冲区(包括函数形参)、采样器、着色器资源和可读写资源到渲染管线
     virtual void Apply(ID3D11DeviceContext* deviceContext) = 0;
 
+    // 调度计算着色器
+    // 传入线程数目，内部会根据计算着色器的线程组维度调用合适的线程组数目
+    virtual void Dispatch(ID3D11DeviceContext* deviceContext, uint32_t threadX = 1, uint32_t threadY = 1, uint32_t threadZ = 1) = 0;
+
     virtual ~IEffectPass() {};
 };
 

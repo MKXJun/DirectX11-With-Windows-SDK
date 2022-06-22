@@ -45,32 +45,32 @@ protected:
         ID3D11Device* device,
         uint32_t rows,                  // 顶点行数
         uint32_t cols,                  // 顶点列数
-        float texU,			            // 纹理坐标U方向最大值
-        float texV,			            // 纹理坐标V方向最大值
-        float timeStep,		            // 时间步长
-        float spatialStep,	            // 空间步长
-        float waveSpeed,	            // 波速
-        float damping,		            // 粘性阻尼力
-        float flowSpeedX,	            // 水流X方向速度
+        float texU,                     // 纹理坐标U方向最大值
+        float texV,                     // 纹理坐标V方向最大值
+        float timeStep,                 // 时间步长
+        float spatialStep,              // 空间步长
+        float waveSpeed,                // 波速
+        float damping,                  // 粘性阻尼力
+        float flowSpeedX,               // 水流X方向速度
         float flowSpeedY,               // 水流Y方向速度
-        bool cpuWrite);	                // 资源CPU写
+        bool cpuWrite);                 // 资源CPU写
 
 private:
     void SetModel(const Model* pModel) {}
 
 protected:
-    uint32_t m_NumRows = 0;				// 顶点行数
-    uint32_t m_NumCols = 0;				// 顶点列数
+    uint32_t m_NumRows = 0;                // 顶点行数
+    uint32_t m_NumCols = 0;                // 顶点列数
     DirectX::XMFLOAT2 m_TexOffset{};
 
     float m_TexU = 0.0f;
     float m_TexV = 0.0f;
 
-    float m_FlowSpeedX = 0.0f;			// 水流X方向速度
-    float m_FlowSpeedY = 0.0f;			// 水流Y方向速度
-    float m_TimeStep = 0.0f;			// 时间步长
-    float m_SpatialStep = 0.0f;			// 空间步长
-    float m_AccumulateTime = 0.0f;		// 累积时间
+    float m_FlowSpeedX = 0.0f;          // 水流X方向速度
+    float m_FlowSpeedY = 0.0f;          // 水流Y方向速度
+    float m_TimeStep = 0.0f;            // 时间步长
+    float m_SpatialStep = 0.0f;         // 空间步长
+    float m_AccumulateTime = 0.0f;      // 累积时间
 
     Model m_Model;
     GeometryData m_MeshData;
@@ -96,16 +96,16 @@ public:
 
     void InitResource(
         ID3D11Device* device,           
-        uint32_t rows,		            // 顶点行数
-        uint32_t cols,		            // 顶点列数
-        float texU,			            // 纹理坐标U方向最大值
-        float texV,			            // 纹理坐标V方向最大值
-        float timeStep,		            // 时间步长
-        float spatialStep,	            // 空间步长
-        float waveSpeed,	            // 波速
-        float damping,		            // 粘性阻尼力
-        float flowSpeedX,	            // 水流X方向速度
-        float flowSpeedY);	            // 水流Y方向速度
+        uint32_t rows,                  // 顶点行数
+        uint32_t cols,                  // 顶点列数
+        float texU,                     // 纹理坐标U方向最大值
+        float texV,                     // 纹理坐标V方向最大值
+        float timeStep,                 // 时间步长
+        float spatialStep,              // 空间步长
+        float waveSpeed,                // 波速
+        float damping,                  // 粘性阻尼力
+        float flowSpeedX,               // 水流X方向速度
+        float flowSpeedY);              // 水流Y方向速度
 
     void Update(float dt);
     
@@ -121,7 +121,7 @@ private:
     std::vector<DirectX::XMFLOAT3> m_CurrNormals;       // 保存当前模拟结果的顶点法线二维数组的一维展开
     std::vector<DirectX::XMFLOAT3> m_PrevSolution;      // 保存上一次模拟结果的顶点位置二维数组的一维展开
 
-    bool m_isUpdated = false;							// 当前是否有顶点数据更新
+    bool m_isUpdated = false;                           // 当前是否有顶点数据更新
 };
 
 class GpuWaves : public Waves
@@ -139,16 +139,16 @@ public:
     // 的顶点被划入到新的线程组当中
     void InitResource(
         ID3D11Device* device,
-        uint32_t rows,		// 顶点行数
-        uint32_t cols,		// 顶点列数
-        float texU,			// 纹理坐标U方向最大值
-        float texV,			// 纹理坐标V方向最大值
-        float timeStep,		// 时间步长
-        float spatialStep,	// 空间步长
-        float waveSpeed,	// 波速
-        float damping,		// 粘性阻尼力
-        float flowSpeedX,	// 水流X方向速度
-        float flowSpeedY);	// 水流Y方向速度
+        uint32_t rows,          // 顶点行数
+        uint32_t cols,          // 顶点列数
+        float texU,             // 纹理坐标U方向最大值
+        float texV,             // 纹理坐标V方向最大值
+        float timeStep,         // 时间步长
+        float spatialStep,      // 空间步长
+        float waveSpeed,        // 波速
+        float damping,          // 粘性阻尼力
+        float flowSpeedX,       // 水流X方向速度
+        float flowSpeedY);      // 水流Y方向速度
 
     void Update(ID3D11DeviceContext* deviceContext, float dt);
 

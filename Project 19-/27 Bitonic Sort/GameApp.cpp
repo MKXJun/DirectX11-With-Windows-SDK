@@ -85,12 +85,12 @@ bool GameApp::InitResource()
     randEngine.seed(std::random_device()());
     std::uniform_int_distribution<uint32_t> powRange(9, 18);
     // 元素数目必须为2的次幂且不小于512个，并用最大值填充
-    uint32_t elemCount = 1 << powRange(randEngine);
+    uint32_t elemCount = 1 << 18;
     m_RandomNums.assign(elemCount, UINT_MAX);
     // 填充随机数目的随机数，数目在一半容量到最大容量之间
     std::uniform_int_distribution<uint32_t> numsCountRange((uint32_t)m_RandomNums.size() / 2,
         (uint32_t)m_RandomNums.size());
-    m_RandomNumsCount = numsCountRange(randEngine);
+    m_RandomNumsCount = elemCount;
     std::generate(m_RandomNums.begin(), m_RandomNums.begin() + m_RandomNumsCount, [&] {return randEngine(); });
 
     CD3D11_BUFFER_DESC bufferDesc(

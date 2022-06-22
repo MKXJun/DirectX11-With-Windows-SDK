@@ -104,7 +104,7 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc));
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamLinearWrap", RenderStates::SSLinearWrap.Get());
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamPointClamp", RenderStates::SSPointClamp.Get());
 

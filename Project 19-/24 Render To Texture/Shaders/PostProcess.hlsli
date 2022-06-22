@@ -9,9 +9,14 @@ cbuffer CB : register(b0)
     float4 g_RectW;              // 小地图xOz平面对应3D世界矩形区域(Left, Front, Right, Back)
 }
 
+struct VertexPosTex
+{
+    float3 posL : POSITION;
+    float2 tex : TEXCOORD;
+};
+
 struct VertexPosHTex
 {
     float4 posH : SV_POSITION;
     float2 tex : TEXCOORD;
 };
-

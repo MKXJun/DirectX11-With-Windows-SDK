@@ -112,7 +112,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "GeometryVS";
     passDesc.namePS = "ForwardPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Forward", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Forward", device, &passDesc));
     {
         auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Forward");
         // 注意：反向Z => GREATER_EQUAL测试
@@ -120,7 +120,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     }
     
     passDesc.namePS = "";
-    pImpl->m_pEffectHelper->AddEffectPass("PreZ", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("PreZ", device, &passDesc));
     {
         auto pPass = pImpl->m_pEffectHelper->GetEffectPass("PreZ");
         // 注意：反向Z => GREATER_EQUAL测试

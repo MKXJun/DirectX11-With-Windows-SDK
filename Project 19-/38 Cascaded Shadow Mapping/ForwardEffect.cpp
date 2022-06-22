@@ -124,7 +124,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     
     // 创建通道
     passDesc.nameVS = "GeometryVS";
-    pImpl->m_pEffectHelper->AddEffectPass("PreZ_Forward", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("PreZ_Forward", device, &passDesc));
 
     for (int cascadeCount = 1; cascadeCount <= 8; ++cascadeCount)
     {
@@ -150,7 +150,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
                     // 创建通道
                     passDesc.nameVS = "GeometryVS";
                     passDesc.namePS = psName;
-                    pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc);
+                    HR(pImpl->m_pEffectHelper->AddEffectPass(passName, device, &passDesc));
                 }
             }
         }

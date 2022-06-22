@@ -484,6 +484,9 @@ struct ComputeShaderInfo
     uint32_t ssUseMask = 0;
     uint32_t rwUseMask = 0;
     uint32_t srUseMasks[4] = {};
+    uint32_t threadGroupSizeX = 0;
+    uint32_t threadGroupSizeY = 0;
+    uint32_t threadGroupSizeZ = 0;
     std::unique_ptr<CBufferData> pParamData = nullptr;
     std::unordered_map<size_t, std::shared_ptr<ConstantBufferVariable>> params;
 };
@@ -517,6 +520,8 @@ struct EffectPass : public IEffectPass
     const std::string& GetPassName() override;
 
     void Apply(ID3D11DeviceContext * deviceContext) override;
+
+    void Dispatch(ID3D11DeviceContext* deviceContext, uint32_t threadX = 1, uint32_t threadY = 1, uint32_t threadZ = 1) override;
 
     EffectHelper* pEffectHelper = nullptr;
     std::string passName;
@@ -604,6 +609,16 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
         return hr;
 
     size_t nameID = StringToID(name);
+
+    if (shaderFlag == ComputeShader)
+    {
+        // 获取线程组维度
+        pShaderReflection->GetThreadGroupSize(
+            &m_ComputeShaders[nameID]->threadGroupSizeX,
+            &m_ComputeShaders[nameID]->threadGroupSizeY,
+            &m_ComputeShaders[nameID]->threadGroupSizeZ);
+        
+    }
 
     for (uint32_t i = 0;; ++i)
     {
@@ -1398,4 +1413,21 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
     deviceContext->RSSetState(pRasterizerState.Get());
     deviceContext->OMSetBlendState(pBlendState.Get(), blendFactor, sampleMask);
     deviceContext->OMSetDepthStencilState(pDepthStencilState.Get(), stencilRef);
+}
+
+void EffectPass::Dispatch(ID3D11DeviceContext* deviceContext, uint32_t threadX, uint32_t threadY, uint32_t threadZ)
+{
+    if (!pCSInfo)
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("[Warning]: No compute shader in current effect pass!");
+#endif
+        return;
+    }
+
+    uint32_t threadGroupCountX = (threadX + pCSInfo->threadGroupSizeX - 1) / pCSInfo->threadGroupSizeX;
+    uint32_t threadGroupCountY = (threadY + pCSInfo->threadGroupSizeY - 1) / pCSInfo->threadGroupSizeY;
+    uint32_t threadGroupCountZ = (threadZ + pCSInfo->threadGroupSizeZ - 1) / pCSInfo->threadGroupSizeZ;
+
+    deviceContext->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }

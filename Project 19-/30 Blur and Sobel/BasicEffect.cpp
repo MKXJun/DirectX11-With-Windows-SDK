@@ -108,15 +108,21 @@ bool BasicEffect::InitAll(ID3D11Device* device)
     EffectPassDesc passDesc;
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "BasicPS";
-    pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("Basic", device, &passDesc));
 
     passDesc.nameVS = "BasicVS";
     passDesc.namePS = "OITStorePS";
-    pImpl->m_pEffectHelper->AddEffectPass("OITStore", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("OITStore", device, &passDesc));
+    {
+        auto pPass = pImpl->m_pEffectHelper->GetEffectPass("OITStore");
+        pPass->SetRasterizerState(RenderStates::RSNoCull.Get());
+        pPass->SetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
+        pPass->SetDepthStencilState(RenderStates::DSSNoDepthWrite.Get(), 0);
+    }
 
     passDesc.nameVS = "OITRenderVS";
     passDesc.namePS = "OITRenderPS";
-    pImpl->m_pEffectHelper->AddEffectPass("OITRender", device, &passDesc);
+    HR(pImpl->m_pEffectHelper->AddEffectPass("OITRender", device, &passDesc));
 
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamLinearWrap", RenderStates::SSLinearWrap.Get());
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamPointClamp", RenderStates::SSPointClamp.Get());
@@ -278,11 +284,7 @@ void BasicEffect::SetRenderOITStorage(
 {
     pImpl->m_pCurrInputLayout = pImpl->m_pVertexPosNormalTexLayout.Get();
     pImpl->m_CurrTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
     pImpl->m_pCurrEffectPass = pImpl->m_pEffectHelper->GetEffectPass("OITStore");
-    pImpl->m_pCurrEffectPass->SetRasterizerState(RenderStates::RSNoCull.Get());
-    pImpl->m_pCurrEffectPass->SetBlendState(RenderStates::BSTransparent.Get(), nullptr, 0xFFFFFFFF);
-    pImpl->m_pCurrEffectPass->SetDepthStencilState(RenderStates::DSSNoDepthWrite.Get(), 0);
 
     uint32_t initCount[1] = { 0 };
     pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_FLBufferRW", flBuffer, initCount);

@@ -80,7 +80,7 @@
 
 **2022/6/23 Ver2.37.0**
 
-- 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃
+- 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃Direct2D/DWrite部分
 - 替换带后缀11的DDS/WICTextureLoader和ScreenGrab
 - 删除VS项目，现在用户需要使用cmake生成
 - 添加VS项目自动生成检查

@@ -15,7 +15,7 @@ public:
     CpuTimer();
  
     float TotalTime()const;     // 返回从Reset()调用之后经过的时间，但不包括暂停期间的
-    float DeltaTime()const;     // 返回帧间隔时间
+    float DeltaTime()const;		// 返回帧间隔时间
 
     void Reset();               // 计时开始前或者需要重置时调用
     void Start();               // 在开始计时或取消暂停的时候调用

@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.37.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -78,36 +78,8 @@
 
 ## 最近更新
 
-**2022/6/23 Ver2.37.0**
+**2022/6/23 Ver2.38.0**
 
-- 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃Direct2D/DWrite部分
-- 替换带后缀11的DDS/WICTextureLoader和ScreenGrab
-- 删除VS项目，现在用户需要使用cmake生成
-- 添加VS项目自动生成检查
-- HLSL代码统一使用UTF-8 NO BOM（带BOM会导致编译出错，尽管fxc要求ansi编码）
-- 添加命令行快速生成项目并编译
-
-**19章起的改动**
-
-- 代码重新分类为三个文件夹，且19章开始使用统一的**Common**项目来避免重复
-- **统一使用Assimp加载模型**
-- 使用`ModelManager`和`TextureManager`管理资源，避免重复创建资源
-- **需要使用C++17**
-- **back buffer默认使用sRGB格式**，因此不能直接copy渲染结果到交换链，而是要以render的方式写入
-- **统一使用EffectHelper**，基于IEffect继承来管理特效资源，承接模型材质和几何数据
-- 使用Material存储材质信息、MeshData管理存储在GPU的模型信息
-- 修复EffectHelper中OM阶段设置RTV和UAV的部分
-- 添加`Texture2D`、`Depth2D`和`Buffer`等，便于和着色器对应
-- `Geometry::MeshData`更改为`GeometryData`，避免与`MeshData`同名
-- 具体特效会根据当前使用的Pass和输入的MeshData来获取管线需要在IA阶段绑定的信息
-- shader进行精简与部分重写
-- 修复切线变换错误的问题
-- 去除SkyRender、TextureRender等，以及`CreateWICTexture2DCubeFromFile`等函数，简化天空盒读取流程
-- 修正SSAO中shader变换投影纹理坐标错误
-- 31章起的项目会缓存编译好的着色器二进制信息，若要重新编译则删掉缓存或者设置`EffectHelper::SetBinaryCacheDirectory`
-- 后处理特效绝大部分统一使用全屏三角形渲染然后指定视口的方式
-- EffectHelper添加Dispatch方法，无需知道shader内CS线程组维度信息
-- Effect具体类的各种设置函数将不需要提供`ID3D11DeviceContext`
-- 在Win10下使用DXGI FLIP模型
+- **第6章项目替换为Use ImGui，原项目Mouse and Keyboard归档到Project Archive**
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

@@ -70,7 +70,7 @@ void CpuTimer::Start()
 
     if( m_Stopped )
     {
-        m_PausedTime += (startTime - m_StopTime);
+        m_PausedTime += (startTime - m_StopTime);	
 
         m_PrevTime = startTime;
         m_StopTime = 0;

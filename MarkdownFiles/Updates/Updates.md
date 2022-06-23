@@ -4,11 +4,13 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+**2022/6/23 Ver2.38.0**
 
+- **第6章项目替换为Use ImGui，原项目Mouse and Keyboard归档到Project Archive**
 
 **2022/6/23 Ver2.37.0**
 
-- 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃
+- 第9章使用ImGui，从第9章起的项目全面使用ImGui并丢弃Direct2D/DWrite
 - 替换带后缀11的DDS/WICTextureLoader和ScreenGrab
 - 删除VS项目，现在用户需要使用cmake生成
 - 添加VS项目自动生成检查

@@ -30,10 +30,10 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 D3DApp::D3DApp(HINSTANCE hInstance, const std::wstring& windowName, int initWidth, int initHeight)
-	: m_hAppInst(hInstance),
-	m_MainWndCaption(windowName),
-	m_ClientWidth(initWidth),
-	m_ClientHeight(initHeight),
+    : m_hAppInst(hInstance),
+    m_MainWndCaption(windowName),
+    m_ClientWidth(initWidth),
+    m_ClientHeight(initHeight),
     m_hMainWnd(nullptr),
     m_AppPaused(false),
     m_Minimized(false),

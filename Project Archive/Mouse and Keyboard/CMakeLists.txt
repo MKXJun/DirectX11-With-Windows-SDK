@@ -44,12 +44,12 @@ foreach(HLSL_FILE ${HLSL_FILES})
                                 VS_SHADER_ENABLE_DEBUG $<$<CONFIG:Debug>:true>)
 endforeach()
 
-add_executable(06_Mouse_and_Keyboard WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
-target_link_libraries(06_Mouse_and_Keyboard d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
+add_executable(Mouse_and_Keyboard WIN32 ${DIR_SRCS} ${HEADER_FILES} ${HLSL_FILES})
+target_link_libraries(Mouse_and_Keyboard d3d11.lib dxgi.lib dxguid.lib D3DCompiler.lib d2d1.lib dwrite.lib winmm.lib)
 
 source_group("HLSL Files" FILES ${HLSL_FILES})
-set_target_properties(06_Mouse_and_Keyboard PROPERTIES OUTPUT_NAME "06 Mouse and Keyboard")
+set_target_properties(Mouse_and_Keyboard PROPERTIES OUTPUT_NAME "Mouse and Keyboard")
 
-set_target_properties(06_Mouse_and_Keyboard PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(06_Mouse_and_Keyboard PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(06_Mouse_and_Keyboard PROPERTIES FOLDER "Project 01-09")
+set_target_properties(Mouse_and_Keyboard PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(Mouse_and_Keyboard PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(Mouse_and_Keyboard PROPERTIES FOLDER "Project Archive")

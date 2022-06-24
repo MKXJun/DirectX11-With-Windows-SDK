@@ -52,7 +52,7 @@ void CpuTimer::Reset()
     m_BaseTime = currTime;
     m_PrevTime = currTime;
     m_StopTime = 0;
-    m_PausedTime = 0;	// 涉及到多次Reset的话需要将其归0
+    m_PausedTime = 0;   // 涉及到多次Reset的话需要将其归0
     m_Stopped  = false;
 }
 
@@ -70,7 +70,7 @@ void CpuTimer::Start()
 
     if( m_Stopped )
     {
-        m_PausedTime += (startTime - m_StopTime);	
+        m_PausedTime += (startTime - m_StopTime);
 
         m_PrevTime = startTime;
         m_StopTime = 0;

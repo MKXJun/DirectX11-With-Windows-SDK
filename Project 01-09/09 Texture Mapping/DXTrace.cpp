@@ -33,7 +33,7 @@ HRESULT WINAPI DXTraceW(_In_z_ const WCHAR* strFile, _In_ DWORD dwLine, _In_ HRE
     WCHAR* errorStr = wcsrchr(strBufferError, L'\r');
     if (errorStr)
     {
-        errorStr[0] = L'\0';	// 擦除FormatMessageW带来的换行符(把\r\n的\r置换为\0即可)
+        errorStr[0] = L'\0';    // 擦除FormatMessageW带来的换行符(把\r\n的\r置换为\0即可)
     }
 
     swprintf_s(strBufferHR, 40, L" (0x%0.8x)", hr);

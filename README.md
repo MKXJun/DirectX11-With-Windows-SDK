@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -78,8 +78,9 @@
 
 ## 最近更新
 
-**2022/6/23 Ver2.38.0**
+2022/6/24 Ver2.38.1
 
-- **第6章项目替换为Use ImGui，原项目Mouse and Keyboard归档到Project Archive**
+- 修复ImGui使用过时方式的键盘事件监测
+- 将剩余tab替换成空格
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

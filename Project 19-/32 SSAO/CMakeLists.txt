@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(UNICODE _UNICODE)
 
 if(WIN7_SYSTEM_SUPPORT MATCHES ON)
-	add_compile_definitions(_WIN32_WINNT=0x601)
+    add_compile_definitions(_WIN32_WINNT=0x601)
 endif()
 
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -15,7 +15,7 @@ file(GLOB SHADER_FILES ${CMAKE_CURRENT_BINARY_DIR}/Shaders/*.hlsl ${CMAKE_CURREN
 file(GLOB HEADER_FILES ./*.h)
 
 foreach(SHADER_FILE ${SHADER_FILES})
-	set_source_files_properties(${SHADER_FILE} PROPERTIES HEADER_FILE_ONLY TRUE)
+    set_source_files_properties(${SHADER_FILE} PROPERTIES HEADER_FILE_ONLY TRUE)
 endforeach()
 
 add_executable(32_SSAO WIN32 ${DIR_SRCS} ${HEADER_FILES} ${SHADER_FILES})

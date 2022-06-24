@@ -41,7 +41,7 @@ protected:
     bool      m_Minimized;       // 应用是否最小化
     bool      m_Maximized;       // 应用是否最大化
     bool      m_Resizing;        // 窗口大小是否变化
-    bool	  m_Enable4xMsaa;	 // 是否开启4倍多重采样
+    bool      m_Enable4xMsaa;    // 是否开启4倍多重采样
     UINT      m_4xMsaaQuality;   // MSAA支持的质量等级
 
 

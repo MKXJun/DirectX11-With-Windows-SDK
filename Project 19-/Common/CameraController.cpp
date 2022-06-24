@@ -17,12 +17,12 @@ void FirstPersonCameraController::Update(float deltaTime)
     }
 
     int forward = (
-        (ImGui::IsKeyDown('W') ? 1 : 0) +
-        (ImGui::IsKeyDown('S') ? -1 : 0)
+        (ImGui::IsKeyDown(ImGuiKey_W) ? 1 : 0) +
+        (ImGui::IsKeyDown(ImGuiKey_S) ? -1 : 0)
         );
     int strafe = (
-        (ImGui::IsKeyDown('A') ? -1 : 0) +
-        (ImGui::IsKeyDown('D') ? 1 : 0)
+        (ImGui::IsKeyDown(ImGuiKey_A) ? -1 : 0) +
+        (ImGui::IsKeyDown(ImGuiKey_D) ? 1 : 0)
         );
 
     if (forward || strafe)

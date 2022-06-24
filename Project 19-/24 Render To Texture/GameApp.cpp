@@ -77,13 +77,13 @@ void GameApp::UpdateScene(float dt)
         ImGuiIO& io = ImGui::GetIO();
         // 第一人称的操作
         float d1 = 0.0f, d2 = 0.0f;
-        if (ImGui::IsKeyDown('W'))
+        if (ImGui::IsKeyDown(ImGuiKey_W))
             d1 += dt;
-        if (ImGui::IsKeyDown('S'))
+        if (ImGui::IsKeyDown(ImGuiKey_S))
             d1 -= dt;
-        if (ImGui::IsKeyDown('A'))
+        if (ImGui::IsKeyDown(ImGuiKey_A))
             d2 -= dt;
-        if (ImGui::IsKeyDown('D'))
+        if (ImGui::IsKeyDown(ImGuiKey_D))
             d2 += dt;
 
         m_pCamera->Walk(d1 * 6.0f);

@@ -63,7 +63,7 @@ float4 SkyboxPS(SkyboxVSOut input) : SV_Target
     [branch]
     if (skyboxSamples > 0)
     {
-        float3 skybox = g_SkyboxTexture.Sample(g_SamplerDiffuse, input.skyboxCoord).xyz;
+        float3 skybox = g_SkyboxTexture.Sample(g_Sam, input.skyboxCoord).xyz;
         lit += skyboxSamples * skybox;
     }
     

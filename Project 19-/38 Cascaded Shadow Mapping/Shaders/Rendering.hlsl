@@ -9,8 +9,8 @@
 //--------------------------------------------------------------------------------------
 // 几何阶段 
 //--------------------------------------------------------------------------------------
-Texture2D g_TextureDiffuse : register(t0);
-SamplerState g_SamplerDiffuse : register(s0);
+Texture2D g_DiffuseMap : register(t0);
+SamplerState g_Sam : register(s0);
 
 struct VertexPosNormalTex
 {
@@ -54,11 +54,7 @@ float4 ForwardPS(VertexOut input) : SV_Target
     float percentLit = CalculateCascadedShadow(input.shadowPosV, input.depthV,
         cascadeIndex, nextCascadeIndex, blendAmount);
     
-    float4 diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    uint texWidth = 0, texHeight = 0;
-    g_TextureDiffuse.GetDimensions(texWidth, texHeight);
-    if (texWidth > 0 && texHeight > 0)
-        diffuse = g_TextureDiffuse.Sample(g_SamplerDiffuse, input.texCoord);
+    float4 diffuse = g_DiffuseMap.Sample(g_Sam, input.texCoord);
     
     float4 visualizeCascadeColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     if (g_VisualizeCascades)

@@ -83,15 +83,9 @@ VertexOutput BasicVS(VertexInput vIn)
 // 像素着色器
 float4 BasicPS(VertexOutput pIn) : SV_Target
 {
-    uint texWidth, texHeight;
-    g_DiffuseMap.GetDimensions(texWidth, texHeight);
-    float4 texColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (texWidth > 0 && texHeight > 0)
-    {
-        // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
-        texColor = g_DiffuseMap.Sample(g_Sam, pIn.tex);
-        clip(texColor.a - 0.1f);
-    }
+    float4 texColor = g_DiffuseMap.Sample(g_Sam, pIn.tex);
+    // 提前进行Alpha裁剪，对不符合要求的像素可以避免后续运算
+    clip(texColor.a - 0.1f);
     
     // 标准化法向量
     pIn.normalW = normalize(pIn.normalW);

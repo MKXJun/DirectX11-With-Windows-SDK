@@ -110,8 +110,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
 
     Microsoft::WRL::ComPtr<ID3DBlob> blob;
     // 创建顶点着色器
-    pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders/Rendering.hlsl", device,
-        "GeometryVS", "vs_5_0", defines, blob.GetAddressOf());
+    HR(pImpl->m_pEffectHelper->CreateShaderFromFile("GeometryVS", L"Shaders/Rendering.hlsl", device,
+        "GeometryVS", "vs_5_0", defines, blob.GetAddressOf()));
     // 创建顶点布局
     HR(device->CreateInputLayout(VertexPosNormalTex::GetInputLayout(), ARRAYSIZE(VertexPosNormalTex::GetInputLayout()),
         blob->GetBufferPointer(), blob->GetBufferSize(), pImpl->m_pVertexPosNormalTexLayout.GetAddressOf()));
@@ -144,8 +144,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
                     defines[3].Definition = numStrs[intervalIdx];
 
                     // 创建像素着色器
-                    pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/Rendering.hlsl", device, 
-                        "ForwardPS", "ps_5_0", defines);
+                    HR(pImpl->m_pEffectHelper->CreateShaderFromFile(psName, L"Shaders/Rendering.hlsl", device, 
+                        "ForwardPS", "ps_5_0", defines));
 
                     // 创建通道
                     passDesc.nameVS = "GeometryVS";
@@ -157,8 +157,8 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
     }
 
 
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerShadow", RenderStates::SSShadowPCF.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSAnistropicWrap16x.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSShadowPCF.Get());
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
@@ -190,7 +190,7 @@ void ForwardEffect::SetMaterial(const Material& material)
     TextureManager& tm = TextureManager::Get();
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)
@@ -294,7 +294,7 @@ void XM_CALLCONV ForwardEffect::SetShadowViewMatrix(DirectX::FXMMATRIX ShadowVie
 
 void ForwardEffect::SetShadowTextureArray(ID3D11ShaderResourceView* shadow)
 {
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureShadow", shadow);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_ShadowMap", shadow);
 }
 
 void ForwardEffect::SetLightDir(const DirectX::XMFLOAT3& dir)

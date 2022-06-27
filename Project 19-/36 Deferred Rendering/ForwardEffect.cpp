@@ -127,7 +127,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
         pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
     }
 
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSAnistropicWrap16x.Get());
 
     // 设置调试对象名
 #if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
@@ -193,7 +193,7 @@ void ForwardEffect::SetMaterial(const Material& material)
     TextureManager& tm = TextureManager::Get();
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)

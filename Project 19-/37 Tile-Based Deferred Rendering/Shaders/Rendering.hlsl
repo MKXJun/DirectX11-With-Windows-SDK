@@ -16,8 +16,8 @@ float linstep(float min_value, float max_value, float value)
 //--------------------------------------------------------------------------------------
 // 几何阶段 
 //--------------------------------------------------------------------------------------
-Texture2D g_TextureDiffuse : register(t0);
-SamplerState g_SamplerDiffuse : register(s0);
+Texture2D g_DiffuseMap : register(t0);
+SamplerState g_Sam : register(s0);
 
 struct VertexPosNormalTex
 {
@@ -75,13 +75,8 @@ SurfaceData ComputeSurfaceDataFromGeometry(VertexPosHVNormalVTex input)
     float3 faceNormal = ComputeFaceNormal(input.posV);
     surface.normalV = normalize(g_FaceNormals ? faceNormal : input.normalV);
     
-    surface.albedo = g_TextureDiffuse.Sample(g_SamplerDiffuse, input.texCoord);
+    surface.albedo = g_DiffuseMap.Sample(g_Sam, input.texCoord);
     surface.albedo.rgb = g_LightingOnly ? float3(1.0f, 1.0f, 1.0f) : surface.albedo.rgb;
-    
-    // 将空漫反射纹理映射为白色
-    uint2 textureDim;
-    g_TextureDiffuse.GetDimensions(textureDim.x, textureDim.y);
-    surface.albedo = (textureDim.x == 0U ? float4(1.0f, 1.0f, 1.0f, 1.0f) : surface.albedo);
     
     // 我们没有艺术资产相关的值来设置下面这些，现在就设置成看起来比较合理的值
     surface.specularAmount = 0.9f;

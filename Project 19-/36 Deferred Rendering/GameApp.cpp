@@ -325,12 +325,12 @@ bool GameApp::InitResource()
     // ******************
     // 初始化天空盒纹理
     //
-    m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
+    m_TextureManager.CreateFromFile("..\\Texture\\Clouds.dds");
 
     // ******************
     // 初始化对象
     //
-    m_Sponza.SetModel(m_ModelManager.CreateFromFile("..\\Model\\Sponza\\Sponza.obj"));
+    m_Sponza.SetModel(m_ModelManager.CreateFromFile("..\\Model\\Sponza\\Sponza.gltf"));
     m_Sponza.GetTransform().SetScale(0.05f, 0.05f, 0.05f);
     m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
     Model* pModel = m_ModelManager.GetModel("skyboxCube");

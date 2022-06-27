@@ -164,7 +164,7 @@ void BasicEffect::SetMaterial(const Material& material)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 
     XMMATRIX TexTransform = XMMatrixIdentity();
     if (material.Has<XMFLOAT2>("$TexScale"))

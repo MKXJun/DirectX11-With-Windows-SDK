@@ -266,9 +266,9 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Ground", Geometry::CreatePlane(XMFLOAT2(20.0f, 30.0f), XMFLOAT2(6.0f, 9.0f)));
         pModel->SetDebugObjectName("Ground");
-        m_TextureManager.CreateTexture("..\\Texture\\floor.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\floor.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\floor.dds");
-        m_TextureManager.CreateTexture("..\\Texture\\floor_nmap.dds");
+        m_TextureManager.CreateFromFile("..\\Texture\\floor_nmap.dds");
         pModel->materials[0].Set<std::string>("$Normal", "..\\Texture\\floor_nmap.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -282,9 +282,9 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Cylinder", Geometry::CreateCylinder(0.5f, 3.0f));
         pModel->SetDebugObjectName("Cylinder");
-        m_TextureManager.CreateTexture("..\\Texture\\bricks.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\bricks.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\bricks.dds");
-        m_TextureManager.CreateTexture("..\\Texture\\bricks_nmap.dds");
+        m_TextureManager.CreateFromFile("..\\Texture\\bricks_nmap.dds");
         pModel->materials[0].Set<std::string>("$Normal", "..\\Texture\\bricks_nmap.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -302,7 +302,7 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Sphere", Geometry::CreateSphere(0.5f));
         pModel->SetDebugObjectName("Sphere");
-        m_TextureManager.CreateTexture("..\\Texture\\stone.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\stone.dds", false, true);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\stone.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f));
@@ -336,7 +336,7 @@ bool GameApp::InitResource()
         Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
         pModel->SetDebugObjectName("Skybox");
         m_Skybox.SetModel(pModel);
-        m_TextureManager.CreateTexture("..\\Texture\\desertcube1024.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\desertcube1024.dds", false, true);
         pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\desertcube1024.dds");
     }
 

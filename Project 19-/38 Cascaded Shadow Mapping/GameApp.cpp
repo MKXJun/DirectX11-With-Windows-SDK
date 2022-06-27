@@ -73,6 +73,7 @@ void GameApp::UpdateScene(float dt)
     if (m_CSManager.m_SelectedCamera <= CameraSelection::CameraSelection_Light)
         m_FPSCameraController.Update(dt);
 
+#pragma region IMGUI
     bool need_gpu_timer_reset = false;
     if (ImGui::Begin("Cascaded Shadow Mapping"))
     {
@@ -121,8 +122,6 @@ void GameApp::UpdateScene(float dt)
             m_pDebugShadowBuffer = std::make_unique<Texture2D>(m_pd3dDevice.Get(), m_CSManager.m_ShadowSize, m_CSManager.m_ShadowSize, DXGI_FORMAT_R8G8B8A8_UNORM);
             need_gpu_timer_reset = true;
         }
-
-        
 
         static int pcf_kernel_level = 1;
         ImGui::Text("PCF Kernel Size: %d", m_CSManager.m_PCFKernelSize);
@@ -259,6 +258,7 @@ void GameApp::UpdateScene(float dt)
         m_GpuTimer_Shadow.Reset(m_pd3dImmediateContext.Get());
         m_GpuTimer_Skybox.Reset(m_pd3dImmediateContext.Get());
     }
+#pragma endregion IMGUI
 
     if (m_CSManager.m_SelectedCamera == CameraSelection::CameraSelection_Eye)
     {
@@ -408,6 +408,7 @@ bool GameApp::InitResource()
 
     m_FPSCameraController.InitCamera(viewerCamera.get());
     m_FPSCameraController.SetMoveSpeed(10.0f);
+    
     // ******************
     // 初始化特效
     //
@@ -432,13 +433,13 @@ bool GameApp::InitResource()
     // ******************
     // 初始化对象
     //
-    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.obj"));
+    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.gltf"));
     
     m_ModelManager.CreateFromGeometry("cube", Geometry::CreateBox());
     m_Cube.SetModel(m_ModelManager.GetModel("cube"));
     m_Cube.GetTransform().SetPosition(XMFLOAT3(48.0f, 1.0f, 0.0f));
 
-    m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
+    m_TextureManager.CreateFromFile("..\\Texture\\Clouds.dds");
     m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
     Model* pModel = m_ModelManager.GetModel("skyboxCube");
     pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\Clouds.dds");

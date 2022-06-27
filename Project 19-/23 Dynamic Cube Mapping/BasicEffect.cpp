@@ -147,8 +147,8 @@ void BasicEffect::SetMaterial(const Material& material)
     phongMat.reflect = material.Get<XMFLOAT4>("$ReflectColor");
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
-    const auto& str = material.Get<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", tm.GetTexture(str));
+    auto pStr = material.TryGet<std::string>("$Diffuse");
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)

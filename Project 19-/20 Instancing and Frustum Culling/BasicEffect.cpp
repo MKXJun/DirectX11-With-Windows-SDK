@@ -175,7 +175,7 @@ void BasicEffect::SetMaterial(const Material& material)
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_Material")->SetRaw(&phongMat);
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput BasicEffect::GetInputData(const MeshData& meshData)
@@ -221,7 +221,7 @@ void BasicEffect::SetEyePos(const DirectX::XMFLOAT3& eyePos)
 
 void BasicEffect::SetDiffuseColor(const DirectX::XMFLOAT4& color)
 {
-    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_DiffuseColor")->SetFloatVector(4, reinterpret_cast<const float*>(&color));
+    pImpl->m_pEffectHelper->GetConstantBufferVariable("g_ConstantDiffuseColor")->SetFloatVector(4, reinterpret_cast<const float*>(&color));
 }
 
 void BasicEffect::SetRenderDefault()

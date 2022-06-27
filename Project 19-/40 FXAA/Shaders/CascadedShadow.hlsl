@@ -29,9 +29,9 @@
 // 可以适用于低端PC。高端PC可以处理更大的阴影，以及更大的混合地带
 // 在使用更大的PCF核时，可以给高端PC使用基于偏导的深度偏移
 
-Texture2DArray g_TextureShadow : register(t10);
-SamplerComparisonState g_SamplerShadowCmp : register(s10);
-SamplerState g_SamplerShadow : register(s11);
+Texture2DArray g_ShadowMap : register(t10);
+SamplerComparisonState g_SamShadowCmp : register(s10);
+SamplerState g_SamShadow : register(s11);
 
 static const float4 s_CascadeColorsMultiplier[8] =
 {
@@ -113,7 +113,7 @@ float CalculatePCFPercentLit(int currentCascadeIndex,
             depthCmp -= g_PCFDepthBias;
 
             // 将变换后的像素深度同阴影图中的深度进行比较
-            percentLit += g_TextureShadow.SampleCmpLevelZero(g_SamplerShadowCmp,
+            percentLit += g_ShadowMap.SampleCmpLevelZero(g_SamShadowCmp,
                 float3(
                     shadowTexCoord.x + (float) x * g_TexelSize,
                     shadowTexCoord.y + (float) y * g_TexelSize,
@@ -144,7 +144,7 @@ float CalculateVarianceShadow(float4 shadowTexCoord,
     shadowTexCoordDDX *= g_CascadeScale[currentCascadeIndex].xyz;
     shadowTexCoordDDY *= g_CascadeScale[currentCascadeIndex].xyz;
     
-    moments += g_TextureShadow.SampleGrad(g_SamplerShadow,
+    moments += g_ShadowMap.SampleGrad(g_SamShadow,
                    float3(shadowTexCoord.xy, (float) currentCascadeIndex),
                    shadowTexCoordDDX.xy, shadowTexCoordDDY.xy).xy;
     
@@ -169,7 +169,7 @@ float CalculateExponentialShadow(float4 shadowTexCoord,
     shadowTexCoordDDX *= g_CascadeScale[currentCascadeIndex].xyz;
     shadowTexCoordDDY *= g_CascadeScale[currentCascadeIndex].xyz;
     
-    occluder += g_TextureShadow.SampleGrad(g_SamplerShadow,
+    occluder += g_ShadowMap.SampleGrad(g_SamShadow,
                     float3(shadowTexCoord.xy, (float) currentCascadeIndex),
                     shadowTexCoordDDX.xy, shadowTexCoordDDY.xy).x;
     
@@ -196,7 +196,7 @@ float CalculateExponentialVarianceShadow(float4 shadowTexCoord,
     shadowTexCoordDDX *= g_CascadeScale[currentCascadeIndex].xyz;
     shadowTexCoordDDY *= g_CascadeScale[currentCascadeIndex].xyz;
     
-    moments += g_TextureShadow.SampleGrad(g_SamplerShadow,
+    moments += g_ShadowMap.SampleGrad(g_SamShadow,
                     float3(shadowTexCoord.xy, (float) currentCascadeIndex),
                     shadowTexCoordDDX.xy, shadowTexCoordDDY.xy);
     

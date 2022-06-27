@@ -7,10 +7,8 @@
 #include "CascadedShadow.hlsl"
 
 
-Texture2D g_TextureDiffuse : register(t0);
-Texture2D<float> g_TexturePercentLit : register(t1);
-Texture2D g_TextureCascadeColor : register(t2);
-SamplerState g_SamplerDiffuse : register(s0);
+Texture2D g_DiffuseMap : register(t0);
+SamplerState g_Sam : register(s0);
 
 //--------------------------------------------------------------------------------------
 // 几何阶段 
@@ -81,11 +79,7 @@ float4 ForwardPS(VertexOut input) : SV_Target
     float percentLit = CalculateCascadedShadow(input.shadowPosV, input.depthV,
         cascadeIndex, nextCascadeIndex, blendAmount);
     
-    float4 diffuse = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    uint texWidth = 0, texHeight = 0;
-    g_TextureDiffuse.GetDimensions(texWidth, texHeight);
-    if (texWidth > 0 && texHeight > 0)
-        diffuse = g_TextureDiffuse.Sample(g_SamplerDiffuse, input.texCoord);
+    float4 diffuse = g_DiffuseMap.Sample(g_Sam, input.texCoord);
     
     float4 visualizeCascadeColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     if (g_VisualizeCascades)
@@ -110,37 +104,5 @@ float4 ForwardPS(VertexOut input) : SV_Target
     lighting = lerp(shadowLighting, lighting, percentLit);
     return lighting * visualizeCascadeColor * diffuse;
 }
-
-float4 DeferredShadowForwardPS(VertexOut input) : SV_Target
-{
-    float4 diffuse = g_TextureDiffuse.Sample(g_SamplerDiffuse, input.texCoord);
-    float percentLit = g_TexturePercentLit.Load(int3(input.posH.xy, 0));
-    float4 visualizeCascadeColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    uint texWidth = 0, texHeight = 0;
-    g_TextureCascadeColor.GetDimensions(texWidth, texHeight);
-    if (texWidth > 0 && texHeight > 0)
-        g_TextureCascadeColor.Load(int3(input.posH.xy, 0));
-    
-    // 灯光硬编码
-    float3 lightDir[4] =
-    {
-        float3(-1.0f, 1.0f, -1.0f),
-        float3(1.0f, 1.0f, -1.0f),
-        float3(0.0f, -1.0f, 0.0f),
-        float3(1.0f, 1.0f, 1.0f)
-    };
-    
-    // 类似环境光的照明
-    float lighting = saturate(dot(lightDir[0], input.normalW)) * 0.05f +
-                     saturate(dot(lightDir[1], input.normalW)) * 0.05f +
-                     saturate(dot(lightDir[2], input.normalW)) * 0.05f +
-                     saturate(dot(lightDir[3], input.normalW)) * 0.05f;
-    
-    float shadowLighting = lighting * 0.5f;
-    lighting += saturate(dot(-g_LightDir, input.normalW));
-    lighting = lerp(shadowLighting, lighting, percentLit);
-    return lighting * visualizeCascadeColor * diffuse;
-}
-
 
 #endif // RENDERING_HLSL

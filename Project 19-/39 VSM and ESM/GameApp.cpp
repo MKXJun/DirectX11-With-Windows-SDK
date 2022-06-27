@@ -541,7 +541,7 @@ bool GameApp::InitResource()
     m_Cube.SetModel(m_ModelManager.GetModel("cube"));
     m_Cube.GetTransform().SetPosition(XMFLOAT3(48.0f, 1.0f, 0.0f));
 
-    m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
+    m_TextureManager.CreateFromFile("..\\Texture\\Clouds.dds");
     m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
     Model* pModel = m_ModelManager.GetModel("skyboxCube");
     pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\Clouds.dds");

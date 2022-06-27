@@ -45,7 +45,7 @@ void Waves::InitResource(ID3D11Device* device, uint32_t rows, uint32_t cols,
     m_pModel = &m_Model;
 
     if (TextureManager::Get().GetTexture("..\\Texture\\water2.dds") == nullptr)
-        TextureManager::Get().CreateTexture("..\\Texture\\water2.dds", false, true);
+        TextureManager::Get().CreateFromFile("..\\Texture\\water2.dds", false, true);
     m_Model.materials[0].Set<std::string>("$Diffuse", "..\\Texture\\water2.dds");
     m_Model.materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
     m_Model.materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));

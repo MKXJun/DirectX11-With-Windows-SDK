@@ -31,10 +31,12 @@ public:
 
     static TextureManager& Get();
     void Init(ID3D11Device* device);
-    ID3D11ShaderResourceView* CreateTexture(std::string_view filename, bool enableMips = false, bool forceSRGB = false);
+    ID3D11ShaderResourceView* CreateFromFile(std::string_view filename, bool enableMips = false, bool forceSRGB = false);
+    ID3D11ShaderResourceView* CreateFromMemory(std::string_view name, void* data, size_t byteWidth, bool enableMips = false, bool forceSRGB = false);
     bool AddTexture(std::string_view name, ID3D11ShaderResourceView* texture);
     void RemoveTexture(std::string_view name);
     ID3D11ShaderResourceView* GetTexture(std::string_view filename);
+    ID3D11ShaderResourceView* GetNullTexture();
 
 private:
 

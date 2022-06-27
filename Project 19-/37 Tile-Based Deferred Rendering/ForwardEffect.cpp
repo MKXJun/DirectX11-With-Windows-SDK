@@ -145,7 +145,7 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
         pPass->SetDepthStencilState(RenderStates::DSSGreaterEqual.Get(), 0);
     }
 
-    pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamplerDiffuse", RenderStates::SSAnistropicWrap16x.Get());
+    pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSAnistropicWrap16x.Get());
 
     // ******************
     // 创建计算着色器与通道
@@ -241,7 +241,8 @@ void ForwardEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
 
     UINT dims[2] = { texDesc.Width, texDesc.Height };
     pImpl->m_pEffectHelper->GetConstantBufferVariable("g_FramebufferDimensions")->SetUIntVector(2, dims);
-    pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_TilebufferRW", tileInfoBufferUAV, 0);
+    uint32_t initCount = 0;
+    pImpl->m_pEffectHelper->SetUnorderedAccessByName("g_TilebufferRW", tileInfoBufferUAV, &initCount);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Light", lightBufferSRV);
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[3]", depthBufferSRV);
     
@@ -253,12 +254,12 @@ void ForwardEffect::ComputeTiledLightCulling(ID3D11DeviceContext* deviceContext,
     pPass->Dispatch(deviceContext, texDesc.Width, texDesc.Height);
 
     // 清空
-    int slot = pImpl->m_pEffectHelper->MapUnorderedAccessSlot("g_TilebufferRW");
+    auto& pEffectHelper = pImpl->m_pEffectHelper;
     tileInfoBufferUAV = nullptr;
-    deviceContext->CSSetUnorderedAccessViews(slot, 1, &tileInfoBufferUAV, nullptr);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_Light", nullptr);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_GBufferTextures[3]", nullptr);
-    pPass->Apply(deviceContext);
+    deviceContext->CSSetUnorderedAccessViews(pEffectHelper->MapUnorderedAccessSlot("g_TilebufferRW"), 1, &tileInfoBufferUAV, nullptr);
+    lightBufferSRV = nullptr;
+    deviceContext->CSSetShaderResources(pEffectHelper->MapShaderResourceSlot("g_Light"), 1, &lightBufferSRV);
+    deviceContext->CSSetShaderResources(pEffectHelper->MapShaderResourceSlot("g_GBufferTextures[3]"), 1, &lightBufferSRV);
 }
 
 void ForwardEffect::SetRenderWithTiledLightCulling()
@@ -288,7 +289,7 @@ void ForwardEffect::SetMaterial(const Material& material)
     TextureManager& tm = TextureManager::Get();
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)

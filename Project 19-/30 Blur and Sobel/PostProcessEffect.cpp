@@ -149,7 +149,7 @@ void PostProcessEffect::RenderComposite(
 {
     auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Composite");
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Input", input1);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_EdgeInput", input2);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_EdgeInput", input2 ? input2 : TextureManager::Get().GetNullTexture());
     pPass->Apply(deviceContext);
 
     deviceContext->OMSetRenderTargets(1, &output, nullptr);

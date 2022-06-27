@@ -345,13 +345,13 @@ bool GameApp::InitResource()
     // ******************
     // 初始化对象
     //
-    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.obj"));
+    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.gltf"));
 
     m_ModelManager.CreateFromGeometry("cube", Geometry::CreateBox());
     m_Cube.SetModel(m_ModelManager.GetModel("cube"));
     m_Cube.GetTransform().SetPosition(XMFLOAT3(48.0f, 1.0f, 0.0f));
 
-    m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
+    m_TextureManager.CreateFromFile("..\\Texture\\Clouds.dds");
     m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
     Model* pModel = m_ModelManager.GetModel("skyboxCube");
     pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\Clouds.dds");

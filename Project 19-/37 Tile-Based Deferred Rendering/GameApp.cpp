@@ -72,6 +72,7 @@ void GameApp::UpdateScene(float dt)
     // 更新摄像机
     m_FPSCameraController.Update(dt);
 
+#pragma region IMGUI
     bool need_gpu_timer_reset = false;
     if (ImGui::Begin("Tile-Based Deferred Rendering"))
     {
@@ -182,7 +183,7 @@ void GameApp::UpdateScene(float dt)
         m_GpuTimer_Geometry.Reset(m_pd3dImmediateContext.Get());
         m_GpuTimer_Skybox.Reset(m_pd3dImmediateContext.Get());
     }
-    
+#pragma endregion
 
     m_ForwardEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
     m_DeferredEffect.SetViewMatrix(m_pCamera->GetViewMatrixXM());
@@ -360,12 +361,12 @@ bool GameApp::InitResource()
     // ******************
     // 初始化天空盒纹理
     //
-    m_TextureManager.CreateTexture("..\\Texture\\Clouds.dds");
+    m_TextureManager.CreateFromFile("..\\Texture\\Clouds.dds");
 
     // ******************
     // 初始化对象
     //
-    m_Sponza.SetModel(m_ModelManager.CreateFromFile("..\\Model\\Sponza\\Sponza.obj"));
+    m_Sponza.SetModel(m_ModelManager.CreateFromFile("..\\Model\\Sponza\\sponza.gltf"));
     m_Sponza.GetTransform().SetScale(0.05f, 0.05f, 0.05f);
     m_ModelManager.CreateFromGeometry("skyboxCube", Geometry::CreateBox());
     Model* pModel = m_ModelManager.GetModel("skyboxCube"); 

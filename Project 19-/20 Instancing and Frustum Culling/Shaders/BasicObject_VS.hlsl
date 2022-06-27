@@ -10,7 +10,7 @@ VertexPosHWNormalColorTex VS(VertexPosNormalTex vIn)
     vOut.posW = posW.xyz;
     vOut.posH = mul(posW, g_ViewProj);
     vOut.normalW = mul(vIn.normalL, (float3x3) g_WorldInvTranspose);
-    vOut.color = g_DiffuseColor;
+    vOut.color = g_ConstantDiffuseColor;
     vOut.tex = vIn.tex;
     return vOut;
 }

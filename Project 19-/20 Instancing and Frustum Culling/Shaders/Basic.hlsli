@@ -8,7 +8,7 @@ cbuffer CBChangesEveryInstanceDrawing : register(b0)
 {
     matrix g_World;
     matrix g_WorldInvTranspose;
-    float4 g_DiffuseColor;
+    float4 g_ConstantDiffuseColor;
 }
 
 cbuffer CBChangesEveryObjectDrawing : register(b1)

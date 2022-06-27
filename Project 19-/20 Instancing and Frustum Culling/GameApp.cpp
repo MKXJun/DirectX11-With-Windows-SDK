@@ -205,6 +205,7 @@ void GameApp::DrawScene()
     if (m_SceneMode == 0)
     {
         m_BasicEffect.SetRenderDefault();
+        m_BasicEffect.SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
         m_Ground.Draw(m_pd3dImmediateContext.Get(), m_BasicEffect);
     }
 
@@ -327,6 +328,8 @@ void GameApp::CreateRandomTrees()
                 XMMATRIX WInvT = XMath::InverseTranspose(W);
                 XMStoreFloat4x4(&m_TreeInstancedData[pos].world, XMMatrixTranspose(W));
                 XMStoreFloat4x4(&m_TreeInstancedData[pos].worldInvTranspose, XMMatrixTranspose(WInvT));
+                // 使用纹理色跟顶点色混乘，需要设置为1.0f
+                m_TreeInstancedData[pos].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
             }
         }
         theta += XM_2PI / 16;

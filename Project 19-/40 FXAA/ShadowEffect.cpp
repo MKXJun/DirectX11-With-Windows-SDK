@@ -475,7 +475,7 @@ void ShadowEffect::SetMaterial(const Material& material)
     TextureManager& tm = TextureManager::Get();
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : nullptr);
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_TextureDiffuse", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
 }
 
 MeshDataInput ShadowEffect::GetInputData(const MeshData& meshData)

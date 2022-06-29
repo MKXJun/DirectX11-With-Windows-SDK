@@ -1,12 +1,16 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.1-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.2-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
 ![000](MarkdownFiles/000.png)
 
->  **注意：2.x.x和1.x.x的主要区别在于19章之后的代码有大幅修改。**
+>  **注意：**
+>
+>  - **2.x.x和1.x.x的主要区别在于19章之后的代码有大幅修改。**
+>  - **若更新项目后渲染显示有问题，尝试删除Shaders/Cache文件夹**
+>
 
 ## 博客教程
 
@@ -78,9 +82,15 @@
 
 ## 最近更新
 
-2022/6/24 Ver2.38.1
+2022/6/29 Ver2.38.2
 
-- 修复ImGui使用过时方式的键盘事件监测
-- 将剩余tab替换成空格
+- TextureManager读取方法修改为CreateFromFile/Memory 
+- TextureManager添加1x1白纹理，用于替代19章开始的shader判空操作 
+- 修改shader中部分变量名，删除38-39多余函数 
+- 修复37章Forward+解绑问题 
+- sponza和powerplant模型格式从.obj转为.gltf 
+- 添加sponzaPBR模型 
+- 修改assimp读取部分，去除点、线图元
+- 添加ImGuiLog类，但暂不实装
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

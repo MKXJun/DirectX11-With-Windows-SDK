@@ -4,6 +4,17 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+2022/6/29 Ver2.38.2
+
+- TextureManager读取方法修改为CreateFromFile/Memory 
+- TextureManager添加1x1白纹理，用于替代19章开始的shader判空操作 
+- 修改shader中部分变量名，删除38-39多余函数 
+- 修复37章Forward+解绑问题 
+- sponza和powerplant模型格式从.obj转为.gltf 
+- 添加sponzaPBR模型 
+- 修改assimp读取部分，去除点、线图元
+- 添加ImGuiLog类，但暂不实装
+
 2022/6/24 Ver2.38.1
 
 - 修复ImGui使用过时方式的键盘事件监测

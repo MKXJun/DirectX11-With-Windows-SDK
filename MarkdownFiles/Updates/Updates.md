@@ -4,6 +4,11 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+
+2022/9/3 Ver2.38.3
+
+- 调整d3dFormat.h
+
 2022/6/29 Ver2.38.2
 
 - TextureManager读取方法修改为CreateFromFile/Memory 

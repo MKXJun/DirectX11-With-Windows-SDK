@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.2-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.3-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -82,15 +82,8 @@
 
 ## 最近更新
 
-2022/6/29 Ver2.38.2
+2022/9/3 Ver2.38.3
 
-- TextureManager读取方法修改为CreateFromFile/Memory 
-- TextureManager添加1x1白纹理，用于替代19章开始的shader判空操作 
-- 修改shader中部分变量名，删除38-39多余函数 
-- 修复37章Forward+解绑问题 
-- sponza和powerplant模型格式从.obj转为.gltf 
-- 添加sponzaPBR模型 
-- 修改assimp读取部分，去除点、线图元
-- 添加ImGuiLog类，但暂不实装
+- 调整d3dFormat.h
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

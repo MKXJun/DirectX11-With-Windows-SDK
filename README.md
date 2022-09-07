@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.3-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.39.0-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -82,8 +82,15 @@
 
 ## 最近更新
 
-2022/9/3 Ver2.38.3
+2022/9/7 Ver2.39.0
 
-- 调整d3dFormat.h
+- **添加项目 PBR，目前仅支持延迟渲染**
+- 调整TextureMnager的读取配置选项，初步支持HDR
+- 调整Camera类
+- 球体生成暂时替换为UV球
+- 调整Texture2D类
+- 添加SamplerStates
+- ModelManager初步支持PBR
+- 调整Material类
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

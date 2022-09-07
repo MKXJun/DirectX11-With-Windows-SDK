@@ -16,6 +16,7 @@ public:
     using ComPtr = Microsoft::WRL::ComPtr<T>;
 
     Texture2DBase(ID3D11Device* device, const CD3D11_TEXTURE2D_DESC& texDesc, const CD3D11_SHADER_RESOURCE_VIEW_DESC& srvDesc);
+    Texture2DBase(ID3D11Device* device, const CD3D11_TEXTURE2D_DESC& texDesc);
     virtual ~Texture2DBase() = 0 {}
 
     ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
@@ -24,6 +25,7 @@ public:
 
     uint32_t GetWidth() const { return m_Width; }
     uint32_t GetHeight() const { return m_Height; }
+    uint32_t GetMipLevels() const { return m_MipLevels; }
 
     // 设置调试对象名
     virtual void SetDebugObjectName(std::string_view name);
@@ -31,7 +33,7 @@ public:
 protected:
     ComPtr<ID3D11Texture2D> m_pTexture;
     ComPtr<ID3D11ShaderResourceView> m_pTextureSRV;
-    uint32_t m_Width{}, m_Height{};
+    uint32_t m_Width{}, m_Height{}, m_MipLevels;
 };
 
 class Texture2D : public Texture2DBase
@@ -51,22 +53,37 @@ public:
     ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureRTV.Get(); }
     ID3D11UnorderedAccessView* GetUnorderedAccess() { return m_pTextureUAV.Get(); }
 
-    uint32_t GetMipLevels() const { return m_MipLevels; }
-
     // 设置调试对象名
     void SetDebugObjectName(std::string_view name) override;
 
 protected:
-    uint32_t m_MipLevels = 1;
     ComPtr<ID3D11RenderTargetView> m_pTextureRTV;
     ComPtr<ID3D11UnorderedAccessView> m_pTextureUAV;
+};
+
+class ReadBackTexture2D : public Texture2DBase
+{
+public:
+    ReadBackTexture2D(ID3D11Device* device, uint32_t width, uint32_t height, DXGI_FORMAT format);
+    ~ReadBackTexture2D() override = default;
+
+    // 不允许拷贝，允许移动
+    ReadBackTexture2D(const ReadBackTexture2D&) = delete;
+    ReadBackTexture2D& operator=(const ReadBackTexture2D&) = delete;
+    ReadBackTexture2D(ReadBackTexture2D&&) = default;
+    ReadBackTexture2D& operator=(ReadBackTexture2D&&) = default;
+
+    void CopyFrom(ID3D11DeviceContext* deviceContext, Texture2DBase& texture, uint32_t arraySlice = 0, uint32_t mipSlice = 0);
+    void CopyFrom(ID3D11DeviceContext* deviceContext, ID3D11Texture2D* texture, uint32_t arraySlice = 0, uint32_t mipSlice = 0);
+    void* Map(ID3D11DeviceContext* deviceContext, uint32_t& rowPitch);
+    void UnMap(ID3D11DeviceContext* deviceContext);
 };
 
 class Texture2DMS : public Texture2DBase
 {
 public:
     Texture2DMS(ID3D11Device* device, uint32_t width, uint32_t height, DXGI_FORMAT format,
-        const DXGI_SAMPLE_DESC& sampleDesc, 
+        const DXGI_SAMPLE_DESC& sampleDesc,
         uint32_t bindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
     ~Texture2DMS() override = default;
 
@@ -90,14 +107,12 @@ public:
         uint32_t bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
     ~TextureCube() override = default;
 
-    uint32_t GetMipLevels() const { return m_MipLevels; }
-
     ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureArrayRTV.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx) { return m_pRenderTargetElements[arrayIdx].Get(); }
-    
+
     // RWTexture2D
     ID3D11UnorderedAccessView* GetUnorderedAccess(size_t arrayIdx) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
-    
+
     // TextureCube
     using Texture2DBase::GetShaderResource;
     // Texture2D
@@ -107,7 +122,6 @@ public:
     void SetDebugObjectName(std::string_view name) override;
 
 private:
-    uint32_t m_MipLevels = 1;
     ComPtr<ID3D11RenderTargetView> m_pTextureArrayRTV;   // RTV指向纹理数组
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
     std::vector<ComPtr<ID3D11UnorderedAccessView>> m_pUnorderedAccessElements;
@@ -122,12 +136,11 @@ public:
         uint32_t bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
     ~Texture2DArray() override = default;
 
-    uint32_t GetMipLevels() const { return m_MipLevels; }
     uint32_t GetArraySize() const { return m_ArraySize; }
 
     ID3D11RenderTargetView* GetRenderTarget() { return m_pTextureArrayRTV.Get(); }
     ID3D11RenderTargetView* GetRenderTarget(size_t arrayIdx) { return m_pRenderTargetElements[arrayIdx].Get(); }
-    
+
     // RWTexture2D
     ID3D11UnorderedAccessView* GetUnorderedAccess(size_t arrayIdx) { return m_pUnorderedAccessElements[arrayIdx].Get(); }
 
@@ -140,7 +153,6 @@ public:
     void SetDebugObjectName(std::string_view name) override;
 
 private:
-    uint32_t m_MipLevels = 1;
     uint32_t m_ArraySize = 1;
     ComPtr<ID3D11RenderTargetView> m_pTextureArrayRTV;   // RTV指向纹理数组
     std::vector<ComPtr<ID3D11RenderTargetView>> m_pRenderTargetElements;
@@ -155,7 +167,7 @@ public:
         uint32_t arraySize, const DXGI_SAMPLE_DESC& sampleDesc,
         uint32_t bindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET);
     ~Texture2DMSArray() override = default;
-    
+
     uint32_t GetArraySize() const { return m_ArraySize; }
     uint32_t GetMsaaSamples() const { return m_MsaaSamples; }
 

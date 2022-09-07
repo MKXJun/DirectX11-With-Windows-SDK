@@ -387,7 +387,7 @@ struct ConstantBufferVariable : public IEffectConstantBufferVariable
         memcpy_s(pOutput, byteCount, pCBufferData->cbufferData.data() + startByteOffset + byteOffset, byteCount);
         return S_OK;
     }
-    
+
     void SetMatrixInBytes(uint32_t rows, uint32_t cols, const BYTE* noPadData)
     {
         // 仅允许1x1到4x4
@@ -519,7 +519,7 @@ struct EffectPass : public IEffectPass
     EffectHelper* GetEffectHelper() override;
     const std::string& GetPassName() override;
 
-    void Apply(ID3D11DeviceContext * deviceContext) override;
+    void Apply(ID3D11DeviceContext* deviceContext) override;
 
     void Dispatch(ID3D11DeviceContext* deviceContext, uint32_t threadX = 1, uint32_t threadY = 1, uint32_t threadZ = 1) override;
 
@@ -535,7 +535,7 @@ struct EffectPass : public IEffectPass
 
     ComPtr<ID3D11DepthStencilState> pDepthStencilState = nullptr;
     uint32_t stencilRef = 0;
-    
+
 
     // 着色器相关信息
     std::shared_ptr<VertexShaderInfo> pVSInfo = nullptr;
@@ -617,7 +617,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
             &m_ComputeShaders[nameID]->threadGroupSizeX,
             &m_ComputeShaders[nameID]->threadGroupSizeY,
             &m_ComputeShaders[nameID]->threadGroupSizeZ);
-        
+
     }
 
     for (uint32_t i = 0;; ++i)
@@ -716,7 +716,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
                 }
                 // 常量缓冲区的成员
                 else
-                {	
+                {
                     m_ConstantBufferVariables[svNameID] = std::make_shared<ConstantBufferVariable>(
                         svDesc.Name, svDesc.StartOffset, svDesc.Size, &m_CBuffers[sibDesc.BindPoint]);
                     // 如果有默认值，对其赋初值
@@ -724,11 +724,11 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
                         m_ConstantBufferVariables[svNameID]->SetRaw(svDesc.DefaultValue);
                 }
             }
-            
-            
 
-            
-            
+
+
+
+
         }
         // 着色器资源
         else if (sibDesc.Type == D3D_SIT_TEXTURE || sibDesc.Type == D3D_SIT_STRUCTURED || sibDesc.Type == D3D_SIT_BYTEADDRESS ||
@@ -740,7 +740,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
                 m_ShaderResources.emplace(std::make_pair(sibDesc.BindPoint,
                     ShaderResource{ sibDesc.Name, sibDesc.Dimension, nullptr }));
             }
-            
+
             // 标记该着色器使用了当前着色器资源
             switch (shaderFlag)
             {
@@ -762,7 +762,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
                 m_Samplers.emplace(std::make_pair(sibDesc.BindPoint,
                     SamplerState{ sibDesc.Name, nullptr }));
             }
-            
+
             // 标记该着色器使用了当前采样器
             switch (shaderFlag)
             {
@@ -784,7 +784,7 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
             if (it == m_RWResources.end())
             {
                 m_RWResources.emplace(std::make_pair(sibDesc.BindPoint,
-                    RWResource{ sibDesc.Name, static_cast<D3D11_UAV_DIMENSION>(sibDesc.Dimension), nullptr, 0, 
+                    RWResource{ sibDesc.Name, static_cast<D3D11_UAV_DIMENSION>(sibDesc.Dimension), nullptr, 0,
                     sibDesc.Type == D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER, false }));
             }
 
@@ -860,7 +860,7 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
 {
     if (name.empty() || device == nullptr || blob == nullptr)
         return E_INVALIDARG;
-    
+
     HRESULT hr;
 
     // 着色器反射
@@ -881,7 +881,7 @@ HRESULT EffectHelper::AddShader(std::string_view name, ID3D11Device* device, ID3
         return hr;
 
     // 建立着色器反射
-return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
+    return pImpl->UpdateShaderReflection(name, device, pShaderReflection.Get(), shaderFlag);
 }
 
 void EffectHelper::SetBinaryCacheDirectory(std::wstring_view cacheDir, bool forceWrite)
@@ -1045,7 +1045,7 @@ HRESULT EffectHelper::AddEffectPass(std::string_view effectPassName, ID3D11Devic
     EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(GeometryShader, GS);
     EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(PixelShader, PS);
     EFFECTHELPER_EFFECTPASS_SET_SHADER_AND_PARAM(ComputeShader, CS);
-        
+
     return S_OK;
 }
 
@@ -1134,7 +1134,7 @@ void EffectHelper::SetUnorderedAccessBySlot(uint32_t slot, ID3D11UnorderedAccess
             it->second.firstInit = true;
         }
     }
-        
+
 }
 
 void EffectHelper::SetUnorderedAccessByName(std::string_view name, ID3D11UnorderedAccessView* uav, uint32_t* pInitialCount)
@@ -1302,7 +1302,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
     {
         deviceContext->VSSetShader(nullptr, nullptr, 0);
     }
-    
+
     if (pDSInfo)
     {
         EFFECTPASS_SET_SHADER(DS);
@@ -1341,7 +1341,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
     {
         deviceContext->GSSetShader(nullptr, nullptr, 0);
     }
-    
+
     if (pPSInfo)
     {
         EFFECTPASS_SET_SHADER(PS);
@@ -1377,13 +1377,13 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
                 nullptr, nullptr, firstSlot, (uint32_t)pUAVs.size() - firstSlot, &pUAVs[firstSlot],
                 (needInit ? initCounts.data() : nullptr));
         }
-        
+
     }
     else
     {
         deviceContext->PSSetShader(nullptr, nullptr, 0);
     }
-    
+
     if (pCSInfo)
     {
         EFFECTPASS_SET_SHADER(CS);
@@ -1407,7 +1407,7 @@ void EffectPass::Apply(ID3D11DeviceContext* deviceContext)
         deviceContext->CSSetShader(nullptr, nullptr, 0);
     }
 
-    
+
 
     // 设置渲染状态	
     deviceContext->RSSetState(pRasterizerState.Get());

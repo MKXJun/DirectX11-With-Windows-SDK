@@ -48,19 +48,10 @@ public:
     }
 
     template<class T>
-    bool Has(std::string_view name) const
-    {
-        auto it = m_Properties.find(StringToID(name));
-        if (it == m_Properties.end() || !std::holds_alternative<T>(it->second))
-            return false;
-        return true;
-    }
-
-    template<class T>
     const T* TryGet(std::string_view name) const
     {
         auto it = m_Properties.find(StringToID(name));
-        if (it != m_Properties.end())
+        if (it != m_Properties.end() && std::holds_alternative<T>(it->second))
             return &std::get<T>(it->second);
         else
             return nullptr;
@@ -72,9 +63,20 @@ public:
         return const_cast<T*>(static_cast<const Material*>(this)->TryGet<T>(name));
     }
 
+    template<class T>
+    bool Has(std::string_view name) const
+    {
+        return TryGet<T>(name) != nullptr;
+    }
+
     bool HasProperty(std::string_view name) const
     {
         return m_Properties.find(StringToID(name)) != m_Properties.end();
+    }
+
+    void Remove(std::string_view name)
+    {
+        m_Properties.erase(StringToID(name));
     }
 
 private:

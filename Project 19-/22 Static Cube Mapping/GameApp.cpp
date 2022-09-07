@@ -151,7 +151,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[19] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr));
+            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, TextureManager::LoadConfig_ForceSRGB));
         }
 
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -173,7 +173,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[17] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr));
+            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, TextureManager::LoadConfig_ForceSRGB));
         }
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
         pTex->GetDesc(&texDesc);
@@ -188,7 +188,7 @@ bool GameApp::InitResource()
     }
     
     // Desert
-    m_TextureManager.AddTexture("Desert", m_TextureManager.CreateFromFile("..\\Texture\\desertcube1024.dds", false, true));
+    m_TextureManager.AddTexture("Desert", m_TextureManager.CreateFromFile("..\\Texture\\desertcube1024.dds", TextureManager::LoadConfig_ForceSRGB));
 
     m_BasicEffect.SetTextureCube(m_TextureManager.GetTexture("Daylight"));
     

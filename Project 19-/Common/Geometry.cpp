@@ -13,8 +13,8 @@ namespace Geometry
 
         GeometryData geoData;
         
-        uint32_t vertexCount = 2 + (levels - 1) * (slices + 1);
-        uint32_t indexCount = 6 * (levels - 1) * slices;
+        uint32_t vertexCount = (levels + 1) * (slices + 1);
+        uint32_t indexCount = 6 * levels * slices;
         geoData.vertices.resize(vertexCount);
         geoData.normals.resize(vertexCount);
         geoData.texcoords.resize(vertexCount);
@@ -31,14 +31,7 @@ namespace Geometry
         float per_theta = 2 * PI / slices;
         float x, y, z;
 
-        // 放入顶端点
-        geoData.vertices[vIndex] = XMFLOAT3(0.0f, radius, 0.0f);
-        geoData.normals[vIndex] = XMFLOAT3(0.0f, 1.0f, 0.0f);
-        geoData.tangents[vIndex] = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-        geoData.texcoords[vIndex++] = XMFLOAT2(0.0f, 0.0f);
-
-
-        for (uint32_t i = 1; i < levels; ++i)
+        for (uint32_t i = 0; i <= levels; ++i)
         {
             phi = per_phi * i;
             // 需要slices + 1个顶点是因为 起点和终点需为同一点，但纹理坐标值不一致
@@ -54,83 +47,40 @@ namespace Geometry
                 geoData.vertices[vIndex] = pos;
                 XMStoreFloat3(&geoData.normals[vIndex], XMVector3Normalize(XMLoadFloat3(&pos)));
                 geoData.tangents[vIndex] = XMFLOAT4(-sinf(theta), 0.0f, cosf(theta), 1.0f);
-                geoData.texcoords[vIndex++] = XMFLOAT2(theta / 2 / PI, phi / PI);
+                geoData.texcoords[vIndex] = XMFLOAT2(theta / 2 / PI, phi / PI);
+                if (geoData.texcoords[vIndex].x > 1.0f)
+                    geoData.texcoords[vIndex].x = 1.0f;
+                if (geoData.texcoords[vIndex].y > 1.0f)
+                    geoData.texcoords[vIndex].y = 1.0f;
+                vIndex++;
             }
         }
 
-        // 放入底端点
-        geoData.vertices[vIndex] = XMFLOAT3(0.0f, -radius, 0.0f);
-        geoData.normals[vIndex] = XMFLOAT3(0.0f, -1.0f, 0.0f);
-        geoData.tangents[vIndex] = XMFLOAT4(-1.0f, 0.0f, 0.0f, 1.0f);
-        geoData.texcoords[vIndex++] = XMFLOAT2(0.0f, 1.0f);
-
-
-        // 放入索引
-        if (levels > 1)
+        for (uint32_t i = 0; i < levels; ++i)
         {
-            for (uint32_t j = 1; j <= slices; ++j)
+            for (uint32_t j = 0; j < slices; ++j)
             {
                 if (indexCount > 65535)
                 {
-                    geoData.indices32[iIndex++] = 0;
-                    geoData.indices32[iIndex++] = j % (slices + 1) + 1;
-                    geoData.indices32[iIndex++] = j;
-                }
-                else
-                {
-                    geoData.indices16[iIndex++] = 0;
-                    geoData.indices16[iIndex++] = j % (slices + 1) + 1;
-                    geoData.indices16[iIndex++] = j;
-                }
-            }
-        }
-
-
-        for (uint32_t i = 1; i < levels - 1; ++i)
-        {
-            for (uint32_t j = 1; j <= slices; ++j)
-            {
-                if (indexCount > 65535)
-                {
-                    geoData.indices32[iIndex++] = (i - 1) * (slices + 1) + j;
-                    geoData.indices32[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
-                    geoData.indices32[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
-
-                    geoData.indices32[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
                     geoData.indices32[iIndex++] = i * (slices + 1) + j;
-                    geoData.indices32[iIndex++] = (i - 1) * (slices + 1) + j;
+                    geoData.indices32[iIndex++] = i * (slices + 1) + j + 1;
+                    geoData.indices32[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+
+                    geoData.indices32[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+                    geoData.indices32[iIndex++] = (i + 1) * (slices + 1) + j;
+                    geoData.indices32[iIndex++] = i * (slices + 1) + j;
                 }
                 else
                 {
-                    geoData.indices16[iIndex++] = (i - 1) * (slices + 1) + j;
-                    geoData.indices16[iIndex++] = (i - 1) * (slices + 1) + j % (slices + 1) + 1;
-                    geoData.indices16[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
-
-                    geoData.indices16[iIndex++] = i * (slices + 1) + j % (slices + 1) + 1;
                     geoData.indices16[iIndex++] = i * (slices + 1) + j;
-                    geoData.indices16[iIndex++] = (i - 1) * (slices + 1) + j;
-                }
-                
-            }
-        }
+                    geoData.indices16[iIndex++] = i * (slices + 1) + j + 1;
+                    geoData.indices16[iIndex++] = (i + 1) * (slices + 1) + j + 1;
 
-        // 逐渐放入索引
-        if (levels > 1)
-        {
-            for (uint32_t j = 1; j <= slices; ++j)
-            {
-                if (indexCount > 65535)
-                {
-                    geoData.indices32[iIndex++] = (levels - 2) * (slices + 1) + j;
-                    geoData.indices32[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
-                    geoData.indices32[iIndex++] = (levels - 1) * (slices + 1) + 1;
+                    geoData.indices16[iIndex++] = (i + 1) * (slices + 1) + j + 1;
+                    geoData.indices16[iIndex++] = (i + 1) * (slices + 1) + j;
+                    geoData.indices16[iIndex++] = i * (slices + 1) + j;
                 }
-                else
-                {
-                    geoData.indices16[iIndex++] = (levels - 2) * (slices + 1) + j;
-                    geoData.indices16[iIndex++] = (levels - 2) * (slices + 1) + j % (slices + 1) + 1;
-                    geoData.indices16[iIndex++] = (levels - 1) * (slices + 1) + 1;
-                }
+
             }
         }
 

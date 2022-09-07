@@ -104,6 +104,26 @@ float Camera::GetAspectRatio() const
     return m_Aspect;
 }
 
+void Camera::SetRotation(const DirectX::XMFLOAT3& eulerAnglesInRadian)
+{
+    m_Transform.SetRotation(eulerAnglesInRadian);
+}
+
+void Camera::SetRotation(float x, float y, float z)
+{
+    m_Transform.SetRotation(x, y, z);
+}
+
+void Camera::SetPosition(const DirectX::XMFLOAT3& position)
+{
+    m_Transform.SetPosition(position);
+}
+
+void Camera::SetPosition(float x, float y, float z)
+{
+    m_Transform.SetPosition(x, y, z);
+}
+
 void Camera::SetFrustum(float fovY, float aspect, float nearZ, float farZ)
 {
     m_FovY = fovY;

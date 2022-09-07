@@ -271,7 +271,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[19] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, false, true));
+            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, TextureManager::LoadConfig_ForceSRGB));
         }
 
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -293,7 +293,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[17] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, false, true));
+            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, TextureManager::LoadConfig_ForceSRGB));
         }
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
         pTex->GetDesc(&texDesc);
@@ -308,7 +308,7 @@ bool GameApp::InitResource()
     }
 
     // Desert
-    m_TextureManager.AddTexture("Desert", m_TextureManager.CreateFromFile("..\\Texture\\desertcube1024.dds", false, true));
+    m_TextureManager.AddTexture("Desert", m_TextureManager.CreateFromFile("..\\Texture\\desertcube1024.dds", TextureManager::LoadConfig_ForceSRGB));
 
     // 动态天空盒
     m_pDynamicTextureCube = std::make_unique<TextureCube>(m_pd3dDevice.Get(), 256, 256, DXGI_FORMAT_R8G8B8A8_UNORM);

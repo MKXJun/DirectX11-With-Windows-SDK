@@ -254,7 +254,7 @@ bool GameApp::InitResource()
         for (size_t i = 0; i < 6; ++i)
         {
             filenameStr[19] = '0' + (char)i;
-            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, false, true));
+            pCubeTextures.push_back(m_TextureManager.CreateFromFile(filenameStr, TextureManager::LoadConfig_ForceSRGB));
         }
 
         pCubeTextures[0]->GetResource(reinterpret_cast<ID3D11Resource**>(pTex.ReleaseAndGetAddressOf()));
@@ -286,7 +286,7 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("Sphere", Geometry::CreateSphere());
         pModel->SetDebugObjectName("Sphere");
-        m_TextureManager.CreateFromFile("..\\Texture\\stone.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\stone.dds", TextureManager::LoadConfig_ForceSRGB);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\stone.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));

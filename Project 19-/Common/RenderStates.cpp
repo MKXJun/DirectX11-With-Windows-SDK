@@ -4,33 +4,36 @@
 
 using namespace Microsoft::WRL;
 
-ComPtr<ID3D11RasterizerState> RenderStates::RSNoCull			= nullptr;
-ComPtr<ID3D11RasterizerState> RenderStates::RSWireframe			= nullptr;
-ComPtr<ID3D11RasterizerState> RenderStates::RSCullClockWise		= nullptr;
-ComPtr<ID3D11RasterizerState> RenderStates::RSShadow		    = nullptr;
+ComPtr<ID3D11RasterizerState> RenderStates::RSNoCull = nullptr;
+ComPtr<ID3D11RasterizerState> RenderStates::RSWireframe = nullptr;
+ComPtr<ID3D11RasterizerState> RenderStates::RSCullClockWise = nullptr;
+ComPtr<ID3D11RasterizerState> RenderStates::RSShadow = nullptr;
 
-ComPtr<ID3D11SamplerState> RenderStates::SSPointClamp			= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap			= nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSLinearClamp          = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap16x    = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp2x    = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp4x    = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp8x    = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp16x   = nullptr;
-ComPtr<ID3D11SamplerState> RenderStates::SSShadowPCF			= nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSPointClamp = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSLinearWrap = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSLinearClamp = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap2x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap4x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap8x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicWrap16x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp2x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp4x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp8x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSAnistropicClamp16x = nullptr;
+ComPtr<ID3D11SamplerState> RenderStates::SSShadowPCF = nullptr;
 
-ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage		= nullptr;
-ComPtr<ID3D11BlendState> RenderStates::BSTransparent			= nullptr;
-ComPtr<ID3D11BlendState> RenderStates::BSAdditive				= nullptr;
-ComPtr<ID3D11BlendState> RenderStates::BSAlphaWeightedAdditive  = nullptr;
+ComPtr<ID3D11BlendState> RenderStates::BSAlphaToCoverage = nullptr;
+ComPtr<ID3D11BlendState> RenderStates::BSTransparent = nullptr;
+ComPtr<ID3D11BlendState> RenderStates::BSAdditive = nullptr;
+ComPtr<ID3D11BlendState> RenderStates::BSAlphaWeightedAdditive = nullptr;
 
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqual          = nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSLessEqual      = nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSGreaterEqual   = nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite   = nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest    = nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil	= nullptr;
-ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqualStencil   = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqual = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSLessEqual = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSGreaterEqual = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthWrite = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSNoDepthTest = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSWriteStencil = nullptr;
+ComPtr<ID3D11DepthStencilState> RenderStates::DSSEqualStencil = nullptr;
 
 
 bool RenderStates::IsInit()
@@ -113,8 +116,22 @@ void RenderStates::InitAll(ID3D11Device* device)
     sampDesc.MaxAnisotropy = 0;
     HR(device->CreateSamplerState(&sampDesc, SSLinearWrap.GetAddressOf()));
 
-    // 16倍各向异性过滤与Wrap模式
+    
     sampDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    // 2倍各向异性过滤与Wrap模式
+    sampDesc.MaxAnisotropy = 2;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap2x.GetAddressOf()));
+
+    // 4倍各向异性过滤与Wrap模式
+    sampDesc.MaxAnisotropy = 4;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap4x.GetAddressOf()));
+
+
+    // 8倍各向异性过滤与Wrap模式
+    sampDesc.MaxAnisotropy = 8;
+    HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap8x.GetAddressOf()));
+
+    // 16倍各向异性过滤与Wrap模式
     sampDesc.MaxAnisotropy = 16;
     HR(device->CreateSamplerState(&sampDesc, SSAnistropicWrap16x.GetAddressOf()));
 
@@ -250,6 +267,9 @@ void RenderStates::InitAll(ID3D11Device* device)
     SetDebugObjectName(SSPointClamp.Get(), "SSPointClamp");
     SetDebugObjectName(SSLinearWrap.Get(), "SSLinearWrap");
     SetDebugObjectName(SSLinearClamp.Get(), "SSLinearClamp");
+    SetDebugObjectName(SSAnistropicWrap2x.Get(), "SSAnistropicWrap2x");
+    SetDebugObjectName(SSAnistropicWrap4x.Get(), "SSAnistropicWrap4x");
+    SetDebugObjectName(SSAnistropicWrap8x.Get(), "SSAnistropicWrap8x");
     SetDebugObjectName(SSAnistropicWrap16x.Get(), "SSAnistropicWrap16x");
     SetDebugObjectName(SSAnistropicClamp2x.Get(), "SSAnistropicClamp2x");
     SetDebugObjectName(SSAnistropicClamp4x.Get(), "SSAnistropicClamp4x");

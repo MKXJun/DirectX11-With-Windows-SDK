@@ -150,10 +150,6 @@ bool ForwardEffect::InitAll(ID3D11Device * device)
         }
     }
     
-    
-    
-
-
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_Sam", RenderStates::SSAnistropicWrap16x.Get());
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadowCmp", RenderStates::SSShadowPCF.Get());
     pImpl->m_pEffectHelper->SetSamplerStateByName("g_SamShadow", RenderStates::SSAnistropicClamp16x.Get());
@@ -187,7 +183,7 @@ void ForwardEffect::SetMaterial(const Material& material)
     TextureManager& tm = TextureManager::Get();
 
     auto pStr = material.TryGet<std::string>("$Diffuse");
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetNullTexture());
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_DiffuseMap", pStr ? tm.GetTexture(*pStr) : tm.GetTexture("$Null"));
 }
 
 MeshDataInput ForwardEffect::GetInputData(const MeshData& meshData)

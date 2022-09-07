@@ -16,7 +16,7 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
 {
     using namespace Assimp;
     namespace fs = std::filesystem;
-    
+
     model.materials.clear();
     model.meshdatas.clear();
     model.boundingbox = BoundingBox();
@@ -24,13 +24,13 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
     Importer importer;
     // 去掉里面的点、线图元
     importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT);
-    auto pAssimpScene = importer.ReadFile(filename.data(), 
+    auto pAssimpScene = importer.ReadFile(filename.data(),
         aiProcess_ConvertToLeftHanded |     // 转为左手系
         aiProcess_GenBoundingBoxes |        // 获取碰撞盒
         aiProcess_Triangulate |             // 将多边形拆分
         aiProcess_ImproveCacheLocality |    // 改善缓存局部性
         aiProcess_SortByPType);             // 按图元顶点数排序用于移除非三角形图元
-
+    
     if (pAssimpScene && !(pAssimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && pAssimpScene->HasMeshes())
     {
         model.meshdatas.resize(pAssimpScene->mNumMeshes);
@@ -175,12 +175,12 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                 material.Set("$TransparentColor", vec);
             if (aiReturn_SUCCESS == pAiMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, (float*)&vec, &num))
                 material.Set("$ReflectiveColor", vec);
-            
+
             aiString aiPath;
             fs::path texFilename;
             std::string texName;
 
-            auto TryCreateTexture = [&](aiTextureType type, std::string_view propertyName, bool genMips = false, bool forceSRGB = false) {
+            auto TryCreateTexture = [&](aiTextureType type, std::string_view propertyName, uint32_t loadConfig) {
                 if (!pAiMaterial->GetTextureCount(type))
                     return;
 
@@ -193,7 +193,8 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                     texName += aiPath.C_Str();
                     char* pEndStr = nullptr;
                     aiTexture* pTex = pAssimpScene->mTextures[strtol(aiPath.data + 1, &pEndStr, 10)];
-                    TextureManager::Get().CreateFromMemory(texName, pTex->pcData, pTex->mHeight ? pTex->mWidth * pTex->mHeight : pTex->mWidth, genMips, forceSRGB);
+                    TextureManager::Get().CreateFromMemory(texName, pTex->pcData, pTex->mHeight ? pTex->mWidth * pTex->mHeight : pTex->mWidth,
+                        loadConfig);
                     material.Set(propertyName, std::string(texName));
                 }
                 // 纹理通过文件名索引
@@ -201,18 +202,17 @@ void Model::CreateFromFile(Model& model, ID3D11Device* device, std::string_view 
                 {
                     texFilename = filename;
                     texFilename = texFilename.parent_path() / aiPath.C_Str();
-                    TextureManager::Get().CreateFromFile(texFilename.string(), genMips, forceSRGB);
+                    TextureManager::Get().CreateFromFile(texFilename.string(), loadConfig);
                     material.Set(propertyName, texFilename.string());
                 }
             };
 
-            TryCreateTexture(aiTextureType_DIFFUSE, "$Diffuse", true, true);
-            TryCreateTexture(aiTextureType_NORMALS, "$Normal");
-            TryCreateTexture(aiTextureType_BASE_COLOR, "$Albedo", true, true);
-            TryCreateTexture(aiTextureType_NORMAL_CAMERA, "$NormalCamera");
-            TryCreateTexture(aiTextureType_METALNESS, "$Metalness");
-            TryCreateTexture(aiTextureType_DIFFUSE_ROUGHNESS, "$Roughness");
-            TryCreateTexture(aiTextureType_AMBIENT_OCCLUSION, "$AmbientOcclusion");
+            TryCreateTexture(aiTextureType_DIFFUSE, "$Diffuse", TextureManager::LoadConfig_EnableMips | TextureManager::LoadConfig_ForceSRGB);
+            TryCreateTexture(aiTextureType_NORMALS, "$Normal", 0);
+            TryCreateTexture(aiTextureType_BASE_COLOR, "$Albedo", TextureManager::LoadConfig_EnableMips | TextureManager::LoadConfig_ForceSRGB);
+            TryCreateTexture(aiTextureType_METALNESS, "$Metallic", 0);
+            TryCreateTexture(aiTextureType_DIFFUSE_ROUGHNESS, "$Roughness", 0);
+            TryCreateTexture(aiTextureType_AMBIENT_OCCLUSION, "$AmbientOcclusion", 0);
         }
     }
     else
@@ -236,11 +236,14 @@ void Model::CreateFromGeometry(Model& model, ID3D11Device* device, const Geometr
 {
     // 默认材质
     model.materials = { Material{} };
-    model.materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-    model.materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-    model.materials[0].Set<XMFLOAT4>("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-    model.materials[0].Set<float>("$SpecularFactor", 10.0f);
-    model.materials[0].Set<float>("$Opacity", 1.0f);
+    model.materials[0].Set("$Albedo", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+    model.materials[0].Set("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+    model.materials[0].Set("$DiffuseColor", XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+    model.materials[0].Set("$SpecularColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+    model.materials[0].Set("$SpecularFactor", 10.0f);
+    model.materials[0].Set("$Roughness", 0.5f);
+    model.materials[0].Set("$Metallic", 0.0f);
+    model.materials[0].Set("$Opacity", 1.0f);
 
     model.meshdatas = { MeshData{} };
     model.meshdatas[0].m_pTexcoordArrays.resize(1);

@@ -256,7 +256,7 @@ bool GameApp::InitResource()
             [](float x, float z) { return XMFLOAT3{ -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z), 1.0f,
             -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z) }; }));
         pModel->SetDebugObjectName("Ground");
-        m_TextureManager.CreateFromFile("..\\Texture\\grass.dds");
+        m_TextureManager.CreateFromFile("..\\Texture\\grass.dds", TextureManager::LoadConfig_ForceSRGB);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\grass.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f));
@@ -269,7 +269,7 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("RedBox", Geometry::CreateBox(8.0f, 8.0f, 8.0f));
         pModel->SetDebugObjectName("RedBox");
-        m_TextureManager.CreateFromFile("..\\Texture\\Red.dds");
+        m_TextureManager.CreateFromFile("..\\Texture\\Red.dds", TextureManager::LoadConfig_ForceSRGB);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\Red.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
@@ -283,7 +283,7 @@ bool GameApp::InitResource()
     {
         Model* pModel = m_ModelManager.CreateFromGeometry("YellowBox", Geometry::CreateBox(8.0f, 8.0f, 8.0f));
         pModel->SetDebugObjectName("YellowBox");
-        m_TextureManager.CreateFromFile("..\\Texture\\Yellow.dds");
+        m_TextureManager.CreateFromFile("..\\Texture\\Yellow.dds", TextureManager::LoadConfig_ForceSRGB);
         pModel->materials[0].Set<std::string>("$Diffuse", "..\\Texture\\Yellow.dds");
         pModel->materials[0].Set<XMFLOAT4>("$AmbientColor", XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f));
         pModel->materials[0].Set<XMFLOAT4>("$DiffuseColor", XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));

@@ -6,7 +6,7 @@
 
 using namespace Microsoft::WRL;
 
-Texture2DBase::Texture2DBase(ID3D11Device* device, 
+Texture2DBase::Texture2DBase(ID3D11Device* device,
     const CD3D11_TEXTURE2D_DESC& texDesc, const CD3D11_SHADER_RESOURCE_VIEW_DESC& srvDesc)
     : m_Width(texDesc.Width), m_Height(texDesc.Height)
 {
@@ -18,12 +18,27 @@ Texture2DBase::Texture2DBase(ID3D11Device* device,
     // 用实际产生的mip等级等数据更新
     D3D11_TEXTURE2D_DESC desc;
     m_pTexture->GetDesc(&desc);
+    m_MipLevels = desc.MipLevels;
 
     // 完整资源SRV
-    if ((desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)) 
+    if ((desc.BindFlags & D3D11_BIND_SHADER_RESOURCE))
     {
         device->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, m_pTextureSRV.GetAddressOf());
     }
+}
+
+Texture2DBase::Texture2DBase(ID3D11Device* device, const CD3D11_TEXTURE2D_DESC& texDesc)
+    : m_Width(texDesc.Width), m_Height(texDesc.Height)
+{
+    m_pTexture.Reset();
+    m_pTextureSRV.Reset();
+
+    device->CreateTexture2D(&texDesc, nullptr, m_pTexture.GetAddressOf());
+
+    // 用实际产生的mip等级等数据更新
+    D3D11_TEXTURE2D_DESC desc;
+    m_pTexture->GetDesc(&desc);
+    m_MipLevels = desc.MipLevels;
 }
 
 void Texture2DBase::SetDebugObjectName(std::string_view name)
@@ -36,7 +51,7 @@ void Texture2DBase::SetDebugObjectName(std::string_view name)
 
 Texture2D::Texture2D(ID3D11Device* device, uint32_t width, uint32_t height,
     DXGI_FORMAT format, uint32_t mipLevels, uint32_t bindFlags)
-    : Texture2DBase(device, CD3D11_TEXTURE2D_DESC(format, width, height, 1, mipLevels, bindFlags), 
+    : Texture2DBase(device, CD3D11_TEXTURE2D_DESC(format, width, height, 1, mipLevels, bindFlags),
         CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2D, format))
 {
     D3D11_TEXTURE2D_DESC desc;
@@ -63,12 +78,44 @@ void Texture2D::SetDebugObjectName(std::string_view name)
 #endif
 }
 
-Texture2DMS::Texture2DMS(ID3D11Device* device, uint32_t width, uint32_t height, 
+ReadBackTexture2D::ReadBackTexture2D(ID3D11Device* device, uint32_t width, uint32_t height, DXGI_FORMAT format)
+    : Texture2DBase(device, CD3D11_TEXTURE2D_DESC(format, width, height, 1, 1, 0, D3D11_USAGE_STAGING, D3D11_CPU_ACCESS_READ))
+{
+}
+
+void ReadBackTexture2D::CopyFrom(ID3D11DeviceContext* deviceContext, Texture2DBase& texture, uint32_t arraySlice, uint32_t mipSlice)
+{
+    deviceContext->CopySubresourceRegion(m_pTexture.Get(), 0, 0, 0, 0, texture.GetTexture(), D3D11CalcSubresource(mipSlice, arraySlice, texture.GetMipLevels()), nullptr);
+}
+
+void ReadBackTexture2D::CopyFrom(ID3D11DeviceContext* deviceContext, ID3D11Texture2D* texture, uint32_t arraySlice, uint32_t mipSlice)
+{
+    D3D11_TEXTURE2D_DESC texDesc;
+    texture->GetDesc(&texDesc);
+    deviceContext->CopySubresourceRegion(m_pTexture.Get(), 0, 0, 0, 0, texture, D3D11CalcSubresource(mipSlice, arraySlice, texDesc.MipLevels), nullptr);
+}
+
+void* ReadBackTexture2D::Map(ID3D11DeviceContext* deviceContext, uint32_t& rowPitch)
+{
+    D3D11_MAPPED_SUBRESOURCE mappedData;
+    deviceContext->Map(m_pTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedData);
+    rowPitch = mappedData.RowPitch;
+    return mappedData.pData;
+}
+
+void ReadBackTexture2D::UnMap(ID3D11DeviceContext* deviceContext)
+{
+    deviceContext->Unmap(m_pTexture.Get(), 0);
+}
+
+
+
+Texture2DMS::Texture2DMS(ID3D11Device* device, uint32_t width, uint32_t height,
     DXGI_FORMAT format, const DXGI_SAMPLE_DESC& sampleDesc, uint32_t bindFlags)
-    : Texture2DBase(device, 
-        CD3D11_TEXTURE2D_DESC(format, width, height, 1, 1, bindFlags, 
-            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality), 
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, format)), 
+    : Texture2DBase(device,
+        CD3D11_TEXTURE2D_DESC(format, width, height, 1, 1, bindFlags,
+            D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, format)),
     m_MsaaSamples(sampleDesc.Count)
 {
     if (bindFlags & D3D11_BIND_RENDER_TARGET)
@@ -94,7 +141,6 @@ TextureCube::TextureCube(ID3D11Device* device, uint32_t width, uint32_t height,
 {
     D3D11_TEXTURE2D_DESC desc;
     m_pTexture->GetDesc(&desc);
-    m_MipLevels = desc.MipLevels;
     if (bindFlags & D3D11_BIND_RENDER_TARGET)
     {
         // 单个子资源
@@ -116,7 +162,7 @@ TextureCube::TextureCube(ID3D11Device* device, uint32_t width, uint32_t height,
         device->CreateRenderTargetView(m_pTexture.Get(), &rtvDesc, m_pTextureArrayRTV.GetAddressOf());
     }
 
-    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS) 
+    if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
     {
         // 单个子资源
         for (uint32_t i = 0; i < 6; ++i) {
@@ -133,7 +179,7 @@ TextureCube::TextureCube(ID3D11Device* device, uint32_t width, uint32_t height,
         }
     }
 
-    if (bindFlags & D3D11_BIND_SHADER_RESOURCE) 
+    if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
     {
         // 单个子资源
         for (uint32_t i = 0; i < 6; ++i) {
@@ -171,12 +217,11 @@ Texture2DArray::Texture2DArray(ID3D11Device* device, uint32_t width, uint32_t he
     DXGI_FORMAT format, uint32_t arraySize, uint32_t mipLevels, uint32_t bindFlags)
     : Texture2DBase(device,
         CD3D11_TEXTURE2D_DESC(format, width, height, arraySize, mipLevels, bindFlags),
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, format)), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, format)),
     m_ArraySize(arraySize)
 {
     D3D11_TEXTURE2D_DESC desc;
     m_pTexture->GetDesc(&desc);
-    m_MipLevels = desc.MipLevels;
     if (bindFlags & D3D11_BIND_RENDER_TARGET)
     {
         for (uint32_t i = 0; i < arraySize; ++i) {
@@ -245,9 +290,9 @@ void Texture2DArray::SetDebugObjectName(std::string_view name)
 Texture2DMSArray::Texture2DMSArray(ID3D11Device* device, uint32_t width, uint32_t height,
     DXGI_FORMAT format, uint32_t arraySize, const DXGI_SAMPLE_DESC& sampleDesc, uint32_t bindFlags)
     : Texture2DBase(device,
-        CD3D11_TEXTURE2D_DESC(format, width, height, arraySize, 1, bindFlags, 
+        CD3D11_TEXTURE2D_DESC(format, width, height, arraySize, 1, bindFlags,
             D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, format)), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, format)),
     m_ArraySize(arraySize), m_MsaaSamples(sampleDesc.Count)
 {
     if (bindFlags & D3D11_BIND_RENDER_TARGET)
@@ -337,7 +382,7 @@ static DXGI_FORMAT GetDepthDSVFormat(DepthStencilBitsFlag flag)
     }
 }
 
-Depth2D::Depth2D(ID3D11Device* device, 
+Depth2D::Depth2D(ID3D11Device* device,
     uint32_t width, uint32_t height, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
     : Texture2DBase(device,
         CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, 1, 1, bindFlags),
@@ -361,9 +406,9 @@ void Depth2D::SetDebugObjectName(std::string_view name)
 Depth2DMS::Depth2DMS(ID3D11Device* device, uint32_t width, uint32_t height,
     const DXGI_SAMPLE_DESC& sampleDesc, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
     : Texture2DBase(device,
-        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, 1, 1, bindFlags, 
+        CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, 1, 1, bindFlags,
             D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, GetDepthSRVFormat(depthStencilBitsFlag))), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMS, GetDepthSRVFormat(depthStencilBitsFlag))),
     m_MsaaSamples(sampleDesc.Count)
 {
     if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
@@ -385,7 +430,7 @@ Depth2DArray::Depth2DArray(ID3D11Device* device, uint32_t width, uint32_t height
     uint32_t arraySize, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
     : Texture2DBase(device,
         CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, arraySize, 1, bindFlags),
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, GetDepthSRVFormat(depthStencilBitsFlag))), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DARRAY, GetDepthSRVFormat(depthStencilBitsFlag))),
     m_ArraySize(arraySize)
 {
     if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
@@ -416,7 +461,7 @@ Depth2DArray::Depth2DArray(ID3D11Device* device, uint32_t width, uint32_t height
             CD3D11_SHADER_RESOURCE_VIEW_DESC srvElementDesc(
                 D3D11_SRV_DIMENSION_TEXTURE2DARRAY,
                 GetDepthSRVFormat(depthStencilBitsFlag),
-                0, 1, 
+                0, 1,
                 i, 1);   // Array
 
             ComPtr<ID3D11ShaderResourceView> pSRV;
@@ -439,12 +484,12 @@ void Depth2DArray::SetDebugObjectName(std::string_view name)
 #endif
 }
 
-Depth2DMSArray::Depth2DMSArray(ID3D11Device* device, uint32_t width, uint32_t height, uint32_t arraySize, 
+Depth2DMSArray::Depth2DMSArray(ID3D11Device* device, uint32_t width, uint32_t height, uint32_t arraySize,
     const DXGI_SAMPLE_DESC& sampleDesc, DepthStencilBitsFlag depthStencilBitsFlag, uint32_t bindFlags)
     : Texture2DBase(device,
         CD3D11_TEXTURE2D_DESC(GetDepthTextureFormat(depthStencilBitsFlag), width, height, arraySize, 1, bindFlags,
             D3D11_USAGE_DEFAULT, 0, sampleDesc.Count, sampleDesc.Quality),
-        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, GetDepthSRVFormat(depthStencilBitsFlag))), 
+        CD3D11_SHADER_RESOURCE_VIEW_DESC(D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY, GetDepthSRVFormat(depthStencilBitsFlag))),
     m_ArraySize(arraySize), m_MsaaSamples(sampleDesc.Count)
 {
     if (bindFlags & D3D11_BIND_DEPTH_STENCIL)
@@ -497,4 +542,5 @@ void Depth2DMSArray::SetDebugObjectName(std::string_view name)
     UNREFERENCED_PARAMETER(name);
 #endif
 }
+
 

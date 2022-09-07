@@ -245,15 +245,15 @@ bool GameApp::InitResource()
         Model* pModel = m_ModelManager.CreateFromGeometry("Skybox", Geometry::CreateBox());
         pModel->SetDebugObjectName("Skybox");
         m_Skybox.SetModel(pModel);
-        m_TextureManager.CreateFromFile("..\\Texture\\grasscube1024.dds", false, true);
+        m_TextureManager.CreateFromFile("..\\Texture\\grasscube1024.dds", TextureManager::LoadConfig_ForceSRGB);
         pModel->materials[0].Set<std::string>("$Skybox", "..\\Texture\\grasscube1024.dds");
     }
 
     // ******************
     // 初始化粒子系统
     //
-    m_TextureManager.CreateFromFile("..\\Texture\\flare0.dds", false, true);
-    m_TextureManager.CreateFromFile("..\\Texture\\raindrop.dds", false, true);
+    m_TextureManager.CreateFromFile("..\\Texture\\flare0.dds", TextureManager::LoadConfig_ForceSRGB);
+    m_TextureManager.CreateFromFile("..\\Texture\\raindrop.dds", TextureManager::LoadConfig_ForceSRGB);
 
     // 创建随机数据
     std::mt19937 randEngine;

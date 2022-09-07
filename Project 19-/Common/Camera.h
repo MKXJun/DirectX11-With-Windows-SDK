@@ -38,6 +38,10 @@ public:
     float GetRotationX() const;
     // 获取绕Y轴旋转的欧拉角弧度
     float GetRotationY() const;
+    // 获取欧拉角弧度
+    DirectX::XMFLOAT3 GetRotation() const;
+    // 获取四元数
+    DirectX::XMFLOAT4 GetRotationQuat() const;
 
     //
     // 获取摄像机的坐标轴向量
@@ -66,6 +70,14 @@ public:
     float GetFarZ() const;
     float GetFovY() const;
     float GetAspectRatio() const;
+
+    // 设置旋转欧拉角
+    void SetRotation(const DirectX::XMFLOAT3& eulerAnglesInRadian);
+    void SetRotation(float x, float y, float z);
+    
+    // 设置位置
+    void SetPosition(const DirectX::XMFLOAT3& position);
+    void SetPosition(float x, float y, float z);
 
     // 设置视锥体
     void SetFrustum(float fovY, float aspect, float nearZ, float farZ);

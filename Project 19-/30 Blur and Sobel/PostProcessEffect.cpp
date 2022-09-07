@@ -147,9 +147,11 @@ void PostProcessEffect::RenderComposite(
     ID3D11RenderTargetView* output,
     const D3D11_VIEWPORT& vp)
 {
+    TextureManager& tm = TextureManager::Get();
+
     auto pPass = pImpl->m_pEffectHelper->GetEffectPass("Composite");
     pImpl->m_pEffectHelper->SetShaderResourceByName("g_Input", input1);
-    pImpl->m_pEffectHelper->SetShaderResourceByName("g_EdgeInput", input2 ? input2 : TextureManager::Get().GetNullTexture());
+    pImpl->m_pEffectHelper->SetShaderResourceByName("g_EdgeInput", input2 ? input2 : tm.GetTexture("$Null"));
     pPass->Apply(deviceContext);
 
     deviceContext->OMSetRenderTargets(1, &output, nullptr);

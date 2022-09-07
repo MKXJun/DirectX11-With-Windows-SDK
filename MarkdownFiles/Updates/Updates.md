@@ -4,6 +4,16 @@
 - 中版本号 项目添加
 - 小版本号 项目调整(随中版本号添加归零)
 
+**2022/9/7 Ver2.39.0**
+
+- **添加项目 PBR，目前仅支持延迟渲染**
+- 调整TextureMnager的读取配置选项，初步支持HDR
+- 调整Camera类
+- 球体生成暂时替换为UV球
+- 调整Texture2D类
+- 添加SamplerStates
+- ModelManager初步支持PBR
+- 调整Material类
 
 2022/9/3 Ver2.38.3
 

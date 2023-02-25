@@ -15,6 +15,12 @@
 - ModelManager初步支持PBR
 - 调整Material类
 
+2023/2/25 Ver2.38.4
+
+- 修复项目32的报错问题
+- 处理Transform获取欧拉角时的死锁问题
+- EffectHelper类少量调整
+
 2022/9/3 Ver2.38.3
 
 - 调整d3dFormat.h

@@ -98,9 +98,8 @@ public:
     // 沿着某一方向观察
     void LookTo(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& up = { 0.0f, 1.0f, 0.0f });
 
-private:
     // 从旋转矩阵获取旋转欧拉角
-    DirectX::XMFLOAT3 GetEulerAnglesFromRotationMatrix(const DirectX::XMFLOAT4X4& rotationMatrix);
+    static DirectX::XMFLOAT3 GetEulerAnglesFromRotationMatrix(const DirectX::XMFLOAT4X4& rotationMatrix);
 
 private:
     DirectX::XMFLOAT3 m_Scale = { 1.0f, 1.0f, 1.0f };				// 缩放

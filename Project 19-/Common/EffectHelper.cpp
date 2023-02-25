@@ -649,6 +649,13 @@ HRESULT EffectHelper::Impl::UpdateShaderReflection(std::string_view name, ID3D11
                     m_CBuffers.emplace(std::make_pair(sibDesc.BindPoint, CBufferData(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr)));
                     m_CBuffers[sibDesc.BindPoint].CreateBuffer(device);
                 }
+                // 存在不同shader间的cbuffer大小不一致的情况，应当以最大的为准
+                // 例如当前shader通过宏开启了cbuffer最后一个变量导致多一个16 bytes，而另一个shader关闭了该变量
+                else if (it->second.cbufferData.size() < cbDesc.Size)
+                {
+                    m_CBuffers[sibDesc.BindPoint] = CBufferData(sibDesc.Name, sibDesc.BindPoint, cbDesc.Size, nullptr);
+                    m_CBuffers[sibDesc.BindPoint].CreateBuffer(device);
+                }
 
                 // 标记该着色器使用了当前常量缓冲区
                 if (cbDesc.Variables > 0)

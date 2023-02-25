@@ -158,6 +158,8 @@ void XM_CALLCONV SkyboxEffect::SetProjMatrix(DirectX::FXMMATRIX P)
 MeshDataInput SkyboxEffect::GetInputData(const MeshData& meshData)
 {
     MeshDataInput input;
+    input.pInputLayout = pImpl->m_pCurrInputLayout.Get();
+    input.topology = pImpl->m_CurrTopology;
     input.pVertexBuffers = {
         meshData.m_pVertices.Get(),
         meshData.m_pNormals.Get(),

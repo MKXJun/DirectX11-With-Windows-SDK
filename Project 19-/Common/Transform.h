@@ -47,7 +47,7 @@ public:
 
         DirectX::XMFLOAT3 rotation;
         // 死锁特殊处理
-        if (fabs(sinX - 1.0f) < 1e-5f)
+        if (fabs(fabs(sinX) - 1.0f) < 1e-5f)
         {
             rotation.x = copysignf(DirectX::XM_PI / 2, sinX);
             rotation.y = 2.0f * atan2f(m_Rotation.y, m_Rotation.w);

@@ -197,12 +197,21 @@ void Transform::LookTo(const XMFLOAT3& direction, const XMFLOAT3& up)
 
 XMFLOAT3 Transform::GetEulerAnglesFromRotationMatrix(const XMFLOAT4X4& rotationMatrix)
 {
+    DirectX::XMFLOAT3 rotation{};
+    // 死锁特殊处理
+    if (fabs(1.0f - fabs(rotationMatrix(2, 1))) < 1e-5f)
+    {
+        rotation.x = copysignf(DirectX::XM_PIDIV2, -rotationMatrix(2, 1));
+        rotation.y = -atan2f(rotationMatrix(0, 2), rotationMatrix(0, 0));
+        return rotation;
+    }
+
     // 通过旋转矩阵反求欧拉角
     float c = sqrtf(1.0f - rotationMatrix(2, 1) * rotationMatrix(2, 1));
     // 防止r[2][1]出现大于1的情况
     if (isnan(c))
         c = 0.0f;
-    XMFLOAT3 rotation;
+
     rotation.z = atan2f(rotationMatrix(0, 1), rotationMatrix(1, 1));
     rotation.x = atan2f(-rotationMatrix(2, 1), c);
     rotation.y = atan2f(rotationMatrix(2, 0), rotationMatrix(2, 2));

@@ -30,7 +30,7 @@
 
 ### 命令行构建
 
-在Win10系统下，若安装cmake的时候添加了环境变量，则可以直接运行`build_msvc.cmd`来生成项目并构建项目，完成后打开build文件夹可以找到解决方案
+在Win10系统下，若安装cmake的时候添加了环境变量，则可以直接运行`build_msvc.cmd`来生成项目并构建项目，完成后打开build文件夹可以找到解决方案，然后切换到Release x64就可以直接运行。
 
 ### GUI构建
 
@@ -71,7 +71,25 @@
 
 作为教程演示项目，这里并不是以实现一个软引擎为目标。建议读者在跟随教程学习的同时要动手实践。
 
+## 打包教程示例程序
+
+以项目31的程序(Release x64)为例，其文件结构应为：
+
+```cpp
+Project 31
+|----Model/                    (挑出项目用到的模型)
+|----Texture/                  (挑出项目用到的纹理)
+|----31 Shadow Mapping/        (此处命名自由发挥，比如bin)
+     |----31 Shadow Mapping.exe
+     |----imgui.ini
+     |----assimp-vc14*-mt.dll  (从build/Assimp/bin/Release(或Debug)复制一份)
+     |----Shaders/
+```
+
+
+
 ## 支持/赞赏博主
+
 **博客和项目维护不易，如果本系列教程对您有所帮助，希望能够扫码支持一下博主。**
 
 ![](MarkdownFiles/002.png)![](MarkdownFiles/003.png)
@@ -82,8 +100,9 @@
 
 ## 最近更新
 
-2022/9/3 Ver2.38.3
-
-- 调整d3dFormat.h
+- 2023/2/25 Ver2.38.4
+  - 修复项目32的报错问题
+  - 处理Transform获取欧拉角时的死锁问题
+  - EffectHelper类少量调整
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

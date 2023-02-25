@@ -46,12 +46,19 @@ public:
         float cosZ_cosX = 1 - 2 * (m_Rotation.x * m_Rotation.x + m_Rotation.z * m_Rotation.z);
 
         DirectX::XMFLOAT3 rotation;
-        if (fabs(sinX) >= 1.0f)
+        // 死锁特殊处理
+        if (fabs(sinX - 1.0f) < 1e-5f)
+        {
             rotation.x = copysignf(DirectX::XM_PI / 2, sinX);
+            rotation.y = 2.0f * atan2f(m_Rotation.y, m_Rotation.w);
+            rotation.z = 0.0f;
+        }
         else
+        {
             rotation.x = asinf(sinX);
-        rotation.y = atan2f(sinY_cosX, cosY_cosX);
-        rotation.z = atan2f(sinZ_cosX, cosZ_cosX);
+            rotation.y = atan2f(sinY_cosX, cosY_cosX);
+            rotation.z = atan2f(sinZ_cosX, cosZ_cosX);
+        }
 
         return rotation;
     }
@@ -229,16 +236,25 @@ public:
         XMMATRIX InvView = XMMatrixInverse(nullptr, View);
         XMStoreFloat4(&m_Rotation, XMQuaternionRotationMatrix(InvView));
     }
-private:
+
     // 从旋转矩阵获取旋转欧拉角
-    DirectX::XMFLOAT3 GetEulerAnglesFromRotationMatrix(const DirectX::XMFLOAT4X4& rotationMatrix)
+    static DirectX::XMFLOAT3 GetEulerAnglesFromRotationMatrix(const DirectX::XMFLOAT4X4& rotationMatrix)
     {
+        DirectX::XMFLOAT3 rotation{};
+        // 死锁特殊处理
+        if (fabs(1.0f - fabs(rotationMatrix(2, 1))) < 1e-5f)
+        {
+            rotation.x = copysignf(DirectX::XM_PIDIV2, -rotationMatrix(2, 1));
+            rotation.y = -atan2f(rotationMatrix(0, 2), rotationMatrix(0, 0));
+            return rotation;
+        }
+
         // 通过旋转矩阵反求欧拉角
         float c = sqrtf(1.0f - rotationMatrix(2, 1) * rotationMatrix(2, 1));
         // 防止r[2][1]出现大于1的情况
         if (isnan(c))
             c = 0.0f;
-        DirectX::XMFLOAT3 rotation{};
+        
         rotation.z = atan2f(rotationMatrix(0, 1), rotationMatrix(1, 1));
         rotation.x = atan2f(-rotationMatrix(2, 1), c);
         rotation.y = atan2f(rotationMatrix(2, 0), rotationMatrix(2, 2));

@@ -1,4 +1,7 @@
 @echo off
 
 cmake -S . -B build
-cmake --build build --config Release -- -m
+cd build
+del /S/Q *.cso
+cmake --build . --config Release -- -m
+cd ..

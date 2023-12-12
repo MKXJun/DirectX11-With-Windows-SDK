@@ -535,7 +535,7 @@ bool GameApp::InitResource()
     // ******************
     // 初始化对象
     //
-    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.obj"));
+    m_Powerplant.SetModel(m_ModelManager.CreateFromFile("..\\Model\\powerplant\\powerplant.gltf"));
 
     m_ModelManager.CreateFromGeometry("cube", Geometry::CreateBox());
     m_Cube.SetModel(m_ModelManager.GetModel("cube"));

@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.3-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.5-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -100,9 +100,7 @@ Project 31
 
 ## 最近更新
 
-- 2023/2/25 Ver2.38.4
-  - 修复项目32的报错问题
-  - 处理Transform获取欧拉角时的死锁问题
-  - EffectHelper类少量调整
+- 2023/12/12 Ver2.38.5
+  - 修复项目39的模型读取问题
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

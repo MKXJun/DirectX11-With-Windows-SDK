@@ -61,6 +61,11 @@ D3DApp::~D3DApp()
     // 恢复所有默认设定
     if (m_pd3dImmediateContext)
         m_pd3dImmediateContext->ClearState();
+
+    if (m_pSwapChain)
+    {
+        m_pSwapChain->SetFullscreenState(FALSE, NULL);
+    }
 }
 
 HINSTANCE D3DApp::AppInst()const

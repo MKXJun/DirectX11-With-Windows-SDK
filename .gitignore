@@ -4,6 +4,7 @@ x64/
 .git/
 .vs/
 .vscode/
+bin/
 build/
 backup/
 lib/
@@ -19,3 +20,4 @@ lib/
 *.lastcodeanalysissucceeded
 !dxtex.exe
 *.exe
+compile_commands.json

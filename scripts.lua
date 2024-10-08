@@ -37,7 +37,7 @@ rule("hlsl_shader_copy")
     set_extensions(".hlsli",".hlsl")
     after_build(function (target)
         if os.exists(path.join(target:scriptdir(),"/Shaders")) then
-            os.cp(path.join(target:scriptdir(),"/Shaders"), path.join(target:targetdir(),"../Shaders"))
+            os.cp(path.join(target:scriptdir(),"/Shaders"), path.join(target:targetdir(),"/Shaders"))
         end
     end)
 rule_end()

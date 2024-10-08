@@ -8,6 +8,7 @@ bin/
 build/
 backup/
 lib/
+vsxmake2022/
 *.cso
 *.mbo
 *.inc

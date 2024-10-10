@@ -1,4 +1,8 @@
-binDir = path.join(os.projectdir(),"bin/Project 10-17")
+if is_mode("debug") then
+    binDir = path.join(os.projectdir(),"bin/Debug/Project 10-17")
+else 
+    binDir = path.join(os.projectdir(),"bin/Release/Project 10-17")
+end
 includes("10 Camera")
 includes("11 Blending")
 includes("12 Depth and Stenciling")

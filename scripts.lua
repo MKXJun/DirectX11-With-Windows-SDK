@@ -34,8 +34,9 @@ rule("hlsl_shader_complier")
 rule_end()
 
 rule("hlsl_shader_copy")
-    set_extensions(".hlsli",".hlsl")
+    set_extensions(".hlsl",".hlsli")
     after_build(function (target)
+        -- shader files
         if os.exists(path.join(target:scriptdir(),"/Shaders")) then
             os.cp(path.join(target:scriptdir(),"/Shaders"), path.join(target:targetdir(),"/Shaders"))
         end
@@ -45,12 +46,8 @@ rule_end()
 rule("imguiini")
     after_build(function (target)
         imguiini_file=path.join(target:scriptdir(),"imgui.ini")
-        bin_path = path.join(target:targetdir())
-        if not os.isdir(bin_path) then
-            os.mkdir(bin_path)
-        end
         if os.isfile(imguiini_file) then
-            os.cp(imguiini_file,bin_path)
+            os.cp(imguiini_file,target:targetdir())
         end
     end)
 rule_end()

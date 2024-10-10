@@ -7,13 +7,13 @@ option("WIN7_SYSTEM_SUPPORT")
 option_end()
 
 
-add_rules("mode.debug", "mode.release", "mode.releasedbg")
+add_rules("mode.debug", "mode.release")
+set_defaultmode("debug")
 set_toolchains("msvc")
 set_languages("c99", "cxx17")
 set_encodings("utf-8")
 
 if is_os("windows") then 
-    -- add_defines("_WINDOWS")
     add_defines("UNICODE")
     add_defines("_UNICODE")
 end
@@ -28,25 +28,10 @@ end
 includes("scripts.lua")
 --ImGui
 includes("ImGui")
-add_requires("assimp",{system=false})
---Assimp
--- package("assimp")
---     add_deps("cmake")
---     set_sourcedir(path.join(os.scriptdir(), "assimp"))
---     on_install(function (package)
---         local configs = {"-DASSIMP_BUILD_ZLIB=ON",
---                          "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF",
---                          "-DASSIMP_BUILD_TESTS=OFF",
---                          "-DASSIMP_INSTALL_PDB=OFF",
---                          "-DASSIMP_INJECT_DEBUG_POSTFIX=OFF",
---                          }
---         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
---         import("package.tools.cmake").install(package, configs)
---     end)
---     add_includedirs("assimp/include", {public =true})
--- package_end()
+-- Assimp
+add_requires("assimp",{system = false })
 
 includes("Project 01-09")
 includes("Project 10-17")
 includes("Project 19-")
--- includes("Project Archive")
+includes("Project Archive")

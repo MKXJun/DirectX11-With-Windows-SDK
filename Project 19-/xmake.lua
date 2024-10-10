@@ -1,4 +1,8 @@
-binDir = path.join(os.projectdir(),"bin/Project 19-")
+if is_mode("debug") then
+    binDir = path.join(os.projectdir(),"bin/Debug/Project 19-")
+else 
+    binDir = path.join(os.projectdir(),"bin/Release/Project 19-")
+end
 includes("Common")
 includes("19 Meshes")
 includes("20 Instancing and Frustum Culling")

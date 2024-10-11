@@ -1,6 +1,6 @@
 # DirectX11 With Windows SDK教程演示项目
 
-![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.6-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
+![](https://img.shields.io/badge/license-MIT-dddd00.svg) [![](https://img.shields.io/badge/Ver-2.38.7-519dd9.svg)](https://github.com/MKXJun/DirectX11-With-Windows-SDK/blob/master/MarkdownFiles/Updates/Updates.md)
 
 **现代DX11系列教程：使用Windows SDK(C++)开发Direct3D 11.x**
 
@@ -80,6 +80,8 @@ xmake project -k compile_commands
 xmake project -k [vsxmake2019|vsxmake2022]
 ```
 
+生成的二进制程序位于`bin/debug`或者`bin/release`中
+
 项目代码库`assimp`目前使用`xrepo`进行包管理：
 
 ```
@@ -133,7 +135,7 @@ Project 31
 
 ## 最近更新
 
-- 2024/7/20 Ver2.38.6
-  - 修复Win7下Common项目的编译问题
+- 2024/10/11 Ver2.38.7
+  - 支持xmake生成项目(感谢Ligo)
 
 **[历史更新记录](MarkdownFiles/Updates/Updates.md)**

@@ -53,6 +53,39 @@
 > 2. **由于Assimp不支持Win32(x86)，本项目仅支持64位系统**
 > 3. **Win7打开需要安装Service Pack 1以及KB2670838补丁**
 
+## XMake构建项目（可选）
+
+安装好xmake后，根据如下命令构建与编译项目
+
+```
+xmake f -p windows -a x64 -m debug/release
+xmake 
+xmake build [target]
+xmake run [target]
+```
+
+`target`如下：
+
+![image-20241010203626020](MarkdownFiles/005.png)
+
+可以使用如下命令生成`compile_commands.json`(推荐)
+
+```
+xmake project -k compile_commands
+```
+
+或者使用如下命令生成vs2019/2022项目
+
+```
+xmake project -k [vsxmake2019|vsxmake2022]
+```
+
+项目代码库`assimp`目前使用`xrepo`进行包管理：
+
+```
+add_requires("assimp",{system = false })
+```
+
 ## 项目概况
 
 语言:</br>

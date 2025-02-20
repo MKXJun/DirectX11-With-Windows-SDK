@@ -38,7 +38,7 @@ rule("hlsl_shader_copy")
     after_build(function (target)
         -- shader files
         if os.exists(path.join(target:scriptdir(),"/Shaders")) then
-            os.cp(path.join(target:scriptdir(),"/Shaders"), path.join(target:targetdir(),"/Shaders"))
+            os.cp(path.join(target:scriptdir(),"/Shaders"), target:targetdir())
         end
     end)
 rule_end()
@@ -55,10 +55,10 @@ rule_end()
 rule("asset_file")
     after_build(function (target)
         if os.exists(path.join(target:scriptdir(),"../Texture")) then
-            os.cp(path.join(target:scriptdir(),"../Texture"), path.join(target:targetdir(),"../Texture"))
+            os.cp(path.join(target:scriptdir(),"../Texture"), path.join(target:targetdir(),".."))
         end
         if os.exists(path.join(target:scriptdir(),"../Model")) then
-            os.cp(path.join(target:scriptdir(),"../Model"), path.join(target:targetdir(),"../Model"))
+            os.cp(path.join(target:scriptdir(),"../Model"), path.join(target:targetdir(),".."))
         end
     end)
 rule_end()
